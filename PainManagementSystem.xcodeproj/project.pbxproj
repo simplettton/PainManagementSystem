@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
+		04ED0EB820528A1800638850 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB720528A1800638850 /* MasterViewController.m */; };
+		04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EBA20528A1800638850 /* DetailViewController.m */; };
+		04ED0EBE20528A1800638850 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBC20528A1800638850 /* Main.storyboard */; };
+		04ED0EC020528A1800638850 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBF20528A1800638850 /* Assets.xcassets */; };
+		04ED0EC320528A1800638850 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EC120528A1800638850 /* LaunchScreen.storyboard */; };
+		04ED0EC620528A1800638850 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EC520528A1800638850 /* main.m */; };
+		04ED0ED020528A1800638850 /* PainManagementSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0ECF20528A1800638850 /* PainManagementSystemTests.m */; };
+		04ED0EDB20528A1800638850 /* PainManagementSystemUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EDA20528A1800638850 /* PainManagementSystemUITests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		04ED0ECC20528A1800638850 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04ED0EA820528A1800638850 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04ED0EAF20528A1800638850;
+			remoteInfo = PainManagementSystem;
+		};
+		04ED0ED720528A1800638850 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04ED0EA820528A1800638850 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04ED0EAF20528A1800638850;
+			remoteInfo = PainManagementSystem;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		04ED0EB620528A1800638850 /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
+		04ED0EB720528A1800638850 /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
+		04ED0EB920528A1800638850 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		04ED0EBA20528A1800638850 /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		04ED0EBD20528A1800638850 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		04ED0EBF20528A1800638850 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		04ED0EC220528A1800638850 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		04ED0EC420528A1800638850 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		04ED0EC520528A1800638850 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		04ED0ECB20528A1800638850 /* PainManagementSystemTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PainManagementSystemTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		04ED0ECF20528A1800638850 /* PainManagementSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PainManagementSystemTests.m; sourceTree = "<group>"; };
+		04ED0ED120528A1800638850 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		04ED0ED620528A1800638850 /* PainManagementSystemUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PainManagementSystemUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		04ED0EDA20528A1800638850 /* PainManagementSystemUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PainManagementSystemUITests.m; sourceTree = "<group>"; };
+		04ED0EDC20528A1800638850 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		04ED0EAD20528A1800638850 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04ED0EC820528A1800638850 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04ED0ED320528A1800638850 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		04ED0EA720528A1700638850 = {
+			isa = PBXGroup;
+			children = (
+				04ED0EB220528A1800638850 /* PainManagementSystem */,
+				04ED0ECE20528A1800638850 /* PainManagementSystemTests */,
+				04ED0ED920528A1800638850 /* PainManagementSystemUITests */,
+				04ED0EB120528A1800638850 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		04ED0EB120528A1800638850 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				04ED0EB020528A1800638850 /* PainManagementSystem.app */,
+				04ED0ECB20528A1800638850 /* PainManagementSystemTests.xctest */,
+				04ED0ED620528A1800638850 /* PainManagementSystemUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		04ED0EB220528A1800638850 /* PainManagementSystem */ = {
+			isa = PBXGroup;
+			children = (
+				04ED0EB320528A1800638850 /* AppDelegate.h */,
+				04ED0EB420528A1800638850 /* AppDelegate.m */,
+				04ED0EB620528A1800638850 /* MasterViewController.h */,
+				04ED0EB720528A1800638850 /* MasterViewController.m */,
+				04ED0EB920528A1800638850 /* DetailViewController.h */,
+				04ED0EBA20528A1800638850 /* DetailViewController.m */,
+				04ED0EBC20528A1800638850 /* Main.storyboard */,
+				04ED0EBF20528A1800638850 /* Assets.xcassets */,
+				04ED0EC120528A1800638850 /* LaunchScreen.storyboard */,
+				04ED0EC420528A1800638850 /* Info.plist */,
+				04ED0EC520528A1800638850 /* main.m */,
+			);
+			path = PainManagementSystem;
+			sourceTree = "<group>";
+		};
+		04ED0ECE20528A1800638850 /* PainManagementSystemTests */ = {
+			isa = PBXGroup;
+			children = (
+				04ED0ECF20528A1800638850 /* PainManagementSystemTests.m */,
+				04ED0ED120528A1800638850 /* Info.plist */,
+			);
+			path = PainManagementSystemTests;
+			sourceTree = "<group>";
+		};
+		04ED0ED920528A1800638850 /* PainManagementSystemUITests */ = {
+			isa = PBXGroup;
+			children = (
+				04ED0EDA20528A1800638850 /* PainManagementSystemUITests.m */,
+				04ED0EDC20528A1800638850 /* Info.plist */,
+			);
+			path = PainManagementSystemUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		04ED0EAF20528A1800638850 /* PainManagementSystem */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04ED0EDF20528A1800638850 /* Build configuration list for PBXNativeTarget "PainManagementSystem" */;
+			buildPhases = (
+				04ED0EAC20528A1800638850 /* Sources */,
+				04ED0EAD20528A1800638850 /* Frameworks */,
+				04ED0EAE20528A1800638850 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PainManagementSystem;
+			productName = PainManagementSystem;
+			productReference = 04ED0EB020528A1800638850 /* PainManagementSystem.app */;
+			productType = "com.apple.product-type.application";
+		};
+		04ED0ECA20528A1800638850 /* PainManagementSystemTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04ED0EE220528A1800638850 /* Build configuration list for PBXNativeTarget "PainManagementSystemTests" */;
+			buildPhases = (
+				04ED0EC720528A1800638850 /* Sources */,
+				04ED0EC820528A1800638850 /* Frameworks */,
+				04ED0EC920528A1800638850 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04ED0ECD20528A1800638850 /* PBXTargetDependency */,
+			);
+			name = PainManagementSystemTests;
+			productName = PainManagementSystemTests;
+			productReference = 04ED0ECB20528A1800638850 /* PainManagementSystemTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		04ED0ED520528A1800638850 /* PainManagementSystemUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04ED0EE520528A1800638850 /* Build configuration list for PBXNativeTarget "PainManagementSystemUITests" */;
+			buildPhases = (
+				04ED0ED220528A1800638850 /* Sources */,
+				04ED0ED320528A1800638850 /* Frameworks */,
+				04ED0ED420528A1800638850 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04ED0ED820528A1800638850 /* PBXTargetDependency */,
+			);
+			name = PainManagementSystemUITests;
+			productName = PainManagementSystemUITests;
+			productReference = 04ED0ED620528A1800638850 /* PainManagementSystemUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		04ED0EA820528A1800638850 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0910;
+				ORGANIZATIONNAME = "Shenzhen Lifotronic Technology Co.,Ltd.";
+				TargetAttributes = {
+					04ED0EAF20528A1800638850 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+					};
+					04ED0ECA20528A1800638850 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 04ED0EAF20528A1800638850;
+					};
+					04ED0ED520528A1800638850 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 04ED0EAF20528A1800638850;
+					};
+				};
+			};
+			buildConfigurationList = 04ED0EAB20528A1800638850 /* Build configuration list for PBXProject "PainManagementSystem" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 04ED0EA720528A1700638850;
+			productRefGroup = 04ED0EB120528A1800638850 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				04ED0EAF20528A1800638850 /* PainManagementSystem */,
+				04ED0ECA20528A1800638850 /* PainManagementSystemTests */,
+				04ED0ED520528A1800638850 /* PainManagementSystemUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		04ED0EAE20528A1800638850 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04ED0EC320528A1800638850 /* LaunchScreen.storyboard in Resources */,
+				04ED0EC020528A1800638850 /* Assets.xcassets in Resources */,
+				04ED0EBE20528A1800638850 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04ED0EC920528A1800638850 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04ED0ED420528A1800638850 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		04ED0EAC20528A1800638850 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04ED0EB820528A1800638850 /* MasterViewController.m in Sources */,
+				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
+				04ED0EC620528A1800638850 /* main.m in Sources */,
+				04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04ED0EC720528A1800638850 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04ED0ED020528A1800638850 /* PainManagementSystemTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04ED0ED220528A1800638850 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04ED0EDB20528A1800638850 /* PainManagementSystemUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		04ED0ECD20528A1800638850 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 04ED0EAF20528A1800638850 /* PainManagementSystem */;
+			targetProxy = 04ED0ECC20528A1800638850 /* PBXContainerItemProxy */;
+		};
+		04ED0ED820528A1800638850 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 04ED0EAF20528A1800638850 /* PainManagementSystem */;
+			targetProxy = 04ED0ED720528A1800638850 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		04ED0EBC20528A1800638850 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				04ED0EBD20528A1800638850 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		04ED0EC120528A1800638850 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				04ED0EC220528A1800638850 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		04ED0EDD20528A1800638850 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		04ED0EDE20528A1800638850 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		04ED0EE020528A1800638850 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A457Z9M6ER;
+				INFOPLIST_FILE = PainManagementSystem/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystem;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		04ED0EE120528A1800638850 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A457Z9M6ER;
+				INFOPLIST_FILE = PainManagementSystem/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystem;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		04ED0EE320528A1800638850 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A457Z9M6ER;
+				INFOPLIST_FILE = PainManagementSystemTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystemTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PainManagementSystem.app/PainManagementSystem";
+			};
+			name = Debug;
+		};
+		04ED0EE420528A1800638850 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A457Z9M6ER;
+				INFOPLIST_FILE = PainManagementSystemTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystemTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PainManagementSystem.app/PainManagementSystem";
+			};
+			name = Release;
+		};
+		04ED0EE620528A1800638850 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A457Z9M6ER;
+				INFOPLIST_FILE = PainManagementSystemUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystemUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PainManagementSystem;
+			};
+			name = Debug;
+		};
+		04ED0EE720528A1800638850 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = A457Z9M6ER;
+				INFOPLIST_FILE = PainManagementSystemUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystemUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PainManagementSystem;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04ED0EAB20528A1800638850 /* Build configuration list for PBXProject "PainManagementSystem" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04ED0EDD20528A1800638850 /* Debug */,
+				04ED0EDE20528A1800638850 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04ED0EDF20528A1800638850 /* Build configuration list for PBXNativeTarget "PainManagementSystem" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04ED0EE020528A1800638850 /* Debug */,
+				04ED0EE120528A1800638850 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04ED0EE220528A1800638850 /* Build configuration list for PBXNativeTarget "PainManagementSystemTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04ED0EE320528A1800638850 /* Debug */,
+				04ED0EE420528A1800638850 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04ED0EE520528A1800638850 /* Build configuration list for PBXNativeTarget "PainManagementSystemUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04ED0EE620528A1800638850 /* Debug */,
+				04ED0EE720528A1800638850 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 04ED0EA820528A1800638850 /* Project object */;
+}
