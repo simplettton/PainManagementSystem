@@ -15,6 +15,8 @@
 @implementation DetailViewController
 
 - (void)configureView {
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:10.0f/255.0f green:194.0f/255.0f blue:174.0f/255.0f alpha:1];
     // Update the user interface for the detail item.
     if (self.detailItem) {
         self.detailDescriptionLabel.text = [self.detailItem description];
@@ -26,14 +28,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     [self configureView];
+    
+    
 }
-
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 
 #pragma mark - Managing the detail item
 
