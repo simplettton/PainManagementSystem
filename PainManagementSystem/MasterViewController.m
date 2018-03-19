@@ -26,7 +26,7 @@
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:10.0f/255.0f green:194.0f/255.0f blue:174.0f/255.0f alpha:1];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:53.0f/255.0f green:171.0f/255.0f blue:231.0f/255.0f alpha:1];
 }
 
 
