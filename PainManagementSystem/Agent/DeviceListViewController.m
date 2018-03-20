@@ -7,14 +7,17 @@
 //
 
 #import "DeviceListViewController.h"
-
+#import "DeviceTableViewCell.h"
+#import "EditDeviceViewController.h"
 @interface DeviceListViewController ()
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
-@implementation DeviceListViewController
+@implementation DeviceListViewController{
+        NSMutableArray *datas;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -31,7 +34,17 @@
 
 
 -(void)initAll{
-    self.searchBar.backgroundImage = [[UIImage alloc]init];
+    
+    self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
+    self.searchBar.tintColor = [UIColor blackColor];//出现光标
+    self.tableView.tableFooterView = [[UIView alloc]init];
+    
+    datas = [[NSMutableArray alloc]initWithCapacity:20];
+    datas = [NSMutableArray arrayWithObjects:
+             @{@"type":@"空气波",@"mac":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+             @{@"type":@"空气波",@"mac":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+             @{@"type":@"电疗",@"mac":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
+             nil];
 }
 
 /*
@@ -48,14 +61,46 @@
     return 1;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 3;
+    return [datas count];
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[DeviceTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
+    NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
+    cell.typeLabel.text = [dataDic objectForKey:@"type"];
+    cell.macLabel.text = [dataDic objectForKey:@"mac"];
+    cell.nameLabel.text = [dataDic objectForKey:@"name"];
+    cell.serialNum = [dataDic objectForKey:@"serialNum"];
+    
+    cell.editButton.tag = indexPath.row;
+    [cell.editButton addTarget:self action:@selector(edit:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
     return cell;
+}
+
+-(void)edit:(UIButton *)sender{
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:sender.tag inSection:0];
+    DeviceTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    [self performSegueWithIdentifier:@"EditDevice" sender:cell];
+}
+
+#pragma mark - segue
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if([segue.identifier isEqualToString:@"EditDevice"]){
+        UINavigationController *navi = (UINavigationController  *)segue.destinationViewController;
+        DeviceTableViewCell *cell= (DeviceTableViewCell *)sender;
+        EditDeviceViewController *controller = [navi.viewControllers firstObject];
+        controller.type = cell.typeLabel.text;
+        controller.name = cell.nameLabel.text;
+        controller.mac = cell.macLabel.text;
+        controller.serialNum = cell.serialNum;
+        
+        
+    }
 }
 @end

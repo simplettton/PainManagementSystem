@@ -7,9 +7,9 @@
 //
 
 #import "AddDeviceViewController.h"
-
+#import "DeviceTableViewCell.h"
 @interface AddDeviceViewController ()
-
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @end
 
 @implementation AddDeviceViewController
@@ -31,14 +31,30 @@
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+#pragma mark - tableview dataSource
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
 }
-*/
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 2;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *CellIdentifier = @"Cell";
+    DeviceTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    if (cell == nil) {
+        cell = [[DeviceTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
+//    NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
+//    cell.typeLabel.text = [dataDic objectForKey:@"type"];
+//    cell.macLabel.text = [dataDic objectForKey:@"mac"];
+//    cell.nameLabel.text = [dataDic objectForKey:@"name"];
+//    cell.serialNum = [dataDic objectForKey:@"serialNum"];
+    
+//    cell.editButton.tag = indexPath.row;
+//    [cell.editButton addTarget:self action:@selector(edit:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    return cell;
+}
 
 @end
