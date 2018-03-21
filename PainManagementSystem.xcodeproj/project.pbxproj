@@ -10,8 +10,8 @@
 		04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112064205FBCEC00C91BA0 /* DeviceListViewController.m */; };
 		04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112068205FD54E00C91BA0 /* AddDeviceViewController.m */; };
 		04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DE8206091B6002641D1 /* DeviceTableViewCell.m */; };
-		04661DEB206091B6002641D1 /* DeviceTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04661DE9206091B6002641D1 /* DeviceTableViewCell.xib */; };
 		04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DED2060999D002641D1 /* EditDeviceViewController.m */; };
+		046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */; };
 		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
 		04ED0EB820528A1800638850 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB720528A1800638850 /* MasterViewController.m */; };
 		04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EBA20528A1800638850 /* DetailViewController.m */; };
@@ -47,10 +47,11 @@
 		04112068205FD54E00C91BA0 /* AddDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddDeviceViewController.m; sourceTree = "<group>"; };
 		04661DE7206091B6002641D1 /* DeviceTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewCell.h; sourceTree = "<group>"; };
 		04661DE8206091B6002641D1 /* DeviceTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceTableViewCell.m; sourceTree = "<group>"; };
-		04661DE9206091B6002641D1 /* DeviceTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeviceTableViewCell.xib; sourceTree = "<group>"; };
 		04661DEC2060999D002641D1 /* EditDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditDeviceViewController.h; sourceTree = "<group>"; };
 		04661DED2060999D002641D1 /* EditDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditDeviceViewController.m; sourceTree = "<group>"; };
 		04661DF92060A981002641D1 /* BaseHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseHeader.h; sourceTree = "<group>"; };
+		046E2E0D2061FB0E00DEFD70 /* AddDeviceCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDeviceCell.h; sourceTree = "<group>"; };
+		046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddDeviceCell.m; sourceTree = "<group>"; };
 		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -107,7 +108,8 @@
 				04112068205FD54E00C91BA0 /* AddDeviceViewController.m */,
 				04661DE7206091B6002641D1 /* DeviceTableViewCell.h */,
 				04661DE8206091B6002641D1 /* DeviceTableViewCell.m */,
-				04661DE9206091B6002641D1 /* DeviceTableViewCell.xib */,
+				046E2E0D2061FB0E00DEFD70 /* AddDeviceCell.h */,
+				046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */,
 			);
 			path = Agent;
 			sourceTree = "<group>";
@@ -279,7 +281,6 @@
 				04ED0EC320528A1800638850 /* LaunchScreen.storyboard in Resources */,
 				04ED0EC020528A1800638850 /* Assets.xcassets in Resources */,
 				04ED0EBE20528A1800638850 /* Main.storyboard in Resources */,
-				04661DEB206091B6002641D1 /* DeviceTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +307,7 @@
 			files = (
 				04ED0EB820528A1800638850 /* MasterViewController.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
+				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,

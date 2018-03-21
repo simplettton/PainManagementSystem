@@ -33,7 +33,7 @@
 }
 
 -(void)initAll{
-    self.macLabel.text = self.mac;
+    self.macLabel.text = self.macString;
     
     self.typeTextField.layer.borderWidth = 1.0f;
     self.typeTextField.layer.borderColor = UIColorFromHex(0xBBBBBB).CGColor;

@@ -11,7 +11,7 @@
 @interface EditDeviceViewController : UIViewController
 @property(strong,nonatomic)NSString *type;
 @property(strong,nonatomic)NSString *name;
-@property(strong,nonatomic)NSString *mac;
+@property(strong,nonatomic)NSString *macString;
 @property(strong,nonatomic)NSString *serialNum;
 
 @end

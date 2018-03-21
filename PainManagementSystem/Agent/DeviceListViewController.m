@@ -41,9 +41,9 @@
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     datas = [NSMutableArray arrayWithObjects:
-             @{@"type":@"空气波",@"mac":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-             @{@"type":@"空气波",@"mac":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-             @{@"type":@"电疗",@"mac":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
+             @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+             @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
              nil];
 }
 
@@ -71,9 +71,9 @@
     }
     NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
     cell.typeLabel.text = [dataDic objectForKey:@"type"];
-    cell.macLabel.text = [dataDic objectForKey:@"mac"];
+    cell.serialNumLabel.text = [dataDic objectForKey:@"serialNum"];
     cell.nameLabel.text = [dataDic objectForKey:@"name"];
-    cell.serialNum = [dataDic objectForKey:@"serialNum"];
+    cell.macString = [dataDic objectForKey:@"macString"];
     
     cell.editButton.tag = indexPath.row;
     [cell.editButton addTarget:self action:@selector(edit:) forControlEvents:UIControlEventTouchUpInside];
@@ -97,8 +97,8 @@
         EditDeviceViewController *controller = [navi.viewControllers firstObject];
         controller.type = cell.typeLabel.text;
         controller.name = cell.nameLabel.text;
-        controller.mac = cell.macLabel.text;
-        controller.serialNum = cell.serialNum;
+        controller.macString = cell.macString;
+        controller.serialNum = cell.serialNumLabel.text;
         
         
     }

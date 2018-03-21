@@ -10,9 +10,9 @@
 
 @interface DeviceTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
-@property (weak, nonatomic) IBOutlet UILabel *macLabel;
+@property (weak, nonatomic) IBOutlet UILabel *serialNumLabel;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UIButton *editButton;
-@property (strong,nonatomic)NSString *serialNum;
+@property (strong,nonatomic)NSString *macString;
 
 @end
