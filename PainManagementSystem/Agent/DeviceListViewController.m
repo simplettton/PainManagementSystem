@@ -9,9 +9,11 @@
 #import "DeviceListViewController.h"
 #import "DeviceTableViewCell.h"
 #import "EditDeviceViewController.h"
+#import "BaseHeader.h"
 @interface DeviceListViewController ()
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
 @end
 
@@ -32,30 +34,37 @@
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
 }
 
-
 -(void)initAll{
     
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
     self.searchBar.tintColor = [UIColor blackColor];//出现光标
+    
+    //tableview
     self.tableView.tableFooterView = [[UIView alloc]init];
+    self.tableView.allowsMultipleSelectionDuringEditing = YES;
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     datas = [NSMutableArray arrayWithObjects:
              @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
              @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
              @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874458"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874459"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874450"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874451"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874356"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874556"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874856"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12307874456"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12867874456"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"82367874456"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12967874456"},
+             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"15367874456"},
              nil];
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+
 #pragma mark - tableview dataSource
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -78,14 +87,64 @@
     cell.editButton.tag = indexPath.row;
     [cell.editButton addTarget:self action:@selector(edit:) forControlEvents:UIControlEventTouchUpInside];
     
-    
+    //改变编辑状态下左侧圆圈勾选颜色
+    cell.tintColor = UIColorFromHex(0x37BD9C);
     return cell;
 }
 
+#pragma mark - action
 -(void)edit:(UIButton *)sender{
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:sender.tag inSection:0];
     DeviceTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     [self performSegueWithIdentifier:@"EditDevice" sender:cell];
+}
+
+- (IBAction)delete:(id)sender {
+    
+    //设置cell 可选中 修改选中样式
+    UIView *view = [[UIView alloc] init];
+    view.backgroundColor = [UIColor whiteColor];
+    
+
+    if (self.tableView.editing) {
+        self.deleteButton.titleLabel.text = @"删除";
+        [self.deleteButton setTitle:@"删除" forState:UIControlStateNormal];
+        
+
+            NSMutableArray *deleteArray = [NSMutableArray array];
+            
+            for (NSIndexPath *indexPath in self.tableView.indexPathsForSelectedRows) {
+                [deleteArray addObject:datas[indexPath.row]];
+            }
+            
+            NSMutableArray *currentArray = datas;
+            [currentArray removeObjectsInArray:deleteArray];
+            
+            datas = currentArray;
+            
+            [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
+            
+            dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+            dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+                
+                [self.tableView reloadData];
+            });
+        //完成删除后不给选中cell
+        for (DeviceTableViewCell *cell in self.tableView.visibleCells) {
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        
+        
+    }else{
+        self.deleteButton.titleLabel.text = @"完成";
+        [self.deleteButton setTitle:@"完成" forState:UIControlStateNormal];
+        for (DeviceTableViewCell *cell in self.tableView.visibleCells) {
+            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+            cell.selectedBackgroundView = view;
+        }
+    }
+    
+    [self.tableView setEditing:!self.tableView.editing animated:NO];
 }
 
 #pragma mark - segue

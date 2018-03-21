@@ -12,6 +12,23 @@
 		04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DE8206091B6002641D1 /* DeviceTableViewCell.m */; };
 		04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DED2060999D002641D1 /* EditDeviceViewController.m */; };
 		046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */; };
+		046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E1120622FD600DEFD70 /* QRCodeViewController.m */; };
+		046E2E2D2062370800DEFD70 /* QRCameraSwitchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E152062370800DEFD70 /* QRCameraSwitchButton.m */; };
+		046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E172062370800DEFD70 /* QRCodeReader.m */; };
+		046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E1B2062370800DEFD70 /* QRCodeReaderAanimationLineView.m */; };
+		046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E1D2062370800DEFD70 /* QRCodeReaderMaskView.m */; };
+		046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E1F2062370800DEFD70 /* QRCodeReaderView.m */; };
+		046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E212062370800DEFD70 /* QRCodeReaderViewController.m */; };
+		046E2E332062370800DEFD70 /* QRCodeBottomLeft@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E232062370800DEFD70 /* QRCodeBottomLeft@2x.png */; };
+		046E2E342062370800DEFD70 /* QRCodeBottomLeft@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E242062370800DEFD70 /* QRCodeBottomLeft@3x.png */; };
+		046E2E352062370800DEFD70 /* QRCodeBottomRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E252062370800DEFD70 /* QRCodeBottomRight@2x.png */; };
+		046E2E362062370800DEFD70 /* QRCodeBottomRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E262062370800DEFD70 /* QRCodeBottomRight@3x.png */; };
+		046E2E372062370800DEFD70 /* QRCodeLine@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E272062370800DEFD70 /* QRCodeLine@2x.png */; };
+		046E2E382062370800DEFD70 /* QRCodeLine@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E282062370800DEFD70 /* QRCodeLine@3x.png */; };
+		046E2E392062370800DEFD70 /* QRCodeTopLeft@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E292062370800DEFD70 /* QRCodeTopLeft@2x.png */; };
+		046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */; };
+		046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */; };
+		046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */; };
 		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
 		04ED0EB820528A1800638850 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB720528A1800638850 /* MasterViewController.m */; };
 		04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EBA20528A1800638850 /* DetailViewController.m */; };
@@ -52,6 +69,31 @@
 		04661DF92060A981002641D1 /* BaseHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseHeader.h; sourceTree = "<group>"; };
 		046E2E0D2061FB0E00DEFD70 /* AddDeviceCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDeviceCell.h; sourceTree = "<group>"; };
 		046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddDeviceCell.m; sourceTree = "<group>"; };
+		046E2E1020622FD600DEFD70 /* QRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QRCodeViewController.h; sourceTree = "<group>"; };
+		046E2E1120622FD600DEFD70 /* QRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRCodeViewController.m; sourceTree = "<group>"; };
+		046E2E142062370800DEFD70 /* QRCameraSwitchButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCameraSwitchButton.h; sourceTree = "<group>"; };
+		046E2E152062370800DEFD70 /* QRCameraSwitchButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCameraSwitchButton.m; sourceTree = "<group>"; };
+		046E2E162062370800DEFD70 /* QRCodeReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeReader.h; sourceTree = "<group>"; };
+		046E2E172062370800DEFD70 /* QRCodeReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeReader.m; sourceTree = "<group>"; };
+		046E2E182062370800DEFD70 /* QRCodeReaderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeReaderDelegate.h; sourceTree = "<group>"; };
+		046E2E1A2062370800DEFD70 /* QRCodeReaderAanimationLineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeReaderAanimationLineView.h; sourceTree = "<group>"; };
+		046E2E1B2062370800DEFD70 /* QRCodeReaderAanimationLineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeReaderAanimationLineView.m; sourceTree = "<group>"; };
+		046E2E1C2062370800DEFD70 /* QRCodeReaderMaskView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeReaderMaskView.h; sourceTree = "<group>"; };
+		046E2E1D2062370800DEFD70 /* QRCodeReaderMaskView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeReaderMaskView.m; sourceTree = "<group>"; };
+		046E2E1E2062370800DEFD70 /* QRCodeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeReaderView.h; sourceTree = "<group>"; };
+		046E2E1F2062370800DEFD70 /* QRCodeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeReaderView.m; sourceTree = "<group>"; };
+		046E2E202062370800DEFD70 /* QRCodeReaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeReaderViewController.h; sourceTree = "<group>"; };
+		046E2E212062370800DEFD70 /* QRCodeReaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeReaderViewController.m; sourceTree = "<group>"; };
+		046E2E232062370800DEFD70 /* QRCodeBottomLeft@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeBottomLeft@2x.png"; sourceTree = "<group>"; };
+		046E2E242062370800DEFD70 /* QRCodeBottomLeft@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeBottomLeft@3x.png"; sourceTree = "<group>"; };
+		046E2E252062370800DEFD70 /* QRCodeBottomRight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeBottomRight@2x.png"; sourceTree = "<group>"; };
+		046E2E262062370800DEFD70 /* QRCodeBottomRight@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeBottomRight@3x.png"; sourceTree = "<group>"; };
+		046E2E272062370800DEFD70 /* QRCodeLine@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeLine@2x.png"; sourceTree = "<group>"; };
+		046E2E282062370800DEFD70 /* QRCodeLine@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeLine@3x.png"; sourceTree = "<group>"; };
+		046E2E292062370800DEFD70 /* QRCodeTopLeft@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopLeft@2x.png"; sourceTree = "<group>"; };
+		046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopLeft@3x.png"; sourceTree = "<group>"; };
+		046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@2x.png"; sourceTree = "<group>"; };
+		046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@3x.png"; sourceTree = "<group>"; };
 		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -106,12 +148,60 @@
 				04661DED2060999D002641D1 /* EditDeviceViewController.m */,
 				04112067205FD54E00C91BA0 /* AddDeviceViewController.h */,
 				04112068205FD54E00C91BA0 /* AddDeviceViewController.m */,
+				046E2E1020622FD600DEFD70 /* QRCodeViewController.h */,
+				046E2E1120622FD600DEFD70 /* QRCodeViewController.m */,
 				04661DE7206091B6002641D1 /* DeviceTableViewCell.h */,
 				04661DE8206091B6002641D1 /* DeviceTableViewCell.m */,
 				046E2E0D2061FB0E00DEFD70 /* AddDeviceCell.h */,
 				046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */,
 			);
 			path = Agent;
+			sourceTree = "<group>";
+		};
+		046E2E132062370800DEFD70 /* QRCodeReaderViewController */ = {
+			isa = PBXGroup;
+			children = (
+				046E2E142062370800DEFD70 /* QRCameraSwitchButton.h */,
+				046E2E152062370800DEFD70 /* QRCameraSwitchButton.m */,
+				046E2E162062370800DEFD70 /* QRCodeReader.h */,
+				046E2E172062370800DEFD70 /* QRCodeReader.m */,
+				046E2E182062370800DEFD70 /* QRCodeReaderDelegate.h */,
+				046E2E192062370800DEFD70 /* QRCodeReaderView */,
+				046E2E202062370800DEFD70 /* QRCodeReaderViewController.h */,
+				046E2E212062370800DEFD70 /* QRCodeReaderViewController.m */,
+				046E2E222062370800DEFD70 /* Resources */,
+			);
+			path = QRCodeReaderViewController;
+			sourceTree = "<group>";
+		};
+		046E2E192062370800DEFD70 /* QRCodeReaderView */ = {
+			isa = PBXGroup;
+			children = (
+				046E2E1A2062370800DEFD70 /* QRCodeReaderAanimationLineView.h */,
+				046E2E1B2062370800DEFD70 /* QRCodeReaderAanimationLineView.m */,
+				046E2E1C2062370800DEFD70 /* QRCodeReaderMaskView.h */,
+				046E2E1D2062370800DEFD70 /* QRCodeReaderMaskView.m */,
+				046E2E1E2062370800DEFD70 /* QRCodeReaderView.h */,
+				046E2E1F2062370800DEFD70 /* QRCodeReaderView.m */,
+			);
+			path = QRCodeReaderView;
+			sourceTree = "<group>";
+		};
+		046E2E222062370800DEFD70 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				046E2E232062370800DEFD70 /* QRCodeBottomLeft@2x.png */,
+				046E2E242062370800DEFD70 /* QRCodeBottomLeft@3x.png */,
+				046E2E252062370800DEFD70 /* QRCodeBottomRight@2x.png */,
+				046E2E262062370800DEFD70 /* QRCodeBottomRight@3x.png */,
+				046E2E272062370800DEFD70 /* QRCodeLine@2x.png */,
+				046E2E282062370800DEFD70 /* QRCodeLine@3x.png */,
+				046E2E292062370800DEFD70 /* QRCodeTopLeft@2x.png */,
+				046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */,
+				046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */,
+				046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		04ED0EA720528A1700638850 = {
@@ -145,6 +235,7 @@
 				04ED0EB920528A1800638850 /* DetailViewController.h */,
 				04ED0EBA20528A1800638850 /* DetailViewController.m */,
 				04ED0EBC20528A1800638850 /* Main.storyboard */,
+				046E2E132062370800DEFD70 /* QRCodeReaderViewController */,
 				04112066205FBCF700C91BA0 /* Agent */,
 				04ED0EBF20528A1800638850 /* Assets.xcassets */,
 				04ED0EC120528A1800638850 /* LaunchScreen.storyboard */,
@@ -279,8 +370,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				04ED0EC320528A1800638850 /* LaunchScreen.storyboard in Resources */,
+				046E2E362062370800DEFD70 /* QRCodeBottomRight@3x.png in Resources */,
 				04ED0EC020528A1800638850 /* Assets.xcassets in Resources */,
+				046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */,
+				046E2E332062370800DEFD70 /* QRCodeBottomLeft@2x.png in Resources */,
+				046E2E372062370800DEFD70 /* QRCodeLine@2x.png in Resources */,
+				046E2E342062370800DEFD70 /* QRCodeBottomLeft@3x.png in Resources */,
+				046E2E352062370800DEFD70 /* QRCodeBottomRight@2x.png in Resources */,
+				046E2E382062370800DEFD70 /* QRCodeLine@3x.png in Resources */,
 				04ED0EBE20528A1800638850 /* Main.storyboard in Resources */,
+				046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */,
+				046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */,
+				046E2E392062370800DEFD70 /* QRCodeTopLeft@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,13 +406,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */,
+				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
 				04ED0EB820528A1800638850 /* MasterViewController.m in Sources */,
+				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,
+				046E2E2D2062370800DEFD70 /* QRCameraSwitchButton.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
+				046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */,
+				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
 				04ED0EC620528A1800638850 /* main.m in Sources */,
+				046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */,
 				04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */,
 				04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */,
 			);

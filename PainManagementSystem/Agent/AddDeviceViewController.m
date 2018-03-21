@@ -9,21 +9,26 @@
 #import "AddDeviceViewController.h"
 #import "AddDeviceCell.h"
 #import "BaseHeader.h"
+#import "QRCodeReaderViewController.h"
+#import <AVFoundation/AVFoundation.h>
 typedef NS_ENUM(NSUInteger,typeTags)
 {
     electrotherapyTag = 1000,airProTag = 1001,aladdinTag = 1002
 };
-@interface AddDeviceViewController ()
+@interface AddDeviceViewController ()<QRCodeReaderDelegate,UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
-@property (assign,nonatomic) NSInteger selectedTag;
+@property (strong,nonatomic) QRCodeReaderViewController *reader;
+@property (assign,nonatomic) NSInteger selectedDeviceTag;
+@property (assign,nonatomic) NSInteger selectedRow;
+
 @end
 
 @implementation AddDeviceViewController{
     NSMutableArray *datas;
 }
 - (IBAction)changeDevice:(UIButton *)sender {
-    self.selectedTag = [sender tag];
+    self.selectedDeviceTag = [sender tag];
     
     
     for (int i = electrotherapyTag; i<electrotherapyTag +3; i++) {
@@ -38,7 +43,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
         }
     }
     
-    
 }
 
 
@@ -50,7 +54,13 @@ typedef NS_ENUM(NSUInteger,typeTags)
 }
 
 -(void)initAll{
+    
+    //默认选中电疗设备
+    UIButton *btn = (UIButton *)[self.contentView viewWithTag:electrotherapyTag];
+    [self changeDevice:btn];
+    
     self.tableView.tableFooterView = [[UIView alloc]init];
+    
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     datas = [NSMutableArray arrayWithObjects:
              @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
@@ -58,6 +68,48 @@ typedef NS_ENUM(NSUInteger,typeTags)
              @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
              nil];
 }
+
+#pragma mark - scan
+- (void)scanAction:(id)sender {
+
+    self.selectedRow = [sender tag];
+    
+    NSArray *types = @[AVMetadataObjectTypeQRCode,
+                       AVMetadataObjectTypeEAN13Code,
+                       AVMetadataObjectTypeEAN8Code,
+                       AVMetadataObjectTypeUPCECode,
+                       AVMetadataObjectTypeCode39Code,
+                       AVMetadataObjectTypeCode39Mod43Code,
+                       AVMetadataObjectTypeCode93Code,
+                       AVMetadataObjectTypeCode128Code,
+                       AVMetadataObjectTypePDF417Code];
+    
+    _reader        = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
+    
+    // Using delegate methods
+    _reader.delegate = self;
+    
+    
+    [self presentViewController:_reader animated:YES completion:NULL];
+
+}
+
+#pragma mark - QRCodeReader Delegate Methods
+- (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedRow inSection:0];
+        AddDeviceCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        cell.serialNumTextField.text = result;
+        NSLog(@"retult == %@", result);
+    }];
+}
+
+- (void)readerDidCancel:(QRCodeReaderViewController *)reader
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
 - (IBAction)backToDeviceList:(id)sender {
     [self.navigationController popViewControllerAnimated:NO];
     [self dismissViewControllerAnimated:NO completion:nil];
@@ -86,14 +138,23 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }
     
     NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
-//    cell.ringButton.titleLabel.text = [dataDic objectForKey:@"macString"];
-//    [cell.ringButton.titleLabel setText:[dataDic objectForKey:@"macString"]];
     [cell.ringButton setTitle:[dataDic objectForKey:@"macString"] forState:UIControlStateNormal];
-    cell.ringButton.tag = indexPath.row;
-//    [cell.ringButton addTarget:self action:@selector(ring:) forControlEvents:UIControlEventTouchUpInside];
+    [cell.ringButton addTarget:self action:@selector(ring:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
+    cell.scanButton.tag = indexPath.row;
+    
     
     
     return cell;
 }
+
+-(void)ring:(UIButton *)button{
+    AddDeviceCell *cell = (AddDeviceCell *)[[button superview]superview];
+    NSString *cpuid = cell.ringButton.titleLabel.text;
+    NSLog(@"--------cupid：%@ --------------bibibi",cpuid);
+}
+
+
 
 @end
