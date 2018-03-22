@@ -10,6 +10,7 @@
 #import "AddDeviceCell.h"
 #import "BaseHeader.h"
 #import "QRCodeReaderViewController.h"
+#import <MBProgressHUD.h>
 #import <AVFoundation/AVFoundation.h>
 typedef NS_ENUM(NSUInteger,typeTags)
 {
@@ -22,11 +23,17 @@ typedef NS_ENUM(NSUInteger,typeTags)
 @property (assign,nonatomic) NSInteger selectedDeviceTag;
 @property (assign,nonatomic) NSInteger selectedRow;
 
+@property (strong, nonatomic)MBProgressHUD * HUD;
+
 @end
 
 @implementation AddDeviceViewController{
+    
     NSMutableArray *datas;
+    NSMutableArray *peripheralDataArray;
+    BabyBluetooth *baby;
 }
+
 - (IBAction)changeDevice:(UIButton *)sender {
     self.selectedDeviceTag = [sender tag];
     
@@ -42,12 +49,18 @@ typedef NS_ENUM(NSUInteger,typeTags)
             [btn setTitleColor:UIColorFromHex(0x212121) forState:UIControlStateNormal];
         }
     }
+    
+    //选中蓝牙设备
     if (self.selectedDeviceTag == aladdinTag) {
         
         datas = [[NSMutableArray alloc]initWithCapacity:20];
+        baby.scanForPeripherals().begin();
         
 
     }else {
+        [baby cancelScan];
+        [baby cancelAllPeripheralsConnection];
+        
         datas = [NSMutableArray arrayWithObjects:
                  @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
                  @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
@@ -79,6 +92,66 @@ typedef NS_ENUM(NSUInteger,typeTags)
              @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
              @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
              nil];
+    
+    peripheralDataArray = [[NSMutableArray alloc]init];
+    baby = [BabyBluetooth shareBabyBluetooth];
+    [self babyDelegate];
+}
+
+
+#pragma mark - babyDelegate
+-(void)babyDelegate {
+    __weak typeof(self) weakSelf = self;
+    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
+        if (central.state == CBManagerStatePoweredOff) {
+            if (weakSelf.view) {
+                weakSelf.HUD = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                weakSelf.HUD.mode = MBProgressHUDModeText;
+                weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
+                [weakSelf.HUD showAnimated:YES];
+            }
+        }else if(central.state == CBManagerStatePoweredOn) {
+            if(weakSelf.HUD){
+                [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
+            }
+            
+        }
+    }];
+    
+    [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
+        [weakSelf insertTableView:peripheral advertisementData:advertisementData RSSI:RSSI];
+    }];
+    
+    [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
+        if (peripheralName.length > 0) {
+            return YES;
+        }
+        return NO;
+    }];
+    
+    NSDictionary *scanForPeripheralsWithOptions = @{CBCentralManagerScanOptionAllowDuplicatesKey:@YES};
+    [baby setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
+}
+#pragma mark -UIViewController 方法
+//插入table数据
+-(void)insertTableView:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
+    
+    NSArray *peripherals = [datas valueForKey:@"peripheral"];
+    if(![peripherals containsObject:peripheral]) {
+        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:peripherals.count inSection:0];
+        [indexPaths addObject:indexPath];
+        
+        NSMutableDictionary *item = [[NSMutableDictionary alloc] init];
+        [item setValue:peripheral forKey:@"peripheral"];
+        [item setValue:RSSI forKey:@"RSSI"];
+        [item setValue:advertisementData forKey:@"advertisementData"];
+        NSLog(@"peripheral = %@",peripheral.name);
+        NSLog(@"advertisementData = %@",advertisementData);
+//        [peripheralDataArray addObject:item];
+        [datas addObject:item];
+        [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 
 #pragma mark - scan
@@ -148,13 +221,40 @@ typedef NS_ENUM(NSUInteger,typeTags)
     if (cell == nil) {
         cell = [[AddDeviceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    
+    //wifi设备
     NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
     [cell.ringButton setTitle:[dataDic objectForKey:@"macString"] forState:UIControlStateNormal];
     [cell.ringButton addTarget:self action:@selector(ring:) forControlEvents:UIControlEventTouchUpInside];
     
     [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
     cell.scanButton.tag = indexPath.row;
+    
+    //蓝牙设备
+    NSDictionary *item = [datas objectAtIndex:indexPath.row];
+    CBPeripheral *peripheral = [item objectForKey:@"peripheral"];
+    if (peripheral) {
+        NSDictionary *advertisementData = [item objectForKey:@"advertisementData"];
+        cell.nameTextField.text = peripheral.name;
+        
+        //BLE的mac地址
+        NSData *data = (NSData *)[advertisementData objectForKey:@"kCBAdvDataManufacturerData"];
+        NSMutableArray *array = [NSMutableArray arrayWithCapacity:20];
+        if (data) {
+            Byte *dataByte = (Byte *)[data bytes];
+            for (int i =0 ; i < 6; i++) {
+                [array addObject:[NSString stringWithFormat:@"%x",dataByte[i]]];
+            }
+        }
+        NSString *mac = [array componentsJoinedByString:@""];
+        if(!data) {
+            cell.ringButton.titleLabel.text = peripheral.identifier.UUIDString;
+        }else {
+            cell.ringButton.titleLabel.text = mac;
+        }
+        
+    }
+    
+
     
     return cell;
 }

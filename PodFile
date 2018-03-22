@@ -1,5 +1,6 @@
 platform :ios,'9.0'
 target 'PainManagementSystem' do
 	pod 'BabyBluetooth'
+	pod 'MBProgressHUD'
 end
 #pods for app
