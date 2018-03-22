@@ -31,6 +31,8 @@
 		046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */; };
 		047CA1DF20638E3E00D6B1A4 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */; };
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
+		047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */; };
+		047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */; };
 		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
 		04ED0EB820528A1800638850 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB720528A1800638850 /* MasterViewController.m */; };
 		04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EBA20528A1800638850 /* DetailViewController.m */; };
@@ -100,6 +102,9 @@
 		047CA1DD20638E3E00D6B1A4 /* LoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LoginViewController.h; path = ../../LoginViewController.h; sourceTree = "<group>"; };
 		047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LoginViewController.m; path = ../../LoginViewController.m; sourceTree = "<group>"; };
 		047CA1E020639C0F00D6B1A4 /* wenshang.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = wenshang.ttf; sourceTree = "<group>"; };
+		047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetNetWorkView.h; sourceTree = "<group>"; };
+		047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetNetWorkView.m; sourceTree = "<group>"; };
+		047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SetNetWorkView.xib; sourceTree = "<group>"; };
 		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -249,6 +254,9 @@
 				04ED0EBC20528A1800638850 /* Main.storyboard */,
 				047CA1DD20638E3E00D6B1A4 /* LoginViewController.h */,
 				047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */,
+				047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */,
+				047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */,
+				047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */,
 				046E2E132062370800DEFD70 /* QRCodeReaderViewController */,
 				04112066205FBCF700C91BA0 /* Agent */,
 				04ED0EBF20528A1800638850 /* Assets.xcassets */,
@@ -413,6 +421,7 @@
 				046E2E372062370800DEFD70 /* QRCodeLine@2x.png in Resources */,
 				046E2E342062370800DEFD70 /* QRCodeBottomLeft@3x.png in Resources */,
 				046E2E352062370800DEFD70 /* QRCodeBottomRight@2x.png in Resources */,
+				047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */,
 				046E2E382062370800DEFD70 /* QRCodeLine@3x.png in Resources */,
 				04ED0EBE20528A1800638850 /* Main.storyboard in Resources */,
 				046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */,
@@ -503,6 +512,7 @@
 				047CA1DF20638E3E00D6B1A4 /* LoginViewController.m in Sources */,
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
+				047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */,
 				04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
