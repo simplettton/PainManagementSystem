@@ -50,5 +50,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>wenshang.ttf</string>
+	</array>
 </dict>
 </plist>

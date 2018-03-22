@@ -29,6 +29,8 @@
 		046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */; };
 		046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */; };
 		046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */; };
+		047CA1DF20638E3E00D6B1A4 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */; };
+		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
 		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
 		04ED0EB820528A1800638850 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB720528A1800638850 /* MasterViewController.m */; };
 		04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EBA20528A1800638850 /* DetailViewController.m */; };
@@ -95,6 +97,9 @@
 		046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopLeft@3x.png"; sourceTree = "<group>"; };
 		046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@2x.png"; sourceTree = "<group>"; };
 		046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@3x.png"; sourceTree = "<group>"; };
+		047CA1DD20638E3E00D6B1A4 /* LoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LoginViewController.h; path = ../../LoginViewController.h; sourceTree = "<group>"; };
+		047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LoginViewController.m; path = ../../LoginViewController.m; sourceTree = "<group>"; };
+		047CA1E020639C0F00D6B1A4 /* wenshang.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = wenshang.ttf; sourceTree = "<group>"; };
 		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -242,12 +247,15 @@
 				04ED0EB920528A1800638850 /* DetailViewController.h */,
 				04ED0EBA20528A1800638850 /* DetailViewController.m */,
 				04ED0EBC20528A1800638850 /* Main.storyboard */,
+				047CA1DD20638E3E00D6B1A4 /* LoginViewController.h */,
+				047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */,
 				046E2E132062370800DEFD70 /* QRCodeReaderViewController */,
 				04112066205FBCF700C91BA0 /* Agent */,
 				04ED0EBF20528A1800638850 /* Assets.xcassets */,
 				04ED0EC120528A1800638850 /* LaunchScreen.storyboard */,
 				04ED0EC420528A1800638850 /* Info.plist */,
 				04ED0EC520528A1800638850 /* main.m */,
+				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
 			);
 			path = PainManagementSystem;
 			sourceTree = "<group>";
@@ -396,6 +404,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */,
 				04ED0EC320528A1800638850 /* LaunchScreen.storyboard in Resources */,
 				046E2E362062370800DEFD70 /* QRCodeBottomRight@3x.png in Resources */,
 				04ED0EC020528A1800638850 /* Assets.xcassets in Resources */,
@@ -491,6 +500,7 @@
 				046E2E2D2062370800DEFD70 /* QRCameraSwitchButton.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
 				046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */,
+				047CA1DF20638E3E00D6B1A4 /* LoginViewController.m in Sources */,
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */,

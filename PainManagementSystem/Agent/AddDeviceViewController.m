@@ -225,6 +225,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
     [cell.ringButton setTitle:[dataDic objectForKey:@"macString"] forState:UIControlStateNormal];
     [cell.ringButton addTarget:self action:@selector(ring:) forControlEvents:UIControlEventTouchUpInside];
+    cell.nameTextField.text = [dataDic objectForKey:@"name"];
     
     [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
     cell.scanButton.tag = indexPath.row;
@@ -247,9 +248,9 @@ typedef NS_ENUM(NSUInteger,typeTags)
         }
         NSString *mac = [array componentsJoinedByString:@""];
         if(!data) {
-            cell.ringButton.titleLabel.text = peripheral.identifier.UUIDString;
+            [cell.ringButton setTitle:peripheral.identifier.UUIDString forState:UIControlStateNormal];
         }else {
-            cell.ringButton.titleLabel.text = mac;
+            [cell.ringButton setTitle:mac forState:UIControlStateNormal];
         }
         
     }
