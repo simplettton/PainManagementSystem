@@ -42,7 +42,19 @@ typedef NS_ENUM(NSUInteger,typeTags)
             [btn setTitleColor:UIColorFromHex(0x212121) forState:UIControlStateNormal];
         }
     }
-    
+    if (self.selectedDeviceTag == aladdinTag) {
+        
+        datas = [[NSMutableArray alloc]initWithCapacity:20];
+        
+
+    }else {
+        datas = [NSMutableArray arrayWithObjects:
+                 @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+                 @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+                 @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
+                 nil];
+    }
+    [self.tableView reloadData];
 }
 
 
@@ -101,7 +113,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedRow inSection:0];
         AddDeviceCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         cell.serialNumTextField.text = result;
-        NSLog(@"retult == %@", result);
+        NSLog(@"QRretult == %@", result);
     }];
 }
 
@@ -144,17 +156,41 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
     cell.scanButton.tag = indexPath.row;
     
-    
-    
     return cell;
+}
+
+-(NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [self.tableView endEditing:YES];
+    return indexPath;
 }
 
 -(void)ring:(UIButton *)button{
     AddDeviceCell *cell = (AddDeviceCell *)[[button superview]superview];
     NSString *cpuid = cell.ringButton.titleLabel.text;
-    NSLog(@"--------cupid：%@ --------------bibibi",cpuid);
+    NSLog(@"send to server--------cupid：%@ --------------bibibi",cpuid);
 }
 
+- (IBAction)saveAll:(id)sender {
+    NSArray *cells = self.tableView.visibleCells;
+    NSMutableArray *saveArray = [NSMutableArray array];
+    
+    for (AddDeviceCell *cell in cells) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:20];
+        [dic setObject:cell.ringButton.titleLabel.text forKey:@"macString"];
+        [dic setObject:cell.nameTextField.text forKey:@"name"];
+        [dic setObject:cell.serialNumTextField.text forKey:@"seraialNum"];
+        if (cell.serialNumTextField.text.length>0 && cell.nameTextField.text.length>0) {
+            [saveArray addObject:dic];
+        }
+    }
+    
+    NSLog(@"send to server -----------add device array :%@",saveArray);
+    
+}
 
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
+}
 
 @end

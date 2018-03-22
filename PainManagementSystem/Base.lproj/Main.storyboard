@@ -173,6 +173,9 @@
                                         <state key="normal" title="查找">
                                             <color key="titleColor" red="0.29803921570000003" green="0.29411764709999999" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="search:" destination="Tds-5g-Ksz" eventType="touchUpInside" id="uIG-q6-tTQ"/>
+                                        </connections>
                                     </button>
                                     <searchBar contentMode="redraw" fixedFrame="YES" placeholder="搜索设备类型" translatesAutoresizingMaskIntoConstraints="NO" id="q7W-E8-yLc">
                                         <rect key="frame" x="18" y="4" width="324" height="56"/>
@@ -542,6 +545,9 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" red="0.23529411759999999" green="0.74117647060000003" blue="0.61960784310000006" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <state key="normal" title="一键保存"/>
+                                                <connections>
+                                                    <action selector="saveAll:" destination="JHi-Z1-hxW" eventType="touchUpInside" id="eKT-Co-B8n"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -639,6 +645,9 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.23529411759999999" green="0.74117647060000003" blue="0.61960784310000006" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" title="提交"/>
+                                        <connections>
+                                            <action selector="submit:" destination="Oqi-Zv-U0M" eventType="touchUpInside" id="akV-hK-4Cd"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Akp-Mg-FMe">
                                         <rect key="frame" x="8" y="464" width="260" height="30"/>
@@ -665,7 +674,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="设备昵称 " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3I-Zp-dQs">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="设备名称" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3I-Zp-dQs">
                                         <rect key="frame" x="23" y="157" width="77" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>

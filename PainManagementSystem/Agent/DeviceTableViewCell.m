@@ -7,11 +7,14 @@
 //
 
 #import "DeviceTableViewCell.h"
-
+#import "BaseHeader.h"
 @implementation DeviceTableViewCell
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    UIView *view = [[UIView alloc] init];
+    view.backgroundColor = UIColorFromRGB(0xF6F6F6);
+    self.selectedBackgroundView = view;
     // Initialization code
 }
 

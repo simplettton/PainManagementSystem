@@ -10,7 +10,7 @@
 #import "DeviceTableViewCell.h"
 #import "EditDeviceViewController.h"
 #import "BaseHeader.h"
-@interface DeviceListViewController ()
+@interface DeviceListViewController ()<UISearchBarDelegate>
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
@@ -36,8 +36,10 @@
 
 -(void)initAll{
     
+    //searchBarDelegate
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
     self.searchBar.tintColor = [UIColor blackColor];//出现光标
+    self.searchBar.delegate = self;
     
     //tableview
     self.tableView.tableFooterView = [[UIView alloc]init];
@@ -91,6 +93,10 @@
     cell.tintColor = UIColorFromHex(0x37BD9C);
     return cell;
 }
+-(NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [self.searchBar resignFirstResponder];
+    return indexPath;
+}
 
 #pragma mark - action
 -(void)edit:(UIButton *)sender{
@@ -101,12 +107,9 @@
 
 - (IBAction)delete:(id)sender {
     
-    //设置cell 可选中 修改选中样式
-    UIView *view = [[UIView alloc] init];
-    view.backgroundColor = [UIColor whiteColor];
-    
-
     if (self.tableView.editing) {
+        
+    //完成删除之后的操作
         self.deleteButton.titleLabel.text = @"删除";
         [self.deleteButton setTitle:@"删除" forState:UIControlStateNormal];
         
@@ -115,6 +118,9 @@
             
             for (NSIndexPath *indexPath in self.tableView.indexPathsForSelectedRows) {
                 [deleteArray addObject:datas[indexPath.row]];
+                
+                NSString *cpuid = [datas[indexPath.row]objectForKey:@"macString"];
+                NSLog(@"send to server ------------delete cpuid:%@--------",cpuid);
             }
             
             NSMutableArray *currentArray = datas;
@@ -140,7 +146,6 @@
         [self.deleteButton setTitle:@"完成" forState:UIControlStateNormal];
         for (DeviceTableViewCell *cell in self.tableView.visibleCells) {
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
-            cell.selectedBackgroundView = view;
         }
     }
     
@@ -158,8 +163,39 @@
         controller.name = cell.nameLabel.text;
         controller.macString = cell.macString;
         controller.serialNum = cell.serialNumLabel.text;
-        
-        
+    
     }
 }
+
+#pragma mark - searchBar delegate
+
+-(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
+    NSString *searchResult = self.searchBar.text;
+
+}
+
+-(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    if ([searchBar.text length]>0) {
+        NSLog(@"------search: %@-----",searchBar.text);
+    }
+
+    [searchBar resignFirstResponder];
+}
+
+
+- (IBAction)search:(id)sender {
+    if ([self.searchBar.text length]>0) {
+        NSLog(@"------search: %@-----",self.searchBar.text);
+    }
+
+    [self.searchBar resignFirstResponder];
+    
+}
+
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+
+    [self.view endEditing:YES];
+}
+
 @end

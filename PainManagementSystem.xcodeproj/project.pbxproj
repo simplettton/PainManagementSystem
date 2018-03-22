@@ -38,6 +38,7 @@
 		04ED0EC620528A1800638850 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EC520528A1800638850 /* main.m */; };
 		04ED0ED020528A1800638850 /* PainManagementSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0ECF20528A1800638850 /* PainManagementSystemTests.m */; };
 		04ED0EDB20528A1800638850 /* PainManagementSystemUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EDA20528A1800638850 /* PainManagementSystemUITests.m */; };
+		9FFB073ED4B1021C4A51AB39 /* libPods-PainManagementSystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF07182ACBF97C4E7B469FD /* libPods-PainManagementSystem.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +113,9 @@
 		04ED0ED620528A1800638850 /* PainManagementSystemUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PainManagementSystemUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EDA20528A1800638850 /* PainManagementSystemUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PainManagementSystemUITests.m; sourceTree = "<group>"; };
 		04ED0EDC20528A1800638850 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4307E8FDEDA9C1F745F3CAA1 /* Pods-PainManagementSystem.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PainManagementSystem.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PainManagementSystem/Pods-PainManagementSystem.debug.xcconfig"; sourceTree = "<group>"; };
+		46139ECA2C28F3C37539F297 /* Pods-PainManagementSystem.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PainManagementSystem.release.xcconfig"; path = "Pods/Target Support Files/Pods-PainManagementSystem/Pods-PainManagementSystem.release.xcconfig"; sourceTree = "<group>"; };
+		EFF07182ACBF97C4E7B469FD /* libPods-PainManagementSystem.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PainManagementSystem.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FFB073ED4B1021C4A51AB39 /* libPods-PainManagementSystem.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +216,8 @@
 				04ED0ECE20528A1800638850 /* PainManagementSystemTests */,
 				04ED0ED920528A1800638850 /* PainManagementSystemUITests */,
 				04ED0EB120528A1800638850 /* Products */,
+				7FBC7C82A51618E7FF79707D /* Pods */,
+				BA880A904E69D49E48167050 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -263,6 +270,23 @@
 			path = PainManagementSystemUITests;
 			sourceTree = "<group>";
 		};
+		7FBC7C82A51618E7FF79707D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4307E8FDEDA9C1F745F3CAA1 /* Pods-PainManagementSystem.debug.xcconfig */,
+				46139ECA2C28F3C37539F297 /* Pods-PainManagementSystem.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		BA880A904E69D49E48167050 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EFF07182ACBF97C4E7B469FD /* libPods-PainManagementSystem.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -270,9 +294,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 04ED0EDF20528A1800638850 /* Build configuration list for PBXNativeTarget "PainManagementSystem" */;
 			buildPhases = (
+				D4D0B7E8BED73217CB462D91 /* [CP] Check Pods Manifest.lock */,
 				04ED0EAC20528A1800638850 /* Sources */,
 				04ED0EAD20528A1800638850 /* Frameworks */,
 				04ED0EAE20528A1800638850 /* Resources */,
+				8F5F2DF877237BBCBEDC7263 /* [CP] Embed Pods Frameworks */,
+				04EDBA1D50A4C67021C3E945 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -400,6 +427,57 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		04EDBA1D50A4C67021C3E945 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PainManagementSystem/Pods-PainManagementSystem-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8F5F2DF877237BBCBEDC7263 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PainManagementSystem/Pods-PainManagementSystem-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D4D0B7E8BED73217CB462D91 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PainManagementSystem-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		04ED0EAC20528A1800638850 /* Sources */ = {
@@ -582,6 +660,7 @@
 		};
 		04ED0EE020528A1800638850 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4307E8FDEDA9C1F745F3CAA1 /* Pods-PainManagementSystem.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -597,6 +676,7 @@
 		};
 		04ED0EE120528A1800638850 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 46139ECA2C28F3C37539F297 /* Pods-PainManagementSystem.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

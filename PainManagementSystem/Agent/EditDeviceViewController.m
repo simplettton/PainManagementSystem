@@ -47,6 +47,9 @@
     self.serialNumTextField.layer.borderColor = UIColorFromHex(0xBBBBBB).CGColor;
     self.serialNumTextField.text = self.serialNum;
 }
+- (IBAction)submit:(id)sender {
+    NSLog(@"send to server ------------edit   cpuid:%@--------",_macString);
+}
 
 /*
 #pragma mark - Navigation
