@@ -17,6 +17,22 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    if ([self isUserLogin]) {
+        
+        //  初始化窗口、设置根控制器、显示窗口
+        self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
+        [UIView transitionWithView:self.window
+                          duration:0.25
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{
+//                            self.window.rootViewController = self.drawerController;
+                        }
+                        completion:nil];
+        
+        [self.window makeKeyAndVisible];
+    }
+    
     // Override point for customization after application launch.
 //    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
 //    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
@@ -62,6 +78,19 @@
     } else {
         return NO;
     }
+}
+
+#pragma mark -- 是否登录
+-(BOOL)isUserLogin
+{
+    NSString *userId =  [[NSUserDefaults standardUserDefaults]objectForKey:@"USER_NAME"];
+    
+    if (userId != nil)
+    {
+        //已经登录
+        return YES;
+    }
+    return NO;
 }
 
 @end
