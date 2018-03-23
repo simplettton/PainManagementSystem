@@ -10,6 +10,10 @@
 		04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112064205FBCEC00C91BA0 /* DeviceListViewController.m */; };
 		04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112068205FD54E00C91BA0 /* AddDeviceViewController.m */; };
 		04484FCE2064CA5900467611 /* MedicalRecordListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* MedicalRecordListViewController.m */; };
+		04484FD12064CDBF00467611 /* OnlineDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */; };
+		04484FD52064CDF400467611 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD42064CDF400467611 /* SettingViewController.m */; };
+		04484FDB2064D72500467611 /* NetWorkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD92064D72500467611 /* NetWorkTool.m */; };
+		04484FDC2064D9ED00467611 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD72064D26100467611 /* LoginViewController.m */; };
 		04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DE8206091B6002641D1 /* DeviceTableViewCell.m */; };
 		04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DED2060999D002641D1 /* EditDeviceViewController.m */; };
 		046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */; };
@@ -30,13 +34,10 @@
 		046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */; };
 		046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */; };
 		046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */; };
-		047CA1DF20638E3E00D6B1A4 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */; };
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
 		047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */; };
 		047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */; };
 		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
-		04ED0EB820528A1800638850 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB720528A1800638850 /* MasterViewController.m */; };
-		04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EBA20528A1800638850 /* DetailViewController.m */; };
 		04ED0EBE20528A1800638850 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBC20528A1800638850 /* Main.storyboard */; };
 		04ED0EC020528A1800638850 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBF20528A1800638850 /* Assets.xcassets */; };
 		04ED0EC320528A1800638850 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EC120528A1800638850 /* LaunchScreen.storyboard */; };
@@ -70,6 +71,14 @@
 		04112068205FD54E00C91BA0 /* AddDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddDeviceViewController.m; sourceTree = "<group>"; };
 		04484FCC2064CA5900467611 /* MedicalRecordListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MedicalRecordListViewController.h; sourceTree = "<group>"; };
 		04484FCD2064CA5900467611 /* MedicalRecordListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordListViewController.m; sourceTree = "<group>"; };
+		04484FCF2064CDBF00467611 /* OnlineDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OnlineDeviceViewController.h; sourceTree = "<group>"; };
+		04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OnlineDeviceViewController.m; sourceTree = "<group>"; };
+		04484FD32064CDF400467611 /* SettingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
+		04484FD42064CDF400467611 /* SettingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
+		04484FD72064D26100467611 /* LoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		04484FD82064D26200467611 /* LoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		04484FD92064D72500467611 /* NetWorkTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetWorkTool.m; sourceTree = "<group>"; };
+		04484FDA2064D72500467611 /* NetWorkTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetWorkTool.h; sourceTree = "<group>"; };
 		04661DE7206091B6002641D1 /* DeviceTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewCell.h; sourceTree = "<group>"; };
 		04661DE8206091B6002641D1 /* DeviceTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceTableViewCell.m; sourceTree = "<group>"; };
 		04661DEC2060999D002641D1 /* EditDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditDeviceViewController.h; sourceTree = "<group>"; };
@@ -102,8 +111,6 @@
 		046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopLeft@3x.png"; sourceTree = "<group>"; };
 		046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@2x.png"; sourceTree = "<group>"; };
 		046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@3x.png"; sourceTree = "<group>"; };
-		047CA1DD20638E3E00D6B1A4 /* LoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LoginViewController.h; path = ../../LoginViewController.h; sourceTree = "<group>"; };
-		047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LoginViewController.m; path = ../../LoginViewController.m; sourceTree = "<group>"; };
 		047CA1E020639C0F00D6B1A4 /* wenshang.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = wenshang.ttf; sourceTree = "<group>"; };
 		047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetNetWorkView.h; sourceTree = "<group>"; };
 		047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetNetWorkView.m; sourceTree = "<group>"; };
@@ -111,10 +118,6 @@
 		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		04ED0EB620528A1800638850 /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
-		04ED0EB720528A1800638850 /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
-		04ED0EB920528A1800638850 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
-		04ED0EBA20528A1800638850 /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		04ED0EBD20528A1800638850 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		04ED0EBF20528A1800638850 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		04ED0EC220528A1800638850 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -174,6 +177,31 @@
 				046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */,
 			);
 			path = Agent;
+			sourceTree = "<group>";
+		};
+		04484FD22064CDC900467611 /* Nurse */ = {
+			isa = PBXGroup;
+			children = (
+				04484FCC2064CA5900467611 /* MedicalRecordListViewController.h */,
+				04484FCD2064CA5900467611 /* MedicalRecordListViewController.m */,
+				04484FCF2064CDBF00467611 /* OnlineDeviceViewController.h */,
+				04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */,
+				04484FD32064CDF400467611 /* SettingViewController.h */,
+				04484FD42064CDF400467611 /* SettingViewController.m */,
+			);
+			path = Nurse;
+			sourceTree = "<group>";
+		};
+		04484FD62064D25F00467611 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				04484FD82064D26200467611 /* LoginViewController.h */,
+				04484FD72064D26100467611 /* LoginViewController.m */,
+				047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */,
+				047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */,
+				047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */,
+			);
+			path = Login;
 			sourceTree = "<group>";
 		};
 		046E2E132062370800DEFD70 /* QRCodeReaderViewController */ = {
@@ -250,18 +278,9 @@
 				04661DF92060A981002641D1 /* BaseHeader.h */,
 				04ED0EB320528A1800638850 /* AppDelegate.h */,
 				04ED0EB420528A1800638850 /* AppDelegate.m */,
-				04ED0EB620528A1800638850 /* MasterViewController.h */,
-				04ED0EB720528A1800638850 /* MasterViewController.m */,
-				04ED0EB920528A1800638850 /* DetailViewController.h */,
-				04ED0EBA20528A1800638850 /* DetailViewController.m */,
 				04ED0EBC20528A1800638850 /* Main.storyboard */,
-				04484FCC2064CA5900467611 /* MedicalRecordListViewController.h */,
-				04484FCD2064CA5900467611 /* MedicalRecordListViewController.m */,
-				047CA1DD20638E3E00D6B1A4 /* LoginViewController.h */,
-				047CA1DE20638E3E00D6B1A4 /* LoginViewController.m */,
-				047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */,
-				047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */,
-				047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */,
+				04484FD22064CDC900467611 /* Nurse */,
+				04484FD62064D25F00467611 /* Login */,
 				046E2E132062370800DEFD70 /* QRCodeReaderViewController */,
 				04112066205FBCF700C91BA0 /* Agent */,
 				04ED0EBF20528A1800638850 /* Assets.xcassets */,
@@ -269,6 +288,8 @@
 				04ED0EC420528A1800638850 /* Info.plist */,
 				04ED0EC520528A1800638850 /* main.m */,
 				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
+				04484FDA2064D72500467611 /* NetWorkTool.h */,
+				04484FD92064D72500467611 /* NetWorkTool.m */,
 			);
 			path = PainManagementSystem;
 			sourceTree = "<group>";
@@ -509,13 +530,14 @@
 			files = (
 				046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */,
 				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
-				04ED0EB820528A1800638850 /* MasterViewController.m in Sources */,
 				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,
 				04484FCE2064CA5900467611 /* MedicalRecordListViewController.m in Sources */,
+				04484FDC2064D9ED00467611 /* LoginViewController.m in Sources */,
+				04484FDB2064D72500467611 /* NetWorkTool.m in Sources */,
 				046E2E2D2062370800DEFD70 /* QRCameraSwitchButton.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
+				04484FD12064CDBF00467611 /* OnlineDeviceViewController.m in Sources */,
 				046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */,
-				047CA1DF20638E3E00D6B1A4 /* LoginViewController.m in Sources */,
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */,
@@ -523,8 +545,8 @@
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
 				04ED0EC620528A1800638850 /* main.m in Sources */,
+				04484FD52064CDF400467611 /* SettingViewController.m in Sources */,
 				046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */,
-				04ED0EBB20528A1800638850 /* DetailViewController.m in Sources */,
 				04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

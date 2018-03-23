@@ -1,27 +1,29 @@
 //
-//  MedicalRecordListViewController.m
+//  OnlineDeviceViewController.m
 //  PainManagementSystem
 //
 //  Created by Binger Zeng on 2018/3/23.
 //  Copyright © 2018年 Shenzhen Lifotronic Technology Co.,Ltd. All rights reserved.
 //
 
-#import "MedicalRecordListViewController.h"
-
-@interface MedicalRecordListViewController ()
+#import "OnlineDeviceViewController.h"
+#import "BaseHeader.h"
+@interface OnlineDeviceViewController ()
 
 @end
 
-@implementation MedicalRecordListViewController
+@implementation OnlineDeviceViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"治疗设备";
     // Do any additional setup after loading the view.
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
 }
 
 /*

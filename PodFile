@@ -3,5 +3,6 @@ target 'PainManagementSystem' do
 	pod 'BabyBluetooth'
 	pod 'MBProgressHUD'
 	pod 'CocoaAsyncSocket'
+	pod 'AFNetworking'
 end
 #pods for app
