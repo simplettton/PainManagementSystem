@@ -319,7 +319,11 @@
                         <viewLayoutGuide key="safeArea" id="e7a-Ct-TFZ"/>
                     </view>
                     <navigationItem key="navigationItem" id="HHx-CT-ACq">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="QVL-5b-ERx"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="QVL-5b-ERx">
+                            <connections>
+                                <segue destination="VED-v5-wee" kind="presentation" id="uLH-IL-9Bt"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="deleteButton" destination="v1q-uW-Mrk" id="XuT-l6-2DK"/>
@@ -360,7 +364,7 @@
         <!--Navigation Controller-->
         <scene sceneID="Ktv-de-rE7">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gs2-a7-ves" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="AgentNavigation" automaticallyAdjustsScrollViewInsets="NO" id="gs2-a7-ves" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="TAF-5e-2os">
                         <rect key="frame" x="0.0" y="20" width="768" height="44"/>
@@ -579,7 +583,11 @@
                         <viewLayoutGuide key="safeArea" id="1B8-1z-Ljb"/>
                     </view>
                     <navigationItem key="navigationItem" id="HLh-7d-Wgh">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="wfG-HS-531"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="wfG-HS-531">
+                            <connections>
+                                <segue destination="VED-v5-wee" kind="presentation" id="uCp-3Z-f8n"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="contentView" destination="qUl-kH-2iJ" id="6e0-Mh-q7b"/>
@@ -619,7 +627,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="tintColor" red="0.1019607843" green="0.43137254899999999" blue="0.62352941179999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="user" translatesAutoresizingMaskIntoConstraints="NO" id="WsG-Gq-coT">
@@ -637,7 +645,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="tintColor" red="0.1019607843" green="0.43137254899999999" blue="0.62352941179999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="password" translatesAutoresizingMaskIntoConstraints="NO" id="31I-vf-Q9H">
@@ -652,6 +660,9 @@
                                 <color key="backgroundColor" red="0.10196078431372549" green="0.43137254901960786" blue="0.62352941176470589" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="登录"/>
+                                <connections>
+                                    <action selector="login:" destination="VED-v5-wee" eventType="touchUpInside" id="V1l-AZ-Wei"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="记住用户名" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yg0-dX-dPe">
                                 <rect key="frame" x="311" y="572" width="87" height="21"/>
@@ -692,13 +703,16 @@
                         <viewLayoutGuide key="safeArea" id="MzI-qJ-8aE"/>
                     </view>
                     <connections>
+                        <outlet property="passwordTextField" destination="gmG-Rc-NJ2" id="fXt-bm-OwK"/>
                         <outlet property="passwordView" destination="oEf-oL-Kuc" id="OAC-Bo-M7x"/>
+                        <outlet property="remenberNameSwitch" destination="70h-9p-isy" id="9Uf-PM-bF5"/>
+                        <outlet property="userNameTextField" destination="qLf-bp-gDc" id="h67-Ft-4C0"/>
                         <outlet property="userView" destination="Mgy-fJ-rh0" id="u2E-aW-TLI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nxz-nm-Naf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4986.71875" y="-579.4921875"/>
+            <point key="canvasLocation" x="5566" y="-579"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Pbd-A9-icz">
@@ -854,7 +868,11 @@
                         <viewLayoutGuide key="safeArea" id="m1X-Tg-xZh"/>
                     </view>
                     <navigationItem key="navigationItem" id="BHZ-TD-2cz">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="ByP-Wu-CtB"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="ByP-Wu-CtB">
+                            <connections>
+                                <segue destination="VED-v5-wee" kind="presentation" id="S3X-sW-bcL"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="macLabel" destination="7io-lY-zep" id="N1t-3s-Axa"/>
@@ -909,7 +927,8 @@
         <image name="user" width="28" height="28"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="2HJ-bR-9Si"/>
+        <segue reference="AlW-sR-Pbz"/>
+        <segue reference="S3X-sW-bcL"/>
         <segue reference="6S0-TO-JiA"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
