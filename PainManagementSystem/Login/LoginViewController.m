@@ -65,12 +65,17 @@
     }
         [defaults synchronize];
     
+    //UIStorybord 跳转
+    UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *controller ;
     
     if ([self.userNameTextField.text isEqualToString: @"agent"]) {
-        UIStoryboard *mainStoryBorad = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        controller = [mainStoryBorad instantiateViewControllerWithIdentifier:@"AgentNavigation"];
+
+        controller = [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
         
+    }else if([self.userNameTextField.text isEqualToString:@"nurse"]){
+        
+        controller = [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
     }
     NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
     NSString * address = [HTTPServerURLSting stringByAppendingString:@"Api/User/Login"];

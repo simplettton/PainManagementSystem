@@ -12,6 +12,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *oldPasswordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *confirmPassWordTextField;
+@property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *textFields;
 
 @end
 
@@ -29,16 +30,24 @@
 
     [self initAll];
     self.tableView.tableFooterView = [[UIView alloc]init];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+ 
 }
 -(void)initAll{
-    _oldPasswordTextField.layer.borderWidth=1.0f;
-    _oldPasswordTextField.layer.borderColor=[UIColor colorWithRed:0xbf/255.0f green:0xbf/255.0f blue:0xbf/255.0f alpha:1].CGColor;
     
+    for (UITextField *textField in self.textFields) {
+        textField.layer.borderWidth = 0.5f;
+        textField.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
+        textField.leftView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 51)];
+        textField.leftViewMode=UITextFieldViewModeAlways;
+    }
+//    _oldPasswordTextField.layer.borderWidth=0.5f;
+//    _oldPasswordTextField.layer.borderColor=UIColorFromHex(0xbbbbbb).CGColor;
+//
+//    _passwordTextField.layer.borderWidth=0.5f;
+//    _passwordTextField.layer.borderColor=UIColorFromHex(0xbbbbbb).CGColor;
+//
+//    _confirmPassWordTextField.layer.borderWidth=0.5f;
+//    _confirmPassWordTextField.layer.borderColor=UIColorFromHex(0xbbbbbb).CGColor;
 }
 
 -(void)viewWillAppear:(BOOL)animated{

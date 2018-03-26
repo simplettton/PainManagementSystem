@@ -114,6 +114,7 @@
                         <outlet property="phoneLabel" destination="Dn8-uV-GtA" id="IiT-La-g8n"/>
                         <outlet property="tableView" destination="OoD-Ug-wnD" id="SUo-Oo-ihf"/>
                         <segue destination="x5l-ui-p93" kind="presentation" identifier="EditPassword" id="NUg-yb-kEb"/>
+                        <segue destination="VED-v5-wee" kind="presentation" identifier="LogOut" id="Br2-kz-FsG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sko-B3-x0o" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -149,8 +150,8 @@
                                                     <rect key="frame" x="100" y="6" width="648" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                             </subviews>
@@ -171,11 +172,11 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7l5-kn-ljR">
-                                                    <rect key="frame" x="98" y="6" width="650" height="30"/>
+                                                    <rect key="frame" x="100" y="6" width="648" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                             </subviews>
@@ -196,11 +197,11 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ip4-O8-ECw">
-                                                    <rect key="frame" x="98" y="7" width="650" height="30"/>
+                                                    <rect key="frame" x="100" y="6" width="650" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                             </subviews>
@@ -230,6 +231,9 @@
                         <outlet property="confirmPassWordTextField" destination="Ip4-O8-ECw" id="kTP-F1-JiZ"/>
                         <outlet property="oldPasswordTextField" destination="cMe-d5-rLA" id="jsA-VR-wmj"/>
                         <outlet property="passwordTextField" destination="7l5-kn-ljR" id="FfC-AY-P1H"/>
+                        <outletCollection property="textFields" destination="cMe-d5-rLA" id="V1E-HG-UxH"/>
+                        <outletCollection property="textFields" destination="7l5-kn-ljR" id="BWe-NA-Q9N"/>
+                        <outletCollection property="textFields" destination="Ip4-O8-ECw" id="XuV-HI-pdT"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pad-o2-9Hi" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -379,7 +383,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="UaQ-qc-xVq">
             <objects>
-                <tabBarController id="P3W-sV-HTF" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="NurseTabBarController" id="P3W-sV-HTF" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="FKd-LU-uT3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -960,7 +964,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nxz-nm-Naf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5566" y="-579"/>
+            <point key="canvasLocation" x="5316" y="-548"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Pbd-A9-icz">
@@ -1246,8 +1250,8 @@
         <image name="user" width="28" height="28"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="hWz-ve-0sR"/>
-        <segue reference="uLH-IL-9Bt"/>
+        <segue reference="2HJ-bR-9Si"/>
+        <segue reference="Br2-kz-FsG"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

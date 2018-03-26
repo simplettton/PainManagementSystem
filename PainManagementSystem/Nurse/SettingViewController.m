@@ -127,8 +127,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
     if (indexPath.section *2 +indexPath.row == 0) {
         [self performSegueWithIdentifier:@"EditPassword" sender:nil];
     }
-    if (indexPath.section *2 +indexPath.row == 1) {
+    else if (indexPath.section *2 +indexPath.row == 1) {
         [ContactServiceView alertControllerAboveIn:self];
+    }
+    else if (indexPath.section *2 +indexPath.row == 2){
+        [self performSegueWithIdentifier:@"LogOut" sender:nil];
     }
 }
 - (IBAction)edit:(id)sender {
