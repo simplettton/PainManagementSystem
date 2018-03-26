@@ -10,6 +10,7 @@
 #import "DeviceTableViewCell.h"
 #import "EditDeviceViewController.h"
 #import "BaseHeader.h"
+
 @interface DeviceListViewController ()<UISearchBarDelegate>
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;

@@ -8,8 +8,9 @@
 
 #import "MedicalRecordListViewController.h"
 #import "BaseHeader.h"
-@interface MedicalRecordListViewController ()
+@interface MedicalRecordListViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
@@ -18,6 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"疼痛管理系统";
+    
     [self initAll];
 }
 
@@ -36,21 +38,38 @@
         searchField.layer.masksToBounds = YES;
     }
     
-//    UITextField *searchField = [self.searchBar valueForKey:@"searchField"];
-//    if (searchField) {
-//        [searchField setBackgroundColor:[UIColor whiteColor]];
-//        searchField.layer.cornerRadius = 14.0f;
-//        searchField.layer.borderColor = [UIColor colorWithRed:247/255.0 green:75/255.0 blue:31/255.0 alpha:1].CGColor;
-//        searchField.layer.borderWidth = 1;
-//        searchField.layer.masksToBounds = YES;
-//    }
     
     self.searchBar.delegate = self;
+    
+
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.tableFooterView = [[UIView alloc]init];
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
+}
+
+#pragma mark - delegate
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *CellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        
+    }
+    return cell;
 }
 @end

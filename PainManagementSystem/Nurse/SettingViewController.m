@@ -8,8 +8,17 @@
 
 #import "SettingViewController.h"
 #import "BaseHeader.h"
-@interface SettingViewController ()
+#import "ContactServiceView.h"
+typedef NS_ENUM(NSUInteger,typeTags)
+{
+    imageTag = 1000,nameTag = 1001
+};
+@interface SettingViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UILabel *hospitalLabel;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
+- (IBAction)edit:(id)sender;
 
 @end
 
@@ -18,6 +27,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.tableView.tableFooterView = [[UIView alloc]init];
+    
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    
+    [self setBorderWithView:self.hospitalLabel top:NO left:NO bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
+        [self setBorderWithView:self.nameLabel top:NO left:NO bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
 
 
 }
@@ -66,5 +81,56 @@
         [view.layer addSublayer:layer];
     }
 }
+#pragma mark - tableview delegate
 
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 2;
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    if(section == 0){
+        return 2;
+    }
+        return 1;
+
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 54;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *CellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        
+    }
+    NSArray *imageNames = @[@"key",@"phone",@""];
+    NSArray *titles = @[@"修改密码",@"联系客服",@"退出登录"];
+    
+    UIImageView *imageView = [cell viewWithTag:imageTag];
+    UILabel *nameLabel = [cell viewWithTag:nameTag];
+    
+    imageView.image = [UIImage imageNamed:imageNames[indexPath.row+indexPath.section *2]];
+    nameLabel.text = titles[indexPath.row+indexPath.section *2];
+    if (indexPath.row+indexPath.section*2 == 2) {
+        nameLabel.textAlignment = NSTextAlignmentCenter;
+        nameLabel.textColor = UIColorFromHex(0x03B8EE);
+    }
+    
+    
+    
+    return cell;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.section *2 +indexPath.row == 0) {
+        [self performSegueWithIdentifier:@"EditPassword" sender:nil];
+    }
+    if (indexPath.section *2 +indexPath.row == 1) {
+        [ContactServiceView alertControllerAboveIn:self];
+    }
+}
+- (IBAction)edit:(id)sender {
+}
 @end

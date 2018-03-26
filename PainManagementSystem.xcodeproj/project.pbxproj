@@ -37,6 +37,9 @@
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
 		047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */; };
 		047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */; };
+		049C577A20688E6800180A8B /* ContactServiceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C577920688E6800180A8B /* ContactServiceView.m */; };
+		049C577C20688EA700180A8B /* ContactServiceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 049C577B20688EA700180A8B /* ContactServiceView.xib */; };
+		049C577F20689A2900180A8B /* EditPasswordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C577E20689A2900180A8B /* EditPasswordController.m */; };
 		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
 		04ED0EBE20528A1800638850 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBC20528A1800638850 /* Main.storyboard */; };
 		04ED0EC020528A1800638850 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBF20528A1800638850 /* Assets.xcassets */; };
@@ -115,6 +118,11 @@
 		047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetNetWorkView.h; sourceTree = "<group>"; };
 		047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetNetWorkView.m; sourceTree = "<group>"; };
 		047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SetNetWorkView.xib; sourceTree = "<group>"; };
+		049C577820688E6800180A8B /* ContactServiceView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactServiceView.h; sourceTree = "<group>"; };
+		049C577920688E6800180A8B /* ContactServiceView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactServiceView.m; sourceTree = "<group>"; };
+		049C577B20688EA700180A8B /* ContactServiceView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactServiceView.xib; sourceTree = "<group>"; };
+		049C577D20689A2900180A8B /* EditPasswordController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditPasswordController.h; sourceTree = "<group>"; };
+		049C577E20689A2900180A8B /* EditPasswordController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditPasswordController.m; sourceTree = "<group>"; };
 		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -188,6 +196,11 @@
 				04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */,
 				04484FD32064CDF400467611 /* SettingViewController.h */,
 				04484FD42064CDF400467611 /* SettingViewController.m */,
+				049C577D20689A2900180A8B /* EditPasswordController.h */,
+				049C577E20689A2900180A8B /* EditPasswordController.m */,
+				049C577820688E6800180A8B /* ContactServiceView.h */,
+				049C577920688E6800180A8B /* ContactServiceView.m */,
+				049C577B20688EA700180A8B /* ContactServiceView.xib */,
 			);
 			path = Nurse;
 			sourceTree = "<group>";
@@ -453,6 +466,7 @@
 				046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */,
 				046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */,
 				046E2E392062370800DEFD70 /* QRCodeTopLeft@2x.png in Resources */,
+				049C577C20688EA700180A8B /* ContactServiceView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,6 +548,7 @@
 				04484FCE2064CA5900467611 /* MedicalRecordListViewController.m in Sources */,
 				04484FDC2064D9ED00467611 /* LoginViewController.m in Sources */,
 				04484FDB2064D72500467611 /* NetWorkTool.m in Sources */,
+				049C577F20689A2900180A8B /* EditPasswordController.m in Sources */,
 				046E2E2D2062370800DEFD70 /* QRCameraSwitchButton.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
 				04484FD12064CDBF00467611 /* OnlineDeviceViewController.m in Sources */,
@@ -548,6 +563,7 @@
 				04484FD52064CDF400467611 /* SettingViewController.m in Sources */,
 				046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */,
 				04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */,
+				049C577A20688E6800180A8B /* ContactServiceView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
