@@ -1,5 +1,5 @@
 //
-//  MedicalRecordListViewController.h
+//  PatientListViewController.h
 //  PainManagementSystem
 //
 //  Created by Binger Zeng on 2018/3/23.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MedicalRecordListViewController : UIViewController<UISearchBarDelegate>
+@interface PatientListViewController : UIViewController<UISearchBarDelegate>
 
 @end
