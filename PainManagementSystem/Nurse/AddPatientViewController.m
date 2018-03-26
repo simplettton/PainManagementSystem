@@ -7,6 +7,9 @@
 //
 
 #import "AddPatientViewController.h"
+#import "NSDate+BRAdd.h"
+#import "BETextField.h"
+#import <BRPickerView.h>
 #import "BaseHeader.h"
 @interface AddPatientViewController ()
 @property (strong, nonatomic) IBOutletCollection(UIView) NSArray *editViews;
@@ -14,7 +17,11 @@
 @property (weak, nonatomic) IBOutlet UITextField *medicalRecordNumTextField;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *phoneTextFiled;
+
+@property (weak, nonatomic) IBOutlet BETextField *birthdayTF;
 @property (weak, nonatomic) IBOutlet UILabel *treatDateLabel;
+@property (weak, nonatomic) IBOutlet UIView *birthDayView;
+@property (weak, nonatomic) IBOutlet UIView *treatDayView;
 
 @end
 
@@ -52,6 +59,37 @@
     CGRect frame=  self.segmentedControll.frame;
     CGFloat fNewHeight = 35.0f;
     [self.segmentedControll setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, fNewHeight)];
+    
+    UITapGestureRecognizer *birthDayTapGesture = [[UITapGestureRecognizer alloc]init];
+    [birthDayTapGesture addTarget:self action:@selector(tapBirthDayView:)];
+    [self.birthDayView addGestureRecognizer:birthDayTapGesture];
+    
+    
+    __weak typeof(self) weakSelf = self;
+    [self.birthdayTF addTapAciton:^{
+
+        [BRDatePickerView showDatePickerWithTitle:@"出生日期"
+                                         dateType:UIDatePickerModeDate
+                                  defaultSelValue:weakSelf.birthdayTF.text
+                                       minDateStr:nil
+                                       maxDateStr:[NSDate currentDateString]
+                                     isAutoSelect:YES
+                                       themeColor:UIColorFromHex(0x3cbd9e)
+                                      resultBlock:^(NSString *selectValue) {
+            weakSelf.birthdayTF.text = selectValue;
+        } cancelBlock:^{
+            NSLog(@"点击了背景或取消按钮");
+        }];
+    }];
+    
+}
+-(void)tapBirthDayView:(UIGestureRecognizer *)gesture{
+    
+    [BRDatePickerView showDatePickerWithTitle:@"出生日期" dateType:UIDatePickerModeDate defaultSelValue:self.birthdayTF.text minDateStr:nil maxDateStr:[NSDate currentDateString] isAutoSelect:YES themeColor:nil resultBlock:^(NSString *selectValue) {
+        self.birthdayTF.text = selectValue;
+    } cancelBlock:^{
+        NSLog(@"点击了背景或取消按钮");
+    }];
 }
 
 @end

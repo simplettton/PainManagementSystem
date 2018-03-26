@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'E4AC3992855047944536B3E970B22DEA'
-               BlueprintName = 'Pods-PainManagementSystem'
+               BlueprintIdentifier = '3AB79D0FABA45AA062916FB395413F1D'
+               BlueprintName = 'BRPickerView'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libPods-PainManagementSystem.a'>
+               BuildableName = 'libBRPickerView.a'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

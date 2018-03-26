@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112064205FBCEC00C91BA0 /* DeviceListViewController.m */; };
 		04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112068205FD54E00C91BA0 /* AddDeviceViewController.m */; };
+		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
+		041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */; };
 		04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* PatientListViewController.m */; };
 		04484FD12064CDBF00467611 /* OnlineDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */; };
 		04484FD52064CDF400467611 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD42064CDF400467611 /* SettingViewController.m */; };
@@ -75,6 +77,10 @@
 		04112064205FBCEC00C91BA0 /* DeviceListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceListViewController.m; sourceTree = "<group>"; };
 		04112067205FD54E00C91BA0 /* AddDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDeviceViewController.h; sourceTree = "<group>"; };
 		04112068205FD54E00C91BA0 /* AddDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddDeviceViewController.m; sourceTree = "<group>"; };
+		041B791B2068EDB2001D04C8 /* BETextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BETextField.h; sourceTree = "<group>"; };
+		041B791C2068EDB2001D04C8 /* BETextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETextField.m; sourceTree = "<group>"; };
+		041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRAdd.m"; sourceTree = "<group>"; };
+		041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+BRAdd.h"; sourceTree = "<group>"; };
 		04484FCC2064CA5900467611 /* PatientListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PatientListViewController.h; sourceTree = "<group>"; };
 		04484FCD2064CA5900467611 /* PatientListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PatientListViewController.m; sourceTree = "<group>"; };
 		04484FCF2064CDBF00467611 /* OnlineDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OnlineDeviceViewController.h; sourceTree = "<group>"; };
@@ -187,12 +193,70 @@
 				04112068205FD54E00C91BA0 /* AddDeviceViewController.m */,
 				046E2E1020622FD600DEFD70 /* QRCodeViewController.h */,
 				046E2E1120622FD600DEFD70 /* QRCodeViewController.m */,
-				04661DE7206091B6002641D1 /* DeviceTableViewCell.h */,
-				04661DE8206091B6002641D1 /* DeviceTableViewCell.m */,
+				041B79192068E592001D04C8 /* DeviceTableViewCell */,
+				041B79182068E586001D04C8 /* AddDeviceCell */,
+			);
+			path = Agent;
+			sourceTree = "<group>";
+		};
+		041B79152068E532001D04C8 /* PatientTableViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				049C57802068C18B00180A8B /* PatientTableViewCell.h */,
+				049C57812068C18B00180A8B /* PatientTableViewCell.m */,
+				049C57822068C18B00180A8B /* PatientTableViewCell.xib */,
+			);
+			path = PatientTableViewCell;
+			sourceTree = "<group>";
+		};
+		041B79162068E555001D04C8 /* ContactServiceView */ = {
+			isa = PBXGroup;
+			children = (
+				049C577820688E6800180A8B /* ContactServiceView.h */,
+				049C577920688E6800180A8B /* ContactServiceView.m */,
+				049C577B20688EA700180A8B /* ContactServiceView.xib */,
+			);
+			path = ContactServiceView;
+			sourceTree = "<group>";
+		};
+		041B79172068E572001D04C8 /* SetNetWorkView */ = {
+			isa = PBXGroup;
+			children = (
+				047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */,
+				047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */,
+				047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */,
+			);
+			path = SetNetWorkView;
+			sourceTree = "<group>";
+		};
+		041B79182068E586001D04C8 /* AddDeviceCell */ = {
+			isa = PBXGroup;
+			children = (
 				046E2E0D2061FB0E00DEFD70 /* AddDeviceCell.h */,
 				046E2E0E2061FB0E00DEFD70 /* AddDeviceCell.m */,
 			);
-			path = Agent;
+			path = AddDeviceCell;
+			sourceTree = "<group>";
+		};
+		041B79192068E592001D04C8 /* DeviceTableViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				04661DE7206091B6002641D1 /* DeviceTableViewCell.h */,
+				04661DE8206091B6002641D1 /* DeviceTableViewCell.m */,
+			);
+			path = DeviceTableViewCell;
+			sourceTree = "<group>";
+		};
+		041B791A2068ECF1001D04C8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				04ED0EBC20528A1800638850 /* Main.storyboard */,
+				04ED0EBF20528A1800638850 /* Assets.xcassets */,
+				04ED0EC120528A1800638850 /* LaunchScreen.storyboard */,
+				04ED0EC420528A1800638850 /* Info.plist */,
+				04ED0EC520528A1800638850 /* main.m */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		04484FD22064CDC900467611 /* Nurse */ = {
@@ -202,18 +266,18 @@
 				04484FCD2064CA5900467611 /* PatientListViewController.m */,
 				049C57852068C5E200180A8B /* AddPatientViewController.h */,
 				049C57862068C5E200180A8B /* AddPatientViewController.m */,
-				049C57802068C18B00180A8B /* PatientTableViewCell.h */,
-				049C57812068C18B00180A8B /* PatientTableViewCell.m */,
-				049C57822068C18B00180A8B /* PatientTableViewCell.xib */,
+				041B791B2068EDB2001D04C8 /* BETextField.h */,
+				041B791C2068EDB2001D04C8 /* BETextField.m */,
+				041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */,
+				041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */,
 				04484FCF2064CDBF00467611 /* OnlineDeviceViewController.h */,
 				04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */,
 				04484FD32064CDF400467611 /* SettingViewController.h */,
 				04484FD42064CDF400467611 /* SettingViewController.m */,
 				049C577D20689A2900180A8B /* EditPasswordController.h */,
 				049C577E20689A2900180A8B /* EditPasswordController.m */,
-				049C577820688E6800180A8B /* ContactServiceView.h */,
-				049C577920688E6800180A8B /* ContactServiceView.m */,
-				049C577B20688EA700180A8B /* ContactServiceView.xib */,
+				041B79152068E532001D04C8 /* PatientTableViewCell */,
+				041B79162068E555001D04C8 /* ContactServiceView */,
 			);
 			path = Nurse;
 			sourceTree = "<group>";
@@ -223,9 +287,7 @@
 			children = (
 				04484FD82064D26200467611 /* LoginViewController.h */,
 				04484FD72064D26100467611 /* LoginViewController.m */,
-				047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */,
-				047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */,
-				047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */,
+				041B79172068E572001D04C8 /* SetNetWorkView */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -304,15 +366,11 @@
 				04661DF92060A981002641D1 /* BaseHeader.h */,
 				04ED0EB320528A1800638850 /* AppDelegate.h */,
 				04ED0EB420528A1800638850 /* AppDelegate.m */,
-				04ED0EBC20528A1800638850 /* Main.storyboard */,
+				041B791A2068ECF1001D04C8 /* Supporting Files */,
 				04484FD22064CDC900467611 /* Nurse */,
 				04484FD62064D25F00467611 /* Login */,
 				046E2E132062370800DEFD70 /* QRCodeReaderViewController */,
 				04112066205FBCF700C91BA0 /* Agent */,
-				04ED0EBF20528A1800638850 /* Assets.xcassets */,
-				04ED0EC120528A1800638850 /* LaunchScreen.storyboard */,
-				04ED0EC420528A1800638850 /* Info.plist */,
-				04ED0EC520528A1800638850 /* main.m */,
 				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
 				04484FDA2064D72500467611 /* NetWorkTool.h */,
 				04484FD92064D72500467611 /* NetWorkTool.m */,
@@ -507,9 +565,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-PainManagementSystem/Pods-PainManagementSystem-resources.sh",
+				"${PODS_ROOT}/BRPickerView/BRPickerView/AddressPickerView/BRPickerView.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -572,11 +633,13 @@
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */,
 				04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */,
+				041B791D2068EDB2001D04C8 /* BETextField.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				049C57832068C18B00180A8B /* PatientTableViewCell.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
 				04ED0EC620528A1800638850 /* main.m in Sources */,
 				04484FD52064CDF400467611 /* SettingViewController.m in Sources */,
+				041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */,
 				046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */,
 				04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */,
 				049C577A20688E6800180A8B /* ContactServiceView.m in Sources */,
@@ -745,7 +808,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = A457Z9M6ER;
-				INFOPLIST_FILE = PainManagementSystem/Info.plist;
+				INFOPLIST_FILE = "PainManagementSystem/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystem;
@@ -761,7 +824,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = A457Z9M6ER;
-				INFOPLIST_FILE = PainManagementSystem/Info.plist;
+				INFOPLIST_FILE = "PainManagementSystem/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystem;

@@ -4,5 +4,6 @@ target 'PainManagementSystem' do
 	pod 'MBProgressHUD'
 	pod 'CocoaAsyncSocket'
 	pod 'AFNetworking'
+	pod 'BRPickerView'
 end
 #pods for app

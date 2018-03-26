@@ -449,7 +449,7 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                         </subviews>
@@ -485,7 +485,7 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                         </subviews>
@@ -532,6 +532,16 @@
                                     <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vxs-LP-TUb">
                                         <rect key="frame" x="127" y="14" width="579" height="42"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="2018-03-14" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yCf-oN-lAN" customClass="BETextField">
+                                                <rect key="frame" x="14" y="6" width="565" height="30"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                        </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -557,7 +567,7 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                         </subviews>
@@ -581,11 +591,11 @@
                                         <rect key="frame" x="127" y="14" width="579" height="42"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="2018/03/14" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GtI-CP-S75">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="2018-03-14" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GtI-CP-S75">
                                                 <rect key="frame" x="14" y="11" width="565" height="21"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
-                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                                <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
@@ -595,7 +605,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aom-F5-GVz">
-                                <rect key="frame" x="634" y="892" width="80" height="40"/>
+                                <rect key="frame" x="599" y="899" width="114" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.23529411759999999" green="0.74117647060000003" blue="0.61960784310000006" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="保存">
@@ -610,11 +620,14 @@
                         <viewLayoutGuide key="safeArea" id="BMH-NL-a9k"/>
                     </view>
                     <connections>
+                        <outlet property="birthDayView" destination="Vxs-LP-TUb" id="ALN-vI-oKh"/>
+                        <outlet property="birthdayTF" destination="yCf-oN-lAN" id="Yro-Ci-RDt"/>
                         <outlet property="medicalRecordNumTextField" destination="dYT-kP-gN1" id="npU-Gg-fLj"/>
                         <outlet property="nameTextField" destination="eFV-jh-rXT" id="38e-Cy-pKD"/>
                         <outlet property="phoneTextFiled" destination="4pU-4L-b2M" id="8gx-bd-0uP"/>
                         <outlet property="segmentedControll" destination="DlQ-Jl-22o" id="z9V-8H-Cf6"/>
                         <outlet property="treatDateLabel" destination="GtI-CP-S75" id="2V8-Wy-2NW"/>
+                        <outlet property="treatDayView" destination="A6r-xA-glC" id="m5B-jI-gq7"/>
                         <outletCollection property="editViews" destination="4SZ-ep-4de" id="fn0-ke-QqU"/>
                         <outletCollection property="editViews" destination="Z6r-b6-KtQ" id="gyg-sR-bBT"/>
                         <outletCollection property="editViews" destination="Vxs-LP-TUb" id="0qZ-St-j7X"/>

@@ -63,6 +63,15 @@
              @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"82367874456"},
              @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12967874456"},
              @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"15367874456"},
+             
+             @{@"type":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科二号",@"serialNum":@"13654979946"},
+             @{@"type":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科二号",@"serialNum":@"45645615764"},
+             
+             @{@"type":@"空气波",@"macString":@"dftueqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+             @{@"type":@"空气波",@"macString":@"fjwtstds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+             
+             @{@"type":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+             @{@"type":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
              nil];
 }
 
