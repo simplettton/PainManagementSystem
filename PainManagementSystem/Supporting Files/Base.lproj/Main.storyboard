@@ -330,7 +330,7 @@
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="Cell" id="sMy-X6-j50" customClass="TreatRecordCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="sMy-X6-j50" customClass="TreatRecordCell">
                                         <rect key="frame" x="0.0" y="72" width="768" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="sMy-X6-j50" id="8m0-0M-2ZR">
@@ -406,11 +406,27 @@
                         <outlet property="nameLabel" destination="Uzg-LK-jCZ" id="sXr-PH-Pr2"/>
                         <outlet property="phoneLabel" destination="nFK-qV-WGn" id="gKG-9N-UpP"/>
                         <outlet property="tableView" destination="F97-gI-S5P" id="J23-o6-jXg"/>
+                        <segue destination="l1x-Ya-cMG" kind="show" identifier="ShowRecordDetail" id="vxg-iB-pAb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="30k-up-wPM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5237.5" y="-3514.453125"/>
+        </scene>
+        <!--Record Detail View Controller-->
+        <scene sceneID="8bh-6P-Lv1">
+            <objects>
+                <viewController hidesBottomBarWhenPushed="YES" id="l1x-Ya-cMG" customClass="RecordDetailViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="CQE-sy-YZM">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="Bw0-Fc-hv0"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="d7l-F7-3uh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5931" y="-3514"/>
         </scene>
         <!--Patient List View Controller-->
         <scene sceneID="Nrd-5C-T6w">

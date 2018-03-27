@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112064205FBCEC00C91BA0 /* DeviceListViewController.m */; };
 		04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112068205FD54E00C91BA0 /* AddDeviceViewController.m */; };
+		0412364C206A511C002ED9A1 /* RecordDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0412364B206A511C002ED9A1 /* RecordDetailViewController.m */; };
 		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
 		041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */; };
 		04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* PatientListViewController.m */; };
@@ -82,6 +83,8 @@
 		04112064205FBCEC00C91BA0 /* DeviceListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceListViewController.m; sourceTree = "<group>"; };
 		04112067205FD54E00C91BA0 /* AddDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDeviceViewController.h; sourceTree = "<group>"; };
 		04112068205FD54E00C91BA0 /* AddDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddDeviceViewController.m; sourceTree = "<group>"; };
+		0412364A206A511C002ED9A1 /* RecordDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordDetailViewController.h; sourceTree = "<group>"; };
+		0412364B206A511C002ED9A1 /* RecordDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordDetailViewController.m; sourceTree = "<group>"; };
 		041B791B2068EDB2001D04C8 /* BETextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BETextField.h; sourceTree = "<group>"; };
 		041B791C2068EDB2001D04C8 /* BETextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETextField.m; sourceTree = "<group>"; };
 		041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRAdd.m"; sourceTree = "<group>"; };
@@ -280,6 +283,8 @@
 				04484FCD2064CA5900467611 /* PatientListViewController.m */,
 				046C02112069EC3500FDD974 /* TreatmentCourseRecordViewController.h */,
 				046C02122069EC3500FDD974 /* TreatmentCourseRecordViewController.m */,
+				0412364A206A511C002ED9A1 /* RecordDetailViewController.h */,
+				0412364B206A511C002ED9A1 /* RecordDetailViewController.m */,
 				046C021B206A129400FDD974 /* VASMarkView.h */,
 				046C021C206A129400FDD974 /* VASMarkView.m */,
 				046C021E206A12A600FDD974 /* VASMarkView.xib */,
@@ -663,6 +668,7 @@
 				041B791D2068EDB2001D04C8 /* BETextField.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				049C57832068C18B00180A8B /* PatientTableViewCell.m in Sources */,
+				0412364C206A511C002ED9A1 /* RecordDetailViewController.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
 				04ED0EC620528A1800638850 /* main.m in Sources */,
 				046C021D206A129400FDD974 /* VASMarkView.m in Sources */,
