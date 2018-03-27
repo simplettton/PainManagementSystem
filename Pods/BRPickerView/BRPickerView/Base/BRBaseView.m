@@ -66,7 +66,7 @@
         _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _leftBtn.frame = CGRectMake(5, 8, 60, 28);
         _leftBtn.backgroundColor = [UIColor clearColor];
-        _leftBtn.titleLabel.font = [UIFont systemFontOfSize:15.0f * kScaleFit];
+        _leftBtn.titleLabel.font = [UIFont systemFontOfSize:13.0f * kScaleFit];
         [_leftBtn setTitleColor:kDefaultThemeColor forState:UIControlStateNormal];
         [_leftBtn setTitle:@"取消" forState:UIControlStateNormal];
         [_leftBtn addTarget:self action:@selector(clickLeftBtn) forControlEvents:UIControlEventTouchUpInside];
@@ -80,7 +80,7 @@
         _rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _rightBtn.frame = CGRectMake(SCREEN_WIDTH - 65, 8, 60, 28);
         _rightBtn.backgroundColor = [UIColor clearColor];
-        _rightBtn.titleLabel.font = [UIFont systemFontOfSize:15.0f * kScaleFit];
+        _rightBtn.titleLabel.font = [UIFont systemFontOfSize:13.0f * kScaleFit];
         [_rightBtn setTitleColor:kDefaultThemeColor forState:UIControlStateNormal];
         [_rightBtn setTitle:@"确定" forState:UIControlStateNormal];
         [_rightBtn addTarget:self action:@selector(clickRightBtn) forControlEvents:UIControlEventTouchUpInside];

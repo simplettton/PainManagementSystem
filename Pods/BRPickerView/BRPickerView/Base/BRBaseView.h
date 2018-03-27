@@ -21,7 +21,7 @@ green:((CGFloat)((rgbValue & 0xFF00) >> 8)) / 255.0 \
 blue:((CGFloat)(rgbValue & 0xFF)) / 255.0 alpha:(a)]
 
 // 等比例适配系数
-#define kScaleFit (SCREEN_WIDTH / 375.0f)
+#define kScaleFit (SCREEN_WIDTH / 600.0f)
 
 #define kDatePicHeight 200
 #define kTopViewHeight 44

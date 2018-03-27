@@ -60,9 +60,9 @@
     CGFloat fNewHeight = 35.0f;
     [self.segmentedControll setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, fNewHeight)];
     
-    UITapGestureRecognizer *birthDayTapGesture = [[UITapGestureRecognizer alloc]init];
-    [birthDayTapGesture addTarget:self action:@selector(tapBirthDayView:)];
-    [self.birthDayView addGestureRecognizer:birthDayTapGesture];
+//    UITapGestureRecognizer *birthDayTapGesture = [[UITapGestureRecognizer alloc]init];
+//    [birthDayTapGesture addTarget:self action:@selector(tapBirthDayView:)];
+//    [self.birthDayView addGestureRecognizer:birthDayTapGesture];
     
     
     __weak typeof(self) weakSelf = self;
@@ -73,23 +73,25 @@
                                   defaultSelValue:weakSelf.birthdayTF.text
                                        minDateStr:nil
                                        maxDateStr:[NSDate currentDateString]
-                                     isAutoSelect:YES
-                                       themeColor:UIColorFromHex(0x3cbd9e)
+                                     isAutoSelect:NO
+                                       themeColor:nil
                                       resultBlock:^(NSString *selectValue) {
             weakSelf.birthdayTF.text = selectValue;
         } cancelBlock:^{
             NSLog(@"点击了背景或取消按钮");
         }];
+
     }];
     
 }
--(void)tapBirthDayView:(UIGestureRecognizer *)gesture{
-    
-    [BRDatePickerView showDatePickerWithTitle:@"出生日期" dateType:UIDatePickerModeDate defaultSelValue:self.birthdayTF.text minDateStr:nil maxDateStr:[NSDate currentDateString] isAutoSelect:YES themeColor:nil resultBlock:^(NSString *selectValue) {
-        self.birthdayTF.text = selectValue;
-    } cancelBlock:^{
-        NSLog(@"点击了背景或取消按钮");
-    }];
-}
+//-(void)tapBirthDayView:(UIGestureRecognizer *)gesture{
+//
+//    [BRDatePickerView showDatePickerWithTitle:@"出生日期" dateType:UIDatePickerModeDate defaultSelValue:self.birthdayTF.text minDateStr:nil maxDateStr:[NSDate currentDateString] isAutoSelect:YES themeColor:nil resultBlock:^(NSString *selectValue) {
+//        self.birthdayTF.text = selectValue;
+//    } cancelBlock:^{
+//        NSLog(@"点击了背景或取消按钮");
+//    }];
+//
+//}
 
 @end
