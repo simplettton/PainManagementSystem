@@ -23,15 +23,6 @@
         [button.layer setCornerRadius:5.0f];
         [button.layer setMasksToBounds:YES];
     }
-//    self.inquireButton.layer.borderWidth = 0.5f;
-//
-//    self.inquireButton.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
-//    [self.inquireButton.layer setMasksToBounds:YES];
-//    [self.inquireButton.layer setCornerRadius:5.0f];
-//
-//
-//    self.editButton.layer.borderWidth = 0.5f;
-//    self.editButton.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

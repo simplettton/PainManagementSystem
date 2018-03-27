@@ -30,13 +30,8 @@
     layer.backgroundColor = UIColorFromHex(0XBBBBBB).CGColor;
     [self.contentView.layer addSublayer:layer];
 }
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
+
+
 +(void)alertControllerAboveIn:(UIViewController *)controller return:(returnIP)returnEvent{
     
     SetNetWorkView *view = [[NSBundle mainBundle]loadNibNamed:@"SetNetWorkView" owner:nil options:nil][0];

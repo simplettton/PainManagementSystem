@@ -8,6 +8,7 @@
 
 #import "PatientListViewController.h"
 #import "AddPatientViewController.h"
+#import "TreatmentCourseRecordViewController.h"
 #import "PatientTableViewCell.h"
 #import "BaseHeader.h"
 @interface PatientListViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -96,6 +97,9 @@
     cell.editButton.tag = indexPath.row;
     [cell.editButton addTarget:self action:@selector(editPatientInfomation:) forControlEvents:UIControlEventTouchUpInside];
     
+    [cell.inquireButton addTarget:self action:@selector(showRecord:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -104,6 +108,7 @@
 -(void)editPatientInfomation:(UIButton *)sender{
 
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:sender.tag inSection:0];
+    
 //    PatientTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
 //    [self performSegueWithIdentifier:@"EditPatientInfomation" sender:cell];
     
@@ -112,12 +117,27 @@
 
 
 }
+-(void)showRecord:(UIButton *)sender{
+    
+    UIView* contentView = [sender superview];
+    PatientTableViewCell *cell = (PatientTableViewCell *)[contentView superview];
+    
+    NSInteger interger = [self.tableView.visibleCells indexOfObject:cell];
+    NSDictionary *dataDic = datas[interger];
+    
+    [self performSegueWithIdentifier:@"ShowTreatmentCourseRecord" sender:dataDic];
+    
+    
+}
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString:@"EditPatientInfomation"]) {
         AddPatientViewController *controller = (AddPatientViewController *)segue.destinationViewController;
         
         //传数据,segue手动
+        controller.dataDic = sender;
+    }else if ([segue.identifier isEqualToString:@"ShowTreatmentCourseRecord"]){
+        TreatmentCourseRecordViewController *controller = (TreatmentCourseRecordViewController *)segue.destinationViewController;
         controller.dataDic = sender;
     }
 }
