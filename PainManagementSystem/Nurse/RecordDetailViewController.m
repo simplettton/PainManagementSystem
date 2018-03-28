@@ -15,6 +15,7 @@
 #define KContentTag 5555
 #define KWestTableViewTag 1111
 #define KEastTableViewTag 2222
+#define KTreatParamViewTag 3333
 
 @interface RecordDetailViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *rootTableView;
@@ -85,8 +86,10 @@
         NSLog(@"weatArray count= %lu",(unsigned long)[westArray count]);
         return [westArray count];
 
-    }else{
+    }else if(tableView.tag == KEastTableViewTag){
         return [eastArray count];
+    }else {
+        return 1;
     }
 
 }
@@ -149,6 +152,10 @@
                 content.text = [NSString stringWithFormat:@"超声治疗法"];
             }
                 break;
+            case 5:
+            {
+                cell.insertTableView.tag = KTreatParamViewTag;
+            }
             default: {      CellIdentifier = @"Cell";       }       break;
         }
            return cell;
@@ -159,17 +166,78 @@
         if (cell == nil) {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
-        if(tableView.tag == KWestTableViewTag){
+        
+        NSArray *dataArray = [[NSArray alloc]init];
+        
+        if (tableView.tag == KWestTableViewTag) {
+            dataArray = westArray;
             
-        }else{
+        }else if (tableView.tag == KEastTableViewTag){
+            dataArray = eastArray;
             
         }
+        
         return cell;
         
     }
 
 
 }
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if (tableView != self.rootTableView && tableView.tag != KTreatParamViewTag) {
+        return 20;
+    }
+    return 0;
+}
+//返回每组头部view
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    
+    UIView *headerView = [[UIView alloc]init];
+    
+    if (tableView != self.rootTableView) {
+        
+        headerView.backgroundColor = [UIColor groupTableViewBackgroundColor];
+        
+        UILabel *label = [[UILabel alloc]init];
+        
+        label.textColor = [UIColor grayColor];
+        
+        label.font = [UIFont systemFontOfSize:13];
+        
+        label.frame = CGRectMake(15, 0, 100, 20);
+        
+        [headerView addSubview:label];
+        
+        NSArray *dataArray = [[NSArray alloc]init];
+        
+        if (tableView.tag == KWestTableViewTag) {
+            dataArray = westArray;
+            
+        }else if (tableView.tag == KEastTableViewTag){
+            dataArray = eastArray;
+            
+        }
+        
+            NSMutableArray *typeNames = [[NSMutableArray alloc]initWithCapacity:20];;
+            
+            for (NSMutableDictionary *dic in dataArray) {
+                
+                NSString *typeName = dic[@"diagnosistype"];
+                
+                //诊断类别数组
+                [typeNames addObject:typeName];
+            }
+        if ([typeNames count ]>section) {
+            label.text = typeNames[section];
+        }
+
+    }
+    
+    return headerView;
+    
+}
+
 
 
 @end
