@@ -77,6 +77,8 @@
         
         controller =     [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
     }
+    
+    //登录请求
     NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
     NSString * address = [HTTPServerURLSting stringByAppendingString:@"Api/User/Login"];
     NSDictionary *parameter = @{
@@ -95,19 +97,15 @@
               success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                   NSDictionary *jsonDict = responseObject;
                   if (jsonDict != nil) {
-//                      NSString *state = [jsonDict objectForKey:@"result"];
-//                      if ([state intValue] == 1) {
-//                          NSArray *dataDic = [jsonDict objectForKey:@"body"];
-//                          
-//                          for(NSDictionary *dic in dataDic){
-//
-//                          }
-//                          dispatch_async(dispatch_get_main_queue(), ^{
-//                              
-//                              [self.tableView reloadData];
-//                              self.accumulateTimeLabel.text = [NSString stringWithFormat:@"%ld",(long)accumulateTime];
-//                          });
-//                      }
+                      NSString *state = [jsonDict objectForKey:@"result"];
+                      if ([state intValue] == 1) {
+                          NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
+                          NSString *token = [dataDic objectForKey:@"token"];
+                          NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+                          [userDefault setObject:token forKey:@"Token"];
+                          [userDefault synchronize];
+                                            
+                      }
                   }
                   
                   NSLog(@"receive  %@",responseObject);

@@ -39,6 +39,7 @@
 #define KLeftScale 0.7
 
 #define VDeckCanNoPanViewTag 344343
+#define Token [[NSUserDefaults standardUserDefaults]objectForKey:@"Token"]
 
 #endif /* BaseHeader_h */
 

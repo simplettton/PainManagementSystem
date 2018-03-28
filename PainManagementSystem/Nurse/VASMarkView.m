@@ -8,6 +8,8 @@
 
 #import "VASMarkView.h"
 #import "BaseHeader.h"
+
+#import "NetWorkTool.h"
 @interface VASMarkView()
 @property (weak, nonatomic) IBOutlet UIView *backgroundView;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
@@ -32,7 +34,40 @@
                                  NSFontAttributeName:[UIFont systemFontOfSize:16 weight:UIFontWeightLight],
                                  NSParagraphStyleAttributeName:paragraphStyle
                                  };
+    //请求vas评分说明
+    NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
+    NSString *address = [HTTPServerURLSting stringByAppendingString:@"Api/ScoreItem/List"];
+    
+    NSString *token = Token;
+    
+    NSDictionary *parameter = @{
+                                @"token":token,
+                                @"data":@""
+                                };
+    [netWorkTool POST:address
+           parameters:parameter
+             progress:nil
+              success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                  NSDictionary *jsonDict = responseObject;
+//                  if (jsonDict != nil) {
+//                      NSString *state = [jsonDict objectForKey:@"result"];
+//                      if ([state intValue] == 1) {
+//                          NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
+//                          NSString *token = [dataDic objectForKey:@"token"];
+//                          NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+//                          [userDefault setObject:token forKey:@"Token"];
+//                          [userDefault synchronize];
+//
+//                      }
+//                  }
+                  
+                  NSLog(@"receive  %@",responseObject);
+              } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                  NSLog(@"error==%@",error);
+              }];
+    
     self.scoreStandardsTV.attributedText = [[NSAttributedString alloc] initWithString:@"VAS评分说明(0分-100分): 0分:无痛； 30分以内:有轻微的疼痛，能忍受； 40分-60分:患者疼痛并影响睡眠，尚能忍受； 70分-100分:患者有渐强烈的疼痛，疼痛难忍，影响食欲，影响睡眠。" attributes:attributes];
+    
     self.slider.continuous = YES;
     [self.slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
     self.valueLabel.text = [NSString stringWithFormat:@"%.0f", self.slider.value];
