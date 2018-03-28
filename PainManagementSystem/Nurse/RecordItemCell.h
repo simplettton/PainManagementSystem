@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UIView *backGroundView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UITableView *insertTableView;
 
 @end

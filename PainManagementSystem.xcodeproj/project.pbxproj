@@ -11,6 +11,7 @@
 		04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112068205FD54E00C91BA0 /* AddDeviceViewController.m */; };
 		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
 		041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */; };
+		041F4C88206B93D6002C5C61 /* QuestionnaireTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 041F4C87206B93D6002C5C61 /* QuestionnaireTableView.m */; };
 		04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* PatientListViewController.m */; };
 		04484FD12064CDBF00467611 /* OnlineDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */; };
 		04484FD52064CDF400467611 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD42064CDF400467611 /* SettingViewController.m */; };
@@ -52,6 +53,7 @@
 		049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C57862068C5E200180A8B /* AddPatientViewController.m */; };
 		04C8B64F206B4ACD00DEB3F0 /* RecordDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */; };
 		04C8B65F206B711000DEB3F0 /* RecordItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C8B65E206B711000DEB3F0 /* RecordItemCell.m */; };
+		04C8B661206B75C400DEB3F0 /* Record.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04C8B660206B75C400DEB3F0 /* Record.plist */; };
 		04ED0EB520528A1800638850 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04ED0EB420528A1800638850 /* AppDelegate.m */; };
 		04ED0EBE20528A1800638850 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBC20528A1800638850 /* Main.storyboard */; };
 		04ED0EC020528A1800638850 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04ED0EBF20528A1800638850 /* Assets.xcassets */; };
@@ -88,6 +90,8 @@
 		041B791C2068EDB2001D04C8 /* BETextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETextField.m; sourceTree = "<group>"; };
 		041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRAdd.m"; sourceTree = "<group>"; };
 		041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+BRAdd.h"; sourceTree = "<group>"; };
+		041F4C86206B93D6002C5C61 /* QuestionnaireTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuestionnaireTableView.h; sourceTree = "<group>"; };
+		041F4C87206B93D6002C5C61 /* QuestionnaireTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionnaireTableView.m; sourceTree = "<group>"; };
 		04484FCC2064CA5900467611 /* PatientListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PatientListViewController.h; sourceTree = "<group>"; };
 		04484FCD2064CA5900467611 /* PatientListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PatientListViewController.m; sourceTree = "<group>"; };
 		04484FCF2064CDBF00467611 /* OnlineDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OnlineDeviceViewController.h; sourceTree = "<group>"; };
@@ -157,6 +161,7 @@
 		04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordDetailViewController.m; sourceTree = "<group>"; };
 		04C8B65D206B711000DEB3F0 /* RecordItemCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordItemCell.h; sourceTree = "<group>"; };
 		04C8B65E206B711000DEB3F0 /* RecordItemCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordItemCell.m; sourceTree = "<group>"; };
+		04C8B660206B75C400DEB3F0 /* Record.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Record.plist; sourceTree = "<group>"; };
 		04ED0EB020528A1800638850 /* PainManagementSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PainManagementSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04ED0EB320528A1800638850 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04ED0EB420528A1800638850 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -290,6 +295,9 @@
 				04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */,
 				04C8B65D206B711000DEB3F0 /* RecordItemCell.h */,
 				04C8B65E206B711000DEB3F0 /* RecordItemCell.m */,
+				041F4C86206B93D6002C5C61 /* QuestionnaireTableView.h */,
+				041F4C87206B93D6002C5C61 /* QuestionnaireTableView.m */,
+				04C8B660206B75C400DEB3F0 /* Record.plist */,
 				046C021B206A129400FDD974 /* VASMarkView.h */,
 				046C021C206A129400FDD974 /* VASMarkView.m */,
 				046C021E206A12A600FDD974 /* VASMarkView.xib */,
@@ -561,6 +569,7 @@
 				04ED0EC020528A1800638850 /* Assets.xcassets in Resources */,
 				049C57842068C18B00180A8B /* PatientTableViewCell.xib in Resources */,
 				046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */,
+				04C8B661206B75C400DEB3F0 /* Record.plist in Resources */,
 				046E2E332062370800DEFD70 /* QRCodeBottomLeft@2x.png in Resources */,
 				046E2E372062370800DEFD70 /* QRCodeLine@2x.png in Resources */,
 				046C021F206A12A600FDD974 /* VASMarkView.xib in Resources */,
@@ -651,6 +660,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				041F4C88206B93D6002C5C61 /* QuestionnaireTableView.m in Sources */,
 				046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */,
 				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
 				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,

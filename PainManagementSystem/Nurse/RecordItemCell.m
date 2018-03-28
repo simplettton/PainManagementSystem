@@ -15,13 +15,7 @@
     
     self.backGroundView.layer.borderWidth = 0.5f;
     self.backGroundView.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
-    
-    
-//    CALayer *layer = [CALayer layer];
-//    layer.borderWidth = 0.5f;
-//    layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
-//    layer.frame = CGRectMake(0, self.titleView.frame.size.height - 1, self.titleView.frame.size.width, 1);
-//    [self.titleView.layer addSublayer:layer];
+
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
