@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112064205FBCEC00C91BA0 /* DeviceListViewController.m */; };
 		04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112068205FD54E00C91BA0 /* AddDeviceViewController.m */; };
+		041A7D00206CF3E4006AF568 /* HttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 041A7CFF206CF3E4006AF568 /* HttpHelper.m */; };
 		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
 		041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */; };
 		04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* PatientListViewController.m */; };
@@ -88,6 +89,8 @@
 		04112064205FBCEC00C91BA0 /* DeviceListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceListViewController.m; sourceTree = "<group>"; };
 		04112067205FD54E00C91BA0 /* AddDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDeviceViewController.h; sourceTree = "<group>"; };
 		04112068205FD54E00C91BA0 /* AddDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddDeviceViewController.m; sourceTree = "<group>"; };
+		041A7CFE206CF3E4006AF568 /* HttpHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HttpHelper.h; sourceTree = "<group>"; };
+		041A7CFF206CF3E4006AF568 /* HttpHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HttpHelper.m; sourceTree = "<group>"; };
 		041B791B2068EDB2001D04C8 /* BETextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BETextField.h; sourceTree = "<group>"; };
 		041B791C2068EDB2001D04C8 /* BETextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETextField.m; sourceTree = "<group>"; };
 		041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRAdd.m"; sourceTree = "<group>"; };
@@ -439,6 +442,8 @@
 				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
 				04484FDA2064D72500467611 /* NetWorkTool.h */,
 				04484FD92064D72500467611 /* NetWorkTool.m */,
+				041A7CFE206CF3E4006AF568 /* HttpHelper.h */,
+				041A7CFF206CF3E4006AF568 /* HttpHelper.m */,
 				046C020E2069E48100FDD974 /* BEButton.h */,
 				046C020F2069E48100FDD974 /* BEButton.m */,
 			);
@@ -718,6 +723,7 @@
 				04C8B65F206B711000DEB3F0 /* RecordItemCell.m in Sources */,
 				046C021D206A129400FDD974 /* VASMarkView.m in Sources */,
 				04484FD52064CDF400467611 /* SettingViewController.m in Sources */,
+				041A7D00206CF3E4006AF568 /* HttpHelper.m in Sources */,
 				041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */,
 				046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */,
 				04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */,

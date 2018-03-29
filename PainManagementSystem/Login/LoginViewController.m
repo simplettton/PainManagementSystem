@@ -108,8 +108,48 @@
                                             @"pwd":pwd
                                             }
                                     };
-        
-        
+//        [netWorkTool POST:address
+//               parameters:parameter
+//                 hasToken:NO
+//                 progress:nil
+//                  success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
+//
+//                    NSDictionary *jsonDict = responseObject;
+//                    if (jsonDict != nil) {
+//                        NSString *state = [jsonDict objectForKey:@"result"];
+//                        if ([state intValue] == 1) {
+//
+//                            dispatch_async(dispatch_get_main_queue(), ^{
+//                                [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+//                            });
+//
+//                            NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
+//
+//                            NSString *token = [dataDic objectForKey:@"token"];
+//
+//                            NSString *role = [dataDic objectForKey:@"role"];
+//
+//                            if ([role isEqualToString:@"_nurse"]) {
+//
+//                                controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
+//                            }else if([role isEqualToString:@"_pmadmin"]){
+//                                controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
+//                            }
+//
+//                            [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+//
+//                            //登录成功保存token
+//                            NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+//
+//                            [userDefault setObject:token forKey:@"Token"];
+//
+//                            [userDefault synchronize];
+//
+//                        }
+//                    }
+//                  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//
+//                  }];
         [netWorkTool POST:address
                parameters:parameter
                  progress:nil
@@ -118,41 +158,43 @@
                       if (jsonDict != nil) {
                           NSString *state = [jsonDict objectForKey:@"result"];
                           if ([state intValue] == 1) {
-                              
+
                               dispatch_async(dispatch_get_main_queue(), ^{
                                   [SVProgressHUD showSuccessWithStatus:@"登录成功"];
                               });
-                              
+
                               NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
-                              
+
                               NSString *token = [dataDic objectForKey:@"token"];
-                              
+
                               NSString *role = [dataDic objectForKey:@"role"];
-                              
+
                               if ([role isEqualToString:@"_nurse"]) {
-                                  
+
                                   controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
                               }else if([role isEqualToString:@"_pmadmin"]){
                                   controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
                               }
-                              
+
                               [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
-                              
+
                               //登录成功保存token
                               NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-                              
+
                               [userDefault setObject:token forKey:@"Token"];
-                              
+
                               [userDefault synchronize];
-                              
+
                           }
                       }
-                      
+
                       NSLog(@"receive  %@",responseObject);
                   } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                       NSLog(@"error==%@",error);
                   }];
     });
+    
+    
 
 }
 
@@ -239,7 +281,7 @@
     
     NSError *error = nil;
     
-    if (![udpSocket bindToPort:12345 error:&error])
+    if (![udpSocket bindToPort:32345 error:&error])
     {
         [self logError:FORMAT(@"Error binding: %@", error)];
         return;

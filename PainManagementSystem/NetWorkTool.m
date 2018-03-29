@@ -23,4 +23,38 @@ static NetWorkTool *_instance;
     });
     return _instance;
 }
+
+-(void)POST:(NSString *)address
+ parameters:(NSDictionary *)parameters
+   hasToken:(bool)hasToken
+   progress:(void (^)(NSProgress * _Nonnull))uploadProgress
+    success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success
+    failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure{
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    
+    NSString *token = [userDefault objectForKey:@"Token"];
+    
+    NSMutableDictionary *param = [[NSMutableDictionary alloc]init];
+    
+    if( hasToken )
+    {
+
+        [param setValue:token forKey:@"token"];
+        
+        [param setValue:parameters forKey:@"data"];
+    }
+    
+    NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
+    [netWorkTool POST:address
+           parameters:param
+             hasToken:hasToken progress:^(NSProgress * _Nonnull progress) {
+                 uploadProgress(progress);
+             } success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable response) {
+                 success(task,response);
+             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                 failure(task,error);
+             }];
+    
+}
 @end

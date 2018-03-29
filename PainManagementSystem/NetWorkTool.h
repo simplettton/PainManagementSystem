@@ -11,4 +11,12 @@
 @interface NetWorkTool : AFHTTPSessionManager
 
 +(instancetype)sharedNetWorkTool;
+
+-(void)POST:(NSString *)address
+ parameters:(NSDictionary *)parameters
+   hasToken:(bool)hasToken
+   progress:(void (^)(NSProgress * _Nonnull))uploadProgress
+    success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success
+    failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure;
+
 @end
