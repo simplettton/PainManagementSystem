@@ -67,7 +67,7 @@
     
     //UIStorybord 跳转
     UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UINavigationController *controller ;
+    __block UINavigationController *controller ;
     
     if ([self.userNameTextField.text isEqualToString: @"agent"]) {
 
@@ -75,56 +75,77 @@
         
     }else if([self.userNameTextField.text isEqualToString:@"nurse"]){
         
-        controller =     [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
+        controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
     }
-    
-    //登录请求
-    NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
-    NSString * address = [HTTPServerURLSting stringByAppendingString:@"Api/User/Login"];
-    NSDictionary *parameter = @{
-                                @"token":@"",
-                                @"data":
+    //异步请求
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        //登录请求
+        NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
+        NSString * address = [HTTPServerURLSting stringByAppendingString:@"Api/User/Login"];
+        NSDictionary *parameter = @{
+                                    @"data":
                                         @{
-                                            @"username":@"zengbinger",
-                                            @"pwd":@"123456"
-                                        }
-                                };
-    
+                                            @"username":self.userNameTextField.text,
+                                            @"pwd":self.passwordTextField.text
+                                            }
+                                    };
+        
+        
+        [netWorkTool POST:address
+               parameters:parameter
+                 progress:nil
+                  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                      NSDictionary *jsonDict = responseObject;
+                      if (jsonDict != nil) {
+                          NSString *state = [jsonDict objectForKey:@"result"];
+                          if ([state intValue] == 1) {
+                              
+                              NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
+                              
+                              NSString *token = [dataDic objectForKey:@"token"];
+                              
+                              NSString *role = [dataDic objectForKey:@"role"];
+                              
+                              if ([role isEqualToString:@"_nurse"]) {
+                                  
+                                  controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
+                              }else if([role isEqualToString:@"_pmadmin"]){
+                                  controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
+                              }
 
-    [netWorkTool POST:address
-           parameters:parameter
-             progress:nil
-              success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                  NSDictionary *jsonDict = responseObject;
-                  if (jsonDict != nil) {
-                      NSString *state = [jsonDict objectForKey:@"result"];
-                      if ([state intValue] == 1) {
-                          NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
-                          NSString *token = [dataDic objectForKey:@"token"];
-                          NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-                          [userDefault setObject:token forKey:@"Token"];
-                          [userDefault synchronize];
-                                            
+                              
+                              NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+                              
+                              [userDefault setObject:token forKey:@"Token"];
+                              
+                              [userDefault synchronize];
+                              
+                          }
                       }
-                  }
-                  
-                  NSLog(@"receive  %@",responseObject);
-              } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                  NSLog(@"error==%@",error);
-              }];
-    
-    AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
-    myDelegate.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-    //        [myDelegate.window setRootViewController:myDelegate.drawerController];
+                      
+                      NSLog(@"receive  %@",responseObject);
+                  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                      NSLog(@"error==%@",error);
+                  }];
+    });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+        myDelegate.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
+        //        [myDelegate.window setRootViewController:myDelegate.drawerController];
+        
+        [UIView transitionWithView:myDelegate.window
+                          duration:0.25
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{
+                            myDelegate.window.rootViewController = controller;
+                        }
+                        completion:nil];
+        [myDelegate.window makeKeyAndVisible];
+    });
+ 
 
-    [UIView transitionWithView:myDelegate.window
-                      duration:0.25
-                       options:UIViewAnimationOptionTransitionCrossDissolve
-                    animations:^{
-                        myDelegate.window.rootViewController = controller;
-                    }
-                    completion:nil];
-    [myDelegate.window makeKeyAndVisible];
+    
+
 }
 
 

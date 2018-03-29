@@ -1,36 +1,30 @@
 //
-//  EditPasswordController.m
+//  EditUserInfoController.m
 //  PainManagementSystem
 //
-//  Created by Binger Zeng on 2018/3/26.
+//  Created by Binger Zeng on 2018/3/29.
 //  Copyright © 2018年 Shenzhen Lifotronic Technology Co.,Ltd. All rights reserved.
 //
 
-#import "EditPasswordController.h"
+#import "EditUserInfoController.h"
 #import "BaseHeader.h"
-@interface EditPasswordController ()
-@property (weak, nonatomic) IBOutlet UITextField *oldPasswordTextField;
-@property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
-@property (weak, nonatomic) IBOutlet UITextField *confirmPassWordTextField;
+
+@interface EditUserInfoController ()
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *textFields;
+@property (weak, nonatomic) IBOutlet UITextField *nameTextField;
+@property (weak, nonatomic) IBOutlet UITextField *contactTextFiled;
+@property (weak, nonatomic) IBOutlet UITextField *noteTextField;
 
 @end
 
-@implementation EditPasswordController
-- (IBAction)cancel:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-- (IBAction)done:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+@implementation EditUserInfoController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"设置密码";
-
+    
     [self initAll];
     self.tableView.tableFooterView = [[UIView alloc]init];
- 
+    
 }
 -(void)initAll{
     
@@ -42,22 +36,20 @@
     }
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-//    self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
-}
-
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 3;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 25;
+}
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    UIView *headerView = [[UIView alloc]init];
+    headerView.backgroundColor = [UIColor whiteColor];
+    return headerView;
+}
 /*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
@@ -111,5 +103,11 @@
     // Pass the selected object to the new view controller.
 }
 */
+- (IBAction)cancel:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+- (IBAction)save:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 @end

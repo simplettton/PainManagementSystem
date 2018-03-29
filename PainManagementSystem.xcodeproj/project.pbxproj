@@ -18,6 +18,7 @@
 		04484FDC2064D9ED00467611 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD72064D26100467611 /* LoginViewController.m */; };
 		0465E38D206C6D91009A2264 /* QuestionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0465E38C206C6D91009A2264 /* QuestionCell.m */; };
 		0465E390206C7563009A2264 /* RecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0465E38F206C7563009A2264 /* RecordModel.m */; };
+		0465E395206CD9CD009A2264 /* EditUserInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0465E394206CD9CD009A2264 /* EditUserInfoController.m */; };
 		04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DE8206091B6002641D1 /* DeviceTableViewCell.m */; };
 		04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DED2060999D002641D1 /* EditDeviceViewController.m */; };
 		046C02102069E48100FDD974 /* BEButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 046C020F2069E48100FDD974 /* BEButton.m */; };
@@ -105,6 +106,8 @@
 		0465E38C206C6D91009A2264 /* QuestionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionCell.m; sourceTree = "<group>"; };
 		0465E38E206C7563009A2264 /* RecordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordModel.h; sourceTree = "<group>"; };
 		0465E38F206C7563009A2264 /* RecordModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordModel.m; sourceTree = "<group>"; };
+		0465E393206CD9CD009A2264 /* EditUserInfoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditUserInfoController.h; sourceTree = "<group>"; };
+		0465E394206CD9CD009A2264 /* EditUserInfoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditUserInfoController.m; sourceTree = "<group>"; };
 		04661DE7206091B6002641D1 /* DeviceTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceTableViewCell.h; sourceTree = "<group>"; };
 		04661DE8206091B6002641D1 /* DeviceTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceTableViewCell.m; sourceTree = "<group>"; };
 		04661DEC2060999D002641D1 /* EditDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditDeviceViewController.h; sourceTree = "<group>"; };
@@ -292,22 +295,8 @@
 			children = (
 				04484FCC2064CA5900467611 /* PatientListViewController.h */,
 				04484FCD2064CA5900467611 /* PatientListViewController.m */,
-				046C02112069EC3500FDD974 /* TreatmentCourseRecordViewController.h */,
-				046C02122069EC3500FDD974 /* TreatmentCourseRecordViewController.m */,
-				046C02182069F49A00FDD974 /* TreatRecordCell.h */,
-				046C02192069F49A00FDD974 /* TreatRecordCell.m */,
-				046C021B206A129400FDD974 /* VASMarkView.h */,
-				046C021C206A129400FDD974 /* VASMarkView.m */,
-				046C021E206A12A600FDD974 /* VASMarkView.xib */,
-				04C8B64D206B4ACD00DEB3F0 /* RecordDetailViewController.h */,
-				04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */,
-				04C8B65D206B711000DEB3F0 /* RecordItemCell.h */,
-				04C8B65E206B711000DEB3F0 /* RecordItemCell.m */,
-				0465E38B206C6D91009A2264 /* QuestionCell.h */,
-				0465E38C206C6D91009A2264 /* QuestionCell.m */,
-				04C8B660206B75C400DEB3F0 /* Record.plist */,
-				0465E38E206C7563009A2264 /* RecordModel.h */,
-				0465E38F206C7563009A2264 /* RecordModel.m */,
+				0465E392206CC57C009A2264 /* TreatCourseRecordView */,
+				0465E391206CC562009A2264 /* RecordDetailView */,
 				049C57852068C5E200180A8B /* AddPatientViewController.h */,
 				049C57862068C5E200180A8B /* AddPatientViewController.m */,
 				041B791B2068EDB2001D04C8 /* BETextField.h */,
@@ -320,6 +309,8 @@
 				04484FD42064CDF400467611 /* SettingViewController.m */,
 				049C577D20689A2900180A8B /* EditPasswordController.h */,
 				049C577E20689A2900180A8B /* EditPasswordController.m */,
+				0465E393206CD9CD009A2264 /* EditUserInfoController.h */,
+				0465E394206CD9CD009A2264 /* EditUserInfoController.m */,
 				041B79152068E532001D04C8 /* PatientTableViewCell */,
 				041B79162068E555001D04C8 /* ContactServiceView */,
 			);
@@ -334,6 +325,36 @@
 				041B79172068E572001D04C8 /* SetNetWorkView */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		0465E391206CC562009A2264 /* RecordDetailView */ = {
+			isa = PBXGroup;
+			children = (
+				04C8B64D206B4ACD00DEB3F0 /* RecordDetailViewController.h */,
+				04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */,
+				04C8B65D206B711000DEB3F0 /* RecordItemCell.h */,
+				04C8B65E206B711000DEB3F0 /* RecordItemCell.m */,
+				0465E38B206C6D91009A2264 /* QuestionCell.h */,
+				0465E38C206C6D91009A2264 /* QuestionCell.m */,
+				04C8B660206B75C400DEB3F0 /* Record.plist */,
+				0465E38E206C7563009A2264 /* RecordModel.h */,
+				0465E38F206C7563009A2264 /* RecordModel.m */,
+			);
+			path = RecordDetailView;
+			sourceTree = "<group>";
+		};
+		0465E392206CC57C009A2264 /* TreatCourseRecordView */ = {
+			isa = PBXGroup;
+			children = (
+				046C02112069EC3500FDD974 /* TreatmentCourseRecordViewController.h */,
+				046C02122069EC3500FDD974 /* TreatmentCourseRecordViewController.m */,
+				046C02182069F49A00FDD974 /* TreatRecordCell.h */,
+				046C02192069F49A00FDD974 /* TreatRecordCell.m */,
+				046C021B206A129400FDD974 /* VASMarkView.h */,
+				046C021C206A129400FDD974 /* VASMarkView.m */,
+				046C021E206A12A600FDD974 /* VASMarkView.xib */,
+			);
+			path = TreatCourseRecordView;
 			sourceTree = "<group>";
 		};
 		046E2E132062370800DEFD70 /* QRCodeReaderViewController */ = {
@@ -668,6 +689,7 @@
 				046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */,
 				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
 				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,
+				0465E395206CD9CD009A2264 /* EditUserInfoController.m in Sources */,
 				046C02132069EC3500FDD974 /* TreatmentCourseRecordViewController.m in Sources */,
 				046C021A2069F49A00FDD974 /* TreatRecordCell.m in Sources */,
 				04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */,
