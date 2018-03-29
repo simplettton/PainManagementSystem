@@ -102,7 +102,7 @@
     [self removeFromSuperview];
 }
 - (IBAction)save:(id)sender {
-    NSString *string = @"";
+    NSString *string = self.valueLabel.text;
     self.returnEvent(string);
     [self removeFromSuperview];
 }

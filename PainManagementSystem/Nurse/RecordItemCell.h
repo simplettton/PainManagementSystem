@@ -10,8 +10,15 @@
 
 @interface RecordItemCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIView *backGroundView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleView;
+@property (weak, nonatomic) IBOutlet UIView *titleView;
+
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITableView *insertTableView;
+
+//内容label
+@property (weak, nonatomic) IBOutlet UILabel *basicInfoLabel;
+@property (weak, nonatomic) IBOutlet UILabel *vasLabel;
+@property (weak, nonatomic) IBOutlet UILabel *doctorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *contentLabel;
 
 @end

@@ -9,6 +9,7 @@
 #import "TreatmentCourseRecordViewController.h"
 #import "VASMarkView.h"
 #import "TreatRecordCell.h"
+#import "RecordDetailViewController.h"
 @interface TreatmentCourseRecordViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
@@ -64,6 +65,7 @@
     if (cell == nil) {
         cell = [[TreatRecordCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
+//    [cell.markButton setTag:indexPath.row];
     [cell.markButton addTarget:self action:@selector(showVASMarkView:) forControlEvents:UIControlEventTouchUpInside];
     
     
@@ -71,13 +73,21 @@
 }
 -(void)showVASMarkView:(UIButton *)sender{
     [VASMarkView alertControllerAboveIn:self return:^(NSString *markString) {
-        
+        UIView *contentView = [sender superview];
+        TreatRecordCell *cell = (TreatRecordCell *)[contentView superview];
+        cell.vasAfterLB.text = markString;
     }];
     
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [self performSegueWithIdentifier:@"ShowRecordDetail" sender:nil];
+}
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if ([segue.identifier isEqualToString:@"ShowRecordDetail"]) {
+        RecordDetailViewController *controller = (RecordDetailViewController *)segue.destinationViewController;
+        controller.dataDic = self.dataDic;
+    }
 }
 
 @end

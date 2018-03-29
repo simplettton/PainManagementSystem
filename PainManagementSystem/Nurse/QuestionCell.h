@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface QuestionCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UIView *questionBorderView;
+@property (weak, nonatomic) IBOutlet UILabel *questionNameLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *selectionsLabel;
 
 @end
