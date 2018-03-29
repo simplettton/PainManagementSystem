@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "BaseHeader.h"
 #import "SetNetWorkView.h"
+#import <SVProgressHUD.h>
 
 #import "NetWorkTool.h"
 
@@ -55,7 +56,21 @@
 
 }
 - (IBAction)login:(id)sender {
+    //登录时转圈圈提示
+    [self showIndicator];
+    [self loginCheck];
     
+  
+
+}
+
+-(void)showIndicator{
+    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
+    [SVProgressHUD showWithStatus:@"正在登录中..."];
+}
+-(void)loginCheck{
+    
+    //是否记住与用户名
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     if ([self.remenberNameSwitch isOn]) {
@@ -63,21 +78,25 @@
     }else{
         [defaults setObject:nil forKey:@"UserName"];
     }
-        [defaults synchronize];
+    [defaults synchronize];
     
     //UIStorybord 跳转
     UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     __block UINavigationController *controller ;
     
+    //假数据 不经过服务器
     if ([self.userNameTextField.text isEqualToString: @"agent"]) {
-
+        
         controller = [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
         
     }else if([self.userNameTextField.text isEqualToString:@"nurse"]){
         
         controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
     }
-    //异步请求
+    
+    //异步请求真的数据
+    NSString *userName = self.userNameTextField.text;
+    NSString *pwd = self.passwordTextField.text;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         //登录请求
         NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
@@ -85,8 +104,8 @@
         NSDictionary *parameter = @{
                                     @"data":
                                         @{
-                                            @"username":self.userNameTextField.text,
-                                            @"pwd":self.passwordTextField.text
+                                            @"username":userName,
+                                            @"pwd":pwd
                                             }
                                     };
         
@@ -100,6 +119,10 @@
                           NSString *state = [jsonDict objectForKey:@"result"];
                           if ([state intValue] == 1) {
                               
+                              dispatch_async(dispatch_get_main_queue(), ^{
+                                  [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+                              });
+                              
                               NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
                               
                               NSString *token = [dataDic objectForKey:@"token"];
@@ -112,8 +135,10 @@
                               }else if([role isEqualToString:@"_pmadmin"]){
                                   controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
                               }
-
                               
+                              [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+                              
+                              //登录成功保存token
                               NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
                               
                               [userDefault setObject:token forKey:@"Token"];
@@ -128,10 +153,14 @@
                       NSLog(@"error==%@",error);
                   }];
     });
+
+}
+
+-(void)initRootViewController:(UIViewController *)controller{
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
         myDelegate.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-        //        [myDelegate.window setRootViewController:myDelegate.drawerController];
         
         [UIView transitionWithView:myDelegate.window
                           duration:0.25
@@ -142,12 +171,7 @@
                         completion:nil];
         [myDelegate.window makeKeyAndVisible];
     });
- 
-
-    
-
 }
-
 
 - (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
 {

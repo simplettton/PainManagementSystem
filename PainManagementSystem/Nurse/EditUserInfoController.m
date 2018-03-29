@@ -35,7 +35,12 @@
         textField.leftViewMode=UITextFieldViewModeAlways;
     }
 }
+-(void)viewWillAppear:(BOOL)animated{
+    
+    [super viewWillAppear:YES];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 
+}
 #pragma mark - Table view data source
 
 
