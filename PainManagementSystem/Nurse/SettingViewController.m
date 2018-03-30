@@ -18,6 +18,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 @property (weak, nonatomic) IBOutlet UILabel *hospitalLabel;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
+@property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 - (IBAction)edit:(id)sender;
 
 @end
@@ -31,8 +32,10 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     
-    [self setBorderWithView:self.hospitalLabel top:NO left:NO bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
-        [self setBorderWithView:self.nameLabel top:NO left:NO bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
+    
+
+
+    [self setBorderWithView:self.nameLabel top:NO left:YES bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
 
 
 }
@@ -44,6 +47,14 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
+    
+    self.hospitalLabel.text = [UserDefault objectForKey:@"Hospital"];
+    self.nameLabel.text = [UserDefault objectForKey:@"PersonName"];
+    self.phoneLabel.text = [UserDefault objectForKey:@"Contact"];
+    self.userNameLabel.text = [UserDefault objectForKey:@"UserName"];
+    
+
+
 }
 /*
 #pragma mark - Navigation

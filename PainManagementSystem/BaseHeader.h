@@ -2,7 +2,7 @@
 //  BaseHeader.h
 //  PainManagementSystem
 //
-//  Created by Binger Zeng on 2018/3/20.
+//  Created by Binger Zeng on 2018/3/30.
 //  Copyright © 2018年 Shenzhen Lifotronic Technology Co.,Ltd. All rights reserved.
 //
 
@@ -43,5 +43,5 @@
 
 #define UserDefault [NSUserDefaults standardUserDefaults]
 #import "NetWorkTool.h"
+#import <SVProgressHUD.h>
 #endif /* BaseHeader_h */
-

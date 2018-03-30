@@ -105,6 +105,7 @@
 		04484FDA2064D72500467611 /* NetWorkTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetWorkTool.h; sourceTree = "<group>"; };
 		045F6C89206E2240006DBBF7 /* HttpResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpResponse.h; sourceTree = "<group>"; };
 		045F6C8A206E2240006DBBF7 /* HttpResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HttpResponse.m; sourceTree = "<group>"; };
+		045F6C8C206E2E5D006DBBF7 /* BaseHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseHeader.h; sourceTree = "<group>"; };
 		0465E38B206C6D91009A2264 /* QuestionCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuestionCell.h; sourceTree = "<group>"; };
 		0465E38C206C6D91009A2264 /* QuestionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionCell.m; sourceTree = "<group>"; };
 		0465E38E206C7563009A2264 /* RecordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordModel.h; sourceTree = "<group>"; };
@@ -115,7 +116,6 @@
 		04661DE8206091B6002641D1 /* DeviceTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceTableViewCell.m; sourceTree = "<group>"; };
 		04661DEC2060999D002641D1 /* EditDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditDeviceViewController.h; sourceTree = "<group>"; };
 		04661DED2060999D002641D1 /* EditDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditDeviceViewController.m; sourceTree = "<group>"; };
-		04661DF92060A981002641D1 /* BaseHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseHeader.h; sourceTree = "<group>"; };
 		046C020E2069E48100FDD974 /* BEButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BEButton.h; sourceTree = "<group>"; };
 		046C020F2069E48100FDD974 /* BEButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BEButton.m; sourceTree = "<group>"; };
 		046C02112069EC3500FDD974 /* TreatmentCourseRecordViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreatmentCourseRecordViewController.h; sourceTree = "<group>"; };
@@ -431,9 +431,6 @@
 		04ED0EB220528A1800638850 /* PainManagementSystem */ = {
 			isa = PBXGroup;
 			children = (
-				04661DF92060A981002641D1 /* BaseHeader.h */,
-				04ED0EB320528A1800638850 /* AppDelegate.h */,
-				04ED0EB420528A1800638850 /* AppDelegate.m */,
 				041B791A2068ECF1001D04C8 /* Supporting Files */,
 				04484FD22064CDC900467611 /* Nurse */,
 				04484FD62064D25F00467611 /* Login */,
@@ -446,6 +443,9 @@
 				045F6C8A206E2240006DBBF7 /* HttpResponse.m */,
 				046C020E2069E48100FDD974 /* BEButton.h */,
 				046C020F2069E48100FDD974 /* BEButton.m */,
+				04ED0EB320528A1800638850 /* AppDelegate.h */,
+				04ED0EB420528A1800638850 /* AppDelegate.m */,
+				045F6C8C206E2E5D006DBBF7 /* BaseHeader.h */,
 			);
 			path = PainManagementSystem;
 			sourceTree = "<group>";

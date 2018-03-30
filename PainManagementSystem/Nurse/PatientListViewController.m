@@ -21,45 +21,7 @@
 @implementation PatientListViewController{
     NSMutableArray *datas;
 }
-- (IBAction)test:(id)sender {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        //登录请求
-        NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
-        NSString * address = [HTTPServerURLSting stringByAppendingString:@"Api/User/Login"];
-        
-        NSString *token = [UserDefault objectForKey:@"Token"];
-        NSDictionary *parameter = @{@"token":token,
-                                    @"data":
-                                        @{
-                                            @"page":@"100"
-                                            }
-                                    };
-        
-        [netWorkTool POST:address
-               parameters:parameter
-                 progress:nil
-                  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                      NSDictionary *jsonDict = responseObject;
-                      if (jsonDict != nil) {
-                          NSString *state = [jsonDict objectForKey:@"result"];
-                          if ([state intValue] == 1) {
-                              
-                              
-                              NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
-                              NSLog(@"content = %@",dataDic);
 
-                          }else{
-                              NSDictionary *dataDic = [jsonDict objectForKey:@"msg"];
-                              NSLog(@"msg = %@",dataDic);
-                          }
-                      }
-                      
-                      NSLog(@"receive  %@",responseObject);
-                  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                      NSLog(@"error==%@",error);
-                  }];
-    });
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -111,6 +73,7 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
+    
 }
 
 #pragma mark - table view delegate

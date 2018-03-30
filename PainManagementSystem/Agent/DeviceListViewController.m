@@ -10,7 +10,7 @@
 #import "DeviceTableViewCell.h"
 #import "EditDeviceViewController.h"
 #import "BaseHeader.h"
-
+#import "NetWorkTool.h"
 @interface DeviceListViewController ()<UISearchBarDelegate>
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -33,6 +33,10 @@
 
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
+    
+    
+    
+    
 }
 
 -(void)initAll{

@@ -51,16 +51,13 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *userName = [defaults objectForKey:@"UserName"];
     self.userNameTextField.text = (userName==nil) ? @"" : userName;
-    
-//    self.IPTextFileld.text = IPString == nil? @"http://192.128.127" :IPString;
+
 
 }
 - (IBAction)login:(id)sender {
     //登录时转圈圈提示
     [self showIndicator];
     [self loginCheck];
-    
-  
 
 }
 
@@ -129,14 +126,16 @@
                 controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
             }
             
-            [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
-            
             //登录成功保存token
             NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
             
             [userDefault setObject:token forKey:@"Token"];
             
             [userDefault synchronize];
+            
+            [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+            
+
             
             
             
@@ -158,7 +157,7 @@
 }
 
 -(void)initRootViewController:(UIViewController *)controller{
-    
+    [self saveUserInfo];
     dispatch_async(dispatch_get_main_queue(), ^{
         AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
         myDelegate.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
@@ -172,6 +171,30 @@
                         completion:nil];
         [myDelegate.window makeKeyAndVisible];
     });
+}
+-(void)saveUserInfo{
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLSting stringByAppendingString:@"APi/User/SelfInfo"]
+                                  params:@{ }
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if ([responseObject.result intValue] == 1) {
+                                         NSDictionary *content = responseObject.content;
+                                         
+                                         [UserDefault setObject:content[@"hospital"] forKey:@"Hospital"];
+                                         [UserDefault setObject:content[@"username"] forKey:@"UserName"];
+                                         [UserDefault setObject:content[@"personname"] forKey:@"PersonName"];
+                                         [UserDefault setObject:content[@"contact"] forKey:@"Contact"];
+                                         if (content[@"note"]) {
+                                             [UserDefault  setObject:content[@"note"] forKey:@"Note"];
+                                         }
+                                         
+                                         [UserDefault synchronize];
+                                     }else{
+                                         NSLog(@"error = %@",responseObject.errorString);
+                                     }
+                                 }
+                                 failure:nil];
+    
 }
 
 - (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
