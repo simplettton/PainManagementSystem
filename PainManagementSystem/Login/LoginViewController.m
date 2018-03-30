@@ -94,104 +94,63 @@
         controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
     }
     
+    
     //异步请求真的数据
     NSString *userName = self.userNameTextField.text;
     NSString *pwd = self.passwordTextField.text;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        //登录请求
-        NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
-        NSString * address = [HTTPServerURLSting stringByAppendingString:@"Api/User/Login"];
-        NSDictionary *parameter = @{
-                                    @"data":
-                                        @{
-                                            @"username":userName,
-                                            @"pwd":pwd
-                                            }
-                                    };
-//        [netWorkTool POST:address
-//               parameters:parameter
-//                 hasToken:NO
-//                 progress:nil
-//                  success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
-//
-//                    NSDictionary *jsonDict = responseObject;
-//                    if (jsonDict != nil) {
-//                        NSString *state = [jsonDict objectForKey:@"result"];
-//                        if ([state intValue] == 1) {
-//
-//                            dispatch_async(dispatch_get_main_queue(), ^{
-//                                [SVProgressHUD showSuccessWithStatus:@"登录成功"];
-//                            });
-//
-//                            NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
-//
-//                            NSString *token = [dataDic objectForKey:@"token"];
-//
-//                            NSString *role = [dataDic objectForKey:@"role"];
-//
-//                            if ([role isEqualToString:@"_nurse"]) {
-//
-//                                controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
-//                            }else if([role isEqualToString:@"_pmadmin"]){
-//                                controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
-//                            }
-//
-//                            [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
-//
-//                            //登录成功保存token
-//                            NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-//
-//                            [userDefault setObject:token forKey:@"Token"];
-//
-//                            [userDefault synchronize];
-//
-//                        }
-//                    }
-//                  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//
-//                  }];
-        [netWorkTool POST:address
-               parameters:parameter
-                 progress:nil
-                  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                      NSDictionary *jsonDict = responseObject;
-                      if (jsonDict != nil) {
-                          NSString *state = [jsonDict objectForKey:@"result"];
-                          if ([state intValue] == 1) {
+        
+        
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLSting stringByAppendingString:@"Api/User/Login"]
+    params:@{
+             @"username":userName,
+             @"pwd":pwd
+             }
+    hasToken:NO
+    success:^(HttpResponse *responseObject) {
+        NSString *resutlt = responseObject.result;
+        if ([resutlt intValue] == 1) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+            });
+            
+            NSDictionary *content = responseObject.content;
+            NSLog(@"receive content = %@",content);
+            
+            NSString *token = [responseObject.content objectForKey:@"token"];
+            
+            NSString *role = [responseObject.content objectForKey:@"role"];
+            
+            if ([role isEqualToString:@"_nurse"]) {
+                
+                controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
+            }else if([role isEqualToString:@"_pmadmin"]){
+                controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
+            }
+            
+            [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+            
+            //登录成功保存token
+            NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+            
+            [userDefault setObject:token forKey:@"Token"];
+            
+            [userDefault synchronize];
+            
+            
+            
+        }else{
+            NSString *error = responseObject.errorString;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [SVProgressHUD showErrorWithStatus:error];
+            });
+        }
+    
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        
+    }];
 
-                              dispatch_async(dispatch_get_main_queue(), ^{
-                                  [SVProgressHUD showSuccessWithStatus:@"登录成功"];
-                              });
-
-                              NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
-
-                              NSString *token = [dataDic objectForKey:@"token"];
-
-                              NSString *role = [dataDic objectForKey:@"role"];
-
-                              if ([role isEqualToString:@"_nurse"]) {
-
-                                  controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
-                              }else if([role isEqualToString:@"_pmadmin"]){
-                                  controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
-                              }
-
-                              [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
-
-                              //登录成功保存token
-                              NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-
-                              [userDefault setObject:token forKey:@"Token"];
-
-                              [userDefault synchronize];
-
-                          }
-                      }
-
-                      NSLog(@"receive  %@",responseObject);
-                  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                      NSLog(@"error==%@",error);
-                  }];
     });
     
     

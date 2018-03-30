@@ -7,16 +7,23 @@
 //
 
 #import <AFNetworking/AFNetworking.h>
-
+#import "HttpResponse.h"
 @interface NetWorkTool : AFHTTPSessionManager
+typedef  void (^HttpSuccessBlock) (id JSON);
+typedef  void (^HttpFailureBlock) (NSError *error);
+typedef void (^HttpResponseObject)(HttpResponse* responseObject);
 
 +(instancetype)sharedNetWorkTool;
 
--(void)POST:(NSString *)address
- parameters:(NSDictionary *)parameters
-   hasToken:(bool)hasToken
-   progress:(void (^)(NSProgress * _Nonnull))uploadProgress
-    success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success
-    failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure;
+//-(void)POST:(NSString *)address
+// parameters:(NSDictionary *)parameters
+//   hasToken:(bool)hasToken
+//    success:(void (^)(NSURLSessionDataTask * , id ))success
+//    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure;
 
+-(void)POST:(NSString *)address
+     params:(NSDictionary *)parameters
+   hasToken:(bool)hasToken
+    success:(HttpResponseObject)responseBlock
+    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure;
 @end

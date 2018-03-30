@@ -41,5 +41,7 @@
 #define VDeckCanNoPanViewTag 344343
 #define Token [[NSUserDefaults standardUserDefaults]objectForKey:@"Token"]
 
+#define UserDefault [NSUserDefaults standardUserDefaults]
+#import "NetWorkTool.h"
 #endif /* BaseHeader_h */
 
