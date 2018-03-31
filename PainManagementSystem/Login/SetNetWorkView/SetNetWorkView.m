@@ -63,7 +63,7 @@
 - (IBAction)setIP:(id)sender {
     NSString *IPString = self.IPTextFileld.text;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:IPString forKey:@"IPString"];
+    [defaults setObject:IPString forKey:@"HTTPServerURLSting"];
     [defaults synchronize];
     self.returnEvent(IPString);
     [self removeFromSuperview];
@@ -72,10 +72,10 @@
 -(void)configureUI{
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *IPString = [defaults objectForKey:@"IPString"];
-    self.IPTextFileld.text = IPString == nil? @"http://192.128.127" :IPString;
+    NSString *IPString = [defaults objectForKey:@"HTTPServerURLSting"];
+    self.IPTextFileld.text = IPString == nil? @"http://192.128.2.127:8888/" :IPString;
+
     
-//    [self.IPTextFileld becomeFirstResponder];
 }
 
 

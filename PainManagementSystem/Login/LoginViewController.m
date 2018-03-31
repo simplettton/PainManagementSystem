@@ -13,13 +13,18 @@
 #import <SVProgressHUD.h>
 
 #import "NetWorkTool.h"
+#import "Pack.h"
+#import "Unpack.h"
 
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <ifaddrs.h>
 
 #import <GCDAsyncUdpSocket.h>
-#define FORMAT(format, ...) [NSString stringWithFormat:(format), ##__VA_ARGS__]
+
+#define UdpSendPort 32345
+#define UdpReceivePort 22345
+
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UIView *userView;
 @property (weak, nonatomic) IBOutlet UIView *passwordView;
@@ -31,40 +36,40 @@
 
 @implementation LoginViewController{
     GCDAsyncUdpSocket *udpSocket;
-        NSMutableString *log;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //编辑框下横线
     [self setBorderWithView:self.userView top:NO left:NO bottom:YES right:NO borderColor:UIColorFromHex(0Xbbbbbb) borderWidth:1.0];
     [self setBorderWithView:self.passwordView top:NO left:NO bottom:YES right:NO borderColor:UIColorFromHex(0XBBBBBB) borderWidth:1.0];
     
-    log = [[NSMutableString alloc] init];
+    //初始化udp soket
     [self setupSocket];
-    
-    
 
-    for (int i =255 ; i<256; i++) {
-
-        [self send:i];
-    }
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *userName = [defaults objectForKey:@"UserName"];
+    //用户名显示
+    NSString *userName = [UserDefault objectForKey:@"UserName"];
+    
     self.userNameTextField.text = (userName==nil) ? @"" : userName;
-
 
 }
 - (IBAction)login:(id)sender {
+    
     //登录时转圈圈提示
     [self showIndicator];
+    
     [self loginCheck];
 
 }
 
 -(void)showIndicator{
+    
     [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
+    
     [SVProgressHUD showWithStatus:@"正在登录中..."];
 }
+
 -(void)loginCheck{
     
     //是否记住与用户名
@@ -135,10 +140,6 @@
             
             [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
             
-
-            
-            
-            
         }else{
             NSString *error = responseObject.errorString;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -151,13 +152,14 @@
     }];
 
     });
-    
-    
-
+    [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
 }
 
 -(void)initRootViewController:(UIViewController *)controller{
+    
+    //登录成功后保存账户信息
     [self saveUserInfo];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
         myDelegate.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
@@ -172,6 +174,7 @@
         [myDelegate.window makeKeyAndVisible];
     });
 }
+
 -(void)saveUserInfo{
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLSting stringByAppendingString:@"APi/User/SelfInfo"]
                                   params:@{ }
@@ -196,6 +199,154 @@
                                  failure:nil];
     
 }
+
+- (IBAction)setNetwork:(id)sender {
+    [SetNetWorkView alertControllerAboveIn:self return:^(NSString *ipString) {
+        [UserDefault setObject:ipString forKey:@"HTTPServerURLSting"];
+        [UserDefault synchronize];
+    }];
+}
+
+#pragma mark - udpSocket
+
+- (void)setupSocket
+{
+    
+    udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    
+    NSError *error = nil;
+    
+    [udpSocket enableBroadcast:YES error:&error];
+    
+    if (![udpSocket bindToPort:UdpReceivePort error:&error])
+    {
+        NSLog(@"error :%@",error);
+        return;
+    }
+    if (![udpSocket beginReceiving:&error])
+    {
+        NSLog(@"Error receiving: %@", error);
+        return;
+    }
+    
+    [self send:[Pack packetWithCmdid:0xff dataEnabled:NO data:nil]];
+    
+}
+     
+- (void)send:(NSData *)data
+{
+    NSDictionary *localWifiDic = [self getLocalInfoForCurrentWiFi];
+    
+    //获取当前wifi广播地址
+    NSString *broadCast = [localWifiDic objectForKey:@"broadcast"];
+    
+    [udpSocket sendData:data toHost:broadCast port:UdpSendPort withTimeout:-1 tag:1];
+
+}
+#pragma mark - udp socket delegate
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
+{
+    NSLog(@"did send");
+}
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error
+{
+    // You could add checks here
+}
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock
+   didReceiveData:(NSData *)data
+      fromAddress:(NSData *)address
+withFilterContext:(id)filterContext
+{
+    
+    NSData *receiveData = [Unpack unpackData:data];
+    
+    if (receiveData)
+    {
+        Byte *data = (Byte *)[receiveData bytes];
+        
+        Byte portByte[] = {data[5],data[6]};
+        
+        UInt16 PORT = [self lBytesToInt: portByte withLength:2];
+        
+        NSString *serverIp = [NSString stringWithFormat:@"http://%d.%d.%d.%d:%d/",data[1],data[2],data[3],data[4],PORT];
+        
+        NSLog(@"serverIp = %@",serverIp);
+        
+        [UserDefault setObject:serverIp forKey:@"HTTPServerURLSting"];
+        
+        [UserDefault synchronize];
+        
+    }
+    else
+    {
+        NSString *host = nil;
+        uint16_t port = 22345;
+        [GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
+        
+        NSLog(@"RECV: Unknown message from: %@:%hu", host, port);
+    }
+}
+
+#pragma mark - private method
+
+- (NSMutableDictionary *)getLocalInfoForCurrentWiFi {
+    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    struct ifaddrs *interfaces = NULL;
+    struct ifaddrs *temp_addr = NULL;
+    int success = 0;
+    
+    // retrieve the current interfaces - returns 0 on success
+    success = getifaddrs(&interfaces);
+    if (success == 0) {
+        // Loop through linked list of interfaces
+        temp_addr = interfaces;
+        //*/
+        while(temp_addr != NULL) {
+            if(temp_addr->ifa_addr->sa_family == AF_INET) {
+                // Check if interface is en0 which is the wifi connection on the iPhone
+                if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
+                    //----192.168.1.255 广播地址
+                    NSString *broadcast = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_dstaddr)->sin_addr)];
+                    if (broadcast) {
+                        [dict setObject:broadcast forKey:@"broadcast"];
+                    }
+
+                    //--192.168.1.106 本机地址
+                    NSString *localIp = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
+                    if (localIp) {
+                        [dict setObject:localIp forKey:@"localIp"];
+                    }
+
+                    //--255.255.255.0 子网掩码地址
+                    NSString *netmask = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_netmask)->sin_addr)];
+                    if (netmask) {
+                        [dict setObject:netmask forKey:@"netmask"];
+                    }
+
+                    //--en0 端口地址
+                    NSString *interface = [NSString stringWithUTF8String:temp_addr->ifa_name];
+                    if (interface) {
+                        [dict setObject:interface forKey:@"interface"];
+                    }
+
+                    return dict;
+                }
+            }
+            
+            temp_addr = temp_addr->ifa_next;
+        }
+    }
+    
+    // Free memory
+    freeifaddrs(interfaces);
+    return dict;
+}
+
+
 
 - (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
 {
@@ -224,134 +375,29 @@
         [view.layer addSublayer:layer];
     }
 }
-- (IBAction)setNetwork:(id)sender {
-    [SetNetWorkView alertControllerAboveIn:self return:^(NSString *ipString) {
-        NSLog(@"IPString = %@",ipString);
-    }];
-}
-//
-//- (NSString *)localIPAddress
-//{
-//    NSString *localIP = nil;
-//    struct ifaddrs *addrs;
-//    if (getifaddrs(&addrs)==0) {
-//        const struct ifaddrs *cursor = addrs;
-//        while (cursor != NULL) {
-//            if (cursor->ifa_addr->sa_family == AF_INET && (cursor->ifa_flags & IFF_LOOPBACK) == 0)
-//            {
-//                //NSString *name = [NSString stringWithUTF8String:cursor->ifa_name];
-//                //if ([name isEqualToString:@"en0"]) // Wi-Fi adapter
-//                {
-//                    localIP = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)cursor->ifa_addr)->sin_addr)];
-//                    break;
-//                }
-//            }
-//            cursor = cursor->ifa_next;
-//        }
-//        freeifaddrs(addrs);
-//    }
-//    return localIP;
-//
-//}
-#pragma mark - udpSocket
 
-- (void)setupSocket
+//Byte数组转成int类型
+-(int) lBytesToInt:(Byte[]) byte withLength:(int)length
 {
-    
-    
-    udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    
-    NSError *error = nil;
-    
-    if (![udpSocket bindToPort:32345 error:&error])
+    int height = 0;
+    NSData * testData =[NSData dataWithBytes:byte length:length];
+    for (int i = 0; i < [testData length]; i++)
     {
-        [self logError:FORMAT(@"Error binding: %@", error)];
-        return;
+        if (byte[[testData length]-i] >= 0)
+        {
+            height = height + byte[[testData length]-i];
+        } else
+        {
+            height = height + 256 + byte[[testData length]-i];
+        }
+        height = height * 256;
     }
-    if (![udpSocket beginReceiving:&error])
+    if (byte[0] >= 0)
     {
-        [self logError:FORMAT(@"Error receiving: %@", error)];
-        return;
+        height = height + byte[0];
+    } else {
+        height = height + 256 + byte[0];
     }
-    
-    [self logInfo:@"Ready"];
+    return height;
 }
-- (void)logError:(NSString *)msg
-{
-    NSString *prefix = @"<font color=\"#B40404\">";
-    NSString *suffix = @"</font><br/>";
-    
-    [log appendFormat:@"%@%@%@\n", prefix, msg, suffix];
-    
-    NSString *html = [NSString stringWithFormat:@"<html><body>\n%@\n</body></html>", log];
-    //    [webView loadHTMLString:html baseURL:nil];
-}
-
-- (void)logInfo:(NSString *)msg
-{
-    NSString *prefix = @"<font color=\"#6A0888\">";
-    NSString *suffix = @"</font><br/>";
-    
-    [log appendFormat:@"%@%@%@\n", prefix, msg, suffix];
-    
-    NSString *html = [NSString stringWithFormat:@"<html><body>\n%@\n</body></html>", log];
-    //    [webView loadHTMLString:html baseURL:nil];
-}
-
-- (void)logMessage:(NSString *)msg
-{
-    NSString *prefix = @"<font color=\"#000000\">";
-    NSString *suffix = @"</font><br/>";
-    
-    [log appendFormat:@"%@%@%@\n", prefix, msg, suffix];
-    
-    NSString *html = [NSString stringWithFormat:@"<html><body>%@</body></html>", log];
-    //    [webView loadHTMLString:html baseURL:nil];
-}
-     
-- (IBAction)send:(NSInteger)number
-{
-
-    NSString *host = [NSString stringWithFormat:@"192.168.255.%ld",(long)number];
-    
-//    int port = [portField.text intValue];
-
-    NSString *msg = [NSString stringWithFormat:@"tttttttttest"];
-
-    
-    NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
-    [udpSocket sendData:data toHost:host port:12345 withTimeout:-1 tag:1];
-
-}
-#pragma mark - delegate
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
-{
-    NSLog(@"did send");
-}
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error
-{
-    // You could add checks here
-}
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
-      fromAddress:(NSData *)address
-withFilterContext:(id)filterContext
-{
-    NSString *msg = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    if (msg)
-    {
-        [self logMessage:FORMAT(@"RECV: %@", msg)];
-    }
-    else
-    {
-        NSString *host = nil;
-        uint16_t port = 22345;
-        [GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
-        
-        [self logInfo:FORMAT(@"RECV: Unknown message from: %@:%hu", host, port)];
-    }
-}
-
 @end

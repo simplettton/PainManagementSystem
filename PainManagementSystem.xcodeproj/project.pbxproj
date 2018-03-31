@@ -48,6 +48,8 @@
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
 		047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */; };
 		047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */; };
+		0495FD1A206F26EA00D01E2C /* Pack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0495FD17206F26EA00D01E2C /* Pack.m */; };
+		0495FD1B206F26EA00D01E2C /* Unpack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0495FD19206F26EA00D01E2C /* Unpack.m */; };
 		049C577A20688E6800180A8B /* ContactServiceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C577920688E6800180A8B /* ContactServiceView.m */; };
 		049C577C20688EA700180A8B /* ContactServiceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 049C577B20688EA700180A8B /* ContactServiceView.xib */; };
 		049C577F20689A2900180A8B /* EditPasswordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C577E20689A2900180A8B /* EditPasswordController.m */; };
@@ -156,6 +158,10 @@
 		047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetNetWorkView.h; sourceTree = "<group>"; };
 		047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetNetWorkView.m; sourceTree = "<group>"; };
 		047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SetNetWorkView.xib; sourceTree = "<group>"; };
+		0495FD16206F26EA00D01E2C /* Pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pack.h; sourceTree = "<group>"; };
+		0495FD17206F26EA00D01E2C /* Pack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pack.m; sourceTree = "<group>"; };
+		0495FD18206F26EA00D01E2C /* Unpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unpack.h; sourceTree = "<group>"; };
+		0495FD19206F26EA00D01E2C /* Unpack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Unpack.m; sourceTree = "<group>"; };
 		049C577820688E6800180A8B /* ContactServiceView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactServiceView.h; sourceTree = "<group>"; };
 		049C577920688E6800180A8B /* ContactServiceView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactServiceView.m; sourceTree = "<group>"; };
 		049C577B20688EA700180A8B /* ContactServiceView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactServiceView.xib; sourceTree = "<group>"; };
@@ -406,6 +412,17 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		0495FD15206F26EA00D01E2C /* DataAnalyze */ = {
+			isa = PBXGroup;
+			children = (
+				0495FD16206F26EA00D01E2C /* Pack.h */,
+				0495FD17206F26EA00D01E2C /* Pack.m */,
+				0495FD18206F26EA00D01E2C /* Unpack.h */,
+				0495FD19206F26EA00D01E2C /* Unpack.m */,
+			);
+			path = DataAnalyze;
+			sourceTree = "<group>";
+		};
 		04ED0EA720528A1700638850 = {
 			isa = PBXGroup;
 			children = (
@@ -431,6 +448,7 @@
 		04ED0EB220528A1800638850 /* PainManagementSystem */ = {
 			isa = PBXGroup;
 			children = (
+				0495FD15206F26EA00D01E2C /* DataAnalyze */,
 				041B791A2068ECF1001D04C8 /* Supporting Files */,
 				04484FD22064CDC900467611 /* Nurse */,
 				04484FD62064D25F00467611 /* Login */,
@@ -694,6 +712,7 @@
 			files = (
 				046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */,
 				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
+				0495FD1A206F26EA00D01E2C /* Pack.m in Sources */,
 				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,
 				0465E395206CD9CD009A2264 /* EditUserInfoController.m in Sources */,
 				046C02132069EC3500FDD974 /* TreatmentCourseRecordViewController.m in Sources */,
@@ -718,6 +737,7 @@
 				041B791D2068EDB2001D04C8 /* BETextField.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				049C57832068C18B00180A8B /* PatientTableViewCell.m in Sources */,
+				0495FD1B206F26EA00D01E2C /* Unpack.m in Sources */,
 				04C8B64F206B4ACD00DEB3F0 /* RecordDetailViewController.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
 				04ED0EC620528A1800638850 /* main.m in Sources */,
