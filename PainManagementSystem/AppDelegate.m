@@ -7,8 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import <UserNotifications/UserNotifications.h>
 
-@interface AppDelegate () <UISplitViewControllerDelegate>
+@interface AppDelegate ()<UNUserNotificationCenterDelegate>
 
 @end
 
@@ -32,11 +33,28 @@
         [self.window makeKeyAndVisible];
     }
     
-    // Override point for customization after application launch.
-//    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-//    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-//    navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
-//    splitViewController.delegate = self;
+    [self registerAPN];
+    
+    //iOS 10 //请求通知权限, 本地和远程共用
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        //用户允许了push权限的申请
+        if (granted) {
+            NSLog(@"请求成功");
+        } else {
+            NSLog(@"请求失败");
+        }
+        
+        if (!error) {
+            
+        }
+    }];
+    //注册远程通知
+    [[UIApplication sharedApplication]registerForRemoteNotifications];
+    
+    //设置通知的代理
+    center.delegate = self;
+    
     return YES;
 }
 
@@ -83,4 +101,31 @@
     return NO;
 }
 
+-(void)registerAPN
+{
+    
+
+    
+    //
+    //    //iOS 10 before
+    //    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+    //    [application registerUserNotificationSettings:settings];
+    
+}
+
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    
+    NSString *tokenStr = [NSString stringWithFormat:@"%@",deviceToken];
+     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
+     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""];
+     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@">" withString:@""];
+    
+    //upload tokenStr to server
+    
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
+    
+}
 @end
