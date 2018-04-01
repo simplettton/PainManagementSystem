@@ -916,7 +916,7 @@
 				INFOPLIST_FILE = "PainManagementSystem/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystem;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Lifotronic.PainManagementSystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -932,7 +932,7 @@
 				INFOPLIST_FILE = "PainManagementSystem/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Lifotronic.PainManagementSystem;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Lifotronic.PainManagementSystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
