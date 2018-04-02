@@ -78,6 +78,16 @@ typedef NS_ENUM(NSUInteger,typeTags)
     // Do any additional setup after loading the view.
 }
 
+
+-(void)viewWillAppear:(BOOL)animated{
+    
+    [super viewWillAppear:YES];
+    self.title = @"设备管理系统";
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
+}
+
+
 -(void)initAll{
     
     //默认选中电疗设备
@@ -132,7 +142,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     NSDictionary *scanForPeripheralsWithOptions = @{CBCentralManagerScanOptionAllowDuplicatesKey:@YES};
     [baby setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
 }
-#pragma mark -UIViewController 方法
+#pragma mark UIViewController 方法
 //插入table数据
 -(void)insertTableView:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
     
@@ -200,14 +210,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 
--(void)viewWillAppear:(BOOL)animated{
-
-    [super viewWillAppear:YES];
-    self.title = @"设备管理系统";
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
-}
-
 #pragma mark - tableview dataSource
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -215,6 +217,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";
     AddDeviceCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
@@ -254,9 +257,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         }
         
     }
-    
-
-    
+ 
     return cell;
 }
 

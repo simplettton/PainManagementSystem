@@ -107,6 +107,8 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSDictionary *dataDic = datas[indexPath.row];
+    [self performSegueWithIdentifier:@"ShowTreatmentCourseRecord" sender:dataDic];
 }
 -(void)editPatientInfomation:(UIButton *)sender{
 
@@ -129,8 +131,7 @@
     NSDictionary *dataDic = datas[interger];
     
     [self performSegueWithIdentifier:@"ShowTreatmentCourseRecord" sender:dataDic];
-    
-    
+
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{

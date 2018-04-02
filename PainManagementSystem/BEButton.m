@@ -7,7 +7,7 @@
 //
 
 #import "BEButton.h"
-
+#import "BaseHeader.h"
 @implementation BEButton
 
 /*
@@ -19,6 +19,10 @@
 */
 -(void)awakeFromNib{
     [super awakeFromNib];
+    
+    if ([self.backgroundColor isEqual:[UIColor clearColor]]) {
+        [self.layer setBorderColor:UIColorFromHex(0xbbbbbb).CGColor];
+    }
     [self.layer setCornerRadius:5.0f];
     [self.layer setMasksToBounds:YES];
 }
