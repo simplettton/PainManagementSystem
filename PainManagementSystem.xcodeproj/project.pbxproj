@@ -13,6 +13,8 @@
 		0411BC1C2071FCAA000FC687 /* TaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0411BC1B2071FCAA000FC687 /* TaskListViewController.m */; };
 		0411BC1F2072160F000FC687 /* SendTreatmentSuccessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0411BC1E2072160F000FC687 /* SendTreatmentSuccessView.m */; };
 		0411BC2120721629000FC687 /* SendTreatmentSuccessView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0411BC2020721629000FC687 /* SendTreatmentSuccessView.xib */; };
+		0419F406207331A800C83C2B /* TreatmentParam.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0419F405207331A800C83C2B /* TreatmentParam.plist */; };
+		0419F4082073515900C83C2B /* Task.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0419F4072073515900C83C2B /* Task.plist */; };
 		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
 		041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */; };
 		041FDD5320722D2100BE6EC9 /* SendTreatmentFailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */; };
@@ -62,6 +64,7 @@
 		049C57832068C18B00180A8B /* PatientTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C57812068C18B00180A8B /* PatientTableViewCell.m */; };
 		049C57842068C18B00180A8B /* PatientTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 049C57822068C18B00180A8B /* PatientTableViewCell.xib */; };
 		049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C57862068C5E200180A8B /* AddPatientViewController.m */; };
+		04A5530320737E4900822DB4 /* PopoverTreatwayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A5530220737E4900822DB4 /* PopoverTreatwayController.m */; };
 		04C8B64F206B4ACD00DEB3F0 /* RecordDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */; };
 		04C8B65F206B711000DEB3F0 /* RecordItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C8B65E206B711000DEB3F0 /* RecordItemCell.m */; };
 		04C8B661206B75C400DEB3F0 /* Record.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04C8B660206B75C400DEB3F0 /* Record.plist */; };
@@ -104,6 +107,8 @@
 		0411BC1D2072160F000FC687 /* SendTreatmentSuccessView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendTreatmentSuccessView.h; sourceTree = "<group>"; };
 		0411BC1E2072160F000FC687 /* SendTreatmentSuccessView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SendTreatmentSuccessView.m; sourceTree = "<group>"; };
 		0411BC2020721629000FC687 /* SendTreatmentSuccessView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendTreatmentSuccessView.xib; sourceTree = "<group>"; };
+		0419F405207331A800C83C2B /* TreatmentParam.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TreatmentParam.plist; sourceTree = "<group>"; };
+		0419F4072073515900C83C2B /* Task.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Task.plist; sourceTree = "<group>"; };
 		041B791B2068EDB2001D04C8 /* BETextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BETextField.h; sourceTree = "<group>"; };
 		041B791C2068EDB2001D04C8 /* BETextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETextField.m; sourceTree = "<group>"; };
 		041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRAdd.m"; sourceTree = "<group>"; };
@@ -188,6 +193,8 @@
 		049C57822068C18B00180A8B /* PatientTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PatientTableViewCell.xib; sourceTree = "<group>"; };
 		049C57852068C5E200180A8B /* AddPatientViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddPatientViewController.h; sourceTree = "<group>"; };
 		049C57862068C5E200180A8B /* AddPatientViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddPatientViewController.m; sourceTree = "<group>"; };
+		04A5530120737E4900822DB4 /* PopoverTreatwayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopoverTreatwayController.h; sourceTree = "<group>"; };
+		04A5530220737E4900822DB4 /* PopoverTreatwayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopoverTreatwayController.m; sourceTree = "<group>"; };
 		04C8B64D206B4ACD00DEB3F0 /* RecordDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordDetailViewController.h; sourceTree = "<group>"; };
 		04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordDetailViewController.m; sourceTree = "<group>"; };
 		04C8B65D206B711000DEB3F0 /* RecordItemCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordItemCell.h; sourceTree = "<group>"; };
@@ -323,6 +330,10 @@
 				0411BC182071D235000FC687 /* TaskCell.m */,
 				0411BC1A2071FCAA000FC687 /* TaskListViewController.h */,
 				0411BC1B2071FCAA000FC687 /* TaskListViewController.m */,
+				0419F4072073515900C83C2B /* Task.plist */,
+				04A5530120737E4900822DB4 /* PopoverTreatwayController.h */,
+				04A5530220737E4900822DB4 /* PopoverTreatwayController.m */,
+				0419F405207331A800C83C2B /* TreatmentParam.plist */,
 				0411BC1D2072160F000FC687 /* SendTreatmentSuccessView.h */,
 				0411BC1E2072160F000FC687 /* SendTreatmentSuccessView.m */,
 				0411BC2020721629000FC687 /* SendTreatmentSuccessView.xib */,
@@ -654,9 +665,11 @@
 				046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */,
 				04C8B661206B75C400DEB3F0 /* Record.plist in Resources */,
 				0411BC2120721629000FC687 /* SendTreatmentSuccessView.xib in Resources */,
+				0419F406207331A800C83C2B /* TreatmentParam.plist in Resources */,
 				046E2E332062370800DEFD70 /* QRCodeBottomLeft@2x.png in Resources */,
 				046E2E372062370800DEFD70 /* QRCodeLine@2x.png in Resources */,
 				046C021F206A12A600FDD974 /* VASMarkView.xib in Resources */,
+				0419F4082073515900C83C2B /* Task.plist in Resources */,
 				046E2E342062370800DEFD70 /* QRCodeBottomLeft@3x.png in Resources */,
 				046E2E352062370800DEFD70 /* QRCodeBottomRight@2x.png in Resources */,
 				047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */,
@@ -781,6 +794,7 @@
 				0411BC192071D235000FC687 /* TaskCell.m in Sources */,
 				0411BC1C2071FCAA000FC687 /* TaskListViewController.m in Sources */,
 				046C021D206A129400FDD974 /* VASMarkView.m in Sources */,
+				04A5530320737E4900822DB4 /* PopoverTreatwayController.m in Sources */,
 				04484FD52064CDF400467611 /* SettingViewController.m in Sources */,
 				041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */,
 				046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */,

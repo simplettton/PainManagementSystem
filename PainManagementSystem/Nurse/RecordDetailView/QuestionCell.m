@@ -14,6 +14,7 @@
     [super awakeFromNib];
     self.questionBorderView.layer.borderWidth = 0.5f;
     self.questionBorderView.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
+
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

@@ -24,5 +24,8 @@
 
     // Configure the view for the selected state
 }
+-(void)setTypeLableColor:(UIColor *)color{
+    [self.typeLabel setTextColor:color];
+}
 
 @end
