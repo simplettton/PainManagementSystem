@@ -38,6 +38,7 @@
     self.navigationItem.backBarButtonItem = backButton;
 
     
+    self.searchBar.delegate = self;
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
     
     self.searchBar.tintColor = UIColorFromHex(0x5E97FE);//出现光标
@@ -52,8 +53,7 @@
         searchField.layer.masksToBounds = YES;
     }
     
-    
-    self.searchBar.delegate = self;
+
     
 
     self.tableView.delegate = self;

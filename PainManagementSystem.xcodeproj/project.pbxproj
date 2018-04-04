@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		040D19E82074D246001C51D9 /* FocusMachineAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 040D19E72074D246001C51D9 /* FocusMachineAlertView.m */; };
+		040D19EA2074D25C001C51D9 /* FocusMachineAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 040D19E92074D25C001C51D9 /* FocusMachineAlertView.xib */; };
 		04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112064205FBCEC00C91BA0 /* DeviceListViewController.m */; };
 		04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04112068205FD54E00C91BA0 /* AddDeviceViewController.m */; };
 		0411BC192071D235000FC687 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0411BC182071D235000FC687 /* TaskCell.m */; };
@@ -20,11 +22,18 @@
 		041FDD5320722D2100BE6EC9 /* SendTreatmentFailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */; };
 		041FDD5620722D4300BE6EC9 /* SendTreatmentFailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */; };
 		04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* PatientListViewController.m */; };
-		04484FD12064CDBF00467611 /* OnlineDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */; };
+		04484FD12064CDBF00467611 /* DeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD02064CDBF00467611 /* DeviceViewController.m */; };
 		04484FD52064CDF400467611 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD42064CDF400467611 /* SettingViewController.m */; };
 		04484FDB2064D72500467611 /* NetWorkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD92064D72500467611 /* NetWorkTool.m */; };
 		04484FDC2064D9ED00467611 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD72064D26100467611 /* LoginViewController.m */; };
 		045F6C8B206E2241006DBBF7 /* HttpResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 045F6C8A206E2240006DBBF7 /* HttpResponse.m */; };
+		0462A40120746736006DB5E0 /* LLSegmentBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 0462A3FA20746736006DB5E0 /* LLSegmentBar.m */; };
+		0462A40220746736006DB5E0 /* LLSegmentBarConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 0462A3FC20746736006DB5E0 /* LLSegmentBarConfig.m */; };
+		0462A40320746736006DB5E0 /* LLSegmentBarVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0462A3FE20746736006DB5E0 /* LLSegmentBarVC.m */; };
+		0462A40420746736006DB5E0 /* UIView+LLSegmentBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 0462A40020746736006DB5E0 /* UIView+LLSegmentBar.m */; };
+		0462A40B20746E74006DB5E0 /* FocusDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0462A40A20746E74006DB5E0 /* FocusDeviceViewController.m */; };
+		0462A40F207471DD006DB5E0 /* AllDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0462A40D207471DD006DB5E0 /* AllDeviceViewController.m */; };
+		0462A41320749ECA006DB5E0 /* DeviceCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0462A41220749ECA006DB5E0 /* DeviceCollectionViewCell.m */; };
 		0465E38D206C6D91009A2264 /* QuestionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0465E38C206C6D91009A2264 /* QuestionCell.m */; };
 		0465E390206C7563009A2264 /* RecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0465E38F206C7563009A2264 /* RecordModel.m */; };
 		0465E395206CD9CD009A2264 /* EditUserInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0465E394206CD9CD009A2264 /* EditUserInfoController.m */; };
@@ -96,6 +105,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		040D19E62074D246001C51D9 /* FocusMachineAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusMachineAlertView.h; sourceTree = "<group>"; };
+		040D19E72074D246001C51D9 /* FocusMachineAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusMachineAlertView.m; sourceTree = "<group>"; };
+		040D19E92074D25C001C51D9 /* FocusMachineAlertView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FocusMachineAlertView.xib; sourceTree = "<group>"; };
 		04112063205FBCEC00C91BA0 /* DeviceListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceListViewController.h; sourceTree = "<group>"; };
 		04112064205FBCEC00C91BA0 /* DeviceListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceListViewController.m; sourceTree = "<group>"; };
 		04112067205FD54E00C91BA0 /* AddDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDeviceViewController.h; sourceTree = "<group>"; };
@@ -118,8 +130,8 @@
 		041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SendTreatmentFailView.m; sourceTree = "<group>"; };
 		04484FCC2064CA5900467611 /* PatientListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PatientListViewController.h; sourceTree = "<group>"; };
 		04484FCD2064CA5900467611 /* PatientListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PatientListViewController.m; sourceTree = "<group>"; };
-		04484FCF2064CDBF00467611 /* OnlineDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OnlineDeviceViewController.h; sourceTree = "<group>"; };
-		04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OnlineDeviceViewController.m; sourceTree = "<group>"; };
+		04484FCF2064CDBF00467611 /* DeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceViewController.h; sourceTree = "<group>"; };
+		04484FD02064CDBF00467611 /* DeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceViewController.m; sourceTree = "<group>"; };
 		04484FD32064CDF400467611 /* SettingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		04484FD42064CDF400467611 /* SettingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		04484FD72064D26100467611 /* LoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -129,6 +141,20 @@
 		045F6C89206E2240006DBBF7 /* HttpResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpResponse.h; sourceTree = "<group>"; };
 		045F6C8A206E2240006DBBF7 /* HttpResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HttpResponse.m; sourceTree = "<group>"; };
 		045F6C8C206E2E5D006DBBF7 /* BaseHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseHeader.h; sourceTree = "<group>"; };
+		0462A3F920746736006DB5E0 /* LLSegmentBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLSegmentBar.h; sourceTree = "<group>"; };
+		0462A3FA20746736006DB5E0 /* LLSegmentBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LLSegmentBar.m; sourceTree = "<group>"; };
+		0462A3FB20746736006DB5E0 /* LLSegmentBarConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLSegmentBarConfig.h; sourceTree = "<group>"; };
+		0462A3FC20746736006DB5E0 /* LLSegmentBarConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LLSegmentBarConfig.m; sourceTree = "<group>"; };
+		0462A3FD20746736006DB5E0 /* LLSegmentBarVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLSegmentBarVC.h; sourceTree = "<group>"; };
+		0462A3FE20746736006DB5E0 /* LLSegmentBarVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LLSegmentBarVC.m; sourceTree = "<group>"; };
+		0462A3FF20746736006DB5E0 /* UIView+LLSegmentBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+LLSegmentBar.h"; sourceTree = "<group>"; };
+		0462A40020746736006DB5E0 /* UIView+LLSegmentBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+LLSegmentBar.m"; sourceTree = "<group>"; };
+		0462A40920746E74006DB5E0 /* FocusDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusDeviceViewController.h; sourceTree = "<group>"; };
+		0462A40A20746E74006DB5E0 /* FocusDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusDeviceViewController.m; sourceTree = "<group>"; };
+		0462A40C207471DD006DB5E0 /* AllDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AllDeviceViewController.h; sourceTree = "<group>"; };
+		0462A40D207471DD006DB5E0 /* AllDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AllDeviceViewController.m; sourceTree = "<group>"; };
+		0462A41120749ECA006DB5E0 /* DeviceCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceCollectionViewCell.h; sourceTree = "<group>"; };
+		0462A41220749ECA006DB5E0 /* DeviceCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceCollectionViewCell.m; sourceTree = "<group>"; };
 		0465E38B206C6D91009A2264 /* QuestionCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuestionCell.h; sourceTree = "<group>"; };
 		0465E38C206C6D91009A2264 /* QuestionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionCell.m; sourceTree = "<group>"; };
 		0465E38E206C7563009A2264 /* RecordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordModel.h; sourceTree = "<group>"; };
@@ -326,6 +352,46 @@
 		04484FD22064CDC900467611 /* Nurse */ = {
 			isa = PBXGroup;
 			children = (
+				0462A405207468CE006DB5E0 /* Task list tab */,
+				0462A406207468FA006DB5E0 /* Patient list tab */,
+				041B791B2068EDB2001D04C8 /* BETextField.h */,
+				041B791C2068EDB2001D04C8 /* BETextField.m */,
+				041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */,
+				041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */,
+				0462A4082074693F006DB5E0 /* Device tab */,
+				0462A40720746928006DB5E0 /* Setting tab */,
+			);
+			path = Nurse;
+			sourceTree = "<group>";
+		};
+		04484FD62064D25F00467611 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				04484FD82064D26200467611 /* LoginViewController.h */,
+				04484FD72064D26100467611 /* LoginViewController.m */,
+				041B79172068E572001D04C8 /* SetNetWorkView */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		0462A3F820746736006DB5E0 /* LLSegment */ = {
+			isa = PBXGroup;
+			children = (
+				0462A3F920746736006DB5E0 /* LLSegmentBar.h */,
+				0462A3FA20746736006DB5E0 /* LLSegmentBar.m */,
+				0462A3FB20746736006DB5E0 /* LLSegmentBarConfig.h */,
+				0462A3FC20746736006DB5E0 /* LLSegmentBarConfig.m */,
+				0462A3FD20746736006DB5E0 /* LLSegmentBarVC.h */,
+				0462A3FE20746736006DB5E0 /* LLSegmentBarVC.m */,
+				0462A3FF20746736006DB5E0 /* UIView+LLSegmentBar.h */,
+				0462A40020746736006DB5E0 /* UIView+LLSegmentBar.m */,
+			);
+			path = LLSegment;
+			sourceTree = "<group>";
+		};
+		0462A405207468CE006DB5E0 /* Task list tab */ = {
+			isa = PBXGroup;
+			children = (
 				0411BC172071D235000FC687 /* TaskCell.h */,
 				0411BC182071D235000FC687 /* TaskCell.m */,
 				0411BC1A2071FCAA000FC687 /* TaskListViewController.h */,
@@ -340,38 +406,54 @@
 				041FDD5420722D4300BE6EC9 /* SendTreatmentFailView.h */,
 				041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */,
 				041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */,
+			);
+			path = "Task list tab";
+			sourceTree = "<group>";
+		};
+		0462A406207468FA006DB5E0 /* Patient list tab */ = {
+			isa = PBXGroup;
+			children = (
+				041B79152068E532001D04C8 /* PatientTableViewCell */,
 				04484FCC2064CA5900467611 /* PatientListViewController.h */,
 				04484FCD2064CA5900467611 /* PatientListViewController.m */,
 				0465E392206CC57C009A2264 /* TreatCourseRecordView */,
 				0465E391206CC562009A2264 /* RecordDetailView */,
 				049C57852068C5E200180A8B /* AddPatientViewController.h */,
 				049C57862068C5E200180A8B /* AddPatientViewController.m */,
-				041B791B2068EDB2001D04C8 /* BETextField.h */,
-				041B791C2068EDB2001D04C8 /* BETextField.m */,
-				041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */,
-				041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */,
-				04484FCF2064CDBF00467611 /* OnlineDeviceViewController.h */,
-				04484FD02064CDBF00467611 /* OnlineDeviceViewController.m */,
+			);
+			path = "Patient list tab";
+			sourceTree = "<group>";
+		};
+		0462A40720746928006DB5E0 /* Setting tab */ = {
+			isa = PBXGroup;
+			children = (
+				041B79162068E555001D04C8 /* ContactServiceView */,
 				04484FD32064CDF400467611 /* SettingViewController.h */,
 				04484FD42064CDF400467611 /* SettingViewController.m */,
 				049C577D20689A2900180A8B /* EditPasswordController.h */,
 				049C577E20689A2900180A8B /* EditPasswordController.m */,
 				0465E393206CD9CD009A2264 /* EditUserInfoController.h */,
 				0465E394206CD9CD009A2264 /* EditUserInfoController.m */,
-				041B79152068E532001D04C8 /* PatientTableViewCell */,
-				041B79162068E555001D04C8 /* ContactServiceView */,
 			);
-			path = Nurse;
+			path = "Setting tab";
 			sourceTree = "<group>";
 		};
-		04484FD62064D25F00467611 /* Login */ = {
+		0462A4082074693F006DB5E0 /* Device tab */ = {
 			isa = PBXGroup;
 			children = (
-				04484FD82064D26200467611 /* LoginViewController.h */,
-				04484FD72064D26100467611 /* LoginViewController.m */,
-				041B79172068E572001D04C8 /* SetNetWorkView */,
+				04484FCF2064CDBF00467611 /* DeviceViewController.h */,
+				04484FD02064CDBF00467611 /* DeviceViewController.m */,
+				0462A40920746E74006DB5E0 /* FocusDeviceViewController.h */,
+				0462A40A20746E74006DB5E0 /* FocusDeviceViewController.m */,
+				040D19E62074D246001C51D9 /* FocusMachineAlertView.h */,
+				040D19E72074D246001C51D9 /* FocusMachineAlertView.m */,
+				040D19E92074D25C001C51D9 /* FocusMachineAlertView.xib */,
+				0462A41120749ECA006DB5E0 /* DeviceCollectionViewCell.h */,
+				0462A41220749ECA006DB5E0 /* DeviceCollectionViewCell.m */,
+				0462A40C207471DD006DB5E0 /* AllDeviceViewController.h */,
+				0462A40D207471DD006DB5E0 /* AllDeviceViewController.m */,
 			);
-			path = Login;
+			path = "Device tab";
 			sourceTree = "<group>";
 		};
 		0465E391206CC562009A2264 /* RecordDetailView */ = {
@@ -487,6 +569,7 @@
 			isa = PBXGroup;
 			children = (
 				A64B4D032071392E00DB6619 /* PainManagementSystem.entitlements */,
+				0462A3F820746736006DB5E0 /* LLSegment */,
 				0495FD15206F26EA00D01E2C /* DataAnalyze */,
 				041B791A2068ECF1001D04C8 /* Supporting Files */,
 				04484FD22064CDC900467611 /* Nurse */,
@@ -674,6 +757,7 @@
 				046E2E352062370800DEFD70 /* QRCodeBottomRight@2x.png in Resources */,
 				047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */,
 				046E2E382062370800DEFD70 /* QRCodeLine@3x.png in Resources */,
+				040D19EA2074D25C001C51D9 /* FocusMachineAlertView.xib in Resources */,
 				04ED0EBE20528A1800638850 /* Main.storyboard in Resources */,
 				046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */,
 				046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */,
@@ -763,6 +847,8 @@
 				0495FD1A206F26EA00D01E2C /* Pack.m in Sources */,
 				0411BC1F2072160F000FC687 /* SendTreatmentSuccessView.m in Sources */,
 				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,
+				0462A40B20746E74006DB5E0 /* FocusDeviceViewController.m in Sources */,
+				0462A40120746736006DB5E0 /* LLSegmentBar.m in Sources */,
 				0465E395206CD9CD009A2264 /* EditUserInfoController.m in Sources */,
 				046C02132069EC3500FDD974 /* TreatmentCourseRecordViewController.m in Sources */,
 				046C021A2069F49A00FDD974 /* TreatRecordCell.m in Sources */,
@@ -773,10 +859,11 @@
 				049C577F20689A2900180A8B /* EditPasswordController.m in Sources */,
 				046E2E2D2062370800DEFD70 /* QRCameraSwitchButton.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
-				04484FD12064CDBF00467611 /* OnlineDeviceViewController.m in Sources */,
+				04484FD12064CDBF00467611 /* DeviceViewController.m in Sources */,
 				049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */,
 				046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */,
 				046C02102069E48100FDD974 /* BEButton.m in Sources */,
+				0462A40220746736006DB5E0 /* LLSegmentBarConfig.m in Sources */,
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */,
@@ -795,10 +882,15 @@
 				0411BC1C2071FCAA000FC687 /* TaskListViewController.m in Sources */,
 				046C021D206A129400FDD974 /* VASMarkView.m in Sources */,
 				04A5530320737E4900822DB4 /* PopoverTreatwayController.m in Sources */,
+				0462A40F207471DD006DB5E0 /* AllDeviceViewController.m in Sources */,
 				04484FD52064CDF400467611 /* SettingViewController.m in Sources */,
 				041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */,
+				0462A40420746736006DB5E0 /* UIView+LLSegmentBar.m in Sources */,
+				0462A41320749ECA006DB5E0 /* DeviceCollectionViewCell.m in Sources */,
 				046E2E312062370800DEFD70 /* QRCodeReaderView.m in Sources */,
+				0462A40320746736006DB5E0 /* LLSegmentBarVC.m in Sources */,
 				04112065205FBCEC00C91BA0 /* DeviceListViewController.m in Sources */,
+				040D19E82074D246001C51D9 /* FocusMachineAlertView.m in Sources */,
 				049C577A20688E6800180A8B /* ContactServiceView.m in Sources */,
 				041FDD5620722D4300BE6EC9 /* SendTreatmentFailView.m in Sources */,
 			);
