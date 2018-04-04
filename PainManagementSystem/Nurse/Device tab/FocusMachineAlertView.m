@@ -16,7 +16,7 @@
 -(void)awakeFromNib{
     [super awakeFromNib];
     self.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
-    self.backGroundView.layer.cornerRadius = 5.0f;
+//    self.backGroundView.layer.cornerRadius = 5.0f;
 }
 
 +(void)alertControllerAboveIn:(UIViewController *)controller returnBlock:(returnBlock)returnEvent{
