@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="P3W-sV-HTF">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="P3W-sV-HTF">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -32,7 +32,7 @@
                                         <color key="textColor" red="0.97592383620000001" green="0.97666221860000002" blue="0.97603815790000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="head" translatesAutoresizingMaskIntoConstraints="NO" id="9gd-iE-PUF">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="photo" translatesAutoresizingMaskIntoConstraints="NO" id="9gd-iE-PUF">
                                         <rect key="frame" x="30" y="60" width="70" height="70"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PIG-Yz-Pzs">
@@ -698,7 +698,7 @@
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <subviews>
                                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NsY-SA-tni" userLabel="questionBorderView">
-                                                                                <rect key="frame" x="20" y="0.0" width="628" height="44"/>
+                                                                                <rect key="frame" x="20" y="0.0" width="628" height="43.5"/>
                                                                                 <subviews>
                                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="正常" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ml3-cN-UMj">
                                                                                         <rect key="frame" x="324" y="14" width="284" height="18"/>
@@ -2756,7 +2756,6 @@
         <image name="edit" width="28" height="28"/>
         <image name="edit_green" width="28" height="28"/>
         <image name="exit" width="28" height="28"/>
-        <image name="head" width="70" height="70"/>
         <image name="key" width="28" height="28"/>
         <image name="list" width="28" height="28"/>
         <image name="menu_blue" width="28" height="28"/>
@@ -2764,6 +2763,7 @@
         <image name="password" width="28" height="28"/>
         <image name="pause" width="32" height="32"/>
         <image name="pen" width="28" height="28"/>
+        <image name="photo" width="70" height="70"/>
         <image name="scan" width="28" height="26"/>
         <image name="scancode" width="28" height="28"/>
         <image name="setting" width="28" height="28"/>
@@ -2775,7 +2775,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="AlW-sR-Pbz"/>
-        <segue reference="uCp-3Z-f8n"/>
+        <segue reference="Br2-kz-FsG"/>
         <segue reference="mNo-bM-HVs"/>
         <segue reference="K2N-0B-seC"/>
     </inferredMetricsTieBreakers>
