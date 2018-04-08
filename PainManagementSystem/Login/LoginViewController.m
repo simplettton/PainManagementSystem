@@ -52,6 +52,8 @@
     NSString *userName = [UserDefault objectForKey:@"UserName"];
     
     self.userNameTextField.text = (userName==nil) ? @"" : userName;
+    
+    [self.passwordTextField setSecureTextEntry:YES];
 
 }
 - (IBAction)login:(id)sender {

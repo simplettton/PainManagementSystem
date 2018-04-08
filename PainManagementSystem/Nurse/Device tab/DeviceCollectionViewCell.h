@@ -21,5 +21,10 @@ typedef enum _CellStyle {
 @property (weak, nonatomic) IBOutlet UILabel *bedNumLabel;
 @property (weak, nonatomic) IBOutlet UILabel *machineNameLabel;
 
+@property (weak, nonatomic) IBOutlet UIButton *leftButton;
+@property (weak, nonatomic) IBOutlet UIButton *rightButton;
+@property (weak, nonatomic) IBOutlet UIImageView *middleImageView;
+@property (weak, nonatomic) IBOutlet UIButton *middleButton;
+
 -(void)configureWithStyle:(CellStyle) style;
 @end

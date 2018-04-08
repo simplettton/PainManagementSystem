@@ -16,10 +16,11 @@
 
 #define kGreyColor 0xc1c1c1
 @interface DeviceCollectionViewCell()
-@property (weak, nonatomic) IBOutlet UIImageView *middleImageView;
 
-@property (weak, nonatomic) IBOutlet UIButton *leftButton;
-@property (weak, nonatomic) IBOutlet UIButton *rightButton;
+
+
+@property (weak, nonatomic) IBOutlet UIImageView *clockImageView;
+
 
 @end
 @implementation DeviceCollectionViewCell
@@ -46,11 +47,14 @@
             
             self.topView.backgroundColor =UIColorFromHex(0xf9f9f9);
 //            self.topView.backgroundColor = UIColorFromHex(kGreyColor);
-            self.middleImageView.hidden = NO;
+//            self.middleImageView.hidden = NO;
+            self.middleButton.hidden = NO;
             self.leftButton.hidden = YES;
             self.rightButton.hidden = YES;
             
-            self.middleImageView.image = [UIImage imageNamed:@"remark"];
+
+            [self.middleButton setImage:[UIImage imageNamed:@"remark"] forState:UIControlStateNormal];
+//            self.middleImageView.image = [UIImage imageNamed:@"remark"];
             self.machineStateLabel.text = @"本次治疗结束";
             [self.machineStateLabel setTextColor:UIColorFromHex(kBlueColor)];
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
@@ -60,11 +64,14 @@
         case CellStyleGrey_MachinePause:
             
             self.topView.backgroundColor = UIColorFromHex(0xf9f9f9);
-            self.middleImageView.hidden = NO;
+            self.middleButton.hidden = NO;
+//            self.middleImageView.hidden = NO;
             self.leftButton.hidden = YES;
             self.rightButton.hidden = YES;
             
-            self.middleImageView.image = [UIImage imageNamed:@"play"];
+            [self.middleButton setImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
+//            self.middleImageView.image = [UIImage imageNamed:@"play"];
+            
             self.machineStateLabel.text = @"本次治疗未开始/暂停中";
             [self.machineStateLabel setTextColor:UIColorFromHex(kBlueColor)];
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
@@ -75,11 +82,12 @@
             
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
 //            self.contentView.layer.borderColor = UIColorFromHex(kGreenColor).CGColor;
-            self.middleImageView.hidden = YES;
+//            self.middleImageView.hidden = YES;
+            self.middleButton.hidden = YES;
             self.leftButton.hidden = NO;
             self.rightButton.hidden = NO;
             
-            self.machineStateLabel.text = @"治疗中";
+            self.machineStateLabel.text = @"  00:30";
             [self.machineStateLabel setTextColor:UIColorFromHex(kGreenColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             
@@ -89,11 +97,13 @@
             
             self.topView.backgroundColor = UIColorFromHex(kOrangeColor);
 //            self.contentView.layer.borderColor = UIColorFromHex(kOrangeColor).CGColor;
-            self.middleImageView.hidden = NO;
+//            self.middleImageView.hidden = NO;
+            self.middleButton.hidden = NO;
             self.leftButton.hidden = YES;
             self.rightButton.hidden = YES;
             
-            self.middleImageView.image = [UIImage imageNamed:@"alert"];
+            [self.middleButton setImage:[UIImage imageNamed:@"alert"] forState:UIControlStateNormal];
+//            self.middleImageView.image = [UIImage imageNamed:@"alert"];
             self.machineStateLabel.text = @"气囊类型不合适";
             [self.machineStateLabel setTextColor:UIColorFromHex(kOrangeColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
@@ -103,6 +113,8 @@
         default:
             break;
     }
+
+    self.clockImageView.hidden = (style == CellStyleGreen_MachineRunning)? NO:YES;
 }
 
 @end

@@ -10,5 +10,5 @@
 typedef void (^returnBlock)(void);
 @interface FocusMachineAlertView : UIView
 @property (nonatomic,strong)returnBlock returnEvent;
-+(void)alertControllerAboveIn:(UIViewController *)controller returnBlock:(returnBlock)returnEvent;
++(void)alertControllerAboveIn:(UIViewController *)controller withDataDic:(NSDictionary *)dic returnBlock:(returnBlock)returnEvent;
 @end

@@ -19,13 +19,18 @@
 //    self.backGroundView.layer.cornerRadius = 5.0f;
 }
 
-+(void)alertControllerAboveIn:(UIViewController *)controller returnBlock:(returnBlock)returnEvent{
++(void)alertControllerAboveIn:(UIViewController *)controller withDataDic:(NSDictionary *)dic returnBlock:(returnBlock)returnEvent{
     
     FocusMachineAlertView *view = [[NSBundle mainBundle]loadNibNamed:@"FocusMachineAlertView" owner:nil options:nil][0];
     
     view.frame = CGRectMake(0, 0, KScreenWidth, KScreenHeight);
     
     view.returnEvent = returnEvent;
+    
+    //传入字典更新ui
+    if (dic) {
+        [view configureUIWithDic:dic];
+    }
     
     [controller.view addSubview:view];
     
@@ -53,5 +58,9 @@
     [self removeFromSuperview];
 }
 
+-(void)configureUIWithDic:(NSDictionary *)dic
+{
+    
+}
 
 @end

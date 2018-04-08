@@ -58,9 +58,11 @@
     FocusDeviceViewController *follow = [[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"FocusDeviceViewController"];
 //    UIViewController *follow = [[UIViewController alloc] init];
     follow.view.backgroundColor = [UIColor whiteColor];
+    follow.isInAllTab = NO;
     
-    
-    AllDeviceViewController *all = [[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"AllDeviceViewController"];
+    FocusDeviceViewController *all = [[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"FocusDeviceViewController"];
+    all.isInAllTab = YES;
+
     
     // 3 添加标题数组和控住器数组
     [self.segmentVC setUpWithItems:items childVCs:@[follow,all]];

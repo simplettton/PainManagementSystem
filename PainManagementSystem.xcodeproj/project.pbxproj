@@ -65,6 +65,10 @@
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
 		047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */; };
 		047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */; };
+		0481E8C62079EB480099B506 /* HHDropDownList.m in Sources */ = {isa = PBXBuildFile; fileRef = 0481E8BA2079EB390099B506 /* HHDropDownList.m */; };
+		0481E8C82079EB480099B506 /* ListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0481E8BD2079EB390099B506 /* ListCell.m */; };
+		0481E8C92079EB480099B506 /* ListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0481E8BE2079EB390099B506 /* ListCell.xib */; };
+		0481E8D0207A04EB0099B506 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0481E8D2207A04EB0099B506 /* Localizable.strings */; };
 		0495FD1A206F26EA00D01E2C /* Pack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0495FD17206F26EA00D01E2C /* Pack.m */; };
 		0495FD1B206F26EA00D01E2C /* Unpack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0495FD19206F26EA00D01E2C /* Unpack.m */; };
 		049C577A20688E6800180A8B /* ContactServiceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C577920688E6800180A8B /* ContactServiceView.m */; };
@@ -205,6 +209,15 @@
 		047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetNetWorkView.h; sourceTree = "<group>"; };
 		047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetNetWorkView.m; sourceTree = "<group>"; };
 		047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SetNetWorkView.xib; sourceTree = "<group>"; };
+		0481E8B92079EB390099B506 /* HHDropDownList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HHDropDownList.h; sourceTree = "<group>"; };
+		0481E8BA2079EB390099B506 /* HHDropDownList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HHDropDownList.m; sourceTree = "<group>"; };
+		0481E8BC2079EB390099B506 /* ListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCell.h; sourceTree = "<group>"; };
+		0481E8BD2079EB390099B506 /* ListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListCell.m; sourceTree = "<group>"; };
+		0481E8BE2079EB390099B506 /* ListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListCell.xib; sourceTree = "<group>"; };
+		0481E8CC207A049A0099B506 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		0481E8CD207A049A0099B506 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		0481E8D1207A04EB0099B506 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		0481E8D3207A04FF0099B506 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0495FD16206F26EA00D01E2C /* Pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pack.h; sourceTree = "<group>"; };
 		0495FD17206F26EA00D01E2C /* Pack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pack.m; sourceTree = "<group>"; };
 		0495FD18206F26EA00D01E2C /* Unpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unpack.h; sourceTree = "<group>"; };
@@ -345,6 +358,7 @@
 				04ED0EC120528A1800638850 /* LaunchScreen.storyboard */,
 				04ED0EC420528A1800638850 /* Info.plist */,
 				04ED0EC520528A1800638850 /* main.m */,
+				0481E8D2207A04EB0099B506 /* Localizable.strings */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -532,6 +546,18 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		0481E8B12079EB380099B506 /* HHDropDownList */ = {
+			isa = PBXGroup;
+			children = (
+				0481E8B92079EB390099B506 /* HHDropDownList.h */,
+				0481E8BA2079EB390099B506 /* HHDropDownList.m */,
+				0481E8BC2079EB390099B506 /* ListCell.h */,
+				0481E8BD2079EB390099B506 /* ListCell.m */,
+				0481E8BE2079EB390099B506 /* ListCell.xib */,
+			);
+			path = HHDropDownList;
+			sourceTree = "<group>";
+		};
 		0495FD15206F26EA00D01E2C /* DataAnalyze */ = {
 			isa = PBXGroup;
 			children = (
@@ -569,12 +595,13 @@
 			isa = PBXGroup;
 			children = (
 				A64B4D032071392E00DB6619 /* PainManagementSystem.entitlements */,
+				046E2E132062370800DEFD70 /* QRCodeReaderViewController */,
+				0481E8B12079EB380099B506 /* HHDropDownList */,
 				0462A3F820746736006DB5E0 /* LLSegment */,
 				0495FD15206F26EA00D01E2C /* DataAnalyze */,
 				041B791A2068ECF1001D04C8 /* Supporting Files */,
 				04484FD22064CDC900467611 /* Nurse */,
 				04484FD62064D25F00467611 /* Login */,
-				046E2E132062370800DEFD70 /* QRCodeReaderViewController */,
 				04112066205FBCF700C91BA0 /* Agent */,
 				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
 				04484FDA2064D72500467611 /* NetWorkTool.h */,
@@ -748,6 +775,7 @@
 				046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */,
 				04C8B661206B75C400DEB3F0 /* Record.plist in Resources */,
 				0411BC2120721629000FC687 /* SendTreatmentSuccessView.xib in Resources */,
+				0481E8D0207A04EB0099B506 /* Localizable.strings in Resources */,
 				0419F406207331A800C83C2B /* TreatmentParam.plist in Resources */,
 				046E2E332062370800DEFD70 /* QRCodeBottomLeft@2x.png in Resources */,
 				046E2E372062370800DEFD70 /* QRCodeLine@2x.png in Resources */,
@@ -761,6 +789,7 @@
 				04ED0EBE20528A1800638850 /* Main.storyboard in Resources */,
 				046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */,
 				046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */,
+				0481E8C92079EB480099B506 /* ListCell.xib in Resources */,
 				046E2E392062370800DEFD70 /* QRCodeTopLeft@2x.png in Resources */,
 				049C577C20688EA700180A8B /* ContactServiceView.xib in Resources */,
 			);
@@ -866,6 +895,7 @@
 				0462A40220746736006DB5E0 /* LLSegmentBarConfig.m in Sources */,
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
+				0481E8C82079EB480099B506 /* ListCell.m in Sources */,
 				047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */,
 				045F6C8B206E2241006DBBF7 /* HttpResponse.m in Sources */,
 				0465E390206C7563009A2264 /* RecordModel.m in Sources */,
@@ -876,6 +906,7 @@
 				0495FD1B206F26EA00D01E2C /* Unpack.m in Sources */,
 				04C8B64F206B4ACD00DEB3F0 /* RecordDetailViewController.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
+				0481E8C62079EB480099B506 /* HHDropDownList.m in Sources */,
 				04ED0EC620528A1800638850 /* main.m in Sources */,
 				04C8B65F206B711000DEB3F0 /* RecordItemCell.m in Sources */,
 				0411BC192071D235000FC687 /* TaskCell.m in Sources */,
@@ -928,10 +959,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		0481E8D2207A04EB0099B506 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0481E8D1207A04EB0099B506 /* zh-Hans */,
+				0481E8D3207A04FF0099B506 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		04ED0EBC20528A1800638850 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				04ED0EBD20528A1800638850 /* Base */,
+				0481E8CC207A049A0099B506 /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -940,6 +981,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				04ED0EC220528A1800638850 /* Base */,
+				0481E8CD207A049A0099B506 /* zh-Hans */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -951,6 +993,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1006,6 +1049,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

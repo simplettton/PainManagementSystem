@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+typedef enum _DeviceType
+{
+    DeviceTypeOnline = 0,
+    DeviceTypeLocal = 1
+}DeviceType;
 @interface FocusDeviceViewController : UIViewController
+
+@property (assign,nonatomic) BOOL isInAllTab;
 
 @end

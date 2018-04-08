@@ -80,6 +80,7 @@
     if (cell == nil) {
         cell = [[TaskCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
     cell.scanButton.tag = indexPath.row;
     
@@ -120,6 +121,7 @@
 }
 
 -(void)showPopover:(UIButton *)sender {
+
     [self performSegueWithIdentifier:@"ShowPopover" sender:sender];
 }
 
