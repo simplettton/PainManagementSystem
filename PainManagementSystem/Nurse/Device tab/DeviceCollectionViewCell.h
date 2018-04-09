@@ -11,7 +11,9 @@ typedef enum _CellStyle {
     CellStyleGreen_MachineRunning  = 0,
     CellStyleGrey_MachineStop,
     CellStyleGrey_MachinePause,
-    CellStyleOrange_MachineException
+    CellStyleOrange_MachineException,
+    CellStyle_LocalUnconnect,
+    CellStyle_LocalConnect
 } CellStyle;
 @interface DeviceCollectionViewCell : UICollectionViewCell
 @property (nonatomic,assign) CellStyle style;
@@ -24,7 +26,23 @@ typedef enum _CellStyle {
 @property (weak, nonatomic) IBOutlet UIButton *leftButton;
 @property (weak, nonatomic) IBOutlet UIButton *rightButton;
 @property (weak, nonatomic) IBOutlet UIImageView *middleImageView;
-@property (weak, nonatomic) IBOutlet UIButton *middleButton;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UIButton *remarkButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *btnDelete;
+
+
+//本地设备
+@property (weak, nonatomic) IBOutlet UIButton *BLEPauseButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *BLEStopButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *connectButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *BLEPlayButton;
+
+
+
 
 -(void)configureWithStyle:(CellStyle) style;
 @end

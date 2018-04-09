@@ -36,41 +36,29 @@
     layer.backgroundColor = UIColorFromHex(0xbbbbbb).CGColor;
     [self.topView.layer addSublayer:layer];
     
-    
-    
 }
 
 -(void)configureWithStyle:(CellStyle)style{
+    
+    self.style =style;
+    
     switch (style) {
             
         case CellStyleGrey_MachineStop:
             
             self.topView.backgroundColor =UIColorFromHex(0xf9f9f9);
 //            self.topView.backgroundColor = UIColorFromHex(kGreyColor);
-//            self.middleImageView.hidden = NO;
-            self.middleButton.hidden = NO;
-            self.leftButton.hidden = YES;
-            self.rightButton.hidden = YES;
-            
 
-            [self.middleButton setImage:[UIImage imageNamed:@"remark"] forState:UIControlStateNormal];
-//            self.middleImageView.image = [UIImage imageNamed:@"remark"];
             self.machineStateLabel.text = @"本次治疗结束";
             [self.machineStateLabel setTextColor:UIColorFromHex(kBlueColor)];
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
-            
+
             break;
             
         case CellStyleGrey_MachinePause:
             
             self.topView.backgroundColor = UIColorFromHex(0xf9f9f9);
-            self.middleButton.hidden = NO;
-//            self.middleImageView.hidden = NO;
-            self.leftButton.hidden = YES;
-            self.rightButton.hidden = YES;
-            
-            [self.middleButton setImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
-//            self.middleImageView.image = [UIImage imageNamed:@"play"];
+
             
             self.machineStateLabel.text = @"本次治疗未开始/暂停中";
             [self.machineStateLabel setTextColor:UIColorFromHex(kBlueColor)];
@@ -80,13 +68,9 @@
             
         case CellStyleGreen_MachineRunning:
             
-            self.topView.backgroundColor = UIColorFromHex(kGreenColor);
-//            self.contentView.layer.borderColor = UIColorFromHex(kGreenColor).CGColor;
-//            self.middleImageView.hidden = YES;
-            self.middleButton.hidden = YES;
-            self.leftButton.hidden = NO;
-            self.rightButton.hidden = NO;
             
+            self.topView.backgroundColor = UIColorFromHex(kGreenColor);
+
             self.machineStateLabel.text = @"  00:30";
             [self.machineStateLabel setTextColor:UIColorFromHex(kGreenColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
@@ -96,25 +80,46 @@
         case CellStyleOrange_MachineException:
             
             self.topView.backgroundColor = UIColorFromHex(kOrangeColor);
-//            self.contentView.layer.borderColor = UIColorFromHex(kOrangeColor).CGColor;
-//            self.middleImageView.hidden = NO;
-            self.middleButton.hidden = NO;
-            self.leftButton.hidden = YES;
-            self.rightButton.hidden = YES;
-            
-            [self.middleButton setImage:[UIImage imageNamed:@"alert"] forState:UIControlStateNormal];
-//            self.middleImageView.image = [UIImage imageNamed:@"alert"];
+
+          
             self.machineStateLabel.text = @"气囊类型不合适";
             [self.machineStateLabel setTextColor:UIColorFromHex(kOrangeColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             
             break;
+        case CellStyle_LocalConnect:
+            
+            self.topView.backgroundColor = UIColorFromHex(kGreenColor);
+            [self.machineNameLabel setTextColor:[UIColor whiteColor]];
+            
+            self.BLEPlayButton.hidden = NO;
+            self.BLEPauseButton.hidden = NO;
+            self.BLEStopButton.hidden = NO;
+            self.connectButton.hidden = YES;
+            
+            break;
+        case CellStyle_LocalUnconnect:
+            
+            self.topView.backgroundColor =UIColorFromHex(0xf9f9f9);
+            [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
+            
+            self.BLEPlayButton.hidden = YES;
+            self.BLEPauseButton.hidden = YES;
+            self.BLEStopButton.hidden = YES;
+            self.connectButton.hidden = NO;
             
         default:
             break;
     }
 
     self.clockImageView.hidden = (style == CellStyleGreen_MachineRunning)? NO:YES;
+    self.leftButton.hidden  = (style == CellStyleGreen_MachineRunning)? NO:YES;
+    self.rightButton.hidden  = (style == CellStyleGreen_MachineRunning)? NO:YES;
+    self.middleImageView.hidden = (style == CellStyleOrange_MachineException)?NO:YES;
+    self.playButton.hidden = (style == CellStyleGrey_MachinePause)?NO:YES;
+    self.remarkButton.hidden = (style == CellStyleGrey_MachineStop || style == CellStyle_LocalUnconnect)?NO:YES;
+    
+
 }
 
 @end

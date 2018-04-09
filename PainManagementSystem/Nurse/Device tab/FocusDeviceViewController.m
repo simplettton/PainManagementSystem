@@ -41,6 +41,8 @@
 
 @property (strong, nonatomic) NSArray *dropListArray;
 
+@property (strong, nonatomic)UILongPressGestureRecognizer *longPress;
+
 @end
 
 @implementation FocusDeviceViewController
@@ -96,11 +98,33 @@
     //数据源
     NSArray *dataArray = [[NSArray alloc]init];
     if (self.isInAllTab) {
-        dataArray = @[@{},@{},@{},@{},@{},@{},@{},@{},@{}];
+        dataArray = @[@{@"state":@"running"},
+                      @{@"state":@"stop"},
+                      @{@"state":@"pause"},
+                      @{@"state":@"alert"},
+                      @{@"state":@"running"},
+                      @{@"state":@"stop"},
+                      @{@"state":@"pause"},
+                      @{@"state":@"running"},
+                      @{@"state":@"alert"}];
     }else{
-        dataArray = @[@{},@{},@{},@{},@{}];
+        dataArray = @[@{@"state":@"running",@"serialnum":@"1234567"},
+                      @{@"state":@"stop",@"serialnum":@"1234256"},
+                      @{@"state":@"pause",@"serialnum":@"4334567"},
+                      @{@"state":@"alert",@"serialnum":@"2222267"},
+                      @{@"state":@"running",@"serialnum":@"16844567"},
+                      @{@"state":@"running",@"serialnum":@"12345600"},
+                      @{@"state":@"stop",@"serialnum":@"1234200"},
+                      @{@"state":@"pause",@"serialnum":@"43300567"},
+                      @{@"state":@"alert",@"serialnum":@"22200267"},
+                      @{@"state":@"running",@"serialnum":@"1684007"},
+                      @{@"state":@"running",@"serialnum":@"1134567"},
+                      @{@"state":@"stop",@"serialnum":@"1134256"},
+                      @{@"state":@"pause",@"serialnum":@"1134567"},
+                      @{@"state":@"alert",@"serialnum":@"1122267"},
+                      @{@"state":@"running",@"serialnum":@"11844567"}];
     }
-    datas = [dataArray copy];
+    datas = [dataArray mutableCopy];
     
     
     //seguement 在线或者本地
@@ -121,6 +145,64 @@
 
     [self.dropList reloadListData];
     
+    //关注中 longpress 添加手势
+    if (!self.isInAllTab) {
+        _longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(lonePressMoving:)];
+        [self.collectionView addGestureRecognizer:_longPress];
+    }
+    
+    
+}
+
+- (void)lonePressMoving:    (UILongPressGestureRecognizer *)longPress
+{
+    switch (_longPress.state) {
+        case UIGestureRecognizerStateBegan: {
+            {
+                NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
+                
+                if (selectIndexPath == nil) {
+                    break;
+                }
+                
+                // 找到当前的cell
+                DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
+                // 定义cell的时候btn是隐藏的, 在这里设置为NO
+                [cell.btnDelete setHidden:NO];
+
+                cell.btnDelete.tag = selectIndexPath.item;
+                NSLog(@"selectIndexPath .item = %ld",(long)cell.btnDelete.tag);
+                
+                //添加删除的点击事件
+                [cell.btnDelete addTarget:self action:@selector(btnDelete:) forControlEvents:UIControlEventTouchUpInside];
+
+                [_collectionView beginInteractiveMovementForItemAtIndexPath:selectIndexPath];
+                
+                
+                //cell.layer添加抖动手势
+                for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                    [self starShake:cell];
+                }
+                
+            }
+            break;
+        }
+        case UIGestureRecognizerStateChanged: {
+            [self.collectionView updateInteractiveMovementTargetPosition:[longPress locationInView:_longPress.view]];
+            break;
+        }
+        case UIGestureRecognizerStateEnded: {
+            [self.collectionView endInteractiveMovement];
+            //cell.layer移除抖动手势
+//            for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+//                [self stopShake:cell];
+//            }
+
+            break;
+        }
+        default: [self.collectionView cancelInteractiveMovement];
+            break;
+    }
 }
 
 -(HHDropDownList *)dropList{
@@ -147,7 +229,21 @@
         case DeviceTypeOnline:
         {
             
-            dataArray = @[@{},@{},@{},@{},@{}];
+            dataArray = @[@{@"state":@"running",@"serialnum":@"1234567"},
+                          @{@"state":@"stop",@"serialnum":@"1234256"},
+                          @{@"state":@"pause",@"serialnum":@"4334567"},
+                          @{@"state":@"alert",@"serialnum":@"2222267"},
+                          @{@"state":@"running",@"serialnum":@"16844567"},
+                          @{@"state":@"running",@"serialnum":@"12345600"},
+                          @{@"state":@"stop",@"serialnum":@"1234200"},
+                          @{@"state":@"pause",@"serialnum":@"43300567"},
+                          @{@"state":@"alert",@"serialnum":@"22200267"},
+                          @{@"state":@"running",@"serialnum":@"1684007"},
+                          @{@"state":@"running",@"serialnum":@"1134567"},
+                          @{@"state":@"stop",@"serialnum":@"1134256"},
+                          @{@"state":@"pause",@"serialnum":@"1134567"},
+                          @{@"state":@"alert",@"serialnum":@"1122267"},
+                          @{@"state":@"running",@"serialnum":@"11844567"}];
             self.dropList.hidden = NO;
         
         }
@@ -156,7 +252,10 @@
         case DeviceTypeLocal:
         {
             
-            dataArray = @[@{},@{},@{},@{}];
+            dataArray = @[@{@"state":@"connect",@"serialnum":@"1234567"},
+                          @{@"state":@"unconnect",@"serialnum":@"1234256"},
+                          @{@"state":@"unconnect",@"serialnum":@"223567"},
+                          @{@"state":@"unconnect",@"serialnum":@"2232267"}];
             self.dropList.hidden = YES;
         }
             break;
@@ -165,7 +264,7 @@
             break;
     }
 
-    datas = [dataArray copy];
+    datas = [dataArray mutableCopy];
     [self.collectionView reloadData];
 }
 
@@ -189,29 +288,39 @@
             
             cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
             
-            if (indexPath.row == 1) {
-                [cell configureWithStyle:CellStyleGrey_MachinePause];
-            }else{
-                switch (indexPath.row %3) {
-                    case 0:
-                        
-                        [cell configureWithStyle:CellStyleOrange_MachineException];
-                        break;
-                    case 1:
-                        
-                        [cell configureWithStyle:CellStyleGreen_MachineRunning];
-                        break;
-                    case 2:
-                        
-                        [cell configureWithStyle:CellStyleGrey_MachineStop];
-                        [cell.middleButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
-                        break;
-                    default:
-                        break;
-                }
+            NSDictionary *dic = [datas objectAtIndex:indexPath.row];
+            
+            NSString *state = [dic objectForKey:@"state"];
+            
+            NSDictionary *stateDic = @
+            {@"running":[NSNumber numberWithInteger:CellStyleGreen_MachineRunning],
+                @"stop":[NSNumber numberWithInteger:CellStyleGrey_MachineStop],
+               @"pause":[NSNumber numberWithInteger:CellStyleGrey_MachinePause],
+               @"alert":[NSNumber numberWithInteger:CellStyleOrange_MachineException],
+                @"connect":[NSNumber numberWithInteger:CellStyle_LocalConnect],
+                @"unconnect":[NSNumber numberWithInteger:CellStyle_LocalUnconnect]
+            };
+            
+            NSNumber *stateNumber = [stateDic objectForKey:state];
+            
+            [cell configureWithStyle:[stateNumber intValue]];
+            cell.btnDelete.hidden = YES;
+            
+            //按钮操作
+            switch (cell.style) {
+                case CellStyleGrey_MachineStop:
+                    [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
+                    break;
+                case CellStyleGrey_MachinePause:
+                    [cell.playButton addTarget:self action:@selector(playAction:) forControlEvents:UIControlEventTouchUpInside];
+                    break;
+                case CellStyleGreen_MachineRunning:
+                    [cell.leftButton addTarget:self action:@selector(pauseAction:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell.rightButton addTarget:self action:@selector(stopAction:) forControlEvents:UIControlEventTouchUpInside];
+                    break;
+                default:
+                    break;
             }
-            
-            
         }
             
             break;
@@ -221,6 +330,22 @@
             CellIdentifier = @"LocalDeviceCell";
             
             cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
+            
+            NSDictionary *dic = [datas objectAtIndex:indexPath.row];
+            
+            NSString *state = [dic objectForKey:@"state"];
+            
+            NSDictionary *stateDic = @
+            {
+                @"connect":[NSNumber numberWithInteger:CellStyle_LocalConnect],
+                @"unconnect":[NSNumber numberWithInteger:CellStyle_LocalUnconnect]
+            };
+            
+            NSNumber *stateNumber = [stateDic objectForKey:state];
+            
+            [cell configureWithStyle:[stateNumber intValue]];
+            cell.btnDelete.hidden = YES;
+            [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
             
         }
             
@@ -235,34 +360,108 @@
         cell = [[DeviceCollectionViewCell alloc]init];
     }
     
-
-
-    UILongPressGestureRecognizer* longgs=[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longpress:)];
-    [cell addGestureRecognizer:longgs];//为cell添加手势
-    longgs.minimumPressDuration=1.0;//定义长按识别时长
-    longgs.view.tag=indexPath.row;//将手势和cell的序号绑定
-
-
     return cell;
 }
+
 -(void)goToRemarkVAS:(UIButton *)button{
     [self performSegueWithIdentifier:@"GoToRemarkVAS" sender:button];
+    NSLog(@"vas评分");
+}
+-(void)playAction:(UIButton *)button{
+    NSLog(@"开始治疗");
+}
+-(void)stopAction:(UIButton *)button{
+    NSLog(@"停止治疗");
+    
+}
+-(void)pauseAction:(UIButton *)button{
+    NSLog(@"暂停治疗");
 }
 
--(void)longpress:(UILongPressGestureRecognizer*)ges{
-    if(ges.state==UIGestureRecognizerStateBegan){
-        //获取目标cell
-        NSInteger row=ges.view.tag;
-        //删除操作
-        if(datas.count >1){
-            NSIndexPath *index =[NSIndexPath indexPathForRow:row inSection:0];
-            NSArray* deletearr=@[index];
-            [self.collectionView deleteItemsAtIndexPaths:deletearr];
-        }else{
-            [self.collectionView reloadData];
-            
-        }
-    }
+//3.设置可移动
+-(BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+//4.移动完成后的方法  －－ 交换数据
+-(void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
+{
+//    [datas exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+//    NSLog(@"data = %@",datas);
+    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
+    // 找到当前的cell
+    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
+    
+    //取出源item数据
+    id objc = [datas objectAtIndex:sourceIndexPath.item];
+    //从资源数组中移除该数据
+    [datas removeObject:objc];
+    //将数据插入到资源数组中的目标位置上
+    [datas insertObject:objc atIndex:destinationIndexPath.item];
+    [self.collectionView reloadData];
+    
+
+
+}
+- (void)starShake:(DeviceCollectionViewCell*)cell{
+    
+    CAKeyframeAnimation * keyAnimaion = [CAKeyframeAnimation animation];
+    keyAnimaion.keyPath = @"transform.rotation";
+    keyAnimaion.values = @[@(-3 / 180.0 * M_PI),@(3 /180.0 * M_PI),@(-3/ 180.0 * M_PI)];//度数转弧度
+    keyAnimaion.removedOnCompletion = NO;
+    keyAnimaion.fillMode = kCAFillModeForwards;
+    keyAnimaion.duration = 0.3;
+    keyAnimaion.repeatCount = MAXFLOAT;
+    [cell.layer addAnimation:keyAnimaion forKey:@"cellShake"];
+}
+- (void)stopShake:(DeviceCollectionViewCell*)cell{
+    [cell.layer removeAnimationForKey:@"cellShake"];
+}
+//删除代码
+#pragma mark---btn的删除cell事件
+
+- (void)btnDelete:(UIButton *)btn{
+    //cell的隐藏删除设置
+    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
+    // 找到当前的cell
+    __block DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
+    cell.btnDelete.hidden = NO;
+    
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要取消关注设备吗？"
+                                                                   message:@"取消关注操作将不可恢复。"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              [self.collectionView reloadData];
+                                                              
+                                                              for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                  [self stopShake:cell];
+                                                              }
+                                                          }];
+    
+    UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注" style:UIAlertActionStyleDestructive
+                                                              handler:^(UIAlertAction * action) {
+                                                                  //取出源item数据
+                                                                  id objc = [datas objectAtIndex:btn.tag];
+                                                                  //从资源数组中移除该数据
+                                                                  [datas removeObject:objc];
+                                                                  [self.collectionView reloadData];
+                                                                  
+                                                                  
+                                                                  for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                      [self stopShake:cell];
+                                                                  }
+                                                              }];
+    
+    [alert addAction:defaultAction];
+    
+    [alert addAction:cancelFocusAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+    
+
 }
 
 // 允许选中时，高亮
@@ -272,6 +471,12 @@
 // 设置是否允许选中
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"%s", __FUNCTION__);
+    //cell.layer移除抖动手势
+    for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+        [self stopShake:cell];
+    }
+    [collectionView reloadData];
+    
     return YES;
 }
 
@@ -302,7 +507,7 @@
 //设置每个item垂直间距
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
 {
-    return 25;
+    return 40;
 }
 
 

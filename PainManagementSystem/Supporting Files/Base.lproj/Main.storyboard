@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="P3W-sV-HTF">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="P3W-sV-HTF">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -1278,11 +1278,15 @@
                                 <rect key="frame" x="28" y="126" width="720" height="817"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uab-vc-2Wl">
-                                        <rect key="frame" x="16" y="62" width="688" height="692"/>
+                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z2M-Re-E7Q">
+                                        <rect key="frame" x="8" y="14" width="196" height="35"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </view>
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" indicatorStyle="white" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uab-vc-2Wl">
+                                        <rect key="frame" x="16" y="72" width="688" height="673"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="25" minimumInteritemSpacing="5" id="Vmg-af-GkR">
+                                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="40" minimumInteritemSpacing="5" id="Vmg-af-GkR">
                                             <size key="itemSize" width="220" height="186"/>
                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -1300,13 +1304,18 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="220" height="36"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <subviews>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="空气波-设备昵称" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YcX-Vc-Gf3">
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="空气波-设备昵称" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YcX-Vc-Gf3">
                                                                     <rect key="frame" x="45" y="8" width="129" height="21"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                                     <color key="textColor" red="0.97647058819999999" green="0.97647058819999999" blue="0.97647058819999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
+                                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e3N-bT-9AJ">
+                                                                    <rect key="frame" x="8" y="6" width="25" height="25"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <state key="normal" image="delete_pink"/>
+                                                                </button>
                                                             </subviews>
                                                             <color key="backgroundColor" red="0.97254901959999995" green="0.69803921570000005" blue="0.45098039220000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </view>
@@ -1349,23 +1358,30 @@
                                                             <rect key="frame" x="67" y="92" width="22" height="22"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         </imageView>
-                                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zku-84-rOm">
+                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zku-84-rOm" userLabel="Play Button">
                                                             <rect key="frame" x="94" y="52" width="28" height="28"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="alert"/>
+                                                            <state key="normal" image="play"/>
+                                                        </button>
+                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Mn-b9-H0X" userLabel="Remark Button">
+                                                            <rect key="frame" x="94" y="52" width="28" height="28"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <state key="normal" image="remark"/>
                                                         </button>
                                                     </subviews>
                                                 </view>
                                                 <size key="customSize" width="220" height="186"/>
                                                 <connections>
                                                     <outlet property="bedNumLabel" destination="x44-nW-CET" id="KLp-Vl-766"/>
+                                                    <outlet property="btnDelete" destination="e3N-bT-9AJ" id="BTX-Bt-7O9"/>
                                                     <outlet property="clockImageView" destination="QN2-J9-FPZ" id="FXG-L1-jFd"/>
                                                     <outlet property="leftButton" destination="1rb-TC-Lsl" id="HfE-VX-Yeu"/>
                                                     <outlet property="machineNameLabel" destination="YcX-Vc-Gf3" id="FB7-Uo-kvU"/>
                                                     <outlet property="machineStateLabel" destination="S18-Es-CDo" id="awx-6T-jHv"/>
-                                                    <outlet property="middleButton" destination="zku-84-rOm" id="Eib-Fa-Ap9"/>
                                                     <outlet property="middleImageView" destination="qWF-hQ-7Gn" id="ML2-JT-ap1"/>
                                                     <outlet property="patientLabel" destination="HDU-pA-fkd" id="e9a-L6-WKa"/>
+                                                    <outlet property="playButton" destination="zku-84-rOm" id="IbT-Fm-2Mi"/>
+                                                    <outlet property="remarkButton" destination="6Mn-b9-H0X" id="kfS-Xb-tSM"/>
                                                     <outlet property="rightButton" destination="ftO-wm-Rgs" id="oNN-uR-HfQ"/>
                                                     <outlet property="topView" destination="97P-jZ-DcI" id="gML-q1-fy0"/>
                                                 </connections>
@@ -1381,13 +1397,18 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="220" height="36"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <subviews>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="血瘘-设备昵称" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sjw-IS-A4v">
-                                                                    <rect key="frame" x="45" y="8" width="129" height="21"/>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="血瘘-设备昵称" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sjw-IS-A4v">
+                                                                    <rect key="frame" x="46" y="8" width="129" height="21"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                                     <color key="textColor" red="0.36862745099999999" green="0.59215686270000001" blue="0.99607843139999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
+                                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z5y-03-CjK">
+                                                                    <rect key="frame" x="8" y="6" width="25" height="25"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <state key="normal" image="delete_pink"/>
+                                                                </button>
                                                             </subviews>
                                                             <color key="backgroundColor" red="0.97647058823529409" green="0.97647058823529409" blue="0.97647058823529409" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </view>
@@ -1406,34 +1427,43 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qnF-CH-pgq">
-                                                            <rect key="frame" x="59" y="50" width="35" height="35"/>
+                                                            <rect key="frame" x="49" y="59" width="35" height="35"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <state key="normal" image="pause"/>
                                                         </button>
                                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OX9-QY-vh2">
-                                                            <rect key="frame" x="122" y="48" width="35" height="35"/>
+                                                            <rect key="frame" x="137" y="59" width="35" height="35"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <state key="normal" image="stop"/>
                                                         </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SRn-zY-c0w">
-                                                            <rect key="frame" x="94" y="52" width="28" height="28"/>
+                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d5f-pF-FQO">
+                                                            <rect key="frame" x="94" y="59" width="35" height="35"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="bluetooth"/>
+                                                            <state key="normal" image="play"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CRz-TS-Jck">
                                                             <rect key="frame" x="185" y="149" width="25" height="25"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <state key="normal" image="edit_green"/>
                                                         </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SRn-zY-c0w">
+                                                            <rect key="frame" x="96" y="64" width="28" height="28"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <state key="normal" image="bluetooth"/>
+                                                        </button>
                                                     </subviews>
                                                 </view>
                                                 <size key="customSize" width="220" height="186"/>
                                                 <connections>
+                                                    <outlet property="BLEPauseButton" destination="qnF-CH-pgq" id="VuS-Sr-ntS"/>
+                                                    <outlet property="BLEPlayButton" destination="d5f-pF-FQO" id="7et-D4-Qcy"/>
+                                                    <outlet property="BLEStopButton" destination="OX9-QY-vh2" id="jb2-uU-koy"/>
                                                     <outlet property="bedNumLabel" destination="9tQ-nG-H2v" id="It5-jF-bFI"/>
-                                                    <outlet property="leftButton" destination="qnF-CH-pgq" id="FVt-9x-p4i"/>
+                                                    <outlet property="btnDelete" destination="z5y-03-CjK" id="C82-Bg-wfx"/>
+                                                    <outlet property="connectButton" destination="SRn-zY-c0w" id="ang-wv-5fv"/>
                                                     <outlet property="machineNameLabel" destination="Sjw-IS-A4v" id="y5R-d6-NhC"/>
                                                     <outlet property="patientLabel" destination="Myl-bd-mh9" id="uVT-4L-qBu"/>
-                                                    <outlet property="rightButton" destination="OX9-QY-vh2" id="mC3-Vp-7U2"/>
+                                                    <outlet property="remarkButton" destination="CRz-TS-Jck" id="fzs-go-3CE"/>
                                                     <outlet property="topView" destination="qu3-or-ZGS" id="PMu-d8-hfT"/>
                                                 </connections>
                                             </collectionViewCell>
@@ -1443,10 +1473,6 @@
                                             <outlet property="delegate" destination="Fva-hp-oaq" id="6Qc-aq-KPF"/>
                                         </connections>
                                     </collectionView>
-                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z2M-Re-E7Q">
-                                        <rect key="frame" x="8" y="14" width="196" height="35"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
@@ -2751,6 +2777,7 @@
         <image name="cloud_white" width="28" height="19"/>
         <image name="computer" width="28" height="28"/>
         <image name="contact" width="28" height="28"/>
+        <image name="delete_pink" width="28" height="28"/>
         <image name="devices" width="28" height="28"/>
         <image name="doublechannel" width="85" height="85"/>
         <image name="edit" width="28" height="28"/>
@@ -2764,6 +2791,8 @@
         <image name="pause" width="32" height="32"/>
         <image name="pen" width="28" height="28"/>
         <image name="photo" width="70" height="70"/>
+        <image name="play" width="28" height="28"/>
+        <image name="remark" width="28" height="28"/>
         <image name="scan" width="28" height="26"/>
         <image name="scancode" width="28" height="28"/>
         <image name="setting" width="28" height="28"/>
