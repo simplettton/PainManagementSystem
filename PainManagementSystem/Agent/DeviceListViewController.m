@@ -41,52 +41,21 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
     
-    [self askForData];
+
 }
 
 -(void)initAll{
     
     //searchBarDelegate
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
-    self.searchBar.tintColor = [UIColor blackColor];//出现光标
+    self.searchBar.tintColor = UIColorFromHex(0x5e97fe);//出现光标
     self.searchBar.delegate = self;
     
     //tableview
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.allowsMultipleSelectionDuringEditing = YES;
     
-//    datas = [[NSMutableArray alloc]initWithCapacity:20];
-//    datas = [NSMutableArray arrayWithObjects:
-//             @{@"machinetype":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-//             @{@"machinetype":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874458"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874459"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874450"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874451"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874356"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874556"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874856"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12307874456"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12867874456"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"82367874456"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12967874456"},
-//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"15367874456"},
-//
-//             @{@"machinetype":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科二号",@"serialNum":@"13654979946"},
-//             @{@"machinetype":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科二号",@"serialNum":@"45645615764"},
-//
-//             @{@"machinetype":@"空气波",@"macString":@"dftueqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-//             @{@"machinetype":@"空气波",@"macString":@"fjwtstds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-//
-//             @{@"machinetype":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-//             @{@"machinetype":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-//             nil];
-//
-//
-//
-//
-//
+
     _typeDic = @{
                  @7681:@"空气波",
                  @57119:@"血瘘",
@@ -95,18 +64,20 @@
                  @56836:@"电疗"
 
                  };
-
-
+    
+    [self askForData];
 }
+
 -(void)askForData{
     
-    
+    datas = [[NSMutableArray alloc]initWithCapacity:20];
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/Count"]
                                   params:@{
                                            
                                            }
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
+                                     
                                      
                                      if ([responseObject.result intValue]==1) {
                                          NSString *count = responseObject.content[@"count"];
@@ -125,7 +96,7 @@
                                                                                     }
                                                                          hasToken:YES
                                                                           success:^(HttpResponse *responseObject) {
-                                                                              datas = [[NSMutableArray alloc]initWithCapacity:20];
+
                                                                               if ([responseObject.result intValue] == 1) {
                                                                                   NSDictionary *content = responseObject.content;
                                                                                   NSLog(@"receive content = %@",content);
@@ -140,13 +111,10 @@
                                                                               }
                                                                           } failure:nil];
                                          }
-                                         
-                                         
-                                         
-                                     }else{
-                                         
+   
                                      }
                                  } failure:nil];
+
 }
 
 
@@ -301,34 +269,58 @@
 
 - (IBAction)search:(id)sender {
     if ([self.searchBar.text length]>0) {
+
         
-        NSLog(@"------search: %@-----",self.searchBar.text);
-    }
+        datas = [[NSMutableArray alloc]initWithCapacity:20];
+        
+
+        NSMutableDictionary *paramDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+        if ([[_typeDic allValues]containsObject:self.searchBar.text]) {
+            
+                    //机器类型转换
+            [_typeDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+                
+                if([obj isEqualToString:self.searchBar.text]){
+                    
+                    [paramDic setObject:key forKey:@"machinetype"];
+                    [self searchRequestWithParam:paramDic];
+                }
+            }];
+            
+        }else{
+                    //搜索序列号或者名称
+            [paramDic setObject:self.searchBar.text forKey:@"key"];
+            [self searchRequestWithParam:paramDic];
+            
+        }
+
+
+        
+    [self.searchBar resignFirstResponder];
     
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/ListDBDevice"]
-                                  params:@{
-                                           @"machinetype":self.searchBar.text
-                                           }
+    }
+}
+-(void)searchRequestWithParam:(NSMutableDictionary *)dictionary{
+    
+    NSDictionary *param = (NSDictionary *)dictionary;
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/ListDBDeviceFuzzy"]
+                                  params:@{@"machinetype":@"7681"}
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
-                                     datas = [[NSMutableArray alloc]initWithCapacity:20];
                                      if ([responseObject.result intValue] == 1) {
                                          NSDictionary *content = responseObject.content;
                                          NSLog(@"receive content = %@",content);
                                          for (NSDictionary *dic in content) {
                                              [datas addObject:dic];
                                          }
-                                         
                                          [self.tableView reloadData];
+
                                      }
-                                     else{
-                                         
-                                     }
+                                     
                                  }
                                  failure:nil];
 
-    [self.searchBar resignFirstResponder];
-    
 }
 
 //关闭键盘

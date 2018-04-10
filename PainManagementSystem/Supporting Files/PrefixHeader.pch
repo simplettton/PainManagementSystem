@@ -47,5 +47,6 @@
 #define UserDefault [NSUserDefaults standardUserDefaults]
 #import "NetWorkTool.h"
 #import <SVProgressHUD.h>
+#import <MBProgressHUD.h>
 
 #endif /* PrefixHeader_pch */

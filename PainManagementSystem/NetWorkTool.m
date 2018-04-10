@@ -8,6 +8,10 @@
 
 #import "NetWorkTool.h"
 
+@interface NetWorkTool()
+
+@end
+
 @implementation NetWorkTool
 static NetWorkTool *_instance;
 
@@ -17,6 +21,11 @@ static NetWorkTool *_instance;
         _instance = [[NetWorkTool alloc]initWithBaseURL:nil];
         _instance.requestSerializer = [AFJSONRequestSerializer serializer];
         
+        //设置请求的超时时间
+        [_instance.requestSerializer willChangeValueForKey:@"timeoutInterval"];
+        _instance.requestSerializer.timeoutInterval = 20.f;
+        [_instance.requestSerializer didChangeValueForKey:@"timeoutInterval"];
+        
         _instance.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html", nil];
 //
 //        _instance.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -24,45 +33,6 @@ static NetWorkTool *_instance;
     return _instance;
 }
 
-//-(void)POST:(NSString *)address
-// parameters:(NSDictionary *)parameters
-//   hasToken:(bool)hasToken
-//    success:(void (^)(NSURLSessionDataTask * , id ))success
-//    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure{
-//
-//    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-//
-//    NSString *token = [userDefault objectForKey:@"Token"];
-//
-//    NSMutableDictionary *param = [[NSMutableDictionary alloc]init];
-//
-//    if( hasToken )
-//    {
-//        [param setValue:token forKey:@"token"];
-//    }
-//
-//
-//    [param setValue:parameters forKey:@"data"];
-//    NSDictionary *params = [param copy];
-//
-//    [self POST:address
-//    parameters:params
-//      progress:^(NSProgress * _Nonnull uploadProgress) {
-//      }
-//       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//           NSDictionary *jsonDict = responseObject;
-//           if (jsonDict) {
-//
-//           }
-//
-//
-//           success(task,responseObject);
-//      }
-//       failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//           failure(task,error);
-//       }];
-//
-//}
 -(void)POST:(NSString *)address
      params:(NSDictionary *)parameters
    hasToken:(bool)hasToken
@@ -83,14 +53,25 @@ static NetWorkTool *_instance;
     
     [param setValue:parameters forKey:@"data"];
     NSDictionary *params = [param copy];
+    
+    //发送的参数
 //    NSLog(@"dic = %@",params);
     
+    
+    
+    //打开状态栏的风火轮
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+
     [self POST:address
     parameters:params
       progress:^(NSProgress * _Nonnull uploadProgress) {
           
       }
        success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+           
+           //请求结果出现后关闭风火轮
+           [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+           
            NSDictionary *jsonDict = responseObject;
            if (jsonDict != nil) {
                
@@ -109,6 +90,18 @@ static NetWorkTool *_instance;
            }
        }
        failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+           //请求结果出现后关闭风火轮
+           [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+           
+           NSLog(@"task = %@",task);
+           
+           NSLog(@"error = %@",error.localizedDescription);
+           dispatch_async(dispatch_get_main_queue(), ^{
+               [SVProgressHUD showErrorWithStatus:error.localizedDescription];
+               
+               
+               
+           });
        }];
 }
 

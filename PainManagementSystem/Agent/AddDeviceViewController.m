@@ -37,10 +37,61 @@ typedef NS_ENUM(NSUInteger,typeTags)
     NSMutableArray *peripheralDataArray;
     BabyBluetooth *baby;
 }
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.title = @"设备管理系统";
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
+    [self askForData];
+}
+-(void)askForData{
+    
+    datas = [[NSMutableArray alloc]initWithCapacity:20];
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnlineCount"]
+                                  params:@{
+                                           @"isregistered":@"0"
+                                           }
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     
+                                     
+                                     if ([responseObject.result intValue]==1) {
+                                         NSString *count = responseObject.content[@"count"];
+                                         NSLog(@"count = %@",count);
+                                         
+                                         //页数
+                                         NSInteger numberOfPages = ([count integerValue]+15-1)/15;
+                                         
+                                         //遍历页数获取数据
+                                         for (int i =0; i<numberOfPages; i++) {
+                                             
+                                             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnline"]
+                                                                           params:@{
+                                                                                    @"page":[NSString stringWithFormat:@"%d",i]
+                                                                                    
+                                                                                    }
+                                                                         hasToken:YES
+                                                                          success:^(HttpResponse *responseObject) {
+                                                                              datas = [[NSMutableArray alloc]initWithCapacity:20];
+                                                                              if ([responseObject.result intValue] == 1) {
+                                                                                  NSDictionary *content = responseObject.content;
+                                                                                  for (NSDictionary *dic in content) {
+                                                                                      [datas addObject:dic];
+                                                                                  }
+                                                                                  
+                                                                                  [self.tableView reloadData];
+                                                                              }
+                                                                          } failure:nil];
+                                         }
+                                         
+                                     }
+                                 } failure:nil];
+    
 
+}
 - (IBAction)changeDevice:(UIButton *)sender {
     self.selectedDeviceTag = [sender tag];
-    
+
     
     for (int i = electrotherapyTag; i<electrotherapyTag +3; i++) {
         UIButton *btn = (UIButton *)[self.contentView viewWithTag:i];
@@ -65,11 +116,13 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [baby cancelScan];
         [baby cancelAllPeripheralsConnection];
         
-        datas = [NSMutableArray arrayWithObjects:
-                 @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-                 @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-                 @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
-                 nil];
+        [self askForData];
+        
+//        datas = [NSMutableArray arrayWithObjects:
+//                 @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+//                 @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+//                 @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
+//                 nil];
     }
     [self.tableView reloadData];
 }
@@ -83,14 +136,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 }
 
 
--(void)viewWillAppear:(BOOL)animated{
-    
-    [super viewWillAppear:YES];
-    self.title = @"设备管理系统";
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
-}
-
 
 -(void)initAll{
     
@@ -99,13 +144,13 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [self changeDevice:btn];
     
     self.tableView.tableFooterView = [[UIView alloc]init];
-    
-    datas = [[NSMutableArray alloc]initWithCapacity:20];
-    datas = [NSMutableArray arrayWithObjects:
-             @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-             @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
-             nil];
+//
+//    datas = [[NSMutableArray alloc]initWithCapacity:20];
+//    datas = [NSMutableArray arrayWithObjects:
+//             @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+//             @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+//             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
+//             nil];
     
     peripheralDataArray = [[NSMutableArray alloc]init];
     baby = [BabyBluetooth shareBabyBluetooth];
@@ -230,9 +275,9 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }
     //wifi设备
     NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
-    [cell.ringButton setTitle:[dataDic objectForKey:@"macString"] forState:UIControlStateNormal];
+    [cell.ringButton setTitle:[dataDic objectForKey:@"cpuid"] forState:UIControlStateNormal];
     [cell.ringButton addTarget:self action:@selector(ring:) forControlEvents:UIControlEventTouchUpInside];
-    cell.nameTextField.text = [dataDic objectForKey:@"name"];
+    cell.nameTextField.text = [dataDic objectForKey:@"nick"];
     
     [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
     cell.scanButton.tag = indexPath.row;
@@ -274,6 +319,17 @@ typedef NS_ENUM(NSUInteger,typeTags)
     AddDeviceCell *cell = (AddDeviceCell *)[[button superview]superview];
     NSString *cpuid = cell.ringButton.titleLabel.text;
     NSLog(@"send to server--------cupid：%@ --------------bibibi",cpuid);
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Beep"]
+                                  params:@{
+                                           @"cpuid":cell.ringButton.titleLabel.text
+                                           }
+                                hasToken:YES success:^(HttpResponse *responseObject) {
+                                    if ([responseObject.result intValue]!=1) {
+                                        [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
+                                        [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                    }
+                                } failure:nil];
 }
 
 - (IBAction)saveAll:(id)sender {
@@ -281,13 +337,34 @@ typedef NS_ENUM(NSUInteger,typeTags)
     NSMutableArray *saveArray = [NSMutableArray array];
     
     for (AddDeviceCell *cell in cells) {
+
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:20];
-        [dic setObject:cell.ringButton.titleLabel.text forKey:@"macString"];
-        [dic setObject:cell.nameTextField.text forKey:@"name"];
-        [dic setObject:cell.serialNumTextField.text forKey:@"seraialNum"];
-        if (cell.serialNumTextField.text.length>0 && cell.nameTextField.text.length>0) {
-            [saveArray addObject:dic];
+        [dic setObject:cell.ringButton.titleLabel.text forKey:@"cpuid"];
+        if ([cell.serialNumTextField.text length]>0) {
+            [dic setObject:cell.nameTextField.text forKey:@"nick"];
         }
+
+        [dic setObject:cell.serialNumTextField.text forKey:@"seraialnum"];
+        
+        //序列号输入了才录入
+        if (cell.serialNumTextField.text.length>0 ) {
+            
+            //保存的数组
+            [saveArray addObject:dic];
+            NSDictionary  *param = (NSDictionary *)dic;
+            
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/registered"]
+                                          params:param
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             if ([responseObject.result intValue] == 1) {
+                                                 
+                                                 [SVProgressHUD showSuccessWithStatus:@"成功录入设备"];
+                                             }
+                                         }
+                                         failure:nil];
+        }
+
     }
     
     NSLog(@"send to server -----------add device array :%@",saveArray);
