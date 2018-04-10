@@ -122,7 +122,7 @@
 						<key>name</key>
 						<string>调制波形</string>
 						<key>value</key>
-						<string>方波</string>
+						<string>三角波</string>
 					</dict>
 				</array>
 			</dict>

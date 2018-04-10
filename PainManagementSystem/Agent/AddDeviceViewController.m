@@ -10,6 +10,7 @@
 #import "AddDeviceCell.h"
 #import "BaseHeader.h"
 #import "QRCodeReaderViewController.h"
+
 #import <MBProgressHUD.h>
 #import <AVFoundation/AVFoundation.h>
 typedef NS_ENUM(NSUInteger,typeTags)
@@ -17,8 +18,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
     electrotherapyTag = 1000,airProTag = 1001,aladdinTag = 1002
 };
 @interface AddDeviceViewController ()<QRCodeReaderDelegate,UITextFieldDelegate>
+
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
+
+//条形码扫描
 @property (strong,nonatomic) QRCodeReaderViewController *reader;
 @property (assign,nonatomic) NSInteger selectedDeviceTag;
 @property (assign,nonatomic) NSInteger selectedRow;

@@ -36,7 +36,7 @@
                                  };
     //请求vas评分说明
     NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
-    NSString *address = [HTTPServerURLSting stringByAppendingString:@"Api/ScoreItem/List"];
+    NSString *address = [HTTPServerURLString stringByAppendingString:@"Api/ScoreItem/List"];
     
     NSString *token = Token;
     

@@ -9,7 +9,7 @@
 #ifndef BaseHeader_h
 #define BaseHeader_h
 
-#define HTTPServerURLSting @"http://192.168.2.127:8888/"
+
 /**
  *
  *16进制颜色定义

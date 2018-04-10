@@ -6,5 +6,6 @@ target 'PainManagementSystem' do
 	pod 'AFNetworking'
 	pod 'BRPickerView'
 	pod 'SVProgressHUD'
+	pod 'MJRefresh'
 end
 #pods for app

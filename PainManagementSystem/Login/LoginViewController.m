@@ -26,6 +26,7 @@
 #define UdpReceivePort 22345
 
 @interface LoginViewController ()
+
 @property (weak, nonatomic) IBOutlet UIView *userView;
 @property (weak, nonatomic) IBOutlet UIView *passwordView;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
@@ -34,7 +35,8 @@
 
 @end
 
-@implementation LoginViewController{
+@implementation LoginViewController
+{
     GCDAsyncUdpSocket *udpSocket;
 }
 
@@ -88,15 +90,15 @@
     UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     __block UINavigationController *controller ;
     
-    //假数据 不经过服务器
-    if ([self.userNameTextField.text isEqualToString: @"agent"]) {
-        
-        controller = [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
-        
-    }else if([self.userNameTextField.text isEqualToString:@"nurse"]){
-        
-        controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
-    }
+//    //假数据 不经过服务器
+//    if ([self.userNameTextField.text isEqualToString: @"agent"]) {
+//
+//        controller = [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
+//
+//    }else if([self.userNameTextField.text isEqualToString:@"nurse"]){
+//
+//        controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
+//    }
     
     
     //异步请求真的数据
@@ -104,8 +106,7 @@
     NSString *pwd = self.passwordTextField.text;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         
-        
-        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLSting stringByAppendingString:@"Api/User/Login"]
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/Login"]
     params:@{
              @"username":userName,
              @"pwd":pwd
@@ -154,7 +155,10 @@
     }];
 
     });
-    [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+    if (controller) {
+        [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+    }
+
 }
 
 -(void)initRootViewController:(UIViewController *)controller{
@@ -178,7 +182,7 @@
 }
 
 -(void)saveUserInfo{
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLSting stringByAppendingString:@"APi/User/SelfInfo"]
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/SelfInfo"]
                                   params:@{ }
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
@@ -189,7 +193,7 @@
                                          [UserDefault setObject:content[@"username"] forKey:@"UserName"];
                                          [UserDefault setObject:content[@"personname"] forKey:@"PersonName"];
                                          [UserDefault setObject:content[@"contact"] forKey:@"Contact"];
-                                         if (content[@"note"]) {
+                                         if (content[@"note"] != [NSNull null]) {
                                              [UserDefault  setObject:content[@"note"] forKey:@"Note"];
                                          }
                                          
@@ -204,7 +208,7 @@
 
 - (IBAction)setNetwork:(id)sender {
     [SetNetWorkView alertControllerAboveIn:self return:^(NSString *ipString) {
-        [UserDefault setObject:ipString forKey:@"HTTPServerURLSting"];
+        [UserDefault setObject:ipString forKey:@"HTTPServerURLString"];
         [UserDefault synchronize];
     }];
 }
@@ -277,7 +281,7 @@ withFilterContext:(id)filterContext
         
         NSLog(@"serverIp = %@",serverIp);
         
-        [UserDefault setObject:serverIp forKey:@"HTTPServerURLSting"];
+        [UserDefault setObject:serverIp forKey:@"HTTPServerURLString"];
         
         [UserDefault synchronize];
         

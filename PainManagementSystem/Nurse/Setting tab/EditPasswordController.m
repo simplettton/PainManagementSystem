@@ -27,7 +27,7 @@
     if (![self.confirmPassWordTextField.text isEqualToString:newPwd]) {
         [SVProgressHUD showInfoWithStatus:@"请输入相同的密码"];
     }else{
-        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLSting stringByAppendingString:@"Api/User/ChangeSelfPwd"]
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/ChangeSelfPwd"]
                                       params:@{@"newpwd":newPwd,
                                                @"oldpwd":oldPwd
                                                }

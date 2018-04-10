@@ -24,46 +24,45 @@ static NetWorkTool *_instance;
     return _instance;
 }
 
--(void)POST:(NSString *)address
- parameters:(NSDictionary *)parameters
-   hasToken:(bool)hasToken
-    success:(void (^)(NSURLSessionDataTask * , id ))success
-    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure{
-    
-    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    
-    NSString *token = [userDefault objectForKey:@"Token"];
-    
-    NSMutableDictionary *param = [[NSMutableDictionary alloc]init];
-    
-    if( hasToken )
-    {
-        [param setValue:token forKey:@"token"];
-    }
-    
-
-    [param setValue:parameters forKey:@"data"];
-    NSDictionary *params = [param copy];
-    NSLog(@"dic = %@",params);
-    
-    [self POST:address
-    parameters:params
-      progress:^(NSProgress * _Nonnull uploadProgress) {
-      }
-       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-           NSDictionary *jsonDict = responseObject;
-           if (jsonDict) {
-               
-           }
-           
-           
-           success(task,responseObject);
-      }
-       failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-           failure(task,error);
-       }];
-    
-}
+//-(void)POST:(NSString *)address
+// parameters:(NSDictionary *)parameters
+//   hasToken:(bool)hasToken
+//    success:(void (^)(NSURLSessionDataTask * , id ))success
+//    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure{
+//
+//    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+//
+//    NSString *token = [userDefault objectForKey:@"Token"];
+//
+//    NSMutableDictionary *param = [[NSMutableDictionary alloc]init];
+//
+//    if( hasToken )
+//    {
+//        [param setValue:token forKey:@"token"];
+//    }
+//
+//
+//    [param setValue:parameters forKey:@"data"];
+//    NSDictionary *params = [param copy];
+//
+//    [self POST:address
+//    parameters:params
+//      progress:^(NSProgress * _Nonnull uploadProgress) {
+//      }
+//       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//           NSDictionary *jsonDict = responseObject;
+//           if (jsonDict) {
+//
+//           }
+//
+//
+//           success(task,responseObject);
+//      }
+//       failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//           failure(task,error);
+//       }];
+//
+//}
 -(void)POST:(NSString *)address
      params:(NSDictionary *)parameters
    hasToken:(bool)hasToken
@@ -84,7 +83,7 @@ static NetWorkTool *_instance;
     
     [param setValue:parameters forKey:@"data"];
     NSDictionary *params = [param copy];
-    NSLog(@"dic = %@",params);
+//    NSLog(@"dic = %@",params);
     
     [self POST:address
     parameters:params

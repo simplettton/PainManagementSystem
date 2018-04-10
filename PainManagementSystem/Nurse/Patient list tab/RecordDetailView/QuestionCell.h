@@ -12,6 +12,8 @@
 @property (weak, nonatomic) IBOutlet UIView *questionBorderView;
 @property (weak, nonatomic) IBOutlet UILabel *questionNameLabel;
 
+@property (weak, nonatomic) IBOutlet UIImageView *waveFormImageView;
+
 @property (weak, nonatomic) IBOutlet UILabel *selectionsLabel;
 
 @end

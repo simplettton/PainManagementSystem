@@ -29,6 +29,7 @@
 -(void)initAll{
     
 
+    //textField前面空出一部分
     for (UITextField *textField in self.textFields) {
         textField.layer.borderWidth = 0.5f;
         textField.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
@@ -70,7 +71,7 @@
     NSString *personName = self.nameTextField.text;
     NSString *contact = self.contactTextFiled.text;
     NSString *note = self.noteTextField.text;
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLSting stringByAppendingString:@"Api/User/ChangeSelfInfo"]
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/ChangeSelfInfo"]
                                                                              params:@{@"personname":personName,
                                                                                       @"contact":contact,
                                                                                       @"note":note

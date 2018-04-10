@@ -7,7 +7,8 @@
 //
 
 #import "PopoverTreatwayController.h"
-
+//借用questioncell边框
+#import "QuestionCell.h"
 #import "BaseHeader.h"
 #define KeyTag 10000
 #define ValueTag 20000
@@ -105,20 +106,30 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 44;
+}
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    QuestionCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     if (cell == nil) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[QuestionCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
     
     NSDictionary *dic = [datas objectAtIndex:indexPath.row];
     NSString *key = dic[@"name"];
-    cell.textLabel.text = key;
-    cell.detailTextLabel.text = dic[@"value"];
+    cell.questionNameLabel.text = key;
+    cell.selectionsLabel.text = dic[@"value"];
+    
+    if ([key isEqualToString:@"调制波形"]) {
+        cell.selectionsLabel.text = nil;
+        
+        cell.waveFormImageView.image = [UIImage imageNamed:dic[@"value"]];
+        
+    }
     
     
     return cell;

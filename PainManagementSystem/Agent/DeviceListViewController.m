@@ -11,10 +11,14 @@
 #import "EditDeviceViewController.h"
 #import "BaseHeader.h"
 #import "NetWorkTool.h"
+
+
 @interface DeviceListViewController ()<UISearchBarDelegate>
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+
+@property (strong,nonatomic)NSDictionary * typeDic;
 
 @end
 
@@ -22,21 +26,22 @@
         NSMutableArray *datas;
 }
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"设备管理系统";
     [self initAll];
+
+
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-
+    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
     
-    
-    
-    
+    [self askForData];
 }
 
 -(void)initAll{
@@ -50,33 +55,98 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.allowsMultipleSelectionDuringEditing = YES;
     
-    datas = [[NSMutableArray alloc]initWithCapacity:20];
-    datas = [NSMutableArray arrayWithObjects:
-             @{@"type":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-             @{@"type":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874458"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874459"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874450"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874451"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874356"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874556"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874856"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12307874456"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12867874456"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"82367874456"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12967874456"},
-             @{@"type":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"15367874456"},
-             
-             @{@"type":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科二号",@"serialNum":@"13654979946"},
-             @{@"type":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科二号",@"serialNum":@"45645615764"},
-             
-             @{@"type":@"空气波",@"macString":@"dftueqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-             @{@"type":@"空气波",@"macString":@"fjwtstds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-             
-             @{@"type":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
-             @{@"type":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
-             nil];
+//    datas = [[NSMutableArray alloc]initWithCapacity:20];
+//    datas = [NSMutableArray arrayWithObjects:
+//             @{@"machinetype":@"空气波",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+//             @{@"machinetype":@"空气波",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874456"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874458"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874459"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874450"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874451"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874356"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874556"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12367874856"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12307874456"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12867874456"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"82367874456"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"12967874456"},
+//             @{@"machinetype":@"电疗",@"macString":@"fstjkst",@"name":@"骨科一号",@"serialNum":@"15367874456"},
+//
+//             @{@"machinetype":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科二号",@"serialNum":@"13654979946"},
+//             @{@"machinetype":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科二号",@"serialNum":@"45645615764"},
+//
+//             @{@"machinetype":@"空气波",@"macString":@"dftueqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+//             @{@"machinetype":@"空气波",@"macString":@"fjwtstds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+//
+//             @{@"machinetype":@"血瘘",@"macString":@"dgahqaa",@"name":@"骨科一号",@"serialNum":@"13654979946"},
+//             @{@"machinetype":@"血瘘",@"macString":@"fjfjfds",@"name":@"骨科一号",@"serialNum":@"45645615764"},
+//             nil];
+//
+//
+//
+//
+//
+    _typeDic = @{
+                 @7681:@"空气波",
+                 @57119:@"血瘘",
+                 @56833:@"电疗",
+                 @56834:@"电疗",
+                 @56836:@"电疗"
+
+                 };
+
+
+}
+-(void)askForData{
+    
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/Count"]
+                                  params:@{
+                                           
+                                           }
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     
+                                     if ([responseObject.result intValue]==1) {
+                                         NSString *count = responseObject.content[@"count"];
+                                         NSLog(@"count = %@",count);
+                                         
+                                         //页数
+                                         NSInteger numberOfPages = ([count integerValue]+15-1)/15;
+                                         
+                                         //遍历页数获取数据
+                                         for (int i =0; i<numberOfPages; i++) {
+                                             
+                                             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/ListDBDevice"]
+                                                                           params:@{
+                                                                                    @"page":[NSString stringWithFormat:@"%d",i]
+                                                                                    
+                                                                                    }
+                                                                         hasToken:YES
+                                                                          success:^(HttpResponse *responseObject) {
+                                                                              datas = [[NSMutableArray alloc]initWithCapacity:20];
+                                                                              if ([responseObject.result intValue] == 1) {
+                                                                                  NSDictionary *content = responseObject.content;
+                                                                                  NSLog(@"receive content = %@",content);
+                                                                                  for (NSDictionary *dic in content) {
+                                                                                      [datas addObject:dic];
+                                                                                  }
+                                                                                  
+                                                                                  [self.tableView reloadData];
+                                                                              }
+                                                                              else{
+                                                                                  
+                                                                              }
+                                                                          } failure:nil];
+                                         }
+                                         
+                                         
+                                         
+                                     }else{
+                                         
+                                     }
+                                 } failure:nil];
 }
 
 
@@ -95,12 +165,18 @@
         cell = [[DeviceTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
-    cell.typeLabel.text = [dataDic objectForKey:@"type"];
-    cell.serialNumLabel.text = [dataDic objectForKey:@"serialNum"];
-    cell.nameLabel.text = [dataDic objectForKey:@"name"];
-    cell.macString = [dataDic objectForKey:@"macString"];
+    
+    
+    cell.typeLabel.text = _typeDic[[dataDic objectForKey:@"machinetype"]];
+
+    cell.serialNumLabel.text = [dataDic objectForKey:@"serialnum"];
+
+    cell.nameLabel.text = [dataDic objectForKey:@"nick"];
+    
+    cell.macString = [dataDic objectForKey:@"cpuid"];
     
     cell.editButton.tag = indexPath.row;
+    
     [cell.editButton addTarget:self action:@selector(edit:) forControlEvents:UIControlEventTouchUpInside];
     
     //改变编辑状态下左侧圆圈勾选颜色
@@ -127,28 +203,54 @@
         self.deleteButton.titleLabel.text = @"删除";
         [self.deleteButton setTitle:@"删除" forState:UIControlStateNormal];
         
+        [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
+        
+        [SVProgressHUD show];
 
-            NSMutableArray *deleteArray = [NSMutableArray array];
+        NSMutableArray *deleteArray = [NSMutableArray array];
+        
+        for (NSIndexPath *indexPath in self.tableView.indexPathsForSelectedRows) {
+            [deleteArray addObject:datas[indexPath.row]];
             
-            for (NSIndexPath *indexPath in self.tableView.indexPathsForSelectedRows) {
-                [deleteArray addObject:datas[indexPath.row]];
-                
-                NSString *cpuid = [datas[indexPath.row]objectForKey:@"macString"];
-                NSLog(@"send to server ------------delete cpuid:%@--------",cpuid);
-            }
+            NSString *cpuid = [datas[indexPath.row]objectForKey:@"cpuid"];
+
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/Delete"]
+                                          params:@{
+                                                   @"cpuid":cpuid
+                                                   }
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             if ([responseObject.result intValue]==1) {
+                                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                                     [SVProgressHUD dismiss];
+                                                     
+
+                                                     
+                                                 });
+                                             }else{
+                                                 NSString *error = responseObject.errorString;
+                                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                                     [SVProgressHUD showErrorWithStatus:error];
+                                                 });
+                                             }
+                                         }
+                                         failure:nil];
+        }
+        
+
+        NSMutableArray *currentArray = datas;
+        [currentArray removeObjectsInArray:deleteArray];
+        
+        datas = currentArray;
+        
+        [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
+        
+        dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+        dispatch_after(delayTime, dispatch_get_main_queue(), ^{
             
-            NSMutableArray *currentArray = datas;
-            [currentArray removeObjectsInArray:deleteArray];
-            
-            datas = currentArray;
-            
-            [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
-            
-            dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
-            dispatch_after(delayTime, dispatch_get_main_queue(), ^{
-                
-                [self.tableView reloadData];
-            });
+            [self.tableView reloadData];
+        });
+        
         //完成删除后不给选中cell
         for (DeviceTableViewCell *cell in self.tableView.visibleCells) {
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -199,8 +301,31 @@
 
 - (IBAction)search:(id)sender {
     if ([self.searchBar.text length]>0) {
+        
         NSLog(@"------search: %@-----",self.searchBar.text);
     }
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/ListDBDevice"]
+                                  params:@{
+                                           @"machinetype":self.searchBar.text
+                                           }
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     datas = [[NSMutableArray alloc]initWithCapacity:20];
+                                     if ([responseObject.result intValue] == 1) {
+                                         NSDictionary *content = responseObject.content;
+                                         NSLog(@"receive content = %@",content);
+                                         for (NSDictionary *dic in content) {
+                                             [datas addObject:dic];
+                                         }
+                                         
+                                         [self.tableView reloadData];
+                                     }
+                                     else{
+                                         
+                                     }
+                                 }
+                                 failure:nil];
 
     [self.searchBar resignFirstResponder];
     
