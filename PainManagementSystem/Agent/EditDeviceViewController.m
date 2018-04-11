@@ -56,9 +56,6 @@
 }
 - (IBAction)submit:(id)sender {
     
-    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
-    
-    [SVProgressHUD show];
     
     if ([self.nameTextField.text length] > 0 && [self.serialNumTextField.text length] > 0) {
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/DBDevice/Change"]

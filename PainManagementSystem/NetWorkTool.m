@@ -7,7 +7,7 @@
 //
 
 #import "NetWorkTool.h"
-
+#import "MJRefresh.h"
 @interface NetWorkTool()
 
 @end
@@ -23,7 +23,7 @@ static NetWorkTool *_instance;
         
         //设置请求的超时时间
         [_instance.requestSerializer willChangeValueForKey:@"timeoutInterval"];
-        _instance.requestSerializer.timeoutInterval = 20.f;
+        _instance.requestSerializer.timeoutInterval = 5.f;
         [_instance.requestSerializer didChangeValueForKey:@"timeoutInterval"];
         
         _instance.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html", nil];
@@ -86,7 +86,14 @@ static NetWorkTool *_instance;
                responseObject.content = content;
                responseObject.errorString = errorString;
                
+
                responseBlock(responseObject);
+               
+               
+               //停止刷新
+               dispatch_async(dispatch_get_main_queue(), ^{
+                   [self endTableViewHeaderRefreshing];
+               });
            }
        }
        failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -95,14 +102,77 @@ static NetWorkTool *_instance;
            
            NSLog(@"task = %@",task);
            
-           NSLog(@"error = %@",error.localizedDescription);
+           NSLog(@"error = %@",error);
            dispatch_async(dispatch_get_main_queue(), ^{
                [SVProgressHUD showErrorWithStatus:error.localizedDescription];
-               
-               
-               
+               //endrefresh操作
+               [self endTableViewHeaderRefreshing];
+
            });
        }];
+}
+#pragma mark - private method
+
+-(void)endTableViewHeaderRefreshing{
+    
+    UIViewController *controller = [self getCurrentVC];
+    
+    //当前控制器是导航控制器
+    if ([[self getCurrentVC]isKindOfClass:[UINavigationController class]]) {
+        
+        UINavigationController *navi = (UINavigationController *)[self getCurrentVC];
+        
+        controller = [navi viewControllers][0];
+    }
+ 
+    [self traverseAllSubviews:controller.view];
+    
+}
+
+-(void)traverseAllSubviews:(UIView *)rootView {
+    for (UIView *subView in [rootView subviews])
+    {
+        if (!rootView.subviews.count) {
+            return;
+        }
+        
+        //如果是tableview 取消刷新
+        if ([subView isKindOfClass:[UITableView class]]) {
+            __weak UITableView *tableview = (UITableView *)subView;
+            [tableview.mj_header endRefreshing];
+        }
+        [self traverseAllSubviews:subView];
+    }
+}
+
+//获取当前窗口控制器
+- (UIViewController *)getCurrentVC
+{
+    UIViewController *result = nil;
+    
+    UIWindow * window = [[UIApplication sharedApplication] keyWindow];
+    if (window.windowLevel != UIWindowLevelNormal)
+    {
+        NSArray *windows = [[UIApplication sharedApplication] windows];
+        for(UIWindow * tmpWin in windows)
+        {
+            if (tmpWin.windowLevel == UIWindowLevelNormal)
+            {
+                window = tmpWin;
+                break;
+            }
+        }
+    }
+    
+    UIView *frontView = [[window subviews] objectAtIndex:0];
+    id nextResponder = [frontView nextResponder];
+    
+    if ([nextResponder isKindOfClass:[UIViewController class]])
+        result = nextResponder;
+    else
+        result = window.rootViewController;
+    
+    return result;
 }
 
 @end

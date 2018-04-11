@@ -11,6 +11,7 @@
 #import "LLSegmentBarVC.h"
 #import "FocusDeviceViewController.h"
 #import "AllDeviceViewController.h"
+#import "MJRefresh.h"
 @interface DeviceViewController ()
 
 @property (nonatomic,weak) LLSegmentBarVC * segmentVC;
@@ -73,15 +74,5 @@
         config.itemFont([UIFont boldSystemFontOfSize:17.0f]);
     }];
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

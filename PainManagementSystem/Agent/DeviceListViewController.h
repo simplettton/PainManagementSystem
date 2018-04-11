@@ -10,4 +10,11 @@
 
 @interface DeviceListViewController : UIViewController<UITableViewDelegate,UITableViewDataSource>
 
+/**
+ *  获取网络数据
+ *  @param isRefresh 是否是下拉刷新
+ */
+-(void)getNetworkData:(BOOL)isRefresh isFiltered:(BOOL)isFiltered;
+
+
 @end

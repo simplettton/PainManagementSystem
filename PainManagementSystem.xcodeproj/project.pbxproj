@@ -19,6 +19,7 @@
 		0419F4082073515900C83C2B /* Task.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0419F4072073515900C83C2B /* Task.plist */; };
 		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
 		041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */; };
+		041D7DB0207DA9D100B392FB /* MJChiBaoZiHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D7DAE207DA9CF00B392FB /* MJChiBaoZiHeader.m */; };
 		041FDD5320722D2100BE6EC9 /* SendTreatmentFailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */; };
 		041FDD5620722D4300BE6EC9 /* SendTreatmentFailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */; };
 		04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* PatientListViewController.m */; };
@@ -132,6 +133,8 @@
 		041B791C2068EDB2001D04C8 /* BETextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETextField.m; sourceTree = "<group>"; };
 		041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRAdd.m"; sourceTree = "<group>"; };
 		041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+BRAdd.h"; sourceTree = "<group>"; };
+		041D7DAE207DA9CF00B392FB /* MJChiBaoZiHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJChiBaoZiHeader.m; sourceTree = "<group>"; };
+		041D7DAF207DA9D000B392FB /* MJChiBaoZiHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJChiBaoZiHeader.h; sourceTree = "<group>"; };
 		041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendTreatmentFailView.xib; sourceTree = "<group>"; };
 		041FDD5420722D4300BE6EC9 /* SendTreatmentFailView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendTreatmentFailView.h; sourceTree = "<group>"; };
 		041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SendTreatmentFailView.m; sourceTree = "<group>"; };
@@ -619,6 +622,8 @@
 				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
 				04484FDA2064D72500467611 /* NetWorkTool.h */,
 				04484FD92064D72500467611 /* NetWorkTool.m */,
+				041D7DAF207DA9D000B392FB /* MJChiBaoZiHeader.h */,
+				041D7DAE207DA9CF00B392FB /* MJChiBaoZiHeader.m */,
 				045F6C89206E2240006DBBF7 /* HttpResponse.h */,
 				045F6C8A206E2240006DBBF7 /* HttpResponse.m */,
 				046C020E2069E48100FDD974 /* BEButton.h */,
@@ -890,6 +895,7 @@
 				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
 				0495FD1A206F26EA00D01E2C /* Pack.m in Sources */,
 				0411BC1F2072160F000FC687 /* SendTreatmentSuccessView.m in Sources */,
+				041D7DB0207DA9D100B392FB /* MJChiBaoZiHeader.m in Sources */,
 				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,
 				0462A40B20746E74006DB5E0 /* FocusDeviceViewController.m in Sources */,
 				0462A40120746736006DB5E0 /* LLSegmentBar.m in Sources */,
