@@ -8,12 +8,12 @@
 
 #import "DeviceListViewController.h"
 #import "DeviceTableViewCell.h"
-#import "MJChiBaoZiHeader.h"
 #import "EditDeviceViewController.h"
 #import "BaseHeader.h"
 #import "NetWorkTool.h"
 
 #import "MJRefresh.h"
+#import "MJChiBaoZiHeader.h"
 
 @interface DeviceListViewController ()<UISearchBarDelegate>
 {
@@ -51,10 +51,49 @@
     [self initAll];
     
 
+    
+}
+
+-(void)initAll{
+    
+    //pageControll
+    
+    page = 0;
+    isFirstCome = YES;
+    isJuhua = NO;
+    isFilteredList = NO;
+    //
+    datas = [[NSMutableArray alloc]initWithCapacity:20];
+    
+    //searchBarDelegate
+    self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
+    self.searchBar.tintColor = UIColorFromHex(0x5e97fe);//出现光标
+    self.searchBar.delegate = self;
+    
+    //tableview
+    self.tableView.tableFooterView = [[UIView alloc]init];
+    self.tableView.allowsMultipleSelectionDuringEditing = YES;
+    
+    
+    _typeDic = @{
+                 @7681:@"空气波",
+                 @57119:@"血瘘",
+                 @56833:@"电疗",
+                 @56834:@"电疗",
+                 @56836:@"电疗"
+                 
+                 };
+    [self initTableHeaderAndFooter];
+}
+
+
+#pragma mark - refresh
+-(void)initTableHeaderAndFooter{
+    
     //下拉刷新
     self.tableView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
     [self.tableView.mj_header beginRefreshing];
-
+    
     
     //上拉加载
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
@@ -62,7 +101,6 @@
     [footer setTitle:@"" forState:MJRefreshStateRefreshing];
     [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
     self.tableView.mj_footer = footer;
-    
 }
 
 -(void)refresh
@@ -109,7 +147,6 @@
         url = [HTTPServerURLString stringByAppendingString:@"Api/DBDevice/Count"];
     }
     
-    
     [[NetWorkTool sharedNetWorkTool]POST:url
                                   params:params
                                 hasToken:YES
@@ -121,15 +158,20 @@
                                          
                                          totalPage = ([count intValue]+15-1)/15;
                                          
-                                        NSLog(@"totalPage = %d",totalPage);
+                                         NSLog(@"totalPage = %d",totalPage);
                                          
+                                         if ([count intValue]>0) {
+                                              [self getNetworkData:isRefresh isFiltered:iSFiltered];
+                                         }
+
                                          
-                                         [self getNetworkData:isRefresh isFiltered:iSFiltered];
                                          
                                      }else{
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                      }
+                                     
                                  } failure:nil];
+
     
 }
 
@@ -188,7 +230,7 @@
                                      isJuhua = YES;
                                      
                                      //适用于上拉加载更多
-                                     if (page >totalPage) {
+                                     if (page >=totalPage) {
                                          [self endRefresh];
                                          [tableView.mj_footer endRefreshingWithNoMoreData];
                                          return;
@@ -220,37 +262,7 @@
     
 }
 
--(void)initAll{
-    
-    //pageControll
-    
-    page = 0;
-    isFirstCome = YES;
-    isJuhua = NO;
-    isFilteredList = NO;
-    //
-    datas = [[NSMutableArray alloc]initWithCapacity:20];
-    
-    //searchBarDelegate
-    self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
-    self.searchBar.tintColor = UIColorFromHex(0x5e97fe);//出现光标
-    self.searchBar.delegate = self;
-    
-    //tableview
-    self.tableView.tableFooterView = [[UIView alloc]init];
-    self.tableView.allowsMultipleSelectionDuringEditing = YES;
-    
-    
-    _typeDic = @{
-                 @7681:@"空气波",
-                 @57119:@"血瘘",
-                 @56833:@"电疗",
-                 @56834:@"电疗",
-                 @56836:@"电疗"
-                 
-                 };
-    
-}
+
 
 
 #pragma mark - tableview dataSource
@@ -400,12 +412,11 @@
 //
 //}
 //
--(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
 
-    [self search:searchBar];
-
+-(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    
+    [self search:nil];
 }
-
 
 - (IBAction)search:(id)sender {
     if ([self.searchBar.text length]>0) {
@@ -417,19 +428,33 @@
         NSMutableDictionary *paramDic = [[NSMutableDictionary alloc]initWithCapacity:20];
         
         if ([[_typeDic allValues]containsObject:self.searchBar.text]) {
-            
-            //机器类型转换
-            [_typeDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            if ([self.searchBar.text isEqualToString: @"电疗"]) {
+                [paramDic setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
                 
-                if([obj isEqualToString:self.searchBar.text]){
-                    
-                    [paramDic setObject:key forKey:@"machinetype"];
-                    
-                    filterparam = paramDic;
-                    
-                    [self askForData:YES isFiltered:YES];
-                }
-            }];
+                filterparam = paramDic;
+                [self askForData:YES isFiltered:YES];
+            }
+            else if([self.searchBar.text isEqualToString:@"空气波"]){
+                
+                [paramDic setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
+                
+                filterparam = paramDic;
+                [self askForData:YES isFiltered:YES];
+            }
+//                检索字典有的key
+//                [_typeDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+//
+//                    if([obj isEqualToString:self.searchBar.text]){
+//
+//                        [paramDic setObject:key forKey:@"machinetype"];
+//
+//                        filterparam = paramDic;
+//
+//                        [self askForData:YES isFiltered:YES];
+//                    }
+//                }];
+//            }
+
             
         }else{
             
@@ -444,7 +469,8 @@
     
     }else{
         //没有关键字显示全部
-        [self askForData:NO isFiltered:NO];
+        [self.tableView.mj_header beginRefreshing];
+        [self askForData:YES isFiltered:NO];
     }
         [self.searchBar resignFirstResponder];
 }

@@ -142,6 +142,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [ContactServiceView alertControllerAboveIn:self];
     }
     else if (indexPath.section *2 +indexPath.row == 2){
+        
+        [UserDefault setBool:NO forKey:@"IsLogined"];
+        
+        [UserDefault synchronize];
+        
         [self performSegueWithIdentifier:@"LogOut" sender:nil];
     }
 }

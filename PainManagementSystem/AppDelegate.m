@@ -18,21 +18,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    if ([self isUserLogin]) {
-        
-        //  初始化窗口、设置根控制器、显示窗口
-        self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-        [UIView transitionWithView:self.window
-                          duration:0.25
-                           options:UIViewAnimationOptionTransitionCrossDissolve
-                        animations:^{
-//                            self.window.rootViewController = self.drawerController;
-                        }
-                        completion:nil];
-        
-        [self.window makeKeyAndVisible];
-    }
     
+
+
     [self registerAPN];
     
     //iOS 10 //请求通知权限, 本地和远程共用
@@ -54,8 +42,44 @@
     
     //设置通知的代理
     center.delegate = self;
-    
+    //初始化
+    [self initRootViewController];
     return YES;
+}
+
+-(void)initRootViewController{
+    
+     UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    __block UINavigationController *controller ;
+    
+
+//
+    if ([self isUserLogin]) {
+        
+        NSString *role = [UserDefault objectForKey:@"Role"];
+        if ([role isEqualToString:@"_nurse"]) {
+            
+            controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
+        }else if([role isEqualToString:@"_pmadmin"]){
+            controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
+        }
+
+    }else{
+        controller = [mainStoryBoard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    }
+    
+    //  初始化窗口、设置根控制器、显示窗口
+    self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
+    [UIView transitionWithView:self.window
+                      duration:0.25
+                       options:UIViewAnimationOptionTransitionCrossDissolve
+                    animations:^{
+                        self.window.rootViewController = controller;
+                    }
+                    completion:nil];
+    
+    [self.window makeKeyAndVisible];
+    
 }
 
 
@@ -85,15 +109,13 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-
-#pragma mark - Split view
-
 #pragma mark -- 是否登录
 -(BOOL)isUserLogin
 {
-    NSString *userId =  [[NSUserDefaults standardUserDefaults]objectForKey:@"USER_NAME"];
     
-    if (userId != nil)
+    BOOL isLogined = [UserDefault boolForKey:@"IsLogined"];
+    
+    if (isLogined)
     {
         //已经登录
         return YES;

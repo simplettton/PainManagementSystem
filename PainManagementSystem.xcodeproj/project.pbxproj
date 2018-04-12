@@ -41,6 +41,7 @@
 		0465E395206CD9CD009A2264 /* EditUserInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0465E394206CD9CD009A2264 /* EditUserInfoController.m */; };
 		04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DE8206091B6002641D1 /* DeviceTableViewCell.m */; };
 		04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DED2060999D002641D1 /* EditDeviceViewController.m */; };
+		0469E23F207EED410035D5AC /* PatientModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0469E23E207EED410035D5AC /* PatientModel.m */; };
 		046C02102069E48100FDD974 /* BEButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 046C020F2069E48100FDD974 /* BEButton.m */; };
 		046C02132069EC3500FDD974 /* TreatmentCourseRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 046C02122069EC3500FDD974 /* TreatmentCourseRecordViewController.m */; };
 		046C021A2069F49A00FDD974 /* TreatRecordCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 046C02192069F49A00FDD974 /* TreatRecordCell.m */; };
@@ -175,6 +176,8 @@
 		04661DE8206091B6002641D1 /* DeviceTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceTableViewCell.m; sourceTree = "<group>"; };
 		04661DEC2060999D002641D1 /* EditDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditDeviceViewController.h; sourceTree = "<group>"; };
 		04661DED2060999D002641D1 /* EditDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditDeviceViewController.m; sourceTree = "<group>"; };
+		0469E23D207EED410035D5AC /* PatientModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PatientModel.h; sourceTree = "<group>"; };
+		0469E23E207EED410035D5AC /* PatientModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PatientModel.m; sourceTree = "<group>"; };
 		046C020E2069E48100FDD974 /* BEButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BEButton.h; sourceTree = "<group>"; };
 		046C020F2069E48100FDD974 /* BEButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BEButton.m; sourceTree = "<group>"; };
 		046C02112069EC3500FDD974 /* TreatmentCourseRecordViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreatmentCourseRecordViewController.h; sourceTree = "<group>"; };
@@ -516,6 +519,15 @@
 			path = TreatCourseRecordView;
 			sourceTree = "<group>";
 		};
+		0469E240207EF4FA0035D5AC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0469E23D207EED410035D5AC /* PatientModel.h */,
+				0469E23E207EED410035D5AC /* PatientModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		046E2E132062370800DEFD70 /* QRCodeReaderViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -577,6 +589,7 @@
 		0495FD15206F26EA00D01E2C /* DataAnalyze */ = {
 			isa = PBXGroup;
 			children = (
+				0469E240207EF4FA0035D5AC /* Model */,
 				0495FD16206F26EA00D01E2C /* Pack.h */,
 				0495FD17206F26EA00D01E2C /* Pack.m */,
 				0495FD18206F26EA00D01E2C /* Unpack.h */,
@@ -906,6 +919,7 @@
 				04484FDC2064D9ED00467611 /* LoginViewController.m in Sources */,
 				04484FDB2064D72500467611 /* NetWorkTool.m in Sources */,
 				0465E38D206C6D91009A2264 /* QuestionCell.m in Sources */,
+				0469E23F207EED410035D5AC /* PatientModel.m in Sources */,
 				049C577F20689A2900180A8B /* EditPasswordController.m in Sources */,
 				046E2E2D2062370800DEFD70 /* QRCameraSwitchButton.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,

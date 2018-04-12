@@ -1,4 +1,4 @@
-//
+                                                                                 //
 //  AddPatientViewController.m
 //  PainManagementSystem
 //
@@ -13,8 +13,13 @@
 #import "BaseHeader.h"
 @interface AddPatientViewController ()
 @property (strong, nonatomic) IBOutletCollection(UIView) NSArray *editViews;
+@property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *requiredTextFields;
+
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControll;
 @property (weak, nonatomic) IBOutlet UITextField *medicalRecordNumTextField;
+
+@property (weak, nonatomic) IBOutlet UITextField *bedNumTextField;
+
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *phoneTextFiled;
 
@@ -23,9 +28,12 @@
 @property (weak, nonatomic) IBOutlet UIView *birthDayView;
 @property (weak, nonatomic) IBOutlet UIView *treatDayView;
 
+
 @end
 
-@implementation AddPatientViewController
+@implementation AddPatientViewController{
+    NSArray *genderArray;
+}
 
 - (void)viewDidLoad {
     
@@ -34,20 +42,38 @@
 }
 
 -(void)initAll{
-    if (self.dataDic == nil) {
+   
+    genderArray = @[@"男",@"女",@"其他"];
+
+    
+    if (self.patient == nil) {
         self.title = @"增加病历";
         //当前时间戳
         NSString *ts = [NSString stringWithFormat:@"%ld", time(NULL)];
+
         self.treatDateLabel.text = [self stringFromTimeIntervalString:ts dateFormat:@"yyyy-MM-dd"];
+
+        
         self.birthdayTF.text = [self stringFromTimeIntervalString:ts dateFormat:@"yyyy-MM-dd"];
+        
     }else{
         self.title = @"修改病历";
-        self.medicalRecordNumTextField.text = [self.dataDic objectForKey:@"medicalRecordNum"];
-        self.nameTextField.text = [self.dataDic objectForKey:@"name"];
-        self.phoneTextFiled.text = [self.dataDic objectForKey:@"phone"];
         
-        NSString *gender = [self.dataDic objectForKey:@"gender"];
-        NSArray *genderArray = @[@"男",@"女",@"其他"];
+        //病历不可修改
+        self.medicalRecordNumTextField.text = self.patient.medicalRecordNum;
+        self.medicalRecordNumTextField.enabled = NO;
+        
+        self.nameTextField.text = self.patient.name;
+        self.phoneTextFiled.text = self.patient.contact;
+        
+        self.treatDateLabel.text = [self stringFromTimeIntervalString:self.patient.registeredTimeString dateFormat:@"yyyy-MM-dd"];
+        
+        
+        self.birthdayTF.text = [self stringFromTimeIntervalString:self.patient.birthdayString dateFormat:@"yyyy-MM-dd"];
+        
+        self.bedNumTextField.text = self.patient.bednum;
+        
+        NSString *gender = self.patient.gender;
         NSInteger selectedIndex = [genderArray indexOfObject:gender];
         [self.segmentedControll setSelectedSegmentIndex:selectedIndex];
         
@@ -73,17 +99,78 @@
                                      isAutoSelect:NO
                                        themeColor:nil
                                       resultBlock:^(NSString *selectValue) {
-            weakSelf.birthdayTF.text = selectValue;
-            
-                                          NSString *timeStamp = [self timeStampFromTimeString:selectValue dataFormat:@"yyyy-MM-dd"];
+                                            weakSelf.birthdayTF.text = selectValue;
+                                            NSString *timeStamp = [self timeStampFromTimeString:selectValue dataFormat:@"yyyy-MM-dd"];
 
-            NSLog(@"------send to server ：生日时间戳：%@",timeStamp);
+                                            NSLog(@"------send to server ：生日时间戳：%@",timeStamp);
         } cancelBlock:^{
         }];
 
     }];
     
 }
+- (IBAction)save:(id)sender {
+    
+    for (UITextField *textField in self.requiredTextFields) {
+        if ([textField.text length] == 0) {
+            [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
+            [SVProgressHUD setMaximumDismissTimeInterval:0.5];
+            [SVProgressHUD showErrorWithStatus:@"参数不能为空"];
+        }
+    }
+    
+    NSString *api;
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
+    if (self.patient == nil) {
+        api = @"Api/Patient/Add";
+    }else{
+        api = @"Api/Patient/ChangeInfo";
+    }
+    //参数
+    NSString *gender = genderArray[self.segmentedControll.selectedSegmentIndex];
+    
+    NSString *birthdayString = [self timeStampFromTimeString:self.birthdayTF.text dataFormat:@"yyyy-MM-dd"];
+    
+    [params setObject:self.medicalRecordNumTextField.text forKey:@"medicalrecordnum"];
+    
+    [params setObject:self.nameTextField.text forKey:@"name"];
+    
+    [params setObject:gender forKey:@"gender"];
+    
+    [params setObject:birthdayString forKey:@"birthday"];
+    
+    [params setObject:self.phoneTextFiled.text forKey:@"contact"];
+    
+    if ([self.bedNumTextField.text length]>0) {
+        
+        [params setObject:self.bedNumTextField.text forKey:@"bednum"];
+    }
+
+
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
+                                  params:params
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     
+                                     NSLog(@"repos = %@",responseObject.result);
+                                     if ([responseObject.result intValue]==1) {
+                                         [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
+                                         [SVProgressHUD setMaximumDismissTimeInterval:0.5];
+                                         [SVProgressHUD showSuccessWithStatus:@"保存成功"];
+                                         
+                                         [self.navigationController popViewControllerAnimated:YES];
+
+                                     }else{
+                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+
+                                     }
+
+
+                                  } failure:nil];
+    
+}
+
+#pragma mark - private method
 
 //时间戳字符串转化为日期或时间
 - (NSString *)stringFromTimeIntervalString:(NSString *)timeString dateFormat:(NSString*)dateFormat

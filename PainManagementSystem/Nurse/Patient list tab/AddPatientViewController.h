@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PatientModel.h"
 
 @interface AddPatientViewController : UIViewController
-@property (nonatomic,strong)NSDictionary *dataDic;
+@property (nonatomic,strong)PatientModel *patient;
+
 @end

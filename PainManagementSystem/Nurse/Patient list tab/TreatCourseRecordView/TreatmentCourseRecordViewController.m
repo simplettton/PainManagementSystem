@@ -35,11 +35,15 @@
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
     
-    if (self.dataDic) {
+    if (self.patient) {
         self.title = @"治疗疗程记录";
         self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.dataDic[@"name"]];
         self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.dataDic[@"age"]];
         self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.dataDic[@"phone"]];
+        
+//        self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.patient.name];
+//        self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.patient.age];
+//        self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.patient.contact];
     }
     
     

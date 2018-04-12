@@ -116,16 +116,18 @@
         NSString *resutlt = responseObject.result;
         if ([resutlt intValue] == 1) {
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [SVProgressHUD showSuccessWithStatus:@"登录成功"];
-            });
-            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+//            });
+//
             NSDictionary *content = responseObject.content;
             NSLog(@"receive content = %@",content);
             
             NSString *token = [responseObject.content objectForKey:@"token"];
             
             NSString *role = [responseObject.content objectForKey:@"role"];
+            
             
             if ([role isEqualToString:@"_nurse"]) {
                 
@@ -134,10 +136,14 @@
                 controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
             }
             
-            //登录成功保存token
+            //登录成功保存token role
             NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
             
             [userDefault setObject:token forKey:@"Token"];
+            
+            [userDefault setObject:role forKey:@"Role"];
+            
+            [userDefault setBool:YES forKey:@"IsLogined"];
             
             [userDefault synchronize];
             

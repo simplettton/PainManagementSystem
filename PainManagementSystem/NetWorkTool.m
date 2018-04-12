@@ -23,7 +23,7 @@ static NetWorkTool *_instance;
         
         //设置请求的超时时间
         [_instance.requestSerializer willChangeValueForKey:@"timeoutInterval"];
-        _instance.requestSerializer.timeoutInterval = 5.f;
+        _instance.requestSerializer.timeoutInterval = 10.f;
         [_instance.requestSerializer didChangeValueForKey:@"timeoutInterval"];
         
         _instance.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html", nil];
@@ -57,10 +57,11 @@ static NetWorkTool *_instance;
     //发送的参数
 //    NSLog(@"dic = %@",params);
     
-    
-    
+        
     //打开状态栏的风火轮
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+
+
 
     [self POST:address
     parameters:params
@@ -70,7 +71,9 @@ static NetWorkTool *_instance;
        success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
            
            //请求结果出现后关闭风火轮
+
            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
            
            NSDictionary *jsonDict = responseObject;
            if (jsonDict != nil) {
@@ -98,7 +101,10 @@ static NetWorkTool *_instance;
        }
        failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
            //请求结果出现后关闭风火轮
+
            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
+
            
            NSLog(@"task = %@",task);
            
