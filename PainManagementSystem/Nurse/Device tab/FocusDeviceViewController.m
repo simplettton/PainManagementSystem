@@ -7,11 +7,7 @@
 //
 
 #import "FocusDeviceViewController.h"
-#import "TreatmentCourseRecordViewController.h"
-#import "DeviceCollectionViewCell.h"
-#import "FocusMachineAlertView.h"
-#import "BaseHeader.h"
-#import "HHDropDownList.h"
+
 
 #define kOrangeColor 0xf8b273
 
@@ -25,7 +21,7 @@
 
 #define List_Width (KScreenWidth + 1.4 )/4.0
 
-@interface FocusDeviceViewController ()<UISearchBarDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,HHDropDownListDelegate, HHDropDownListDataSource>
+@interface FocusDeviceViewController ()
 
 @property (weak, nonatomic) IBOutlet UIButton *allTabButton;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
@@ -228,6 +224,7 @@
     switch (Index) {
         case DeviceTypeOnline:
         {
+            NSLog(@"切换在线设备");
             
             dataArray = @[@{@"state":@"running",@"serialnum":@"1234567"},
                           @{@"state":@"stop",@"serialnum":@"1234256"},
@@ -244,6 +241,7 @@
                           @{@"state":@"pause",@"serialnum":@"1134567"},
                           @{@"state":@"alert",@"serialnum":@"1122267"},
                           @{@"state":@"running",@"serialnum":@"11844567"}];
+            
             self.dropList.hidden = NO;
         
         }
@@ -251,11 +249,13 @@
             break;
         case DeviceTypeLocal:
         {
+            NSLog(@"切换本地设备");
             
             dataArray = @[@{@"state":@"connect",@"serialnum":@"1234567"},
                           @{@"state":@"unconnect",@"serialnum":@"1234256"},
                           @{@"state":@"unconnect",@"serialnum":@"223567"},
                           @{@"state":@"unconnect",@"serialnum":@"2232267"}];
+            [self.dropList pullBack];
             self.dropList.hidden = YES;
         }
             break;
@@ -302,7 +302,6 @@
             };
             
             NSNumber *stateNumber = [stateDic objectForKey:state];
-            
             [cell configureWithStyle:[stateNumber intValue]];
             cell.btnDelete.hidden = YES;
             
@@ -318,6 +317,7 @@
                     [cell.leftButton addTarget:self action:@selector(pauseAction:) forControlEvents:UIControlEventTouchUpInside];
                     [cell.rightButton addTarget:self action:@selector(stopAction:) forControlEvents:UIControlEventTouchUpInside];
                     break;
+                    
                 default:
                     break;
             }
@@ -348,7 +348,6 @@
             [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
             
         }
-            
             break;
             
         default:
@@ -367,8 +366,20 @@
     [self performSegueWithIdentifier:@"GoToRemarkVAS" sender:button];
     NSLog(@"vas评分");
 }
+
+#pragma mark http control machine
+
 -(void)playAction:(UIButton *)button{
-    NSLog(@"开始治疗");
+    
+    DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
+    
+    NSInteger interger = [self.collectionView.visibleCells indexOfObject:deviceCell];
+    
+    
+    
+    
+    
+    
 }
 -(void)stopAction:(UIButton *)button{
     NSLog(@"停止治疗");
@@ -376,6 +387,24 @@
 }
 -(void)pauseAction:(UIButton *)button{
     NSLog(@"暂停治疗");
+}
+
+-(void)controlMahine:(NSString *)serialnum cmdcode:(int)cmdcode
+{
+    
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    
+    [params setObject:serialnum forKey:@"cpuid"];
+    
+    [params setObject:[NSNumber numberWithInt:cmdcode] forKey:@"cmdcode"];
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Control"]
+                                 params:params
+                               hasToken:YES
+                                success:^(HttpResponse *responseObject) {
+                                    
+                                }
+                                failure:nil];
 }
 
 //3.设置可移动
@@ -513,10 +542,6 @@
 
 #pragma mark - UICollectionViewDelegateFlowLayout
 
-//-(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return (CGSize){kCellWidth,kCellHeight};
-//}
 - (IBAction)search:(id)sender {
     [FocusMachineAlertView alertControllerAboveIn:self withDataDic:nil returnBlock:^{
         

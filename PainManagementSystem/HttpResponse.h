@@ -15,7 +15,7 @@
 
 @property NSDictionary *jsonDist;
 @property NSString *result;
-@property NSDictionary *content;
+@property id content;
 @property NSString *errorString;
 @end
 

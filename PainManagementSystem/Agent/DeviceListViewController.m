@@ -11,6 +11,7 @@
 #import "EditDeviceViewController.h"
 #import "BaseHeader.h"
 #import "NetWorkTool.h"
+#import "DropdownButton.h"
 
 #import "MJRefresh.h"
 #import "MJChiBaoZiHeader.h"
@@ -29,6 +30,7 @@
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+@property (weak, nonatomic) IBOutlet DropdownButton *filterButton;
 
 @property (strong,nonatomic)NSDictionary * typeDic;
 
@@ -39,10 +41,14 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    
+    [_filterButton.titleLabel addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
     
+}
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [_filterButton.titleLabel removeObserver:self forKeyPath:@"text" context:nil];
 }
 
 - (void)viewDidLoad {
@@ -50,12 +56,12 @@
     self.title = @"设备管理系统";
     [self initAll];
     
-
-    
 }
 
 -(void)initAll{
     
+    _filterButton.list = @[@"空气波",@"电疗",@"血瘘"];
+
     //pageControll
     
     page = 0;
@@ -78,12 +84,21 @@
     _typeDic = @{
                  @7681:@"空气波",
                  @57119:@"血瘘",
-                 @56833:@"电疗",
-                 @56834:@"电疗",
-                 @56836:@"电疗"
+                 @56832:@"电疗",
+                 @56833:@"电疗-100",
+                 @56834:@"电疗-200",
+                 @56836:@"电疗-400"
                  
                  };
     [self initTableHeaderAndFooter];
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
+    if ([keyPath isEqualToString:@"text"]) {
+        NSString *string = [_filterButton titleForState:UIControlStateNormal];
+        self.searchBar.text = string;
+        [self search:nil];
+    }
 }
 
 
@@ -237,9 +252,8 @@
                                      }
                                      
                                      if ([responseObject.result intValue] == 1) {
-                                         NSDictionary *content = responseObject.content;
-                                         
-                                         NSLog(@"请求 = =");
+                                         NSArray *content = responseObject.content;
+
                                          if (![content isEqual:[NSNull null]]) {
                                              for (NSDictionary *dic in content) {
                                                  if (![datas containsObject:dic]) {
@@ -314,8 +328,11 @@
 
 #pragma mark - action
 -(void)edit:(UIButton *)sender{
+    
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:sender.tag inSection:0];
+    
     DeviceTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    
     [self performSegueWithIdentifier:@"EditDevice" sender:cell];
 }
 

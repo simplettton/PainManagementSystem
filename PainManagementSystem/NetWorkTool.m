@@ -80,7 +80,7 @@ static NetWorkTool *_instance;
                
                
                NSString *result = [jsonDict objectForKey:@"result"];
-               NSDictionary *content = [jsonDict objectForKey:@"content"];
+               id content = [jsonDict objectForKey:@"content"];
                NSString *errorString = [jsonDict objectForKey:@"msg"];
                
                

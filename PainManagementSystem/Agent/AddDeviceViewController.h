@@ -10,6 +10,13 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "BabyBluetooth.h"
 
+typedef NS_ENUM(NSInteger,KCmdids)
+{
+    CMDID_DEVICE_TYPE = 0XFA,
+    CMDID_SEND_PARAMETER = 0X9A,
+    CMDID_CHANGE_STATE = 0X90,
+    CMDID_UPDATE_DATA_REQUEST = 0X97
+};
 @interface AddDeviceViewController : UIViewController
 
 @end

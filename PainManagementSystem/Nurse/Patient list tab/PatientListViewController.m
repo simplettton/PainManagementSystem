@@ -32,7 +32,6 @@
     NSMutableArray *datas;
 }
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"疼痛管理系统";
@@ -224,7 +223,7 @@
                                      }
                                      
                                      if ([responseObject.result intValue] == 1) {
-                                         NSDictionary *content = responseObject.content;
+                                         NSArray *content = responseObject.content;
                                          
                                          if (content) {
                                              for (NSDictionary *dic in content) {
@@ -306,11 +305,6 @@
     cell.genderLabel.text = patient.gender;
     cell.ageLabel.text = patient.age;
     
-//    cell.medicalRecordNumLabel.text = [datas[indexPath.row]objectForKey:@"medicalRecordNum"];
-//    cell.nameLabel.text = [datas[indexPath.row]objectForKey:@"name"];
-//    cell.genderLabel.text = [datas[indexPath.row]objectForKey:@"gender"];
-//    cell.ageLabel.text = [datas[indexPath.row]objectForKey:@"age"];
-    
     
     cell.editButton.tag = indexPath.row;
     [cell.editButton addTarget:self action:@selector(editPatientInfomation:) forControlEvents:UIControlEventTouchUpInside];
@@ -323,7 +317,8 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dataDic = datas[indexPath.row];
-    [self performSegueWithIdentifier:@"ShowTreatmentCourseRecord" sender:dataDic];
+    PatientModel *patientInfo = datas[indexPath.row];
+    [self performSegueWithIdentifier:@"ShowTreatmentCourseRecord" sender:patientInfo];
 }
 -(void)editPatientInfomation:(UIButton *)sender{
 

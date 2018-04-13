@@ -139,7 +139,7 @@
                        AVMetadataObjectTypeCode128Code,
                        AVMetadataObjectTypePDF417Code];
     
-    _reader        = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
+    _reader = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
     
     // Using delegate methods
     _reader.delegate = self;
@@ -153,6 +153,7 @@
 - (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result
 {
     [self dismissViewControllerAnimated:YES completion:^{
+        
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedRow inSection:0];
         
         [SVProgressHUD showWithStatus:@"处方下发中……"];
