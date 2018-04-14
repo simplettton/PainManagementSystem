@@ -13,7 +13,9 @@ typedef enum _CellStyle {
     CellStyleGrey_MachinePause,
     CellStyleOrange_MachineException,
     CellStyle_LocalUnconnect,
-    CellStyle_LocalConnect
+    CellStyle_LocalConnect,
+    CellStyle_LocalUnrunning,
+    CellStyle_LocalRunning
 } CellStyle;
 @interface DeviceCollectionViewCell : UICollectionViewCell
 @property (nonatomic,assign) CellStyle style;

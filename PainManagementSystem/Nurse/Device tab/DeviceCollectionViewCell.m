@@ -92,26 +92,32 @@
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             
-            self.BLEPlayButton.hidden = NO;
-            self.BLEPauseButton.hidden = NO;
-            self.BLEStopButton.hidden = NO;
-            self.connectButton.hidden = YES;
-            
+
             break;
         case CellStyle_LocalUnconnect:
             
             self.topView.backgroundColor =UIColorFromHex(0xf9f9f9);
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
             
-            self.BLEPlayButton.hidden = YES;
-            self.BLEPauseButton.hidden = YES;
-            self.BLEStopButton.hidden = YES;
-            self.connectButton.hidden = NO;
+
+            break;
+        case CellStyle_LocalRunning:
+            
+            self.topView.backgroundColor = UIColorFromHex(kGreenColor);
+            [self.machineNameLabel setTextColor:[UIColor whiteColor]];
+
+            
+            break;
+        case CellStyle_LocalUnrunning:
+            
+            self.topView.backgroundColor = UIColorFromHex(kGreenColor);
+            [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             
         default:
             break;
     }
 
+    //online
     self.clockImageView.hidden = (style == CellStyleGreen_MachineRunning)? NO:YES;
     self.leftButton.hidden  = (style == CellStyleGreen_MachineRunning)? NO:YES;
     self.rightButton.hidden  = (style == CellStyleGreen_MachineRunning)? NO:YES;
@@ -119,7 +125,16 @@
     self.playButton.hidden = (style == CellStyleGrey_MachinePause)?NO:YES;
     self.remarkButton.hidden = (style == CellStyleGrey_MachineStop || style == CellStyle_LocalUnconnect)?NO:YES;
     
-
+    
+    //Local
+    self.connectButton.hidden = (style == CellStyle_LocalUnconnect)? NO:YES;
+    
+    
+    self.BLEPlayButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalRunning))?YES:NO;
+    self.BLEPauseButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning))?YES:NO;
+    self.BLEStopButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning))?YES:NO;
+    
+    
 }
 
 @end

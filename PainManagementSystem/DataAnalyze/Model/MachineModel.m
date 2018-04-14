@@ -15,7 +15,7 @@
         self.name = dict[@"nick"];
         self.serialNum = dict[@"serialnum"];
         self.cpuid = dict[@"cpuid"];
-        self.machineTypeNumber = dict[@"machinetype"];
+        self.typeNumber = dict[@"machinetype"];
         
         NSDictionary *typeDic = @{
                                @7681:@"空气波",
@@ -27,9 +27,9 @@
                                
                                };
         
-        self.machineType = typeDic[self.machineTypeNumber];
+        self.type = typeDic[self.typeNumber];
         
-        self.machineStateNumber = dict[@"machinestate"];
+        self.stateNumber = dict[@"machinestate"];
         
         NSDictionary *machineStateDic = @{
                                           @"0":@"running",
@@ -37,7 +37,7 @@
                                           @"2":@"stop"
                                           };
         
-        self.machineState = machineStateDic[self.machineStateNumber];
+        self.state = machineStateDic[self.stateNumber];
         
 
         

@@ -303,7 +303,11 @@
             
             cell.serialNumLabel.text = [dataDic objectForKey:@"serialnum"];
             
-            cell.nameLabel.text = [dataDic objectForKey:@"nick"];
+            if (![[dataDic objectForKey:@"nick"] isEqual:[NSNull null]]) {
+                
+                cell.nameLabel.text = [dataDic objectForKey:@"nick"];
+            }
+
             
             cell.macString = [dataDic objectForKey:@"cpuid"];
             

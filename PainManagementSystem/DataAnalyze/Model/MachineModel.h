@@ -16,13 +16,13 @@
 
 @property(nonatomic,copy)NSString *serialNum;
 
-@property(nonatomic,copy)NSNumber *machineTypeNumber;
+@property(nonatomic,copy)NSNumber *typeNumber;
 
-@property(nonatomic,copy)NSString *machineType;
+@property(nonatomic,copy)NSString *type;
 
-@property(nonatomic,copy)NSNumber *machineStateNumber;
+@property(nonatomic,copy)NSNumber *stateNumber;
 
-@property(nonatomic,copy)NSString *machineState;
+@property(nonatomic,copy)NSString *state;
 
 -(instancetype)initWithDic:(NSDictionary* )dict;
 

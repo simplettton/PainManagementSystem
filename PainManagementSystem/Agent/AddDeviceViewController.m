@@ -17,7 +17,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 
-#define SERVICE_UUID        @"1b7e8251-2877-41c3-b46e-cf057c562023"
+#define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
 #define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
 #define RX_CHARACTERISTIC_UUID @"8ac32d3f-5cb9-4d44-bec2-ee689169f626"
 
@@ -86,6 +86,9 @@ typedef NS_ENUM(NSUInteger,typeTags)
         isLocalDeviceList = YES;
         
         datas = [[NSMutableArray alloc]initWithCapacity:20];
+        
+        baby = [BabyBluetooth shareBabyBluetooth];
+        [self babyDelegate];
         baby.scanForPeripherals().begin();
         
 
@@ -122,89 +125,89 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
     datas = [[NSMutableArray alloc]initWithCapacity:20];
 
-    baby = [BabyBluetooth shareBabyBluetooth];
-    [self babyDelegate];
 }
 
 -(void)askForData{
-    
-    datas = [[NSMutableArray alloc]initWithCapacity:20];
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
-    
-    switch (self.selectedDeviceTag) {
-        case electrotherapyTag:
-            
-            [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-            
-            break;
-        case airProTag:
-            
-            [params setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
-            
-        default:
-            break;
-    }
-    [params setObject:[NSNumber numberWithInt:0] forKey:@"isregistered"];
-    
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnlineCount"]
-                                  params:params
-                                hasToken:YES
-                                 success:^(HttpResponse *responseObject) {
-                                     
-                                     
-                                     if ([responseObject.result intValue]==1) {
-                                         NSString *count = responseObject.content[@"count"];
-                                         NSLog(@"count = %@",count);
-                                         
-                                         //页数
-                                         NSInteger numberOfPages = ([count integerValue]+15-1)/15;
-                                         
-                                         if ([count intValue] >0) {
-                                             //遍历页数获取数据
-                                             for (int i =0; i<numberOfPages; i++) {
-                                                 
-                                                 [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnline"]
-                                                                               params:@{
-                                                                                        @"page":[NSString stringWithFormat:@"%d",i]
-                                                                                        
-                                                                                        }
-                                                                             hasToken:YES
-                                                                              success:^(HttpResponse *responseObject) {
-                                                                                  datas = [[NSMutableArray alloc]initWithCapacity:20];
-                                                                                  if ([responseObject.result intValue] == 1) {
-                                                                                      NSArray *content = responseObject.content;
-                                                                                      for (NSDictionary *dic in content) {
-                                                                                          NSLog(@"device = %@",dic);
-                                                                                          [datas addObject:dic];
-                                                                                      }
-                                                                                      
-                                                                                      [self.tableView reloadData];
-                                                                                  }
-                                                                              } failure:nil];
-                                             }
-                                         }else{
-//                                             [datas removeAllObjects];
-//                                             [self.tableView reloadData];
+    if (!isLocalDeviceList) {
+        datas = [[NSMutableArray alloc]initWithCapacity:20];
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
+        
+        switch (self.selectedDeviceTag) {
+            case electrotherapyTag:
 
-                                             //假数据
-                                             datas = [NSMutableArray arrayWithObjects:
-                                                      @{@"type":@"空气波",@"cpuid":@"dgahqaa",@"serialnum":@"13654979946"},
-                                                      @{@"type":@"空气波",@"cpuid":@"fjfjfds",@"serialnum":@"45645615764"},
-                                                      @{@"type":@"电疗",@"cpuid":@"fstjkst",@"serialnum":@"12367874456"},
-                                                      nil];
-                                             [self.tableView reloadData];
-                                   
+                [params setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
+                
+                break;
+            case airProTag:
+
+                [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
+                
+            default:
+                break;
+        }
+        [params setObject:[NSNumber numberWithInt:0] forKey:@"isregistered"];
+        
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnlineCount"]
+                                      params:params
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         
+                                         
+                                         if ([responseObject.result intValue]==1) {
+                                             NSString *count = responseObject.content[@"count"];
+                                             NSLog(@"count = %@",count);
+                                             
+                                             //页数
+                                             NSInteger numberOfPages = ([count integerValue]+15-1)/15;
+                                             
+                                             if ([count intValue] >0) {
+                                                 //遍历页数获取数据
+                                                 for (int i =0; i<numberOfPages; i++) {
+                                                     
+                                                     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnline"]
+                                                                                   params:@{
+                                                                                            @"page":[NSString stringWithFormat:@"%d",i]
+                                                                                            
+                                                                                            }
+                                                                                 hasToken:YES
+                                                                                  success:^(HttpResponse *responseObject) {
+                                                                                      datas = [[NSMutableArray alloc]initWithCapacity:20];
+                                                                                      if ([responseObject.result intValue] == 1) {
+                                                                                          NSArray *content = responseObject.content;
+                                                                                          for (NSDictionary *dic in content) {
+                                                                                              NSLog(@"device = %@",dic);
+                                                                                              [datas addObject:dic];
+                                                                                          }
+                                                                                          
+                                                                                          [self.tableView reloadData];
+                                                                                      }
+                                                                                  } failure:nil];
+                                                 }
+                                             }else{
+                                                 //                                             [datas removeAllObjects];
+                                                 //                                             [self.tableView reloadData];
+                                                 
+                                                 //假数据
+                                                 datas = [NSMutableArray arrayWithObjects:
+                                                          @{@"type":@"空气波",@"cpuid":@"dgahqaa",@"serialnum":@"13654979946"},
+                                                          @{@"type":@"空气波",@"cpuid":@"fjfjfds",@"serialnum":@"45645615764"},
+                                                          @{@"type":@"电疗",@"cpuid":@"fstjkst",@"serialnum":@"12367874456"},
+                                                          nil];
+                                                 [self.tableView reloadData];
+                                                 
+                                             }
                                          }
-                                     }
-                                 } failure:nil];
-    
+                                     } failure:nil];
+        
+    }
+
     
 }
 
-
-#pragma mark  babyDelegate
+#pragma mark - BLE
 -(void)babyDelegate {
     __weak typeof(self) weakSelf = self;
+    __weak typeof(BabyBluetooth*) weakBaby = baby;
     [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
         if (central.state == CBManagerStatePoweredOff) {
             if (weakSelf.view) {
@@ -216,6 +219,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         }else if(central.state == CBManagerStatePoweredOn) {
             if(weakSelf.HUD){
                 [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
+                weakBaby.scanForPeripherals().begin();
             }
             
         }
@@ -253,6 +257,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
                 if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:TX_CHARACTERISTIC_UUID]])
                 {
                     weakSelf.sendCharacteristic = characteristic;
+                    [weakSelf BleBeep];
                 }
                 
             }
@@ -266,7 +271,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     
     [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
         if (peripheralName.length > 0 && [peripheralName isEqualToString:@"ALX420"]) {
-
+            
             return YES;
             
         }
@@ -291,13 +296,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [item setValue:advertisementData forKey:@"advertisementData"];
         NSLog(@"peripheral = %@",peripheral.name);
         NSLog(@"advertisementData = %@",advertisementData);
-
+        
         [datas addObject:item];
         [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
-#pragma mark - BLE
-
 //接收数据
 - (void)setNotify:(CBCharacteristic *)characteristic {
     __weak typeof(self)weakSelf = self;
@@ -308,6 +311,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
                block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
                    NSLog(@"----------------------------------------------");
                    NSData *data = characteristic.value;
+                   NSLog(@"data = %@",datas);
                    if (data) {
                        
                    }
@@ -379,22 +383,25 @@ typedef NS_ENUM(NSUInteger,typeTags)
 }
 
 -(void)ring:(UIButton *)button{
+    if (!isLocalDeviceList) {
+        AddDeviceCell *cell = (AddDeviceCell *)[[button superview]superview];
+        
+        NSString *cpuid = cell.ringButton.titleLabel.text;
+        
+        
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Beep"]
+                                      params:@{
+                                               @"cpuid":cpuid
+                                               }
+                                    hasToken:YES success:^(HttpResponse *responseObject) {
+                                        if ([responseObject.result intValue]!=1) {
+                                            [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
+                                            [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                        }
+                                    } failure:nil];
+    }
     
-    AddDeviceCell *cell = (AddDeviceCell *)[[button superview]superview];
-    
-    NSString *cpuid = cell.ringButton.titleLabel.text;
 
-    
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Beep"]
-                                  params:@{
-                                           @"cpuid":cpuid
-                                           }
-                                hasToken:YES success:^(HttpResponse *responseObject) {
-                                    if ([responseObject.result intValue]!=1) {
-                                        [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
-                                        [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                    }
-                                } failure:nil];
 }
 
 -(void)localRing:(UIButton *)button{
@@ -418,44 +425,59 @@ typedef NS_ENUM(NSUInteger,typeTags)
 - (IBAction)saveAll:(id)sender {
     NSArray *cells = self.tableView.visibleCells;
     NSMutableArray *saveArray = [NSMutableArray array];
-    
-    for (AddDeviceCell *cell in cells) {
-        
-        
-        
-        //序列号输入了才录入
-        if (cell.serialNumTextField.text.length>0 ) {
+    if ([cells count]>0) {
+        for (AddDeviceCell *cell in cells) {
             
-            NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:20];
-            [dic setObject:cell.ringButton.titleLabel.text forKey:@"cpuid"];
-            if ([cell.serialNumTextField.text length]>0) {
-                [dic setObject:cell.nameTextField.text forKey:@"nick"];
+            //序列号输入了才录入
+            if (cell.serialNumTextField.text.length>0 ) {
+                
+                
+                
+                NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:20];
+                NSString *api;
+                if (isLocalDeviceList) {
+                    api = @"Api/LocalDevice/registered";
+//                    [dic setObject:cell.ringButton.titleLabel.text forKey:@"cpuid"];
+                    [dic setObject:@"900C84002DC2" forKey:@"cpuid"];
+                    [dic setObject:[NSNumber numberWithInteger:57119] forKey:@"machinetype"];
+                
+                }else{
+                    api = @"Api/OnlineDevice/registered";
+                    [dic setObject:cell.ringButton.titleLabel.text forKey:@"cpuid"];
+                }
+
+                if ([cell.serialNumTextField.text length]>0) {
+                    [dic setObject:cell.nameTextField.text forKey:@"nick"];
+                }
+                
+                [dic setObject:cell.serialNumTextField.text forKey:@"serialnum"];
+                
+                //保存的数组
+                [saveArray addObject:dic];
+                NSDictionary  *param = (NSDictionary *)dic;
+                
+                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
+                                              params:param
+                                            hasToken:YES
+                                             success:^(HttpResponse *responseObject) {
+                                                 if ([responseObject.result intValue] == 1) {
+                                                     [SVProgressHUD setMaximumDismissTimeInterval:0.5];
+                                                     [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
+                                                     [SVProgressHUD showSuccessWithStatus:@"录入成功"];
+                                                     [self askForData];
+                                                 }else{
+                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                 }
+                                             }
+                                             failure:nil];
+            }else{
+                [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
+                [SVProgressHUD showErrorWithStatus:@"序列号不能为空"];
             }
             
-            [dic setObject:cell.serialNumTextField.text forKey:@"seraialnum"];
-            //保存的数组
-            [saveArray addObject:dic];
-            NSDictionary  *param = (NSDictionary *)dic;
-            
-            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/registered"]
-                                          params:param
-                                        hasToken:YES
-                                         success:^(HttpResponse *responseObject) {
-                                             if ([responseObject.result intValue] == 1) {
-                                                 
-                                                 [SVProgressHUD showSuccessWithStatus:@"录入成功"];
-                                                 [self askForData];
-                                             }else{
-                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                             }
-                                         }
-                                         failure:nil];
-        }else{
-            [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
-            [SVProgressHUD showErrorWithStatus:@"序列号不能为空"];
         }
-        
     }
+
     
     NSLog(@"send to server -----------add device array :%@",saveArray);
     
@@ -533,6 +555,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
             }else {
                 [cell.ringButton setTitle:mac forState:UIControlStateNormal];
             }
+            
             [cell.ringButton addTarget:self action:@selector(localRing:) forControlEvents:UIControlEventTouchUpInside];
             
         }

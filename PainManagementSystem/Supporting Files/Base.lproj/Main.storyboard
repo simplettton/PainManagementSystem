@@ -1392,12 +1392,12 @@
                                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1rb-TC-Lsl">
                                                             <rect key="frame" x="59" y="50" width="35" height="35"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="pause"/>
+                                                            <state key="normal" image="pause_grey"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ftO-wm-Rgs">
                                                             <rect key="frame" x="122" y="48" width="35" height="35"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="stop"/>
+                                                            <state key="normal" image="stop_grey"/>
                                                         </button>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="clock" translatesAutoresizingMaskIntoConstraints="NO" id="QN2-J9-FPZ">
                                                             <rect key="frame" x="67" y="92" width="22" height="22"/>
@@ -1406,7 +1406,7 @@
                                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zku-84-rOm" userLabel="Play Button">
                                                             <rect key="frame" x="94" y="52" width="28" height="28"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="play"/>
+                                                            <state key="normal" image="play_green"/>
                                                         </button>
                                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Mn-b9-H0X" userLabel="Remark Button">
                                                             <rect key="frame" x="94" y="52" width="28" height="28"/>
@@ -1473,19 +1473,18 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qnF-CH-pgq">
-                                                            <rect key="frame" x="49" y="59" width="35" height="35"/>
+                                                            <rect key="frame" x="59" y="59" width="35" height="35"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="pause"/>
-                                                        </button>
-                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OX9-QY-vh2">
-                                                            <rect key="frame" x="137" y="59" width="35" height="35"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="stop"/>
+                                                            <state key="normal" image="pause_grey"/>
+                                                            <state key="selected" image="pause_green"/>
+                                                            <state key="highlighted" image="pause_green"/>
                                                         </button>
                                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d5f-pF-FQO">
-                                                            <rect key="frame" x="94" y="59" width="35" height="35"/>
+                                                            <rect key="frame" x="94" y="60" width="32" height="32"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <state key="normal" image="play"/>
+                                                            <state key="normal" image="play_green"/>
+                                                            <state key="selected" image="play_green"/>
+                                                            <state key="highlighted" image="play_green"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CRz-TS-Jck">
                                                             <rect key="frame" x="185" y="149" width="25" height="25"/>
@@ -1496,6 +1495,17 @@
                                                             <rect key="frame" x="96" y="64" width="28" height="28"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <state key="normal" image="bluetooth"/>
+                                                        </button>
+                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OX9-QY-vh2">
+                                                            <rect key="frame" x="126" y="59" width="35" height="35"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <state key="normal" image="stop_grey"/>
+                                                            <state key="selected" image="stop_green"/>
+                                                            <state key="highlighted" image="stop_green">
+                                                                <string key="title" base64-UTF8="YES">
+CA
+</string>
+                                                            </state>
                                                         </button>
                                                     </subviews>
                                                 </view>
@@ -1557,7 +1567,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UbV-1q-uoN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6751.5625" y="-1241.015625"/>
+            <point key="canvasLocation" x="6758" y="-1247"/>
         </scene>
         <!--修改信息-->
         <scene sceneID="V5L-00-LzU">
@@ -2848,15 +2858,17 @@
         <image name="menu_blue" width="28" height="28"/>
         <image name="menu_white" width="28" height="28"/>
         <image name="password" width="28" height="28"/>
-        <image name="pause" width="32" height="32"/>
+        <image name="pause_green" width="32" height="32"/>
+        <image name="pause_grey" width="32" height="32"/>
         <image name="pen" width="28" height="28"/>
         <image name="photo" width="70" height="70"/>
-        <image name="play" width="28" height="28"/>
+        <image name="play_green" width="28" height="28"/>
         <image name="remark" width="28" height="28"/>
         <image name="scan" width="28" height="26"/>
         <image name="scancode" width="28" height="28"/>
         <image name="setting" width="28" height="28"/>
-        <image name="stop" width="32" height="32"/>
+        <image name="stop_green" width="32" height="32"/>
+        <image name="stop_grey" width="32" height="32"/>
         <image name="task" width="28" height="28"/>
         <image name="tips" width="28" height="28"/>
         <image name="user" width="28" height="28"/>
