@@ -543,7 +543,7 @@
 
 - (IBAction)search:(id)sender {
     
-    [self writeWithCmdid:CMDID_SEND_PARAMETER dataString:@"1003"];
+    [self writeWithCmdid:CMDID_SEND_PARAMETER dataString:@"0f03"];
     
     [FocusMachineAlertView alertControllerAboveIn:self withDataDic:nil returnBlock:^{
         

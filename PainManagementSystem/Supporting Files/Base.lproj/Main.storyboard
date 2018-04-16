@@ -161,7 +161,7 @@
                                                     <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cMe-d5-rLA">
+                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="请填写旧密码" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cMe-d5-rLA">
                                                     <rect key="frame" x="100" y="6" width="648" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -186,7 +186,7 @@
                                                     <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7l5-kn-ljR">
+                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="请填写新的密码" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7l5-kn-ljR">
                                                     <rect key="frame" x="100" y="6" width="648" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -211,7 +211,7 @@
                                                     <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ip4-O8-ECw">
+                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="请再次输入新密码" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ip4-O8-ECw">
                                                     <rect key="frame" x="100" y="6" width="650" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -916,10 +916,10 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WFL-24-acl">
-                                                    <rect key="frame" x="565" y="12" width="110" height="30"/>
+                                                    <rect key="frame" x="589" y="12" width="86" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <state key="normal" title="查询所有疗程">
+                                                    <state key="normal" title="查询疗程">
                                                         <color key="titleColor" red="0.23529411759999999" green="0.74117647060000003" blue="0.61960784310000006" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
                                                     <connections>
@@ -930,7 +930,7 @@
                                                     <rect key="frame" x="683" y="12" width="70" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <state key="normal" title="修改">
+                                                    <state key="normal" title="编辑">
                                                         <color key="titleColor" red="0.23529411759999999" green="0.74117647060000003" blue="0.61960784310000006" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
                                                     <connections>
@@ -1569,7 +1569,7 @@ CA
             </objects>
             <point key="canvasLocation" x="6758" y="-1247"/>
         </scene>
-        <!--修改信息-->
+        <!--个人信息修改-->
         <scene sceneID="V5L-00-LzU">
             <objects>
                 <tableViewController id="YvB-t0-l9Y" customClass="EditUserInfoController" sceneMemberID="viewController">
@@ -1675,7 +1675,7 @@ CA
                             <outlet property="delegate" destination="YvB-t0-l9Y" id="1mY-cB-bjL"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="修改信息" id="KPd-79-Ur8">
+                    <navigationItem key="navigationItem" title="个人信息修改" id="KPd-79-Ur8">
                         <barButtonItem key="leftBarButtonItem" title="取消" id="CnM-gz-QIw">
                             <connections>
                                 <action selector="cancel:" destination="YvB-t0-l9Y" id="4fu-nv-bV0"/>
@@ -1911,7 +1911,8 @@ CA
                     <navigationItem key="navigationItem" id="HHx-CT-ACq">
                         <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="QVL-5b-ERx">
                             <connections>
-                                <segue destination="VED-v5-wee" kind="presentation" id="uLH-IL-9Bt"/>
+                                <action selector="logout:" destination="Tds-5g-Ksz" id="aCh-Ow-6In"/>
+                                <segue destination="VED-v5-wee" kind="presentation" identifier="DeviceListLogout" id="j0T-NC-lpM"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -2160,13 +2161,14 @@ CA
                     <navigationItem key="navigationItem" id="HLh-7d-Wgh">
                         <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="wfG-HS-531">
                             <connections>
-                                <segue destination="VED-v5-wee" kind="presentation" id="uCp-3Z-f8n"/>
+                                <action selector="logout:" destination="JHi-Z1-hxW" id="UwG-DD-yIX"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="contentView" destination="qUl-kH-2iJ" id="6e0-Mh-q7b"/>
                         <outlet property="tableView" destination="sax-19-6b5" id="S04-df-iv6"/>
+                        <segue destination="VED-v5-wee" kind="presentation" identifier="AddDeviceLogout" id="OZU-bU-VP7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c96-cY-hAu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2453,7 +2455,7 @@ CA
                     <navigationItem key="navigationItem" id="BHZ-TD-2cz">
                         <barButtonItem key="rightBarButtonItem" title="Item" image="exit" id="ByP-Wu-CtB">
                             <connections>
-                                <segue destination="VED-v5-wee" kind="presentation" id="S3X-sW-bcL"/>
+                                <action selector="logout:" destination="Oqi-Zv-U0M" id="OQ7-8U-Vdc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -2465,6 +2467,7 @@ CA
                         <outlet property="typeLabel" destination="xac-pZ-HUL" id="tP0-7C-B8t"/>
                         <outletCollection property="textFields" destination="0Ub-DX-TVl" id="8Hy-Yu-BQd"/>
                         <outletCollection property="textFields" destination="NSn-yU-5Gd" id="7Yu-ib-IaZ"/>
+                        <segue destination="VED-v5-wee" kind="presentation" identifier="EditDeviceLogout" id="ZYp-kf-ckW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sUd-9c-rtg" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2875,9 +2878,9 @@ CA
         <image name="username" width="28" height="28"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="uLH-IL-9Bt"/>
+        <segue reference="j0T-NC-lpM"/>
         <segue reference="mNo-bM-HVs"/>
-        <segue reference="K2N-0B-seC"/>
+        <segue reference="M1g-Ia-37y"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

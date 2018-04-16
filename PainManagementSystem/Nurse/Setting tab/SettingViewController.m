@@ -147,7 +147,23 @@ typedef NS_ENUM(NSUInteger,typeTags)
         
         [UserDefault synchronize];
         
-        [self performSegueWithIdentifier:@"LogOut" sender:nil];
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+                                                                       message:@"退出后不会删除任何历史数据，下次登录依然可以使用本账号。"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {}];
+        
+        [alert addAction:cancelAction];
+        
+        UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"退出登录" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+                [self performSegueWithIdentifier:@"LogOut" sender:nil];
+        }];
+        
+        [alert addAction:logoutAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        
+
     }
 }
 - (IBAction)edit:(id)sender {
