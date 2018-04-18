@@ -76,12 +76,17 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
     
     [self initTableHeaderAndFooter];
     
+}
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [self endRefresh];
 }
 
 #pragma mark - refresh
@@ -104,6 +109,11 @@
 {
     
     isFilteredList = NO;
+    //清空搜索框的文字
+    if ([self.searchBar.text length]>0) {
+        self.searchBar.text = @"";
+    }
+    [self.searchBar resignFirstResponder];
     [self askForData:YES isFiltered:NO];
     
 }
@@ -159,6 +169,11 @@
                                          if([count intValue] > 0)
                                          {
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];
+                                         }else{
+                                             [datas removeAllObjects];
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [self.tableView reloadData];
+                                             });
                                          }
  
                                      }else{
@@ -186,12 +201,13 @@
         [filterparam setObject:[NSNumber numberWithInt:page] forKey:@"page"];
         params = (NSDictionary *)filterparam;
         
-        
     }else{
+        
         url = [HTTPServerURLString stringByAppendingString:@"Api/Patient/ListByQuery"];
         params = @{
                    @"page":[NSNumber numberWithInt:page]
                    };
+        
     }
     
     __weak UITableView *tableView = self.tableView;
@@ -271,7 +287,7 @@
     }else{
         
         [self.tableView.mj_header beginRefreshing];
-        [self askForData:YES isFiltered:NO];
+//        [self askForData:YES isFiltered:NO];
     }
     [self.searchBar resignFirstResponder];
 }
@@ -303,7 +319,9 @@
     cell.medicalRecordNumLabel.text = patient.medicalRecordNum;
     cell.nameLabel.text = patient.name;
     cell.genderLabel.text = patient.gender;
-    cell.ageLabel.text = patient.age;
+
+    cell.ageLabel.text = ([patient.age intValue] == 0) ? @"<1" :patient.age;
+
     
     
     cell.editButton.tag = indexPath.row;
@@ -316,7 +334,6 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *dataDic = datas[indexPath.row];
     PatientModel *patientInfo = datas[indexPath.row];
     [self performSegueWithIdentifier:@"ShowTreatmentCourseRecord" sender:patientInfo];
 }

@@ -148,7 +148,7 @@
         switch (indexPath.section) {
             case 0:
             {
-                cell.basicInfoLabel.text = [NSString stringWithFormat:@"姓名：%@          年龄：%@          电话：%@",self.dataDic[@"name"],self.dataDic[@"age"],self.dataDic[@"phone"]];
+                cell.basicInfoLabel.text = [NSString stringWithFormat:@"姓名：%@          年龄：%@          电话：%@",self.patient.name,self.patient.age,self.patient.contact];
                 cell.vasLabel.text = [NSString stringWithFormat:@"治疗前vas：%@          治疗后vas：%@",self.recordModel.vasBefore,self.recordModel.vasAfter];
                 cell.doctorLabel.text = [NSString stringWithFormat:@"医生：%@",self.recordModel.operator];
             }

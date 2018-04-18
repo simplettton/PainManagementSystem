@@ -73,7 +73,7 @@
     self.valueLabel.text = [NSString stringWithFormat:@"%.0f", self.slider.value];
 }
 
-+(void)alertControllerAboveIn:(UIViewController *)controller return:(returnMark)returnEvent{
++(void)alertControllerAboveIn:(UIViewController *)controller withMark:(NSString *)mark return:(returnMark)returnEvent{
     
     VASMarkView *view = [[NSBundle mainBundle]loadNibNamed:@"VASMarkView" owner:nil options:nil][0];
     
@@ -89,6 +89,12 @@
     
     view.backgroundView.alpha = 0;
     
+    view.mark = mark;
+    
+    view.slider.value = [mark intValue];
+    
+    view.valueLabel.text = mark;
+    
     [UIView animateWithDuration:0.3 delay:0.1 usingSpringWithDamping:0.5 initialSpringVelocity:10 options:UIViewAnimationOptionCurveLinear animations:^{
         view.backgroundView.transform = transform;
         view.backgroundView.alpha = 1;
@@ -102,9 +108,12 @@
     [self removeFromSuperview];
 }
 - (IBAction)save:(id)sender {
+    
     NSString *string = self.valueLabel.text;
     self.returnEvent(string);
     [self removeFromSuperview];
+
+
 }
 -(void)sliderValueChanged:(UISlider *)sender{
     

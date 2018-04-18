@@ -80,7 +80,14 @@ static NetWorkTool *_instance;
                
                
                NSString *result = [jsonDict objectForKey:@"result"];
-               id content = [jsonDict objectForKey:@"content"];
+               
+               id content;
+               //返回null的content
+               if ([[jsonDict objectForKey:@"content"]isEqual:[NSNull null]]) {
+                   content = nil;
+               }else{
+                   content = [jsonDict objectForKey:@"content"];
+               }
                NSString *errorString = [jsonDict objectForKey:@"msg"];
                
                

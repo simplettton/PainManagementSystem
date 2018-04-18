@@ -14,6 +14,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *physicalTreatLB;
 @property (weak, nonatomic) IBOutlet UILabel *vasBeforeLB;
 @property (weak, nonatomic) IBOutlet UILabel *vasAfterLB;
+@property (weak, nonatomic) IBOutlet UILabel *vasLabel;
+
 @property (weak, nonatomic) IBOutlet UIButton *markButton;
 
 

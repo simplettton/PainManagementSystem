@@ -18,7 +18,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    
+   [SVProgressHUD setMaximumDismissTimeInterval:0.5];
 
 
     [self registerAPN];

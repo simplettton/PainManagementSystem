@@ -47,6 +47,7 @@ static NSString *CellIdentifier = @"DropDownCell";
     listView.delegate = self;
     listView.layer.borderWidth = 0.5f;
     listView.layer.borderColor = UIColorFromHex(0x3CBD9E).CGColor;
+    listView.allowsSelection = YES;
     
     listView.separatorStyle= UITableViewCellSeparatorStyleNone;
 }

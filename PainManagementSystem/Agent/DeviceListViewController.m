@@ -120,7 +120,10 @@
 
 -(void)refresh
 {
-    
+    if ([self.searchBar.text length]>0) {
+        self.searchBar.text = @"";
+    }
+    [self.searchBar resignFirstResponder];
     isFilteredList = NO;
     [self askForData:YES isFiltered:NO];
 
@@ -177,6 +180,11 @@
                                          
                                          if ([count intValue]>0) {
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];
+                                         }else{
+                                             [datas removeAllObjects];
+                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [self.tableView reloadData];
+                                             });
                                          }
 
                                          

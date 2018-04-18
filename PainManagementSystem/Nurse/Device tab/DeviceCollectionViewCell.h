@@ -44,7 +44,5 @@ typedef enum _CellStyle {
 @property (weak, nonatomic) IBOutlet UIButton *BLEPlayButton;
 
 
-
-
 -(void)configureWithStyle:(CellStyle) style;
 @end

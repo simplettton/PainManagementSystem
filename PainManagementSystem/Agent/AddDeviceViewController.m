@@ -56,6 +56,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
 
+
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];

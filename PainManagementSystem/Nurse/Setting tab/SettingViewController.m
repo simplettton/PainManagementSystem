@@ -19,6 +19,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *departmentLabel;
 - (IBAction)edit:(id)sender;
 
 @end
@@ -36,6 +37,9 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
 
     [self setBorderWithView:self.nameLabel top:NO left:YES bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
+//    [self setBorderWithView:self.departmentLabel top:NO left:YES bottom:NO right:NO borderColor:[UIColor whiteColor] borderWidth:1.0];
+    
+    
 
 
 }
@@ -52,6 +56,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.nameLabel.text = [UserDefault objectForKey:@"PersonName"];
     self.phoneLabel.text = [UserDefault objectForKey:@"Contact"];
     self.userNameLabel.text = [UserDefault objectForKey:@"UserName"];
+    self.departmentLabel.text = [UserDefault objectForKey:@"Department"];
     
 
 

@@ -27,5 +27,33 @@
 -(void)setTypeLableColor:(UIColor *)color{
     [self.typeLabel setTextColor:color];
 }
+-(void)configureWithStyle:(CellStyle)style{
+    
+    self.style = style;
+    switch (style) {
+        case CellStyle_UnDownLoad:
+            [self.scanButton setImage:[UIImage imageNamed:@"scancode"] forState:UIControlStateNormal];
+        
+            break;
+            
+        case CellStyleGrey_DownLoadedUnRunning:
+            [self.scanButton setImage:[UIImage imageNamed:@"scancode"] forState:UIControlStateNormal];
+            break;
+        
+        case CellStyleGreen_DownLoadedRunning:
+            [self.scanButton setImage:[UIImage imageNamed:@"remark"] forState:UIControlStateNormal];
+            break;
+            
+        case CellStyleBlue_DownLoadedFinishRunning:
+            [self.scanButton setImage:[UIImage imageNamed:@"remark"] forState:UIControlStateNormal];
+            break;
+        
+        case CellStyle_DownLoadedRemarked:
+            [self.scanButton setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
+            
+        default:
+            break;
+    }
+}
 
 @end

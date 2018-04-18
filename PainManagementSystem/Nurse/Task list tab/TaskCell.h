@@ -7,14 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
+typedef enum _CellStyle {
+    CellStyle_UnDownLoad  = 0,
+    CellStyleGrey_DownLoadedUnRunning,
+    CellStyleGreen_DownLoadedRunning,
+    CellStyleBlue_DownLoadedFinishRunning,
+    CellStyle_DownLoadedRemarked,
 
+} CellStyle;
 @interface TaskCell : UITableViewCell
+@property (nonatomic,assign) CellStyle style;
 @property (weak, nonatomic) IBOutlet UIButton *treatmentButton;
 @property (weak, nonatomic) IBOutlet UIButton *scanButton;
 @property (weak, nonatomic) IBOutlet UILabel *medicalRecordNumLable;
 @property (weak, nonatomic) IBOutlet UILabel *patientNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *doctorNameLable;
+
 -(void)setTypeLableColor:(UIColor *)color;
+-(void)configureWithStyle:(CellStyle) style;
 
 @end

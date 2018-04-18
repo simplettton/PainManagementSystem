@@ -7,11 +7,12 @@
 //
 
 #import "AddPatientViewController.h"
+#import "QRCodeReaderViewController.h"
 #import "NSDate+BRAdd.h"
 #import "BETextField.h"
 #import <BRPickerView.h>
 #import "BaseHeader.h"
-@interface AddPatientViewController ()
+@interface AddPatientViewController ()<QRCodeReaderDelegate>
 @property (strong, nonatomic) IBOutletCollection(UIView) NSArray *editViews;
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *requiredTextFields;
 
@@ -27,8 +28,13 @@
 @property (weak, nonatomic) IBOutlet UILabel *treatDateLabel;
 @property (weak, nonatomic) IBOutlet UIView *birthDayView;
 @property (weak, nonatomic) IBOutlet UIView *treatDayView;
+@property (weak, nonatomic) IBOutlet UIButton *scanButton;
 
 
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *nameLabels;
+
+//条形码扫描
+@property (strong,nonatomic) QRCodeReaderViewController *reader;
 @end
 
 @implementation AddPatientViewController{
@@ -43,11 +49,21 @@
 
 -(void)initAll{
    
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"保存" style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
+    
     genderArray = @[@"男",@"女",@"其他"];
 
-    
+    for (UILabel *label in self.nameLabels) {
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:label.text];
+
+        [string addAttribute:NSForegroundColorAttributeName value:UIColorFromHex(0xFD8574) range:NSMakeRange([label.text length]-1,1)];
+
+        label.attributedText = string;
+    }
     if (self.patient == nil) {
         self.title = @"增加病历";
+        self.scanButton.hidden = NO;
         //当前时间戳
         NSString *ts = [NSString stringWithFormat:@"%ld", time(NULL)];
 
@@ -58,6 +74,7 @@
         
     }else{
         self.title = @"修改病历";
+        self.scanButton.hidden = YES;
         
         //病历不可修改
         self.medicalRecordNumTextField.text = self.patient.medicalRecordNum;
@@ -169,6 +186,38 @@
                                   } failure:nil];
     
 }
+- (IBAction)scan:(id)sender {
+    
+    NSArray *types = @[AVMetadataObjectTypeQRCode,
+                       AVMetadataObjectTypeEAN13Code,
+                       AVMetadataObjectTypeEAN8Code,
+                       AVMetadataObjectTypeUPCECode,
+                       AVMetadataObjectTypeCode39Code,
+                       AVMetadataObjectTypeCode39Mod43Code,
+                       AVMetadataObjectTypeCode93Code,
+                       AVMetadataObjectTypeCode128Code,
+                       AVMetadataObjectTypePDF417Code];
+    
+    _reader = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
+    _reader.delegate = self;
+    
+    
+    [self presentViewController:_reader animated:YES completion:NULL];
+}
+#pragma mark - QRCodeReader Delegate Methods
+- (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        self.medicalRecordNumTextField.text = result;
+        NSLog(@"QRretult == %@", result);
+    }];
+}
+
+- (void)readerDidCancel:(QRCodeReaderViewController *)reader
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
 
 #pragma mark - private method
 

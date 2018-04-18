@@ -15,6 +15,7 @@
 		0411BC1C2071FCAA000FC687 /* TaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0411BC1B2071FCAA000FC687 /* TaskListViewController.m */; };
 		0411BC1F2072160F000FC687 /* SendTreatmentSuccessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0411BC1E2072160F000FC687 /* SendTreatmentSuccessView.m */; };
 		0411BC2120721629000FC687 /* SendTreatmentSuccessView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0411BC2020721629000FC687 /* SendTreatmentSuccessView.xib */; };
+		0412081B2087341C00993A49 /* TaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0412081A2087341C00993A49 /* TaskModel.m */; };
 		0419F406207331A800C83C2B /* TreatmentParam.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0419F405207331A800C83C2B /* TreatmentParam.plist */; };
 		0419F4082073515900C83C2B /* Task.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0419F4072073515900C83C2B /* Task.plist */; };
 		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
@@ -128,6 +129,8 @@
 		0411BC1D2072160F000FC687 /* SendTreatmentSuccessView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendTreatmentSuccessView.h; sourceTree = "<group>"; };
 		0411BC1E2072160F000FC687 /* SendTreatmentSuccessView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SendTreatmentSuccessView.m; sourceTree = "<group>"; };
 		0411BC2020721629000FC687 /* SendTreatmentSuccessView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendTreatmentSuccessView.xib; sourceTree = "<group>"; };
+		041208192087341C00993A49 /* TaskModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TaskModel.h; sourceTree = "<group>"; };
+		0412081A2087341C00993A49 /* TaskModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TaskModel.m; sourceTree = "<group>"; };
 		0419F405207331A800C83C2B /* TreatmentParam.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TreatmentParam.plist; sourceTree = "<group>"; };
 		0419F4072073515900C83C2B /* Task.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Task.plist; sourceTree = "<group>"; };
 		041A3E1D207C543100CC316A /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
@@ -229,7 +232,6 @@
 		0481E8BC2079EB390099B506 /* ListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCell.h; sourceTree = "<group>"; };
 		0481E8BD2079EB390099B506 /* ListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListCell.m; sourceTree = "<group>"; };
 		0481E8BE2079EB390099B506 /* ListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListCell.xib; sourceTree = "<group>"; };
-		0481E8CC207A049A0099B506 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		0481E8CD207A049A0099B506 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		0481E8D1207A04EB0099B506 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		0481E8D3207A04FF0099B506 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -532,6 +534,8 @@
 				0469E23E207EED410035D5AC /* PatientModel.m */,
 				045982B62080B68F00B51DB9 /* MachineModel.h */,
 				045982B72080B68F00B51DB9 /* MachineModel.m */,
+				041208192087341C00993A49 /* TaskModel.h */,
+				0412081A2087341C00993A49 /* TaskModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -950,6 +954,7 @@
 				041B791D2068EDB2001D04C8 /* BETextField.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				049C57832068C18B00180A8B /* PatientTableViewCell.m in Sources */,
+				0412081B2087341C00993A49 /* TaskModel.m in Sources */,
 				0495FD1B206F26EA00D01E2C /* Unpack.m in Sources */,
 				04C8B64F206B4ACD00DEB3F0 /* RecordDetailViewController.m in Sources */,
 				04112069205FD54E00C91BA0 /* AddDeviceViewController.m in Sources */,
@@ -1019,7 +1024,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				04ED0EBD20528A1800638850 /* Base */,
-				0481E8CC207A049A0099B506 /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";

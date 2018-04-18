@@ -5,6 +5,9 @@
 /* Class = "UILabel"; text = "病历号"; ObjectID = "0QB-DM-Sa2"; */
 "0QB-DM-Sa2.text" = "病历号";
 
+/* Class = "UIButton"; normalTitle = "在线设备"; ObjectID = "0bl-lF-9V1"; */
+"0bl-lF-9V1.normalTitle" = "在线设备";
+
 /* Class = "UIBarButtonItem"; title = "保存"; ObjectID = "0id-u4-J1V"; */
 "0id-u4-J1V.title" = "保存";
 
@@ -35,8 +38,8 @@
 /* Class = "UITabBarItem"; title = "任务列表"; ObjectID = "3iJ-ek-2sZ"; */
 "3iJ-ek-2sZ.title" = "任务列表";
 
-/* Class = "UIButton"; normalTitle = "修改"; ObjectID = "413-xe-bmm"; */
-"413-xe-bmm.normalTitle" = "修改";
+/* Class = "UIButton"; normalTitle = "编辑"; ObjectID = "413-xe-bmm"; */
+"413-xe-bmm.normalTitle" = "编辑";
 
 /* Class = "UILabel"; text = "1234579"; ObjectID = "4wP-yD-pNO"; */
 "4wP-yD-pNO.text" = "1234579";
@@ -53,26 +56,29 @@
 /* Class = "UILabel"; text = "P06A1234532"; ObjectID = "7io-lY-zep"; */
 "7io-lY-zep.text" = "P06A1234532";
 
+/* Class = "UITextField"; placeholder = "请填写新的密码"; ObjectID = "7l5-kn-ljR"; */
+"7l5-kn-ljR.placeholder" = "请填写新的密码";
+
 /* Class = "UILabel"; text = "男"; ObjectID = "7ve-uX-cpW"; */
 "7ve-uX-cpW.text" = "男";
 
 /* Class = "UIButton"; normalTitle = "Button"; ObjectID = "8aX-53-Dke"; */
 "8aX-53-Dke.normalTitle" = "Button";
 
-/* Class = "UILabel"; text = "加载更多..."; ObjectID = "9m2-Zk-Mm4"; */
-"9m2-Zk-Mm4.text" = "加载更多...";
-
 /* Class = "UILabel"; text = "病床号：309"; ObjectID = "9tQ-nG-H2v"; */
 "9tQ-nG-H2v.text" = "病床号：309";
 
-/* Class = "UILabel"; text = "出生年月"; ObjectID = "AMw-cU-e69"; */
-"AMw-cU-e69.text" = "出生年月";
+/* Class = "UILabel"; text = "出生年月*"; ObjectID = "AMw-cU-e69"; */
+"AMw-cU-e69.text" = "出生年月*";
 
 /* Class = "UILabel"; text = "病历列表"; ObjectID = "AXg-ai-ZTO"; */
 "AXg-ai-ZTO.text" = "病历列表";
 
 /* Class = "UIButton"; normalTitle = "返回"; ObjectID = "Akp-Mg-FMe"; */
 "Akp-Mg-FMe.normalTitle" = "返回";
+
+/* Class = "UILabel"; text = "病床号"; ObjectID = "B0r-iL-G3A"; */
+"B0r-iL-G3A.text" = "病床号";
 
 /* Class = "UISegmentedControl"; BIm-ME-OHc.segmentTitles[0] = "在线设备"; ObjectID = "BIm-ME-OHc"; */
 "BIm-ME-OHc.segmentTitles[0]" = "在线设备";
@@ -146,6 +152,9 @@
 /* Class = "UILabel"; text = "病理因素：痉挛性疼痛          发病部位：肌肉          中医辨证：寒"; ObjectID = "IeI-SU-40I"; */
 "IeI-SU-40I.text" = "病理因素：痉挛性疼痛          发病部位：肌肉          中医辨证：寒";
 
+/* Class = "UITextField"; placeholder = "请再次输入新密码"; ObjectID = "Ip4-O8-ECw"; */
+"Ip4-O8-ECw.placeholder" = "请再次输入新密码";
+
 /* Class = "UILabel"; text = "设备名称"; ObjectID = "J1X-oh-g8O"; */
 "J1X-oh-g8O.text" = "设备名称";
 
@@ -158,11 +167,8 @@
 /* Class = "UILabel"; text = "诊断结果"; ObjectID = "JgM-zX-Q3U"; */
 "JgM-zX-Q3U.text" = "诊断结果";
 
-/* Class = "UINavigationItem"; title = "修改信息"; ObjectID = "KPd-79-Ur8"; */
-"KPd-79-Ur8.title" = "修改信息";
-
-/* Class = "UILabel"; text = "Title"; ObjectID = "KVs-jH-s8O"; */
-"KVs-jH-s8O.text" = "Title";
+/* Class = "UINavigationItem"; title = "个人信息修改"; ObjectID = "KPd-79-Ur8"; */
+"KPd-79-Ur8.title" = "个人信息修改";
 
 /* Class = "UILabel"; text = "治疗设备"; ObjectID = "MG2-Hb-RuU"; */
 "MG2-Hb-RuU.text" = "治疗设备";
@@ -173,8 +179,11 @@
 /* Class = "UILabel"; text = "序列号"; ObjectID = "Mzx-Uk-O3I"; */
 "Mzx-Uk-O3I.text" = "序列号";
 
-/* Class = "UILabel"; text = "病历号"; ObjectID = "Nj5-Gy-eaM"; */
-"Nj5-Gy-eaM.text" = "病历号";
+/* Class = "UILabel"; text = "病历号*"; ObjectID = "Nj5-Gy-eaM"; */
+"Nj5-Gy-eaM.text" = "病历号*";
+
+/* Class = "UIButton"; highlightedTitle = "\b"; ObjectID = "OX9-QY-vh2"; */
+"OX9-QY-vh2.highlightedTitle" = "\b";
 
 /* Class = "UIButton"; normalTitle = "提交"; ObjectID = "PHx-Rk-0uo"; */
 "PHx-Rk-0uo.normalTitle" = "提交";
@@ -188,8 +197,8 @@
 /* Class = "UILabel"; text = "气囊类型不合适"; ObjectID = "S18-Es-CDo"; */
 "S18-Es-CDo.text" = "气囊类型不合适";
 
-/* Class = "UILabel"; text = "联系电话"; ObjectID = "S6M-6G-Xzs"; */
-"S6M-6G-Xzs.text" = "联系电话";
+/* Class = "UILabel"; text = "联系电话*"; ObjectID = "S6M-6G-Xzs"; */
+"S6M-6G-Xzs.text" = "联系电话*";
 
 /* Class = "UILabel"; text = "血瘘-设备昵称"; ObjectID = "Sjw-IS-A4v"; */
 "Sjw-IS-A4v.text" = "血瘘-设备昵称";
@@ -205,6 +214,9 @@
 
 /* Class = "UILabel"; text = "联系方式"; ObjectID = "TSb-wb-8dS"; */
 "TSb-wb-8dS.text" = "联系方式";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "U7n-BY-Eho"; */
+"U7n-BY-Eho.text" = "Label";
 
 /* Class = "UILabel"; text = "修改密码"; ObjectID = "ULT-pP-whV"; */
 "ULT-pP-whV.text" = "修改密码";
@@ -239,9 +251,6 @@
 /* Class = "UILabel"; text = "南山医院"; ObjectID = "Y57-wd-PjE"; */
 "Y57-wd-PjE.text" = "南山医院";
 
-/* Class = "UILabel"; text = "Detail"; ObjectID = "YWo-bL-2nf"; */
-"YWo-bL-2nf.text" = "Detail";
-
 /* Class = "UILabel"; text = "空气波-设备昵称"; ObjectID = "YcX-Vc-Gf3"; */
 "YcX-Vc-Gf3.text" = "空气波-设备昵称";
 
@@ -251,8 +260,8 @@
 /* Class = "UIButton"; normalTitle = "查找"; ObjectID = "ZiB-Kb-Phu"; */
 "ZiB-Kb-Phu.normalTitle" = "查找";
 
-/* Class = "UILabel"; text = "姓名"; ObjectID = "a1r-o3-waK"; */
-"a1r-o3-waK.text" = "姓名";
+/* Class = "UILabel"; text = "姓名*"; ObjectID = "a1r-o3-waK"; */
+"a1r-o3-waK.text" = "姓名*";
 
 /* Class = "UIButton"; normalTitle = "保存"; ObjectID = "aom-F5-GVz"; */
 "aom-F5-GVz.normalTitle" = "保存";
@@ -262,6 +271,9 @@
 
 /* Class = "UITextField"; text = "骨科一号"; ObjectID = "cK9-1n-FzC"; */
 "cK9-1n-FzC.text" = "骨科一号";
+
+/* Class = "UITextField"; placeholder = "请填写旧密码"; ObjectID = "cMe-d5-rLA"; */
+"cMe-d5-rLA.placeholder" = "请填写旧密码";
 
 /* Class = "UIButton"; normalTitle = "  设备列表"; ObjectID = "cqz-lH-I9f"; */
 "cqz-lH-I9f.normalTitle" = "  设备列表";
@@ -278,8 +290,8 @@
 /* Class = "UIButton"; normalTitle = "  设备录入"; ObjectID = "eGF-af-X2v"; */
 "eGF-af-X2v.normalTitle" = "  设备录入";
 
-/* Class = "UILabel"; text = "性别"; ObjectID = "eZJ-Zw-CL3"; */
-"eZJ-Zw-CL3.text" = "性别";
+/* Class = "UILabel"; text = "性别*"; ObjectID = "eZJ-Zw-CL3"; */
+"eZJ-Zw-CL3.text" = "性别*";
 
 /* Class = "UILabel"; text = "空气波"; ObjectID = "ejv-fK-ZHh"; */
 "ejv-fK-ZHh.text" = "空气波";
@@ -368,8 +380,8 @@
 /* Class = "UILabel"; text = "治疗前vas：12          治疗后vas：14"; ObjectID = "pFY-Y9-3VU"; */
 "pFY-Y9-3VU.text" = "治疗前vas：12          治疗后vas：14";
 
-/* Class = "UISearchBar"; placeholder = "搜索设备类型"; ObjectID = "q7W-E8-yLc"; */
-"q7W-E8-yLc.placeholder" = "搜索设备类型";
+/* Class = "UISearchBar"; placeholder = "搜索"; ObjectID = "q7W-E8-yLc"; */
+"q7W-E8-yLc.placeholder" = "搜索";
 
 /* Class = "UILabel"; text = "查看疗程"; ObjectID = "qLI-IU-I2e"; */
 "qLI-IU-I2e.text" = "查看疗程";
@@ -437,8 +449,14 @@
 /* Class = "UILabel"; text = "病床号：309"; ObjectID = "x44-nW-CET"; */
 "x44-nW-CET.text" = "病床号：309";
 
+/* Class = "UILabel"; text = "空气波"; ObjectID = "xac-pZ-HUL"; */
+"xac-pZ-HUL.text" = "空气波";
+
 /* Class = "UIButton"; normalTitle = "评分"; ObjectID = "xks-nR-5g4"; */
 "xks-nR-5g4.normalTitle" = "评分";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "yBZ-vA-8xV"; */
+"yBZ-vA-8xV.text" = "Label";
 
 /* Class = "UITextField"; text = "2018-03-14"; ObjectID = "yCf-oN-lAN"; */
 "yCf-oN-lAN.text" = "2018-03-14";

@@ -7,7 +7,7 @@
 //
 
 #import "FocusDeviceViewController.h"
-
+#import "PatientModel.h"
 @interface FocusDeviceViewController ()
 
 @property (weak, nonatomic) IBOutlet UIButton *allTabButton;
@@ -51,6 +51,7 @@
     [super viewWillDisappear:YES];
     [baby cancelScan];
     [baby cancelAllPeripheralsConnection];
+    [self.dropList pullBack];
     [self.HUD hideAnimated:YES];
 }
 
@@ -138,7 +139,7 @@
     
     //下拉框
     [self.deviceBackgroundView addSubview:self.dropList];
-    NSArray *array_1 = @[@"所有设备", @"治疗中设备", @"异常设备", @"其他设备"];
+    NSArray *array_1 = @[@"治疗中设备", @"未开始设备", @"治疗结束设备"];
     self.dropListArray = array_1;
 
     [self.dropList reloadListData];
@@ -203,6 +204,8 @@
     }
 }
 
+
+#pragma mark - HHDropDownList
 -(HHDropDownList *)dropList{
     if (!_dropList) {
         //配置dropList
@@ -215,10 +218,19 @@
         
         [_dropList setIsExclusive:YES];
         [_dropList setHaveBorderLine:YES];
-
+        
     }
     return _dropList;
 }
+- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
+    
+    return _dropListArray;
+}
+- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
+    NSLog(@"筛选设备%ld:%@",(long)index,itemName);
+    
+}
+
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
     
     NSInteger Index = segmentedControl.selectedSegmentIndex;
@@ -777,20 +789,15 @@
 }
 
 
-#pragma mark - HHDropDownListDataSource-delegate
-- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
-    
-    return _dropListArray;
-}
-- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
-    NSLog(@"筛选设备%ld:%@",(long)index,itemName);
-}
 
 #pragma mark - segue
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString:@"GoToRemarkVAS"]) {
         TreatmentCourseRecordViewController *controller = segue.destinationViewController;
-        controller.dataDic = @{@"medicalRecordNum":@"12345896",@"name":@"小明",@"gender":@"男",@"age":@"20",@"phone":@"13782965445"};
+
+        
+        
+//        controller.patientModel = [PatientModel modelWithDic:<#(NSDictionary *)#>]
         
     }
 }

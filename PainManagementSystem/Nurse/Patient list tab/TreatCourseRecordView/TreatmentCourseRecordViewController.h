@@ -10,5 +10,4 @@
 #import "PatientModel.h"
 @interface TreatmentCourseRecordViewController : UIViewController
 @property (nonatomic,strong)PatientModel *patient;
-@property (nonatomic,strong)NSDictionary *dataDic;
 @end

@@ -37,13 +37,10 @@
     
     if (self.patient) {
         self.title = @"治疗疗程记录";
-        self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.dataDic[@"name"]];
-        self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.dataDic[@"age"]];
-        self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.dataDic[@"phone"]];
-        
-//        self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.patient.name];
-//        self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.patient.age];
-//        self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.patient.contact];
+    
+        self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.patient.name];
+        self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.patient.age];
+        self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.patient.contact];
     }
     
     
@@ -69,18 +66,65 @@
     if (cell == nil) {
         cell = [[TreatRecordCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-//    [cell.markButton setTag:indexPath.row];
+    [cell.markButton setTag:indexPath.row];
     [cell.markButton addTarget:self action:@selector(showVASMarkView:) forControlEvents:UIControlEventTouchUpInside];
-    
     
     return cell;
 }
 -(void)showVASMarkView:(UIButton *)sender{
-    [VASMarkView alertControllerAboveIn:self return:^(NSString *markString) {
-        UIView *contentView = [sender superview];
-        TreatRecordCell *cell = (TreatRecordCell *)[contentView superview];
-        cell.vasAfterLB.text = markString;
-    }];
+    
+    UIView *contentView = [sender superview];
+    TreatRecordCell *cell = (TreatRecordCell *)[contentView superview];
+    __block NSMutableArray *array = (NSMutableArray *)[cell.vasLabel.text componentsSeparatedByString:@"/"];
+    if (![[array objectAtIndex:1]isEqualToString:@"?"]) {
+        
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+                                                                       message:@"该治疗疗程记录已有VAS评分，是否再次修改评分？"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {}];
+        
+        
+        [alert addAction:cancelAction];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            [VASMarkView alertControllerAboveIn:self withMark:[array objectAtIndex:1] return:^(NSString *markString) {
+
+                [array replaceObjectAtIndex:1 withObject:markString];
+                
+                NSString *newValue = [array componentsJoinedByString:@"/"];
+                cell.vasLabel.text = newValue;
+                cell.vasAfterLB.text = markString;
+            }];
+        }];
+        
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        
+    }else{
+        [VASMarkView alertControllerAboveIn:self withMark:@"20" return:^(NSString *markString) {
+
+            [array replaceObjectAtIndex:1 withObject:markString];
+            
+            NSString *newValue = [array componentsJoinedByString:@"/"];
+            cell.vasLabel.text = newValue;
+            cell.vasAfterLB.text = markString;
+        }];
+    }
+    
+//    [VASMarkView alertControllerAboveIn:self withMark:@"20" return:^(NSString *markString) {
+////        UIView *contentView = [sender superview];
+////        TreatRecordCell *cell = (TreatRecordCell *)[contentView superview];
+////
+////        NSMutableArray *array = (NSMutableArray *)[cell.vasLabel.text componentsSeparatedByString:@"/"];
+//        [array replaceObjectAtIndex:1 withObject:markString];
+//
+//        NSString *newValue = [array componentsJoinedByString:@"/"];
+//        cell.vasLabel.text = newValue;
+//        cell.vasAfterLB.text = markString;
+//    }];
     
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -90,7 +134,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString:@"ShowRecordDetail"]) {
         RecordDetailViewController *controller = (RecordDetailViewController *)segue.destinationViewController;
-        controller.dataDic = self.dataDic;
+        controller.patient = self.patient;
     }
 }
 

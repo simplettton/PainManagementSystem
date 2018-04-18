@@ -195,10 +195,16 @@
                                      if ([responseObject.result intValue] == 1) {
                                          NSDictionary *content = responseObject.content;
                                          
+                                         NSLog(@"%@",content);
+                                         
                                          [UserDefault setObject:content[@"hospital"] forKey:@"Hospital"];
                                          [UserDefault setObject:content[@"username"] forKey:@"UserName"];
                                          [UserDefault setObject:content[@"personname"] forKey:@"PersonName"];
-                                         [UserDefault setObject:content[@"contact"] forKey:@"Contact"];
+                                         [UserDefault setObject:content[@"department"] forKey:@"Department"];
+                                         if (content[@"contact"]!=[NSNull null]) {
+                                             [UserDefault setObject:content[@"contact"] forKey:@"Contact"];
+                                         }
+ 
                                          if (content[@"note"] != [NSNull null]) {
                                              [UserDefault  setObject:content[@"note"] forKey:@"Note"];
                                          }

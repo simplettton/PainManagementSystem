@@ -16,6 +16,8 @@
 #import "BaseHeader.h"
 #import <SVProgressHUD.h>
 
+#import "MJRefresh.h"
+
 #define ElectrotherapyTypeValue 56833
 #define AirProTypeValue 7681
 #define AladdinTypeValue 57119
@@ -24,10 +26,16 @@
 #define AirProColor 0xfd8574
 #define AladdinColor 0x5e97fe
 
-@interface TaskListViewController ()<UITableViewDelegate,UITableViewDataSource,QRCodeReaderDelegate,UIPopoverPresentationControllerDelegate>
+@interface TaskListViewController ()<UITableViewDelegate,UITableViewDataSource,QRCodeReaderDelegate,UIPopoverPresentationControllerDelegate>{
+    int page;
+    int totalPage;  //总页数
+    BOOL isRefreshing; //是否正在下拉刷新或者上拉加载
+    BOOL isFinishList;
+}
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong,nonatomic) QRCodeReaderViewController *reader;
 @property (assign,nonatomic) NSInteger selectedRow;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 
 @end
 
@@ -35,27 +43,21 @@
     NSMutableArray *datas;
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    [self initTableHeaderAndFooter];
+    
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
 //    [self showSuccessView];
     [self initAll];
 
 }
--(void)showSuccessView{
-    [SVProgressHUD dismiss];
-    [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
-        NSLog(@"send to server设置关注 ");
-    }];
-    
-
-    
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [self endRefresh];
 }
-
--(void)showFailView{
-    [SVProgressHUD dismiss];
-    [SendTreatmentFailView alertControllerAboveIn:self];
-}
-
 -(void)initAll{
     
     self.tableView.dataSource = self;
@@ -64,8 +66,199 @@
     
     NSArray *dataArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"Task" ofType:@"plist"]];
     datas = [dataArray mutableCopy];
+    
+    self.segmentedControl.frame = CGRectMake(self.segmentedControl.frame.origin.x, self.segmentedControl.frame.origin.y, self.segmentedControl.frame.size.width, 35);
+    
+    [self.segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}forState:UIControlStateSelected];
+    
+    [self.segmentedControl setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15.0f]}forState:UIControlStateNormal];
+    
+    [self.segmentedControl addTarget:self action:@selector(didClicksegmentedControlAction:) forControlEvents:UIControlEventValueChanged];
 }
 
+-(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
+    
+    NSInteger index = segmentedControl.selectedSegmentIndex;
+    switch (index) {
+        case TaskListTypeNotStarted:
+            
+            NSLog(@"切换代处理处方");
+            isFinishList = NO;
+            
+            break;
+        case TaskListTypeProcessing:
+            
+            NSLog(@"切换处理中处方");
+            
+            
+            break;
+        case TaskListTypeFinished:
+            
+            NSLog(@"切换已完成处方");
+            isFinishList = YES;
+            
+            break;
+        default:
+            break;
+    }
+    
+    [self.tableView.mj_header beginRefreshing];
+    
+    
+}
+#pragma mark - refresh
+-(void)initTableHeaderAndFooter{
+    
+    //下拉刷新
+
+    
+    MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+
+    
+    [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
+    [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
+    [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
+    
+    self.tableView.mj_header = header;
+    
+//    [self.tableView.mj_header beginRefreshing];
+    
+    
+    //上拉加载
+    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
+    [footer setTitle:@"" forState:MJRefreshStateIdle];
+    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
+    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+    self.tableView.mj_footer = footer;
+}
+
+-(void)refresh{
+    [self askForData:YES];
+}
+
+-(void)loadMore{
+    [self askForData:NO];
+}
+
+-(void)endRefresh{
+    if (page == 0) {
+        [self.tableView.mj_header endRefreshing];
+    }
+    [self.tableView.mj_footer endRefreshing];
+}
+
+-(void)askForData:(BOOL)isRefresh{
+    
+    switch (self.segmentedControl.selectedSegmentIndex) {
+            
+        //待处理
+        case TaskListTypeNotStarted:
+            
+            break;
+        //处理中
+        case TaskListTypeProcessing:
+            
+            break;
+        //已完成
+        case TaskListTypeFinished:
+            
+            break;
+            
+        default:
+            break;
+    }
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/ListCount"]
+                                  params:nil
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if ([responseObject.result intValue] == 1) {
+                                         
+                                         NSString *count = responseObject.content[@"count"];
+                                         
+                                         totalPage = ([count intValue]+15-1)/15;
+                                         
+                                         NSLog(@"totalPage = %d",totalPage);
+                                         
+                                         if([count intValue] > 0)
+                                         {
+                                             [self getNetworkData:isRefresh];
+                                         }else{
+
+                                         }
+                                         
+                                     }else{
+                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                     }
+                                 }
+                                 failure:nil];
+}
+
+-(void)getNetworkData:(BOOL)isRefresh{
+    
+    if (isRefresh) {
+        page = 0;
+    }else{
+        page ++;
+    }
+    
+    
+    //配置请求http
+    NSMutableDictionary *mutableParam = [[NSMutableDictionary alloc]init];
+    NSNumber *value = [NSNumber numberWithInteger:isFinishList?1:0];
+    [mutableParam setObject:value forKey:@"isfinish"];
+    NSDictionary *params = (NSDictionary *)mutableParam;
+    
+    __weak UITableView *tableView = self.tableView;
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/List"]
+                                  params:params
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     [self endRefresh];
+                                     isRefreshing = NO;//数据获取成功后，设置为NO
+                                     
+                                     if (page == 0) {
+                                         [datas removeAllObjects];
+                                     }
+                                     //判断是否正在加载，如果有，判断当前页数是不是大于最大页数，是的话就不让加载，直接return；（因为下拉的当前页永远是最小的，所以直接return）
+                                     if (isRefreshing) {
+                                         if (page >= totalPage) {
+                                             [self endRefresh];
+                                         }
+                                         return;
+                                     }
+                                     
+                                     isRefreshing = YES;
+                                     
+                                     //上拉加载更多
+                                     if (page >=totalPage) {
+                                         [self endRefresh];
+                                         [tableView.mj_footer endRefreshingWithNoMoreData];
+                                         return;
+                                     }
+                                     
+                                     //返回成功
+                                     
+                                     if ([responseObject.result intValue] == 1) {
+                                         NSArray *content = responseObject.content;
+                                         
+                                         if (content) {
+                                             for (NSDictionary *dic in content) {
+                                                 if (![datas containsObject:dic]) {
+                                                     
+                                                     
+                                                 }
+                                             }
+                                             
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [tableView reloadData];
+                                             });
+                                         }
+                                     }
+                                     
+                                     
+                                 } failure:nil];
+}
 
 #pragma mark - table view delegate
 
@@ -124,7 +317,7 @@
     [self performSegueWithIdentifier:@"ShowPopover" sender:sender];
 }
 
-#pragma mark - scan
+#pragma mark - action
 - (void)scanAction:(id)sender {
     
     self.selectedRow = [sender tag];
@@ -148,6 +341,20 @@
     [self presentViewController:_reader animated:YES completion:NULL];
     
 }
+
+-(void)showSuccessView{
+    [SVProgressHUD dismiss];
+    [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
+        NSLog(@"send to server设置关注 ");
+    }];
+    
+}
+
+-(void)showFailView{
+    [SVProgressHUD dismiss];
+    [SendTreatmentFailView alertControllerAboveIn:self];
+}
+
 
 #pragma mark - QRCodeReader Delegate Methods
 - (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result

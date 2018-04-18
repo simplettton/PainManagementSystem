@@ -13,7 +13,7 @@
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *textFields;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *contactTextFiled;
-@property (weak, nonatomic) IBOutlet UITextField *noteTextField;
+@property (weak, nonatomic) IBOutlet UITextField *departmentTextField;
 
 @end
 
@@ -35,11 +35,12 @@
         textField.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
         textField.leftView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 51)];
         textField.leftViewMode=UITextFieldViewModeAlways;
+        textField.layer.cornerRadius = 5.0f;
     }
     
     self.nameTextField.text = [UserDefault objectForKey:@"PersonName"];
     self.contactTextFiled.text = [UserDefault objectForKey:@"Contact"];
-    self.noteTextField.text = [UserDefault objectForKey:@"Note"];
+    self.departmentTextField.text = [UserDefault objectForKey:@"Department"];
 }
 -(void)viewWillAppear:(BOOL)animated{
     
@@ -70,22 +71,23 @@
     [SVProgressHUD show];
     NSString *personName = self.nameTextField.text;
     NSString *contact = self.contactTextFiled.text;
-    NSString *note = self.noteTextField.text;
+    NSString *department = self.departmentTextField.text;
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/ChangeSelfInfo"]
                                                                              params:@{@"personname":personName,
                                                                                       @"contact":contact,
-                                                                                      @"note":note
+                                                                                      @"department":department
                                                                                       }
                                                                            hasToken:YES
                                                                             success:^(HttpResponse *responseObject) {
                                                                                 if ([responseObject.result intValue] == 1) {
                                                                                     dispatch_async(dispatch_get_main_queue(), ^{
+
                                                                                         [SVProgressHUD showSuccessWithStatus:@"保存成功"];
                                                                                         [self dismissViewControllerAnimated:YES completion:nil];
                                                                                         
                                                                                         [UserDefault setObject:personName forKey:@"PersonName"];
                                                                                         [UserDefault setObject:contact forKey:@"Contact"];
-                                                                                        [UserDefault setObject:note forKey:@"Note"];
+                                                                                        [UserDefault setObject:department forKey:@"Department"];
                                                                                         [UserDefault synchronize];
                                                                                         
                                                                                     });
