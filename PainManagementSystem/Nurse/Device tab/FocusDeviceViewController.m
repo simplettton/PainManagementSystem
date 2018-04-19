@@ -57,7 +57,10 @@
 
 -(void)initUI{
     
+    LLSegmentBarVC *segmentVarVC = (LLSegmentBarVC *)self.parentViewController;
+    segmentVarVC.segmentBar.delegate = self;
     
+
     if (self.isInAllTab) {
         //隐藏本地设备
         self.allTabButton.hidden = NO;
@@ -801,6 +804,16 @@
 //        controller.patientModel = [PatientModel modelWithDic:<#(NSDictionary *)#>]
         
     }
+}
+#pragma mark - LLSegmentBarDelegate
+- (void)segmentBar:(LLSegmentBar *)segmentBar didSelectIndex: (NSInteger)toIndex fromIndex: (NSInteger)fromIndex{
+    NSString *title;
+    if (toIndex == 0) {
+        title = @"关注";
+    }else{
+        title = @"全部";
+    }
+    NSLog(@"select %@",title);
 }
 
 @end
