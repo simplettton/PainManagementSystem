@@ -320,7 +320,7 @@
     cell.nameLabel.text = patient.name;
     cell.genderLabel.text = patient.gender;
 
-    cell.ageLabel.text = ([patient.age intValue] == 0) ? @"<1" :patient.age;
+    cell.ageLabel.text = patient.age;
 
     
     

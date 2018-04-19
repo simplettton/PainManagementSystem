@@ -169,10 +169,9 @@
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
                                      
-                                     NSLog(@"repos = %@",responseObject.result);
                                      if ([responseObject.result intValue]==1) {
                                          [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
-                                         [SVProgressHUD setMaximumDismissTimeInterval:0.5];
+
                                          [SVProgressHUD showSuccessWithStatus:@"保存成功"];
                                          
                                          [self.navigationController popViewControllerAnimated:YES];

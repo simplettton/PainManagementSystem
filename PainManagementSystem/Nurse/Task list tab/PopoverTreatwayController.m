@@ -23,6 +23,8 @@
 @interface PopoverTreatwayController ()<UITableViewDelegate,UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *topView;
+@property (weak, nonatomic) IBOutlet UILabel *airProALabel;
+@property (weak, nonatomic) IBOutlet UILabel *airProBLabel;
 
 @property (strong, nonatomic) NSString *type;
 @end
@@ -43,10 +45,6 @@
 -(void)initAll{
     
     self.tableView.tableFooterView = [[UIView alloc]init];
-//
-//    NSArray *dataArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"TreatmentParam" ofType:@"plist"]];
-//
-//    datas = [dataArray mutableCopy];
     
     NSArray *dataArray = self.treatWayDic[@"list"];
     datas = [dataArray mutableCopy];
@@ -54,32 +52,34 @@
     
     UIImageView *aladdinView = [self.topView viewWithTag:AladdinViewTag];
     
-    UIImageView *electrotherapyView = [self.topView viewWithTag:ElectrotherapyViewTag];
+    UIImageView *leftView = [self.topView viewWithTag:ElectrotherapyViewTag];
     
     UILabel *electrotherapyLabel = [self.topView viewWithTag:ElectrotherapyLabelTag];
     
     self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 15);
     
+    self.airProALabel.hidden = ([self.type integerValue] != AirProViewTag);
+    self.airProBLabel.hidden = ([self.type integerValue] != AirProViewTag);
+    leftView.hidden = ([self.type integerValue] == AladdinViewTag);
+    electrotherapyLabel.hidden = ([self.type integerValue] != ElectrotherapyViewTag);
+    aladdinView.hidden = ([self.type integerValue] != AladdinViewTag);
+    
     switch ([self.type integerValue]) {
         case AladdinViewTag:
-            electrotherapyView.hidden = YES;
-            electrotherapyLabel.hidden = YES;
-            aladdinView.hidden = NO;
+
             aladdinView.image = [UIImage imageNamed:@"aladdin"];
             break;
             
         case AirProViewTag:
-            electrotherapyView.hidden = YES;
-            electrotherapyLabel.hidden = YES;
-            aladdinView.hidden = NO;
-            aladdinView.image = [UIImage imageNamed:@"airpro"];
+
+//            aladdinView.image = [UIImage imageNamed:@"airpro"];
+            leftView.image = [UIImage imageNamed:@"airIcon"];
+
             break;
             
         case ElectrotherapyViewTag:
         {
-            electrotherapyView.hidden = NO;
-            electrotherapyLabel.hidden = NO;
-            aladdinView.hidden = YES;
+
             //电疗第一个参数就是通道数
             NSDictionary *channelDic = [datas objectAtIndex:0];
             NSString *channelNum = channelDic[@"value"];
@@ -88,7 +88,7 @@
 
             NSDictionary *channelImageNameInfo = @{@"1":@"singlechannel",@"2":@"doublechannel",@"3":@"thirdchannel"};
             
-            electrotherapyView.image = [UIImage imageNamed:[channelImageNameInfo objectForKey:channelNum]];
+            leftView.image = [UIImage imageNamed:[channelImageNameInfo objectForKey:channelNum]];
             
         }
 

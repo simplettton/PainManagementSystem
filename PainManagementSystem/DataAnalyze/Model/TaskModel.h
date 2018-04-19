@@ -12,7 +12,7 @@
 
 @property(nonatomic,copy)NSString *medicalRecordNum;
 
-@property(nonatomic,copy)NSString *name;
+@property(nonatomic,copy)NSString *patientName;
 
 //是否评分来判断任务是否完成
 @property(nonatomic,assign)BOOL isFinish;
@@ -20,13 +20,21 @@
 //是否下发
 @property(nonatomic,assign)BOOL isDownload;
 
-@property(nonatomic,copy)NSDictionary *treatwayDic;
+@property (nonatomic, assign) NSUInteger state;
+
+@property(nonatomic,copy)NSString *treatModeName;
+
+@property(nonatomic,copy)NSString *treatModeValue;
+
+@property(nonatomic,copy)NSString *treatTime;
+
+@property(nonatomic,copy)NSDictionary *treatParam;
+
+@property(nonatomic,copy)NSArray *paramlist;
 
 @property(nonatomic,copy)NSString *machineType;
 
-@property(nonatomic,copy)NSString *strong;
-
-@property(nonatomic,copy)NSString *creator;
+@property(nonatomic,copy)NSString *doctorName;
 
 -(instancetype)initWithDic:(NSDictionary* )dict;
 

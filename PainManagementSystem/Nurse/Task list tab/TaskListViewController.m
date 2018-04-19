@@ -24,6 +24,7 @@
 
 #define ElectrothetapyColor 0x0dbaa5
 #define AirProColor 0xfd8574
+//#define AirProColor 0x9BADC3
 #define AladdinColor 0x5e97fe
 
 @interface TaskListViewController ()<UITableViewDelegate,UITableViewDataSource,QRCodeReaderDelegate,UIPopoverPresentationControllerDelegate>{
@@ -36,6 +37,7 @@
 @property (strong,nonatomic) QRCodeReaderViewController *reader;
 @property (assign,nonatomic) NSInteger selectedRow;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
+@property (weak, nonatomic) IBOutlet UILabel *headerLastLabel;
 
 @end
 
@@ -67,6 +69,7 @@
     NSArray *dataArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"Task" ofType:@"plist"]];
     datas = [dataArray mutableCopy];
     
+    //配置segmentedcontrol
     self.segmentedControl.frame = CGRectMake(self.segmentedControl.frame.origin.x, self.segmentedControl.frame.origin.y, self.segmentedControl.frame.size.width, 35);
     
     [self.segmentedControl setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}forState:UIControlStateSelected];
@@ -103,6 +106,7 @@
     }
     
     [self.tableView.mj_header beginRefreshing];
+    [self.tableView reloadData];
     
     
 }
@@ -124,12 +128,12 @@
 //    [self.tableView.mj_header beginRefreshing];
     
     
-    //上拉加载
-    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
-    [footer setTitle:@"" forState:MJRefreshStateIdle];
-    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
-    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
-    self.tableView.mj_footer = footer;
+//    //上拉加载
+//    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
+//    [footer setTitle:@"" forState:MJRefreshStateIdle];
+//    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
+//    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+//    self.tableView.mj_footer = footer;
 }
 
 -(void)refresh{
@@ -273,10 +277,10 @@
     if (cell == nil) {
         cell = [[TaskCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
-    cell.scanButton.tag = indexPath.row;
     
+
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
     //治疗参数详情弹窗
     [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -287,26 +291,76 @@
     
     NSDictionary *physicalTreatDic = dataDic[@"physicaltreat"];
     NSString *type = physicalTreatDic[@"type"];
-    switch ([type integerValue]) {
+    
+
+    
+    //不同的tag配置不一样的cell
+    switch (self.segmentedControl.selectedSegmentIndex) {
+        case TaskListTypeNotStarted:
+        {
+            //配置治疗设备显示文字
+            switch ([type integerValue]) {
+                    
+                case ElectrotherapyTypeValue:
+                    cell.typeLabel.text = @"电疗";
+                    [cell setTypeLableColor:UIColorFromHex(ElectrothetapyColor)];
+                    break;
+                    
+                case AladdinTypeValue:
+                    cell.typeLabel.text = @"血瘘";
+                    [cell setTypeLableColor:UIColorFromHex(AladdinColor)];
+                    break;
+                    
+                case AirProTypeValue:
+                    cell.typeLabel.text = @"空气波";
+                    [cell setTypeLableColor:UIColorFromHex(AirProColor)];
+                    break;
+                    
+                default:
+                    break;
+            }
+                [cell configureWithStyle:CellStyle_UnDownLoad];
             
-        case ElectrotherapyTypeValue:
-            cell.typeLabel.text = @"电疗";
-            [cell setTypeLableColor:UIColorFromHex(ElectrothetapyColor)];
+            //扫描action
+            [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
+            cell.scanButton.tag = indexPath.row;
+        }
+
             break;
+        case TaskListTypeProcessing:
+            if (indexPath.row %3 == 0) {
+                [cell configureWithStyle:CellStyleBlue_DownLoadedFinishRunning];
+                //评分action
+                [cell.scanButton removeTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
+                [cell.scanButton addTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
+                cell.scanButton.tag = indexPath.row;
+                
+            }else if(indexPath.row %3 == 1){
+                [cell configureWithStyle:CellStyleGreen_DownLoadedRunning];
+            }else{
+                [cell configureWithStyle:CellStyleGrey_DownLoadedUnRunning];
+
+                //扫描action
+                [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
+                [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
+                cell.scanButton.tag = indexPath.row;
+            }
+            //类型颜色恢复
+            [cell setTypeLableColor:UIColorFromHex(0x212121)];
             
-        case AladdinTypeValue:
-            cell.typeLabel.text = @"血瘘";
-            [cell setTypeLableColor:UIColorFromHex(AladdinColor)];
             break;
-            
-        case AirProTypeValue:
-            cell.typeLabel.text = @"空气波";
-            [cell setTypeLableColor:UIColorFromHex(AirProColor)];
+        case TaskListTypeFinished:
+            [cell configureWithStyle:CellStyle_DownLoadedRemarked];
+            [cell setTypeLableColor:UIColorFromHex(0x212121)];
             break;
-            
         default:
             break;
     }
+    
+    //第一个tab显示下发处方
+    self.headerLastLabel.hidden = _segmentedControl.selectedSegmentIndex != TaskListTypeNotStarted;
+
     
     return cell;
     
@@ -341,6 +395,12 @@
     [self presentViewController:_reader animated:YES completion:NULL];
     
 }
+- (void)remarkAction:(id)sender{
+    
+    self.selectedRow = [sender tag];
+    [self performSegueWithIdentifier:@"TaskGoToRemarkVAS" sender:sender];
+    
+}
 
 -(void)showSuccessView{
     [SVProgressHUD dismiss];
@@ -361,6 +421,7 @@
 {
     [self dismissViewControllerAnimated:YES completion:^{
         
+        //去除对应的病人病历号
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedRow inSection:0];
         
         [SVProgressHUD showWithStatus:@"处方下发中……"];
@@ -369,6 +430,25 @@
         
         [self performSelector:@selector(showFailView) withObject:nil afterDelay:5.0];
         
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
+        
+        [params setObject:result forKey:@"serialnum"];
+        
+        
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Tasklist/TreatmentParamDownload"]
+                                                                                   params:params
+                                                                                 hasToken:YES
+                                                                                  success:^(HttpResponse *responseObject) {
+                                                                                      if ([responseObject.result intValue]==1) {
+                                                                                          
+                                                                                          [self showSuccessView];
+                                                                                          
+                                                                                      }else{
+                                                                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                                                          
+                                                                                      }
+
+                                                                                  } failure:nil];
         
         NSLog(@"QRretult == %@", result);
     }];
@@ -408,6 +488,8 @@
         UIButton *button = sender;
         popover.sourceView = button;
         popover.sourceRect = button.bounds;
+    }else if ([segue.identifier isEqualToString:@"TaskGoToRemarkVAS"]){
+        
     }
 }
 

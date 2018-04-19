@@ -7,5 +7,6 @@ target 'PainManagementSystem' do
 	pod 'BRPickerView'
 	pod 'SVProgressHUD'
 	pod 'MJRefresh'
+	pod 'MQTTClient'
 end
 #pods for app

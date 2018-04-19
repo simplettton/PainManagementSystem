@@ -279,20 +279,34 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" tag="2222" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="通道数：2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PkX-c9-ryg">
-                                            <rect key="frame" x="198" y="80" width="80" height="21"/>
+                                            <rect key="frame" x="172" y="80" width="122" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                                             <color key="textColor" red="0.050980392159999999" green="0.72941176470000002" blue="0.64705882349999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" tag="56833" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="doublechannel" translatesAutoresizingMaskIntoConstraints="NO" id="Nrl-MZ-4OZ">
-                                            <rect key="frame" x="61" y="45" width="88" height="86"/>
+                                            <rect key="frame" x="28" y="47" width="85" height="85"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </imageView>
                                         <imageView hidden="YES" userInteractionEnabled="NO" tag="57119" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="blood_dev_pure" translatesAutoresizingMaskIntoConstraints="NO" id="g4l-1w-4RG">
                                             <rect key="frame" x="73" y="0.0" width="172" height="156"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="B气囊类型   腿部梯度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VoH-ye-MnN">
+                                            <rect key="frame" x="140" y="100" width="162" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
+                                            <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="A气囊类型   腿部梯度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oeo-pn-5vD">
+                                            <rect key="frame" x="140" y="58" width="163" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
+                                            <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
@@ -349,13 +363,15 @@
                     </view>
                     <value key="contentSizeForViewInPopover" type="size" width="360" height="435"/>
                     <connections>
+                        <outlet property="airProALabel" destination="oeo-pn-5vD" id="5Tc-js-2hI"/>
+                        <outlet property="airProBLabel" destination="VoH-ye-MnN" id="FZM-Bi-j0a"/>
                         <outlet property="tableView" destination="879-lp-Ueb" id="ha8-AO-dkb"/>
                         <outlet property="topView" destination="nNs-23-3ZR" id="QlW-Ix-bkF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="j25-SI-Hso" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4526.5625" y="-4247.4609375"/>
+            <point key="canvasLocation" x="4552" y="-4246"/>
         </scene>
         <!--Treatment Course Record View Controller-->
         <scene sceneID="Gbq-kQ-aU9">
@@ -1291,7 +1307,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rBu-PI-ndq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4302" y="-1985"/>
+            <point key="canvasLocation" x="4552" y="-1985"/>
         </scene>
         <!--Focus Device View Controller-->
         <scene sceneID="Jmp-qk-4re">
@@ -2188,7 +2204,7 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1" translatesAutoresizingMaskIntoConstraints="NO" id="R6B-YQ-GRP">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="loginBackground" translatesAutoresizingMaskIntoConstraints="NO" id="R6B-YQ-GRP">
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -2640,8 +2656,13 @@ CA
                                             <outlet property="medicalRecordNumLable" destination="4wP-yD-pNO" id="wNw-dj-UaL"/>
                                             <outlet property="patientNameLabel" destination="08L-gW-LUl" id="R3k-ye-QbQ"/>
                                             <outlet property="scanButton" destination="utn-sz-ULu" id="QPp-f2-OQH"/>
+                                            <outlet property="statusImage" destination="6KN-Wh-4ki" id="Kyo-7J-PbP"/>
                                             <outlet property="treatmentButton" destination="2qr-cV-KsG" id="Ez4-Dh-hL0"/>
                                             <outlet property="typeLabel" destination="ejv-fK-ZHh" id="K20-ej-DLB"/>
+                                            <outletCollection property="labels" destination="4wP-yD-pNO" id="eYW-cd-udp"/>
+                                            <outletCollection property="labels" destination="08L-gW-LUl" id="Ijx-cK-97n"/>
+                                            <outletCollection property="labels" destination="ejv-fK-ZHh" id="nce-MR-lXT"/>
+                                            <outletCollection property="labels" destination="gAW-gp-WB7" id="sMD-qO-R9B"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -2656,11 +2677,13 @@ CA
                     </view>
                     <navigationItem key="navigationItem" title="处方列表" id="jaz-i7-Qtl"/>
                     <connections>
+                        <outlet property="headerLastLabel" destination="XKh-TH-32y" id="oJo-FY-MYF"/>
                         <outlet property="segmentedControl" destination="bUE-4c-zk7" id="CyA-mY-KJs"/>
                         <outlet property="tableView" destination="lgD-mS-2jE" id="c25-nL-uDF"/>
                         <segue destination="oLn-3g-pCL" kind="popoverPresentation" identifier="ShowPopover" popoverAnchorView="lgD-mS-2jE" id="gUP-Xc-wGd">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES"/>
                         </segue>
+                        <segue destination="B8U-jn-Nch" kind="show" identifier="TaskGoToRemarkVAS" id="SjD-3k-MPu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PoL-kB-Thu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2852,7 +2875,6 @@ CA
         </scene>
     </scenes>
     <resources>
-        <image name="1" width="1536" height="2048"/>
         <image name="alert" width="28" height="28"/>
         <image name="bell" width="28" height="28"/>
         <image name="blood_dev_pure" width="670" height="670"/>
@@ -2871,6 +2893,7 @@ CA
         <image name="filter_green" width="28" height="28"/>
         <image name="key" width="28" height="28"/>
         <image name="list" width="28" height="28"/>
+        <image name="loginBackground" width="1536" height="2048"/>
         <image name="menu_blue" width="28" height="28"/>
         <image name="menu_white" width="28" height="28"/>
         <image name="password" width="28" height="28"/>

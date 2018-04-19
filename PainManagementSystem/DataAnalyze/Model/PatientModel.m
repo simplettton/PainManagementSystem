@@ -20,7 +20,12 @@
         
         NSNumber *ageNumber = dict[@"age"];
 
-        self.age = [NSString stringWithFormat:@"%d",[ageNumber intValue]];
+        //0岁显示<1岁
+        if ([ageNumber integerValue]==0) {
+            self.age = [NSString stringWithFormat:@"<1"];
+        }else{
+            self.age = [NSString stringWithFormat:@"%d",[ageNumber intValue]];
+        }
 
         
         self.medicalRecordNum = dict[@"medicalrecordnum"];

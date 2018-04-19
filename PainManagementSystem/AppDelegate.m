@@ -18,9 +18,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-   [SVProgressHUD setMaximumDismissTimeInterval:0.5];
-
-
+    [SVProgressHUD setMaximumDismissTimeInterval:0.5];
+    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
+    [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
+    [SVProgressHUD setMinimumSize:CGSizeMake(50, 30)];
+    
+    
     [self registerAPN];
     
     //iOS 10 //请求通知权限, 本地和远程共用

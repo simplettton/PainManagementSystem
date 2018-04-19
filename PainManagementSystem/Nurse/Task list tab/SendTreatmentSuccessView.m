@@ -66,7 +66,6 @@
     view.backgroundView.alpha = 0;
     
     
-    
     [UIView animateWithDuration:0.3 delay:0.1 usingSpringWithDamping:0.5 initialSpringVelocity:10 options:UIViewAnimationOptionCurveLinear animations:^{
         view.backgroundView.transform = transform;
         view.backgroundView.alpha = 1;
