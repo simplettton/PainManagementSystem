@@ -16,6 +16,9 @@
 #import "BabyBluetooth.h"
 #import <MBProgressHUD.h>
 
+#import "LLSegmentBarVC.h"
+#import "DeviceViewController.h"
+
 #import "Pack.h"
 #import "Unpack.h"
 #define kOrangeColor 0xf8b273
@@ -40,7 +43,7 @@ typedef NS_ENUM(NSInteger,KCmdids)
     CMDID_CHANGE_STATE = 0X90,
     CMDID_UPDATE_DATA_REQUEST = 0X97
 };
-@interface FocusDeviceViewController : UIViewController<UISearchBarDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,HHDropDownListDelegate, HHDropDownListDataSource>
+@interface FocusDeviceViewController : UIViewController<UISearchBarDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,HHDropDownListDelegate, HHDropDownListDataSource,LLSegmentBarDelegate>
 
 @property (assign,nonatomic) BOOL isInAllTab;
 @property (strong, nonatomic)MBProgressHUD * HUD;

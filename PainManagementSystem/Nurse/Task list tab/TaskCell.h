@@ -24,6 +24,7 @@ typedef enum _CellStyle {
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *doctorNameLable;
 @property (weak, nonatomic) IBOutlet UIImageView *statusImage;
+@property (weak, nonatomic) IBOutlet UIImageView *finishImageView;
 
 @property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *labels;
 

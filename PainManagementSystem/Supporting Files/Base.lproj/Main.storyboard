@@ -2649,10 +2649,15 @@ CA
                                                     <rect key="frame" x="12" y="10" width="20" height="20"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="finish_blue" translatesAutoresizingMaskIntoConstraints="NO" id="Q37-nr-gtg">
+                                                    <rect key="frame" x="702" y="5" width="28" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="doctorNameLable" destination="gAW-gp-WB7" id="VbG-5l-WtO"/>
+                                            <outlet property="finishImageView" destination="Q37-nr-gtg" id="MJy-Yu-nBk"/>
                                             <outlet property="medicalRecordNumLable" destination="4wP-yD-pNO" id="wNw-dj-UaL"/>
                                             <outlet property="patientNameLabel" destination="08L-gW-LUl" id="R3k-ye-QbQ"/>
                                             <outlet property="scanButton" destination="utn-sz-ULu" id="QPp-f2-OQH"/>
@@ -2891,6 +2896,7 @@ CA
         <image name="edit_green" width="28" height="28"/>
         <image name="exit" width="28" height="28"/>
         <image name="filter_green" width="28" height="28"/>
+        <image name="finish_blue" width="28" height="28"/>
         <image name="key" width="28" height="28"/>
         <image name="list" width="28" height="28"/>
         <image name="loginBackground" width="1536" height="2048"/>
@@ -2917,7 +2923,7 @@ CA
     <inferredMetricsTieBreakers>
         <segue reference="j0T-NC-lpM"/>
         <segue reference="mNo-bM-HVs"/>
-        <segue reference="K2N-0B-seC"/>
+        <segue reference="SjD-3k-MPu"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

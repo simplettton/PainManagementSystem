@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "LLSegmentBarVC.h"
 @interface DeviceViewController : UIViewController
-
+@property (nonatomic,weak) LLSegmentBarVC * segmentVC;
 @end

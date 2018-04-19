@@ -8,13 +8,11 @@
 
 #import "DeviceViewController.h"
 #import "BaseHeader.h"
-#import "LLSegmentBarVC.h"
+
 #import "FocusDeviceViewController.h"
 #import "AllDeviceViewController.h"
 #import "MJRefresh.h"
 @interface DeviceViewController ()
-
-@property (nonatomic,weak) LLSegmentBarVC * segmentVC;
 
 @end
 
@@ -55,6 +53,7 @@
     // 2 添加控制器的View
     self.segmentVC.view.frame = self.view.bounds;
     [self.view addSubview:self.segmentVC.view];
+    
     NSArray *items = @[@"关注", @"全部"];
     FocusDeviceViewController *follow = [[UIStoryboard storyboardWithName:@"Main" bundle:nil]instantiateViewControllerWithIdentifier:@"FocusDeviceViewController"];
 //    UIViewController *follow = [[UIViewController alloc] init];
@@ -73,6 +72,16 @@
         config.itemNormalColor([UIColor whiteColor]).itemSelectColor([UIColor whiteColor]).indicatorColor([UIColor whiteColor]);
         config.itemFont([UIFont boldSystemFontOfSize:17.0f]);
     }];
+}
+
+- (void)segmentBar:(LLSegmentBar *)segmentBar didSelectIndex: (NSInteger)toIndex fromIndex: (NSInteger)fromIndex{
+    NSString *title;
+    if (toIndex == 0) {
+        title = @"关注";
+    }else{
+        title = @"全部";
+    }
+    NSLog(@"select %@",title);
 }
 
 @end

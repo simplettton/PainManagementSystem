@@ -57,6 +57,7 @@
 
 -(void)initUI{
     
+    
     if (self.isInAllTab) {
         //隐藏本地设备
         self.allTabButton.hidden = NO;

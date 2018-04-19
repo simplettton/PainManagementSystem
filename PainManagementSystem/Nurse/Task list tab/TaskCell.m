@@ -75,6 +75,8 @@
     
     //进行中的任务和完成的任务不显示按钮
     self.scanButton.hidden = (style == CellStyle_DownLoadedRemarked ||style == CellStyleGreen_DownLoadedRunning);
+    self.finishImageView.hidden = (style != CellStyle_DownLoadedRemarked);
+    
 }
 #pragma mark === 永久闪烁的动画 ======
 -(CABasicAnimation *)opacityForever_Animation:(float)time
