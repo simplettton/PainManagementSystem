@@ -19,6 +19,15 @@
 #import "LLSegmentBarVC.h"
 #import "DeviceViewController.h"
 
+#import "PatientModel.h"
+
+//refresh
+#import "MJRefresh.h"
+#import "MJChiBaoZiHeader.h"
+
+//布局
+#import "Masonry.h"
+
 #import "Pack.h"
 #import "Unpack.h"
 #define kOrangeColor 0xf8b273
@@ -36,6 +45,7 @@ typedef enum _DeviceType
     DeviceTypeOnline = 0,
     DeviceTypeLocal = 1
 }DeviceType;
+
 typedef NS_ENUM(NSInteger,KCmdids)
 {
     CMDID_DEVICE_TYPE = 0XFA,
@@ -43,7 +53,7 @@ typedef NS_ENUM(NSInteger,KCmdids)
     CMDID_CHANGE_STATE = 0X90,
     CMDID_UPDATE_DATA_REQUEST = 0X97
 };
-@interface FocusDeviceViewController : UIViewController<UISearchBarDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,HHDropDownListDelegate, HHDropDownListDataSource,LLSegmentBarDelegate>
+@interface FocusDeviceViewController : UIViewController<UISearchBarDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,HHDropDownListDelegate, HHDropDownListDataSource>
 
 @property (assign,nonatomic) BOOL isInAllTab;
 @property (strong, nonatomic)MBProgressHUD * HUD;

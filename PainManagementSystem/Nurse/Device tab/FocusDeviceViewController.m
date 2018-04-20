@@ -7,8 +7,15 @@
 //
 
 #import "FocusDeviceViewController.h"
-#import "PatientModel.h"
-@interface FocusDeviceViewController ()
+#import <MQTTClient/MQTTClient.h>
+#import <MQTTClient/MQTTSessionManager.h>
+
+NSString *const HOST = @"192.168.2.127";
+NSString *const PORT = @"18826";
+NSString *const MQTTUserName = @"admin";
+NSString *const MQTTPassWord = @"lifotronic.com";
+
+@interface FocusDeviceViewController ()<MQTTSessionManagerDelegate,MQTTSessionDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *allTabButton;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
@@ -22,6 +29,9 @@
 //长按view抖动
 @property (strong, nonatomic)UILongPressGestureRecognizer *longPress;
 
+//在线tag还是本地tag
+@property (nonatomic,assign)int tag;
+
 //蓝牙设备
 @property (strong ,nonatomic) CBPeripheral *peripheral;
 @property (nonatomic,strong) CBCharacteristic *sendCharacteristic;
@@ -29,38 +39,41 @@
 @property (nonatomic,strong) NSString *BLEDeviceName;
 @property (nonatomic,assign)NSInteger selectedDeviceIndex;
 
+//MQTT
+@property (strong, nonatomic) MQTTSessionManager *manager;
+@property (strong,nonatomic) NSMutableDictionary *subscriptions;
 @end
 
 @implementation FocusDeviceViewController
 {
     BabyBluetooth *baby;
     NSMutableArray *datas;
-    BOOL isLocalDeviceList;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initUI];
+    [self initTableHeaderAndFooter];
+    [self connectMQTT];
 
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     
 }
+
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
+
     [baby cancelScan];
     [baby cancelAllPeripheralsConnection];
     [self.dropList pullBack];
     [self.HUD hideAnimated:YES];
+    [self.manager removeObserver:self forKeyPath:@"state" context:nil];
+    [self disconnectMQTT];
 }
-
 -(void)initUI{
     
-    LLSegmentBarVC *segmentVarVC = (LLSegmentBarVC *)self.parentViewController;
-    segmentVarVC.segmentBar.delegate = self;
-    
-
     if (self.isInAllTab) {
         //隐藏本地设备
         self.allTabButton.hidden = NO;
@@ -93,41 +106,26 @@
     [self.deviceBackgroundView.layer setMasksToBounds:YES];
     
     //UICollectionView 配置
-//    [self.collectionView registerClass:[DeviceCollectionViewCell class] forCellWithReuseIdentifier:@"Cell"];
     self.collectionView.dataSource = self;
     self.collectionView.delegate = self;
     
     //数据源
     NSArray *dataArray = [[NSArray alloc]init];
     if (self.isInAllTab) {
-        dataArray = @[@{@"state":@"running"},
-                      @{@"state":@"stop"},
-                      @{@"state":@"pause"},
-                      @{@"state":@"alert"},
-                      @{@"state":@"running"},
-                      @{@"state":@"stop"},
-                      @{@"state":@"pause"},
-                      @{@"state":@"running"},
-                      @{@"state":@"alert"}];
+        dataArray = @[@{@"machinestate":@"running"},
+                      @{@"machinestate":@"stop"},
+                      @{@"machinestate":@"pause"},
+                      @{@"machinestate":@"alert"},
+                      @{@"machinestate":@"running"},
+                      @{@"machinestate":@"stop"}];
     }else{
-        dataArray = @[@{@"state":@"running",@"serialnum":@"1234567"},
-                      @{@"state":@"stop",@"serialnum":@"1234256"},
-                      @{@"state":@"pause",@"serialnum":@"4334567"},
-                      @{@"state":@"alert",@"serialnum":@"2222267"},
-                      @{@"state":@"running",@"serialnum":@"16844567"},
-                      @{@"state":@"running",@"serialnum":@"12345600"},
-                      @{@"state":@"stop",@"serialnum":@"1234200"},
-                      @{@"state":@"pause",@"serialnum":@"43300567"},
-                      @{@"state":@"alert",@"serialnum":@"22200267"},
-                      @{@"state":@"running",@"serialnum":@"1684007"},
-                      @{@"state":@"running",@"serialnum":@"1134567"},
-                      @{@"state":@"stop",@"serialnum":@"1134256"},
-                      @{@"state":@"pause",@"serialnum":@"1134567"},
-                      @{@"state":@"alert",@"serialnum":@"1122267"},
-                      @{@"state":@"running",@"serialnum":@"11844567"}];
+        dataArray = @[
+                      @{@"taskstate":@"2",@"machinestate":@"stop",@"serialnum":@"33ffd9054b583033206510431e01"},
+                      @{@"taskstate":@"2",@"machinestate":@"alert",@"serialnum":@"1234567"}];
+
     }
     datas = [dataArray mutableCopy];
-    
+    self.subscriptions = [[NSMutableDictionary alloc]init];
     
     //seguement 在线或者本地
     self.segmentedControl.frame = CGRectMake(28, 75, 200, 35);
@@ -139,13 +137,13 @@
     [self.segmentedControl addTarget:self action:@selector(didClicksegmentedControlAction:) forControlEvents:UIControlEventValueChanged];
     
     //默认是在线设备
-    isLocalDeviceList = NO;
+    self.tag = DeviceTypeOnline;
     
     //下拉框
     [self.deviceBackgroundView addSubview:self.dropList];
     NSArray *array_1 = @[@"治疗中设备", @"未开始设备", @"治疗结束设备"];
     self.dropListArray = array_1;
-
+    
     [self.dropList reloadListData];
     
     //关注中设备添加 longpress 添加手势 可以取消设备
@@ -153,7 +151,6 @@
         _longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(lonePressMoving:)];
         [self.collectionView addGestureRecognizer:_longPress];
     }
-    
     
 }
 
@@ -172,13 +169,13 @@
                 DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
                 // 定义cell的时候btn是隐藏的, 在这里设置为NO
                 [cell.btnDelete setHidden:NO];
-
+                
                 cell.btnDelete.tag = selectIndexPath.item;
                 NSLog(@"selectIndexPath .item = %ld",(long)cell.btnDelete.tag);
                 
                 //添加删除的点击事件
                 [cell.btnDelete addTarget:self action:@selector(unfollowDevice:) forControlEvents:UIControlEventTouchUpInside];
-
+                
                 [_collectionView beginInteractiveMovementForItemAtIndexPath:selectIndexPath];
                 
                 
@@ -197,16 +194,146 @@
         case UIGestureRecognizerStateEnded: {
             [self.collectionView endInteractiveMovement];
             //cell.layer移除抖动手势
-//            for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-//                [self stopShake:cell];
-//            }
-
+            //            for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+            //                [self stopShake:cell];
+            //            }
+            
             break;
         }
         default: [self.collectionView cancelInteractiveMovement];
             break;
     }
 }
+
+#pragma mark - refresh
+-(void)initTableHeaderAndFooter{
+    
+    //下拉刷新
+    self.collectionView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+//    [self.collectionView.mj_header beginRefreshing];
+    
+    
+//    //上拉加载
+//    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
+//    [footer setTitle:@"" forState:MJRefreshStateIdle];
+//    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
+//    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+//    self.collectionView.mj_footer = footer;
+    
+}
+-(void)refresh{
+    
+}
+-(void)loadMore{
+    
+}
+
+#pragma mark - initMQTT
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
+    
+    switch (self.manager.state) {
+            
+        case MQTTSessionManagerStateClosed:
+            NSLog(@"----------------------------------------closed");
+            [SVProgressHUD showErrorWithStatus:@"断开连接"];
+            break;
+        case MQTTSessionManagerStateClosing:
+            NSLog(@"----------------------------------------closing");
+            break;
+        case MQTTSessionManagerStateConnecting:
+            NSLog(@"--------------------------------------connecting");
+            break;
+        case MQTTSessionManagerStateConnected:
+            NSLog(@"-------------------------------------connected");
+            
+            break;
+        case MQTTSessionManagerStateStarting:
+            NSLog(@"------------------------------------startConnecting");
+            break;
+        case MQTTSessionManagerStateError:
+            NSLog(@"--------------------------------------------error");
+        default:
+            break;
+    }
+}
+-(void)connectMQTT{
+    if (!self.manager) {
+        self.manager = [[MQTTSessionManager alloc] init];
+        self.manager.delegate = self;
+        //订阅主题
+        [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:@"toapp/33ffd9054b583033206510431e01"];
+        [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:@"warning/#"];
+        self.manager.subscriptions = [self.subscriptions copy];
+        
+        //连接服务器
+        [self.manager connectTo:HOST
+                           port:18826
+                            tls:false
+                      keepalive:60
+                          clean:true
+                           auth:true
+                           user:@"admin"
+                           pass:@"lifotronic.com"
+                           will:nil
+                      willTopic:nil
+                        willMsg:nil
+                        willQos:MQTTQosLevelExactlyOnce
+                 willRetainFlag:false
+                   withClientId:nil
+                 securityPolicy:nil
+                   certificates:nil
+                  protocolLevel:MQTTProtocolVersion31
+                 connectHandler:^(NSError *error) {
+                     
+                 }];
+        
+    }else{
+        [self.manager connectToLast:^(NSError *error) {
+            NSLog(@"connectToLast error:%@",error);
+        }];
+    }
+    
+    [self.manager addObserver:self
+                   forKeyPath:@"state"
+                      options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                      context:nil];
+}
+
+-(void)disconnectMQTT{
+    
+    [self.manager disconnectWithDisconnectHandler:nil];
+}
+//subcribe
+-(void)subcribe:(NSString *)cpuid{
+    
+    [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:[NSString stringWithFormat:@"toapp/%@",cpuid]];
+    self.manager.subscriptions = [self.subscriptions copy];
+    
+}
+//receiveData
+-(void)handleMessage:(NSData *)data onTopic:(NSString *)topic retained:(BOOL)retained{
+
+    NSString *receiveStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    
+    NSData * receiveData = [receiveStr dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:receiveData options:NSJSONReadingMutableLeaves error:nil];
+    
+    NSDictionary *content = jsonDict[@"content"];
+    if ([topic hasPrefix:@"warning"]) {
+        NSLog(@"----------------------------------");
+        NSLog(@"receivedata = %@,topic = %@",content[@"msg"],topic);
+    }else if ([topic hasPrefix:@"toapp"]){
+        NSLog(@"content = %@,topic = %@",content,topic);
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.collectionView reloadData];
+    });
+}
+
+
 
 
 #pragma mark - HHDropDownList
@@ -222,6 +349,7 @@
         
         [_dropList setIsExclusive:YES];
         [_dropList setHaveBorderLine:YES];
+    
         
     }
     return _dropList;
@@ -231,6 +359,7 @@
     return _dropListArray;
 }
 - (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
+    
     NSLog(@"筛选设备%ld:%@",(long)index,itemName);
     
 }
@@ -243,23 +372,11 @@
         case DeviceTypeOnline:
         {
             NSLog(@"切换在线设备");
-            isLocalDeviceList = NO;
+            self.tag = DeviceTypeOnline;
             
-            dataArray = @[@{@"state":@"running",@"serialnum":@"1234567"},
-                          @{@"state":@"stop",@"serialnum":@"1234256"},
-                          @{@"state":@"pause",@"serialnum":@"4334567"},
-                          @{@"state":@"alert",@"serialnum":@"2222267"},
-                          @{@"state":@"running",@"serialnum":@"16844567"},
-                          @{@"state":@"running",@"serialnum":@"12345600"},
-                          @{@"state":@"stop",@"serialnum":@"1234200"},
-                          @{@"state":@"pause",@"serialnum":@"43300567"},
-                          @{@"state":@"alert",@"serialnum":@"22200267"},
-                          @{@"state":@"running",@"serialnum":@"1684007"},
-                          @{@"state":@"running",@"serialnum":@"1134567"},
-                          @{@"state":@"stop",@"serialnum":@"1134256"},
-                          @{@"state":@"pause",@"serialnum":@"1134567"},
-                          @{@"state":@"alert",@"serialnum":@"1122267"},
-                          @{@"state":@"running",@"serialnum":@"11844567"}];
+            
+            dataArray = @[@{@"taskstate":@"2",@"machinestate":@"stop",@"serialnum":@"33ffd9054b583033206510431e01"},
+                          @{@"taskstate":@"2",@"machinestate":@"alert",@"serialnum":@"1234567"}];
             
             self.dropList.hidden = NO;
             
@@ -273,17 +390,24 @@
         case DeviceTypeLocal:
         {
             NSLog(@"切换本地设备");
-            isLocalDeviceList = YES;
+            self.tag = DeviceTypeLocal;
             
-//            dataArray = @[@{@"state":@"connect",@"serialnum":@"1234567"},
-//                          @{@"state":@"unconnect",@"serialnum":@"1234256"},
-//                          @{@"state":@"unconnect",@"serialnum":@"223567"},
-//                          @{@"state":@"unconnect",@"serialnum":@"2232267"}];
             
-            dataArray = @[@{@"state":@"unconnect",@"serialnum":@"ALX420"}];
+            dataArray = @[@{@"state":@"unconnect",@"serialnum":@"ALX420"},
+                          @{@"state":@"unconnect",@"serialnum":@"1234256"},
+                          @{@"state":@"unconnect",@"serialnum":@"223567"},
+                          @{@"state":@"unconnect",@"serialnum":@"2232267"}];
 
+            
             [self.dropList pullBack];
             self.dropList.hidden = YES;
+
+            //位置布局
+//            UIEdgeInsets padding = UIEdgeInsetsMake(10, 10, 10, 10);
+//            [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.left.bottom.right.top.equalTo(self.deviceBackgroundView).with.offset(padding.left);
+//
+//            }];
         }
             break;
             
@@ -308,20 +432,22 @@
     
     DeviceCollectionViewCell *cell;
     
-    if (!isLocalDeviceList) {
+    if (self.tag == DeviceTypeOnline) {
         CellIdentifier = @"Cell";
         
         cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
         
         NSDictionary *dic = [datas objectAtIndex:indexPath.row];
         
-        NSString *state = [dic objectForKey:@"state"];
+        NSString *state = [dic objectForKey:@"machinestate"];
         
         NSDictionary *stateDic = @
-        {@"running":[NSNumber numberWithInteger:CellStyleGreen_MachineRunning],
-            @"stop":[NSNumber numberWithInteger:CellStyleGrey_MachineStop],
-            @"pause":[NSNumber numberWithInteger:CellStyleGrey_MachinePause],
-            @"alert":[NSNumber numberWithInteger:CellStyleOrange_MachineException],
+        {@"running":[NSNumber numberWithInteger:CellStyleOngoing_MachineRunning],
+            @"stop":[NSNumber numberWithInteger:CellStyleOngoing_MachineStop],
+            @"pause":[NSNumber numberWithInteger:CellStyleOngoing_MachinePause],
+            @"alert":[NSNumber numberWithInteger:CellStyle_MachineException],
+            
+            
             @"connect":[NSNumber numberWithInteger:CellStyle_LocalConnect],
             @"running":[NSNumber numberWithInteger:CellStyle_LocalRunning],
             @"unrunning":[NSNumber numberWithInteger:CellStyle_LocalUnrunning],
@@ -333,13 +459,13 @@
         
         //按钮操作
         switch (cell.style) {
-            case CellStyleGrey_MachineStop:
+            case CellStyleFinished_MachineStop:
                 [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
                 break;
-            case CellStyleGrey_MachinePause:
+            case CellStyleOngoing_MachinePause:
                 [cell.playButton addTarget:self action:@selector(playAction:) forControlEvents:UIControlEventTouchUpInside];
                 break;
-            case CellStyleGreen_MachineRunning:
+            case CellStyleOngoing_MachineRunning:
                 [cell.leftButton addTarget:self action:@selector(pauseAction:) forControlEvents:UIControlEventTouchUpInside];
                 [cell.rightButton addTarget:self action:@selector(stopAction:) forControlEvents:UIControlEventTouchUpInside];
                 break;
@@ -347,7 +473,7 @@
             default:
                 break;
         }
-    }else{
+    }else if(self.tag == DeviceTypeLocal){
     
         CellIdentifier = @"LocalDeviceCell";
         
@@ -799,21 +925,7 @@
     if ([segue.identifier isEqualToString:@"GoToRemarkVAS"]) {
         TreatmentCourseRecordViewController *controller = segue.destinationViewController;
 
-        
-        
-//        controller.patientModel = [PatientModel modelWithDic:<#(NSDictionary *)#>]
-        
     }
-}
-#pragma mark - LLSegmentBarDelegate
-- (void)segmentBar:(LLSegmentBar *)segmentBar didSelectIndex: (NSInteger)toIndex fromIndex: (NSInteger)fromIndex{
-    NSString *title;
-    if (toIndex == 0) {
-        title = @"关注";
-    }else{
-        title = @"全部";
-    }
-    NSLog(@"select %@",title);
 }
 
 @end

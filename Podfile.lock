@@ -17,6 +17,7 @@ PODS:
   - BabyBluetooth (0.7.0)
   - BRPickerView (2.1.3)
   - CocoaAsyncSocket (7.6.2)
+  - Masonry (1.1.0)
   - MBProgressHUD (1.1.0)
   - MJRefresh (3.1.15.3)
   - MQTTClient (0.13.0):
@@ -34,6 +35,7 @@ DEPENDENCIES:
   - BabyBluetooth
   - BRPickerView
   - CocoaAsyncSocket
+  - Masonry
   - MBProgressHUD
   - MJRefresh
   - MQTTClient
@@ -44,11 +46,12 @@ SPEC CHECKSUMS:
   BabyBluetooth: d50758aecf24d4a0ab9271d69f0f116d6bee51c9
   BRPickerView: dedff537bcd6ab26693b72f3168b55009b01bc88
   CocoaAsyncSocket: 3541e024f48c54b251638ef72d51dd42808de932
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
   MJRefresh: b48380ae2b927b46c4ef000de9adb8dc748e1df7
   MQTTClient: aced164e080fb139daa98fc745d01da279e55945
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: 993339f1db68390e457717b7bbd3e80bf7fb6c81
+PODFILE CHECKSUM: 7799f02ed5adb8f9e91cf5f7ee02e75e45ac841b
 
 COCOAPODS: 1.3.1

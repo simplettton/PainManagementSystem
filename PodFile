@@ -8,5 +8,7 @@ target 'PainManagementSystem' do
 	pod 'SVProgressHUD'
 	pod 'MJRefresh'
 	pod 'MQTTClient'
+	pod 'Masonry'
+
 end
 #pods for app

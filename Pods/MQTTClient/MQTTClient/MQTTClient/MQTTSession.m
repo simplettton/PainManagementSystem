@@ -612,7 +612,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
 }
 
 - (void)checkDup {
-    DDLogVerbose(@"[MQTTSession] checkDup %@ @%.0f", self.clientId, [[NSDate date] timeIntervalSince1970]);
+//    DDLogVerbose(@"[MQTTSession] checkDup %@ @%.0f", self.clientId, [[NSDate date] timeIntervalSince1970]);
     [self checkTxFlows];
 }
 

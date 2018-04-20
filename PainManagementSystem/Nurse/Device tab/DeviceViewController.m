@@ -74,14 +74,6 @@
     }];
 }
 
-- (void)segmentBar:(LLSegmentBar *)segmentBar didSelectIndex: (NSInteger)toIndex fromIndex: (NSInteger)fromIndex{
-    NSString *title;
-    if (toIndex == 0) {
-        title = @"关注";
-    }else{
-        title = @"全部";
-    }
-    NSLog(@"select %@",title);
-}
+
 
 @end

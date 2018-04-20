@@ -8,10 +8,17 @@
 
 #import <UIKit/UIKit.h>
 typedef enum _CellStyle {
-    CellStyleGreen_MachineRunning  = 0,
-    CellStyleGrey_MachineStop,
-    CellStyleGrey_MachinePause,
-    CellStyleOrange_MachineException,
+    
+    CellStyleNotStarted_MachineStop = 0,
+    CellStyleOngoing_MachineRunning,
+    CellStyleOngoing_MachinePause,
+    CellStyleOngoing_MachineStop,
+    CellStyleFinished_MachineStop,
+    CellStyle_MachineException,
+    
+    CellStyleGrey_Unfinished,//通用
+
+    
     CellStyle_LocalUnconnect,
     CellStyle_LocalConnect,
     CellStyle_LocalUnrunning,
@@ -27,6 +34,7 @@ typedef enum _CellStyle {
 
 @property (weak, nonatomic) IBOutlet UIButton *leftButton;
 @property (weak, nonatomic) IBOutlet UIButton *rightButton;
+//警告
 @property (weak, nonatomic) IBOutlet UIImageView *middleImageView;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *remarkButton;
