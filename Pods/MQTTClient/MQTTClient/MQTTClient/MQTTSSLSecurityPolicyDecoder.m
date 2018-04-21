@@ -44,7 +44,7 @@
 
 - (void)stream:(NSStream *)sender handleEvent:(NSStreamEvent)eventCode {    
     if (eventCode & NSStreamEventHasBytesAvailable) {
-        DDLogVerbose(@"[MQTTCFSocketDecoder] NSStreamEventHasBytesAvailable");
+//        DDLogVerbose(@"[MQTTCFSocketDecoder] NSStreamEventHasBytesAvailable");
         if (![self applySSLSecurityPolicy:sender withEvent:eventCode]){
             self.state = MQTTCFSocketDecoderStateError;
             self.error = [NSError errorWithDomain:@"MQTT"

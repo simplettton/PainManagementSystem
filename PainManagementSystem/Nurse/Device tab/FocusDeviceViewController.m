@@ -9,7 +9,7 @@
 #import "FocusDeviceViewController.h"
 #import <MQTTClient/MQTTClient.h>
 #import <MQTTClient/MQTTSessionManager.h>
-
+#import "MachineModel.h"
 NSString *const HOST = @"192.168.2.127";
 NSString *const PORT = @"18826";
 NSString *const MQTTUserName = @"admin";
@@ -54,11 +54,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     [super viewDidLoad];
     [self initUI];
     [self initTableHeaderAndFooter];
-    [self connectMQTT];
+
 
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    [self connectMQTT];
     
 }
 
@@ -69,7 +70,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     [baby cancelAllPeripheralsConnection];
     [self.dropList pullBack];
     [self.HUD hideAnimated:YES];
-    [self.manager removeObserver:self forKeyPath:@"state" context:nil];
+    if (self.manager) {
+        [self.manager removeObserver:self forKeyPath:@"state" context:nil];
+    }
     [self disconnectMQTT];
 }
 -(void)initUI{
@@ -110,21 +113,25 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     self.collectionView.delegate = self;
     
     //数据源
+    datas = [NSMutableArray arrayWithCapacity:20];
     NSArray *dataArray = [[NSArray alloc]init];
     if (self.isInAllTab) {
-        dataArray = @[@{@"machinestate":@"running"},
-                      @{@"machinestate":@"stop"},
-                      @{@"machinestate":@"pause"},
-                      @{@"machinestate":@"alert"},
-                      @{@"machinestate":@"running"},
-                      @{@"machinestate":@"stop"}];
+        dataArray = @[@{@"taskstate":@1,@"machinestate":@2,@"cpuid":@"33ffd9054b583033206510431e01",@"serialnum":@"pode",@"medicalrecordnum":@"12455",@"name":@"天天",@"bednum":@27,@"machinetype":@7681,@"nick":@"骨科一号"},
+                      @{@"taskstate":@3,@"machinestate":@1,@"cpuid":@"33ffd9054b5830332065104601",@"serialnum":@"p23e",@"medicalrecordnum":@"34675",@"name":@"李陌",@"bednum":@90,@"machinetype":@7681,@"nick":@"骨科二号"},
+                      @{@"taskstate":@7,@"machinestate":@2,@"cpuid":@"33ffd9054b583033206544621",@"serialnum":@"p235",@"medicalrecordnum":@"34633",@"name":@"靴靴",@"bednum":@90,@"machinetype":@7681,@"nick":@"骨科三号"}];
+
     }else{
-        dataArray = @[
-                      @{@"taskstate":@"2",@"machinestate":@"stop",@"serialnum":@"33ffd9054b583033206510431e01"},
-                      @{@"taskstate":@"2",@"machinestate":@"alert",@"serialnum":@"1234567"}];
+        dataArray= @[
+                     @{@"taskstate":@3,@"machinestate":@2,@"cpuid":@"33ffd9054b583033206510431e01",@"serialnum":@"pode",@"medicalrecordnum":@"12455",@"name":@"天天",@"bednum":@27,@"machinetype":@7681,@"nick":@"骨科一号"},
+                     @{@"taskstate":@3,@"machinestate":@1,@"cpuid":@"33ffd9054b5830332065104601",@"serialnum":@"p23e",@"medicalrecordnum":@"34675",@"name":@"李陌",@"bednum":@90,@"machinetype":@7681,@"nick":@"骨科二号"}];
+
 
     }
-    datas = [dataArray mutableCopy];
+    for (NSDictionary *dic in dataArray) {
+        MachineModel *machine = [MachineModel modelWithDic:dic];
+        [datas addObject:machine];
+    }
+
     self.subscriptions = [[NSMutableDictionary alloc]init];
     
     //seguement 在线或者本地
@@ -236,7 +243,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             
         case MQTTSessionManagerStateClosed:
             NSLog(@"----------------------------------------closed");
-            [SVProgressHUD showErrorWithStatus:@"断开连接"];
             break;
         case MQTTSessionManagerStateClosing:
             NSLog(@"----------------------------------------closing");
@@ -270,7 +276,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [self.manager connectTo:HOST
                            port:18826
                             tls:false
-                      keepalive:60
+                      keepalive:3600
                           clean:true
                            auth:true
                            user:@"admin"
@@ -301,15 +307,19 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 }
 
 -(void)disconnectMQTT{
-    
+    [self.subscriptions removeAllObjects];
+    self.manager.subscriptions = nil;
+     
     [self.manager disconnectWithDisconnectHandler:nil];
 }
-//subcribe
 -(void)subcribe:(NSString *)cpuid{
     
     [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:[NSString stringWithFormat:@"toapp/%@",cpuid]];
     self.manager.subscriptions = [self.subscriptions copy];
-    
+
+}
+-(void)unsubcibe:(NSString *)cpuid{
+    [self.manager.session unsubscribeTopic:[NSString stringWithFormat:@"toapp/%@",cpuid]];
 }
 //receiveData
 -(void)handleMessage:(NSData *)data onTopic:(NSString *)topic retained:(BOOL)retained{
@@ -321,11 +331,100 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:receiveData options:NSJSONReadingMutableLeaves error:nil];
     
     NSDictionary *content = jsonDict[@"content"];
+    
+    DeviceCollectionViewCell *cell;
+    MachineModel *currentMachine;
+
+    
     if ([topic hasPrefix:@"warning"]) {
         NSLog(@"----------------------------------");
         NSLog(@"receivedata = %@,topic = %@",content[@"msg"],topic);
+        NSString *cpuid = [topic substringFromIndex:8];
+        for (MachineModel *machine in datas) {
+            if ([machine.cpuid isEqualToString:cpuid]) {
+                for (MachineModel *machine in datas) {
+                    if ([machine.cpuid isEqualToString:cpuid]) {
+                        machine.alertMessage = content[@"msg"];
+                        currentMachine = machine;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        
     }else if ([topic hasPrefix:@"toapp"]){
-        NSLog(@"content = %@,topic = %@",content,topic);
+        NSString *cpuid = [topic substringFromIndex:6];
+        NSLog(@"cpuid = %@",cpuid);
+        NSLog(@"content = %@",content);
+
+        
+        //遍历去取出cell
+        for (MachineModel *machine in datas) {
+            if ([machine.cpuid isEqualToString:cpuid]) {
+                NSIndexPath *indexpath = [NSIndexPath indexPathForRow:[datas indexOfObject:machine] inSection:0];
+                 cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexpath];
+                currentMachine = machine;
+                break;
+            }
+        }
+        if (cell) {
+            
+            NSNumber *code = content[@"code"];
+            switch ([currentMachine.taskStateNumber integerValue]) {
+                case 1:
+                    if ([code integerValue] == 0x90) {
+                        //未开始变成治疗中刷新列表
+                    }
+                    break;
+                case 3:
+                    switch ([code integerValue]) {
+                        //机器状态变化 刷新cell样式
+                        case 0x90:
+                        {
+
+                            for (MachineModel *machine in datas) {
+                                if ([machine.cpuid isEqualToString:cpuid]) {
+                                    [machine changeState:content[@"state"]];
+                                    currentMachine = machine;
+                                    break;
+                                }
+                            }
+                        }
+                            break;
+                        //运行中的实时包 刷新倒计时
+                        case 0x91:
+                        {   if([currentMachine.stateNumber isEqualToNumber:@0]){
+                                NSNumber *second= content[@"lefttime"];
+                                for (MachineModel *machine in datas) {
+                                    if ([machine.cpuid isEqualToString:cpuid]) {
+                                        machine.leftTimeNumber = second;
+                                        machine.alertMessage = nil;
+                                        currentMachine = machine;
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+                            break;
+                        case 0x98:
+                        {
+                            
+                        }
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            NSNumber *machineState = currentMachine.stateNumber;
+
+        }
+        
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -333,7 +432,25 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     });
 }
 
-
+-(NSString *)changeSecondToTimeString:(NSNumber *)second{
+    NSLog(@"second = %@",second);
+    NSInteger hour = [second intValue]/3600;
+    NSInteger minute = [second integerValue]/60%60;
+    
+    
+    if (second != 0) {
+        minute = minute +1;
+        if (minute == 60) {
+            hour = hour +1;
+            minute = 0;
+        }
+    }
+    
+    NSString *hourString = [NSString stringWithFormat:hour>9?@"%ld":@"0%ld",(long)hour];
+    NSString *minString = [NSString stringWithFormat:minute>9?@"%ld":@"0%ld",(long)minute];
+    NSString *timeString = [NSString stringWithFormat:@"  %@:%@",hourString,minString];
+    return timeString;
+}
 
 
 #pragma mark - HHDropDownList
@@ -375,14 +492,20 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             self.tag = DeviceTypeOnline;
             
             
-            dataArray = @[@{@"taskstate":@"2",@"machinestate":@"stop",@"serialnum":@"33ffd9054b583033206510431e01"},
-                          @{@"taskstate":@"2",@"machinestate":@"alert",@"serialnum":@"1234567"}];
+            dataArray= @[
+                         @{@"taskstate":@3,@"machinestate":@2,@"cpuid":@"33ffd9054b583033206510431e01",@"serialnum":@"pode",@"medicalrecordnum":@"12455",@"name":@"天天",@"bednum":@27,@"machinetype":@7681,@"nick":@"骨科一号"},
+                         @{@"taskstate":@3,@"machinestate":@1,@"cpuid":@"33ffd9054b5830332065104601",@"serialnum":@"p23e",@"medicalrecordnum":@"34675",@"name":@"李陌",@"bednum":@90,@"machinetype":@7681,@"nick":@"骨科二号"}];
+            for (NSDictionary *dic in dataArray) {
+                MachineModel *machine = [MachineModel modelWithDic:dic];
+                [datas addObject:machine];
+            }
             
             self.dropList.hidden = NO;
             
             [baby cancelScan];
             [baby cancelAllPeripheralsConnection];
             [self.HUD hideAnimated:YES];
+            [self connectMQTT];
         
         }
             
@@ -401,6 +524,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             
             [self.dropList pullBack];
             self.dropList.hidden = YES;
+            datas = [dataArray mutableCopy];
+            [self disconnectMQTT];
 
             //位置布局
 //            UIEdgeInsets padding = UIEdgeInsetsMake(10, 10, 10, 10);
@@ -415,7 +540,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             break;
     }
 
-    datas = [dataArray mutableCopy];
     [self.collectionView reloadData];
 }
 
@@ -437,32 +561,30 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         
         cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
         
-        NSDictionary *dic = [datas objectAtIndex:indexPath.row];
+        MachineModel *machine = [datas objectAtIndex:indexPath.row];
         
-        NSString *state = [dic objectForKey:@"machinestate"];
-        
-        NSDictionary *stateDic = @
-        {@"running":[NSNumber numberWithInteger:CellStyleOngoing_MachineRunning],
-            @"stop":[NSNumber numberWithInteger:CellStyleOngoing_MachineStop],
-            @"pause":[NSNumber numberWithInteger:CellStyleOngoing_MachinePause],
-            @"alert":[NSNumber numberWithInteger:CellStyle_MachineException],
-            
-            
-            @"connect":[NSNumber numberWithInteger:CellStyle_LocalConnect],
-            @"running":[NSNumber numberWithInteger:CellStyle_LocalRunning],
-            @"unrunning":[NSNumber numberWithInteger:CellStyle_LocalUnrunning],
-            @"unconnect":[NSNumber numberWithInteger:CellStyle_LocalUnconnect]
-        };
-        
-        NSNumber *stateNumber = [stateDic objectForKey:state];
-        [cell configureWithStyle:[stateNumber intValue]];
-        
+        [cell configureWithStyle:machine.cellStyle message:nil];
+        cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
+        cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
+        cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
+        //更新倒计时
+        if (machine.leftTimeNumber) {
+            //进行中才更新
+            if (cell.style == CellStyleOngoing_MachineRunning) {
+                [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
+            }
+        }
+        //警告
+        if (machine.alertMessage) {
+            [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
+        }
         //按钮操作
         switch (cell.style) {
             case CellStyleFinished_MachineStop:
                 [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
                 break;
             case CellStyleOngoing_MachinePause:
+            case CellStyleOngoing_MachineStop:
                 [cell.playButton addTarget:self action:@selector(playAction:) forControlEvents:UIControlEventTouchUpInside];
                 break;
             case CellStyleOngoing_MachineRunning:
@@ -493,7 +615,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         
         NSNumber *stateNumber = [stateDic objectForKey:state];
         
-        [cell configureWithStyle:[stateNumber intValue]];
+        [cell configureWithStyle:[stateNumber intValue] message:nil];
 
         [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
         [cell.connectButton addTarget:self action:@selector(BLEConnectDevice:) forControlEvents:UIControlEventTouchUpInside];
@@ -647,16 +769,67 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(void)playAction:(UIButton *)button{
     
     DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
-    
+
     NSInteger interger = [self.collectionView.visibleCells indexOfObject:deviceCell];
+
+    MachineModel *machine = [datas objectAtIndex:interger];
+
+    NSString *cpuid = machine.cpuid;
+    
+    NSDictionary *param = @{@"cpuid":cpuid,@"cmdcode":@0};
+    
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Control"]
+                                  params:param
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     
+                                 }
+                                 failure:nil];
 
 }
 -(void)stopAction:(UIButton *)button{
     NSLog(@"停止治疗");
+    DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
+    
+    NSInteger interger = [self.collectionView.visibleCells indexOfObject:deviceCell];
+    
+    MachineModel *machine = [datas objectAtIndex:interger];
+    
+    NSString *cpuid = machine.cpuid;
+    
+    NSDictionary *param = @{@"cpuid":cpuid,@"cmdcode":@2};
+    
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Control"]
+                                  params:param
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     
+                                 }
+                                 failure:nil];
     
 }
 -(void)pauseAction:(UIButton *)button{
-    NSLog(@"暂停治疗");
+    
+    DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
+    
+    NSInteger interger = [self.collectionView.visibleCells indexOfObject:deviceCell];
+    
+    MachineModel *machine = [datas objectAtIndex:interger];
+    
+    NSString *cpuid = machine.cpuid;
+    
+    NSDictionary *param = @{@"cpuid":cpuid,@"cmdcode":@1};
+    
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Control"]
+                                  params:param
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     
+                                 }
+                                 failure:nil];
 }
 
 -(void)controlMahine:(NSString *)serialnum cmdcode:(int)cmdcode

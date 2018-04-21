@@ -273,15 +273,15 @@
 				<array>
 					<dict>
 						<key>name</key>
-						<string>时间</string>
+						<string>治疗时间(min)</string>
 						<key>value</key>
-						<string>20min</string>
+						<string>20</string>
 					</dict>
 					<dict>
 						<key>name</key>
-						<string>能量</string>
+						<string>强度</string>
 						<key>value</key>
-						<string>三级</string>
+						<string>一级</string>
 					</dict>
 				</array>
 			</dict>

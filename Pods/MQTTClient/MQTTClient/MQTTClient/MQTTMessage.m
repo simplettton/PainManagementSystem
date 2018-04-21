@@ -507,9 +507,9 @@
         [buffer appendData:self.data];
     }
 
-    DDLogVerbose(@"[MQTTMessage] wireFormat(%lu)=%@...",
-                 (unsigned long)buffer.length,
-                 [buffer subdataWithRange:NSMakeRange(0, MIN(256, buffer.length))]);
+//    DDLogVerbose(@"[MQTTMessage] wireFormat(%lu)=%@...",
+//                 (unsigned long)buffer.length,
+//                 [buffer subdataWithRange:NSMakeRange(0, MIN(256, buffer.length))]);
 
     return buffer;
 }
@@ -529,7 +529,7 @@
         UInt8 digit;
         do {
             if (data.length < offset) {
-                DDLogWarn(@"[MQTTMessage] message data incomplete remaining length");
+//                DDLogWarn(@"[MQTTMessage] message data incomplete remaining length");
                 offset = -1;
                 break;
             }
@@ -538,7 +538,7 @@
             remainingLength += (digit & 0x7f) * multiplier;
             multiplier *= 128;
             if (multiplier > 128*128*128) {
-                DDLogWarn(@"[MQTTMessage] message data too long remaining length");
+//                DDLogWarn(@"[MQTTMessage] message data too long remaining length");
                 multiplier = -1;
                 break;
             }
@@ -587,7 +587,7 @@
                             [message.data getBytes:&digit range:NSMakeRange(1, 1)];
                             message.mid += digit;
                         } else {
-                            DDLogWarn(@"[MQTTMessage] missing packet identifier");
+//                            DDLogWarn(@"[MQTTMessage] missing packet identifier");
                             message = nil;
                         }
                     }
@@ -597,12 +597,12 @@
                         type == MQTTPubcomp) {
                         if (protocolLevel != MQTTProtocolVersion50) {
                             if (message.data.length > 2) {
-                                DDLogWarn(@"[MQTTMessage] unexpected payload after packet identifier");
+//                                DDLogWarn(@"[MQTTMessage] unexpected payload after packet identifier");
                                 message = nil;
                             }
                         } else {
                             if (message.data.length < 3) {
-                                DDLogWarn(@"[MQTTMessage] no returncode");
+//                                DDLogWarn(@"[MQTTMessage] no returncode");
                                 message = nil;
                             } else {
                                 const UInt8 *bytes = message.data.bytes;
@@ -617,14 +617,14 @@
                     }
                     if (type == MQTTUnsuback ) {
                         if (message.data.length > 2) {
-                            DDLogWarn(@"[MQTTMessage] unexpected payload after packet identifier");
+//                            DDLogWarn(@"[MQTTMessage] unexpected payload after packet identifier");
                             message = nil;
                         }
                     }
                     if (type == MQTTPingreq ||
                         type == MQTTPingresp) {
                         if (message.data.length > 0) {
-                            DDLogWarn(@"[MQTTMessage] unexpected payload");
+//                            DDLogWarn(@"[MQTTMessage] unexpected payload");
                             message = nil;
                         }
                     }
@@ -645,26 +645,26 @@
                             }
                         } else {
                             if (message.data.length != 2) {
-                                DDLogWarn(@"[MQTTMessage] unexpected payload");
+//                                DDLogWarn(@"[MQTTMessage] unexpected payload");
                                 message = nil;
                             }
                         }
                     }
                     if (type == MQTTConnect) {
                         if (message.data.length < 3) {
-                            DDLogWarn(@"[MQTTMessage] missing connect variable header");
+//                            DDLogWarn(@"[MQTTMessage] missing connect variable header");
                             message = nil;
                         }
                     }
                     if (type == MQTTConnack) {
                         if (protocolLevel == MQTTProtocolVersion50) {
                             if (message.data.length < 3) {
-                                DDLogWarn(@"[MQTTMessage] missing connack variable header");
+//                                DDLogWarn(@"[MQTTMessage] missing connack variable header");
                                 message = nil;
                             }
                         } else {
                             if (message.data.length != 2) {
-                                DDLogWarn(@"[MQTTMessage] missing connack variable header");
+//                                DDLogWarn(@"[MQTTMessage] missing connack variable header");
                                 message = nil;
                             }
                         }
@@ -680,19 +680,19 @@
                     }
                     if (type == MQTTSubscribe) {
                         if (message.data.length < 3) {
-                            DDLogWarn(@"[MQTTMessage] missing subscribe variable header");
+//                            DDLogWarn(@"[MQTTMessage] missing subscribe variable header");
                             message = nil;
                         }
                     }
                     if (type == MQTTSuback) {
                         if (message.data.length < 3) {
-                            DDLogWarn(@"[MQTTMessage] missing suback variable header");
+//                            DDLogWarn(@"[MQTTMessage] missing suback variable header");
                             message = nil;
                         }
                     }
                     if (type == MQTTUnsubscribe) {
                         if (message.data.length < 3) {
-                            DDLogWarn(@"[MQTTMessage] missing unsubscribe variable header");
+//                            DDLogWarn(@"[MQTTMessage] missing unsubscribe variable header");
                             message = nil;
                         }
                     }

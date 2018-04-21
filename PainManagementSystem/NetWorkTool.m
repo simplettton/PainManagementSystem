@@ -110,8 +110,6 @@ static NetWorkTool *_instance;
            //请求结果出现后关闭风火轮
 
            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
-
            
            NSLog(@"task = %@",task);
            

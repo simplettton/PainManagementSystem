@@ -1289,16 +1289,16 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
 }
 
 - (UInt16)nextMsgId {
-    DDLogVerbose(@"nextMsgId synchronizing");
+//    DDLogVerbose(@"nextMsgId synchronizing");
     @synchronized(self) {
-        DDLogVerbose(@"nextMsgId synchronized");
+//        DDLogVerbose(@"nextMsgId synchronized");
         self.txMsgId++;
         while (self.txMsgId == 0 || [self.persistence flowforClientId:self.clientId
                                                          incomingFlag:NO
                                                             messageId:self.txMsgId] != nil) {
             self.txMsgId++;
         }
-        DDLogVerbose(@"nextMsgId synchronized done");
+//        DDLogVerbose(@"nextMsgId synchronized done");
         return self.txMsgId;
     }
 }
@@ -1641,7 +1641,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                       data:message.data];
                 }
             }
-            DDLogVerbose(@"[MQTTSession] mqttTransport send");
+//            DDLogVerbose(@"[MQTTSession] mqttTransport send");
             return [self.transport send:wireFormat];
         } else {
             DDLogError(@"[MQTTSession] trying to send message without wire format");
@@ -1655,7 +1655,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
 
 #pragma mark - MQTTTransport delegate
 - (void)mqttTransport:(id<MQTTTransport>)mqttTransport didReceiveMessage:(NSData *)message {
-    DDLogVerbose(@"[MQTTSession] mqttTransport didReceiveMessage");
+//    DDLogVerbose(@"[MQTTSession] mqttTransport didReceiveMessage");
 
     [self.decoder decodeMessage:message];
 

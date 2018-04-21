@@ -18,11 +18,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    [SVProgressHUD setMaximumDismissTimeInterval:0.5];
-    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
+    [SVProgressHUD setMaximumDismissTimeInterval:1];
+    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleCustom];
     [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
-    [SVProgressHUD setMinimumSize:CGSizeMake(50, 30)];
-    
+    [SVProgressHUD setMinimumSize:CGSizeMake(100, 50)];
+    [SVProgressHUD setBackgroundColor:UIColorFromHex(0xf9f9f9)];
+    [SVProgressHUD setCornerRadius:5];
     
     [self registerAPN];
     

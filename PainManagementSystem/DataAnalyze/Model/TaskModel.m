@@ -25,8 +25,7 @@
         self.patientName = dict[@"name"];
         self.medicalRecordNum = dict[@"medicalrecordnum"];
         self.doctorName = dict[@"creator"];
-        
-        
+
         NSDictionary *treatParam = dict[@"treatparam"];
         self.treatParam = treatParam;
 

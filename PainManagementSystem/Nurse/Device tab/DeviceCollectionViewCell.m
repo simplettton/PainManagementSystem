@@ -38,7 +38,7 @@
     
 }
 
--(void)configureWithStyle:(CellStyle)style{
+-(void)configureWithStyle:(CellStyle)style message:(NSString *)message{
     
     self.style =style;
 
@@ -55,16 +55,16 @@
         
         //灰色未治疗结束
         case CellStyleNotStarted_MachineStop:
-            [self configureWithStyle:CellStyleGrey_Unfinished];
+            [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
             self.machineStateLabel.text = @"本次治疗未开始";
             break;
         case CellStyleOngoing_MachineStop:
-            [self configureWithStyle:CellStyleGrey_Unfinished];
-            self.machineStateLabel.text = @"设备停止了";
+            [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
+            self.machineStateLabel.text = @"当前设备停止了";
             break;
         case CellStyleOngoing_MachinePause:
-            [self configureWithStyle:CellStyleGrey_Unfinished];
-            self.machineStateLabel.text = @"设备暂停中";
+            [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
+            self.machineStateLabel.text = @"当前设备暂停中";
             break;
 
         //治疗结束
@@ -81,7 +81,7 @@
         case CellStyleOngoing_MachineRunning:
 
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
-            self.machineStateLabel.text = @"  00:30";
+            self.machineStateLabel.text = (message == nil)?@"  00:30":message;
             [self.machineStateLabel setTextColor:UIColorFromHex(kGreenColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             
@@ -93,7 +93,8 @@
             
             [self.middleImageView.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
             [self.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
-            self.machineStateLabel.text = @"气囊类型不合适";
+        
+            self.machineStateLabel.text = (message == nil)?@"气囊类型不合适":message;
             [self.machineStateLabel setTextColor:UIColorFromHex(kOrangeColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             
