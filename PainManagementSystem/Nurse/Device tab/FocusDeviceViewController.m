@@ -892,9 +892,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     //连接中状态指示
     _HUD = [MBProgressHUD showHUDAddedTo:deviceCell animated:YES];
     
-    
-    
-
 }
 -(void)babyDelegate{
     __weak typeof(self) weakSelf = self;
@@ -923,18 +920,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         
         NSLog(@"连接成功");
         [weakSelf sendMachineStateRequest];
-        
-//        [weakSelf.HUD hideAnimated:YES];
-//
-//        NSMutableDictionary *machineDic = [[weakDatas objectAtIndex:weakSelf.selectedDeviceIndex]mutableCopy];
-//        [weakDatas removeObject:machineDic];
-//
-//        [machineDic setValue:@"connected" forKey:@"state"];
-//
-//        [weakDatas insertObject:machineDic atIndex:weakSelf.selectedDeviceIndex];
-//
-//        [weakSelf.collectionView reloadData];
-        
         
     }];
     

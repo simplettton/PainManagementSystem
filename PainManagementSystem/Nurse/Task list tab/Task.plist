@@ -11,6 +11,8 @@
 		<string>王小明</string>
 		<key>bednum</key>
 		<integer>0</integer>
+		<key>taskstate</key>
+		<integer>1</integer>
 		<key>treatparam</key>
 		<dict>
 			<key>machinetype</key>
@@ -69,6 +71,8 @@
 		<string>123124694720</string>
 		<key>name</key>
 		<string>七堇年</string>
+		<key>taskstate</key>
+		<integer>3</integer>
 		<key>treatparam</key>
 		<dict>
 			<key>modeshowname</key>
@@ -127,6 +131,8 @@
 		<string>123122964738</string>
 		<key>name</key>
 		<string>kitty</string>
+		<key>taskstate</key>
+		<integer>7</integer>
 		<key>treatparam</key>
 		<dict>
 			<key>machinetype</key>
@@ -185,6 +191,8 @@
 		<string>558994471254</string>
 		<key>name</key>
 		<string>茸徒</string>
+		<key>taskstate</key>
+		<integer>7</integer>
 		<key>treatparam</key>
 		<dict>
 			<key>machinetype</key>
@@ -243,6 +251,8 @@
 		<string>478964015478</string>
 		<key>name</key>
 		<string>jasper</string>
+		<key>taskstate</key>
+		<integer>3</integer>
 		<key>treatparam</key>
 		<dict>
 			<key>machinetype</key>

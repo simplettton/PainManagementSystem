@@ -10,15 +10,11 @@
 
 @interface TaskModel : NSObject
 
+@property(nonatomic,copy)NSNumber *taskStateNumber;
+
 @property(nonatomic,copy)NSString *medicalRecordNum;
 
 @property(nonatomic,copy)NSString *patientName;
-
-//是否评分来判断任务是否完成
-@property(nonatomic,assign)BOOL isFinish;
-
-//是否下发
-@property(nonatomic,assign)BOOL isDownload;
 
 @property (nonatomic, assign) NSUInteger state;
 

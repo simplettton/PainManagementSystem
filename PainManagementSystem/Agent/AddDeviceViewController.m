@@ -356,9 +356,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [self writeWithCmdid:CMDID_CHANGE_STATE dataString:nil];
 }
 
--(void)start{
-    [self writeWithCmdid:CMDID_CHANGE_STATE dataString:@"01"];
-}
 
 #pragma mark - action
 - (void)scanAction:(id)sender {

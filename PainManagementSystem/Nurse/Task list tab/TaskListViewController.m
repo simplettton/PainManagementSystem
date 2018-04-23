@@ -13,11 +13,20 @@
 #import "SendTreatmentFailView.h"
 #import "QRCodeReaderViewController.h"
 #import "PopoverTreatwayController.h"
+#import "Pack.h"
+#import "Unpack.h"
 
 #import "BaseHeader.h"
 #import <SVProgressHUD.h>
 
 #import "MJRefresh.h"
+
+#import <CoreBluetooth/CoreBluetooth.h>
+#import "BabyBluetooth.h"
+
+#define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
+#define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
+#define RX_CHARACTERISTIC_UUID @"8ac32d3f-5cb9-4d44-bec2-ee689169f626"
 
 #define ElectrotherapyTypeValue 56833
 #define AirProTypeValue 7681
@@ -32,7 +41,6 @@
     int page;
     int totalPage;  //总页数
     BOOL isRefreshing; //是否正在下拉刷新或者上拉加载
-    BOOL isFinishList;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong,nonatomic) QRCodeReaderViewController *reader;
@@ -42,10 +50,22 @@
 
 //任务状态
 @property (nonatomic,assign)int taskTag;
+
+//蓝牙设备
+@property (strong ,nonatomic) CBPeripheral *peripheral;
+@property (nonatomic,strong) CBCharacteristic *sendCharacteristic;
+@property (nonatomic,strong) CBCharacteristic *receiveCharacteristic;
+@property (nonatomic,strong) NSString *BLEDeviceName;
+@property (nonatomic,strong) NSData *BLETreatParam;
+@property (nonatomic,assign) NSInteger selectedDeviceIndex;
+
+
 @end
 
 @implementation TaskListViewController{
+    BabyBluetooth *baby;
     NSMutableArray *datas;
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -61,6 +81,8 @@
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
+    [baby cancelScan];
+    [baby cancelAllPeripheralsConnection];
     [self endRefresh];
 }
 -(void)initAll{
@@ -95,7 +117,6 @@
         case 0:
             
             NSLog(@"切换代处理处方");
-            isFinishList = NO;
             self.taskTag = TaskListTypeNotStarted;
             break;
         case 1:
@@ -108,13 +129,14 @@
             
             NSLog(@"切换已完成处方");
             self.taskTag = TaskListTypeFinished;
-            isFinishList = YES;
+            [baby cancelScan];
+            [baby cancelAllPeripheralsConnection];
             
             break;
         default:
             break;
     }
-    
+    [SVProgressHUD dismiss];
     [self.tableView.mj_header beginRefreshing];
     [self.tableView reloadData];
     
@@ -331,22 +353,26 @@
 
             break;
         case TaskListTypeProcessing:
-            if (indexPath.row %3 == 0) {
-                [cell configureWithStyle:CellStyleBlue_DownLoadedFinishRunning];
-                //评分action
-                [cell.scanButton removeTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
-                [cell.scanButton addTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
-                cell.scanButton.tag = indexPath.row;
-                
-            }else if(indexPath.row %3 == 1){
-                [cell configureWithStyle:CellStyleGreen_DownLoadedRunning];
-            }else{
-                [cell configureWithStyle:CellStyleGrey_DownLoadedUnRunning];
-
-                //扫描action
-                [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
-                [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
-                cell.scanButton.tag = indexPath.row;
+            switch (task.state) {
+                case 1:
+                    [cell configureWithStyle:CellStyleGrey_DownLoadedUnRunning];
+                    
+                    //扫描action
+                    [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
+                    cell.scanButton.tag = indexPath.row;
+                    break;
+                case 3:
+                   [cell configureWithStyle:CellStyleGreen_DownLoadedRunning];
+                    break;
+                case 7:
+                    [cell configureWithStyle:CellStyleBlue_DownLoadedFinishRunning];
+                    //评分action
+                    [cell.scanButton removeTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell.scanButton addTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
+                    cell.scanButton.tag = indexPath.row;
+                default:
+                    break;
             }
             //类型颜色恢复
             [cell setTypeLableColor:UIColorFromHex(0x212121)];
@@ -378,8 +404,6 @@
     
     self.selectedRow = [sender tag];
     
-    
-    
     NSArray *types = @[AVMetadataObjectTypeQRCode,
                        AVMetadataObjectTypeEAN13Code,
                        AVMetadataObjectTypeEAN8Code,
@@ -391,11 +415,7 @@
                        AVMetadataObjectTypePDF417Code];
     
     _reader = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
-    
-    // Using delegate methods
     _reader.delegate = self;
-    
-    
     [self presentViewController:_reader animated:YES completion:NULL];
     
 }
@@ -425,34 +445,54 @@
 {
     [self dismissViewControllerAnimated:YES completion:^{
         
-        //去除对应的病人病历号
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedRow inSection:0];
-        
+        //去取对应的病人病历号
+        TaskModel *task = [datas objectAtIndex:self.selectedRow];
+        NSString *medicalRecordNum = task.medicalRecordNum;
+        NSLog(@"medical  = %@",medicalRecordNum);
         [SVProgressHUD showWithStatus:@"处方下发中……"];
         
+        if ([task.machineType isEqualToString:@"血瘘"]) {
+            self.BLEDeviceName = result;
+            NSArray *paramArray = task.treatParam[@"paramlist"];
+            
+            NSString *time = [[paramArray objectAtIndex:0]objectForKey:@"value"];
+            NSDictionary *levelDic = @{@"一级":@"1",@"二级":@"2",@"三级":@"3"};
+            NSString *level = [[paramArray objectAtIndex:1]objectForKey:@"value"];
+            
+            Byte bytes[2] = {[time intValue],[levelDic[level] intValue]};
+            self.BLETreatParam = [NSData dataWithBytes:bytes length:2];
+            
+            //连接设备
+            [self BLEConnectDevice];
+            
+            
+        }else{
+            NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
+            
+            [params setObject:result forKey:@"serialnum"];
+            [params setObject:medicalRecordNum forKey:@"medicalrecordnum"];
+            
+            [self performSelector:@selector(showFailView) withObject:nil afterDelay:5.0];
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/TreatmentParamDownload"]
+                                          params:params
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             if ([responseObject.result intValue]==1) {
+                                                 
+                                                 [self showSuccessView];
+                                                 
+                                             }else{
+                                                                                                                                           [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                 [self showFailView];
+                                                 
+                                             }
+                                             
+                                         } failure:nil];
+        }
         //send treatment to server
-        
-        [self performSelector:@selector(showFailView) withObject:nil afterDelay:5.0];
-        
-        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
-        
-        [params setObject:result forKey:@"serialnum"];
-        
-        
-        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Tasklist/TreatmentParamDownload"]
-                                                                                   params:params
-                                                                                 hasToken:YES
-                                                                                  success:^(HttpResponse *responseObject) {
-                                                                                      if ([responseObject.result intValue]==1) {
-                                                                                          
-                                                                                          [self showSuccessView];
-                                                                                          
-                                                                                      }else{
-                                                                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                                                                          
-                                                                                      }
 
-                                                                                  } failure:nil];
+        
+ 
         
         NSLog(@"QRretult == %@", result);
     }];
@@ -467,6 +507,133 @@
     
     [self.navigationController popViewControllerAnimated:NO];
     [self dismissViewControllerAnimated:NO completion:nil];
+    
+}
+
+#pragma mark - BLE
+
+-(void)BLEConnectDevice{
+    
+    if (self.BLEDeviceName) {
+        
+        baby = [BabyBluetooth shareBabyBluetooth];
+        [self babyDelegate];
+        baby.scanForPeripherals().begin();
+    }
+}
+-(void)BLEDownLoadTreatment{
+
+    [self writeWithCmdid:0x9A data:self.BLETreatParam];
+}
+-(void)babyDelegate{
+    
+    __weak typeof(self) weakSelf = self;
+    __weak typeof(BabyBluetooth*) weakBaby = baby;
+    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
+        if (central.state == CBManagerStatePoweredOff) {
+            if (weakSelf.view) {
+                [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
+            }
+        }else if(central.state == CBManagerStatePoweredOn) {
+                weakBaby.scanForPeripherals().begin();
+        }
+    }];
+    [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
+
+        NSLog(@"连接成功");
+
+    }];
+    [baby setBlockOnDisconnect:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
+        
+        NSLog(@"断开连接");
+        
+    }];
+    
+    //发现service的Characteristics
+    [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:SERVICE_UUID]]) {
+            
+            for (CBCharacteristic *characteristic in service.characteristics)
+            {
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:RX_CHARACTERISTIC_UUID]])
+                {
+                    weakSelf.receiveCharacteristic = characteristic;
+                    if (![characteristic isNotifying]) {
+                        [weakSelf setNotify:characteristic];
+                    }
+                }
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:TX_CHARACTERISTIC_UUID]])
+                {
+                    weakSelf.sendCharacteristic = characteristic;
+                    
+                    [weakSelf performSelector:@selector(BLEDownLoadTreatment) withObject:nil afterDelay:0.5];
+
+                }
+                
+            }
+        }
+        
+    }];
+    [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
+        NSLog(@"advertisementData = %@",advertisementData);
+        //连接设备
+        if ([peripheral.name isEqualToString:weakSelf.BLEDeviceName]) {
+            [weakBaby cancelScan];
+            weakSelf.peripheral = peripheral; weakBaby.having(peripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+        }
+    }];
+    [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
+        if (peripheralName.length > 0 && [peripheralName isEqualToString:@"ALX420"]) {
+            
+            return YES;
+            
+        }
+        return NO;
+    }];
+    
+    NSDictionary *scanForPeripheralsWithOptions = @{CBCentralManagerScanOptionAllowDuplicatesKey:@YES};
+    [baby setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
+}
+//接收数据
+- (void)setNotify:(CBCharacteristic *)characteristic {
+    __weak typeof(self)weakSelf = self;
+    [weakSelf.peripheral setNotifyValue:YES forCharacteristic:characteristic];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [baby notify:weakSelf.peripheral
+      characteristic:characteristic
+               block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
+                   NSLog(@"----------------------------------------------");
+                   NSData *data = characteristic.value;
+                   if (data) {
+                       [weakSelf handleCompleteData:data];
+                   }
+                   
+               }];
+    });
+}
+-(void)handleCompleteData:(NSData *)complateData{
+     NSData *data = [Unpack unpackData:complateData];
+    if (data) {
+        Byte *bytes = (Byte *)[data bytes];
+        Byte cmdid = bytes[0];
+        Byte dataByte = bytes[1];
+        if (cmdid == 0x9A) {
+            if (dataByte == 1) {
+                [self showSuccessView];
+            }else{
+                [self showFailView];
+            }
+        }
+    }
+}
+
+-(void)writeWithCmdid:(Byte)cmdid data:(NSData*)data{
+    
+    [self.peripheral writeValue:[Pack packetWithCmdid:cmdid
+                                          dataEnabled:YES
+                                                 data:data]
+              forCharacteristic:self.sendCharacteristic
+                           type:CBCharacteristicWriteWithResponse];
 }
 
 #pragma mark - prepareForSegue

@@ -34,6 +34,10 @@
         //治疗模式
         self.treatMode = treatParam[@"modeshowname"];
         self.paramlist = treatParam[@"paramlist"];
+        
+        //任务类型
+        self.taskStateNumber = dict[@"taskstate"];
+        self.state = [self.taskStateNumber intValue];
 
         
     }
