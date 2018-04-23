@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface PopoverTreatwayController : UIViewController
-@property(nonatomic,strong)NSDictionary *treatWayDic;
+@property(nonatomic,strong)NSDictionary *treatParamDic;
 @end

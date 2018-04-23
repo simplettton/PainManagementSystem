@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface BEButton : UIButton
-
+//有边框的button
 @end

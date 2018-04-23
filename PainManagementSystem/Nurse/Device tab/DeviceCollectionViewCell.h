@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MultiParamButton.h"
 typedef enum _CellStyle {
     
     CellStyleNotStarted_MachineStop = 0,
@@ -32,15 +33,16 @@ typedef enum _CellStyle {
 @property (weak, nonatomic) IBOutlet UILabel *bedNumLabel;
 @property (weak, nonatomic) IBOutlet UILabel *machineNameLabel;
 
-@property (weak, nonatomic) IBOutlet UIButton *leftButton;
-@property (weak, nonatomic) IBOutlet UIButton *rightButton;
+@property (weak, nonatomic) IBOutlet MultiParamButton *pauseButton;
+@property (weak, nonatomic) IBOutlet MultiParamButton *stopButton;
+@property (weak, nonatomic) IBOutlet MultiParamButton *playButton;
+@property (weak, nonatomic) IBOutlet UIButton *remarkButton;
 //警告
 @property (weak, nonatomic) IBOutlet UIImageView *middleImageView;
-@property (weak, nonatomic) IBOutlet UIButton *playButton;
-@property (weak, nonatomic) IBOutlet UIButton *remarkButton;
-
+//删除按钮
 @property (weak, nonatomic) IBOutlet UIButton *btnDelete;
 
+@property (weak, nonatomic) IBOutlet UIImageView *clockImageView;
 
 //本地设备
 @property (weak, nonatomic) IBOutlet UIButton *BLEPauseButton;

@@ -8,6 +8,7 @@
 
 #import "TaskListViewController.h"
 #import "TaskCell.h"
+#import "TaskModel.h"
 #import "SendTreatmentSuccessView.h"
 #import "SendTreatmentFailView.h"
 #import "QRCodeReaderViewController.h"
@@ -39,6 +40,8 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UILabel *headerLastLabel;
 
+//任务状态
+@property (nonatomic,assign)int taskTag;
 @end
 
 @implementation TaskListViewController{
@@ -61,13 +64,19 @@
     [self endRefresh];
 }
 -(void)initAll{
-    
+    //初始tag为待处理
+    self.taskTag = TaskListTypeNotStarted;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
     
+    datas = [[NSMutableArray alloc]initWithCapacity:20];
     NSArray *dataArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"Task" ofType:@"plist"]];
-    datas = [dataArray mutableCopy];
+    for (NSDictionary *dataDic in dataArray) {
+        TaskModel *task = [TaskModel modelWithDic:dataDic];
+        [datas addObject:task];
+    }
+
     
     //配置segmentedcontrol
     self.segmentedControl.frame = CGRectMake(self.segmentedControl.frame.origin.x, self.segmentedControl.frame.origin.y, self.segmentedControl.frame.size.width, 35);
@@ -83,21 +92,22 @@
     
     NSInteger index = segmentedControl.selectedSegmentIndex;
     switch (index) {
-        case TaskListTypeNotStarted:
+        case 0:
             
             NSLog(@"切换代处理处方");
             isFinishList = NO;
-            
+            self.taskTag = TaskListTypeNotStarted;
             break;
-        case TaskListTypeProcessing:
+        case 1:
             
             NSLog(@"切换处理中处方");
-            
+            self.taskTag = TaskListTypeProcessing;
             
             break;
-        case TaskListTypeFinished:
+        case 2:
             
             NSLog(@"切换已完成处方");
+            self.taskTag = TaskListTypeFinished;
             isFinishList = YES;
             
             break;
@@ -153,27 +163,11 @@
 
 -(void)askForData:(BOOL)isRefresh{
     
-    switch (self.segmentedControl.selectedSegmentIndex) {
-            
-        //待处理
-        case TaskListTypeNotStarted:
-            
-            break;
-        //处理中
-        case TaskListTypeProcessing:
-            
-            break;
-        //已完成
-        case TaskListTypeFinished:
-            
-            break;
-            
-        default:
-            break;
-    }
+
+    NSDictionary *param = @{@"state":[NSNumber numberWithInt:self.taskTag]};
     
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/ListCount"]
-                                  params:nil
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/Count"]
+                                  params:param
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
                                      if ([responseObject.result intValue] == 1) {
@@ -188,7 +182,7 @@
                                          {
                                              [self getNetworkData:isRefresh];
                                          }else{
-
+                                             
                                          }
                                          
                                      }else{
@@ -209,8 +203,9 @@
     
     //配置请求http
     NSMutableDictionary *mutableParam = [[NSMutableDictionary alloc]init];
-    NSNumber *value = [NSNumber numberWithInteger:isFinishList?1:0];
-    [mutableParam setObject:value forKey:@"isfinish"];
+
+    [mutableParam setObject:[NSNumber numberWithInt:self.taskTag] forKey:@"state"];
+    [mutableParam setObject:[NSNumber numberWithInt:page] forKey:@"page"];
     NSDictionary *params = (NSDictionary *)mutableParam;
     
     __weak UITableView *tableView = self.tableView;
@@ -269,7 +264,20 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    switch (self.taskTag) {
+        case TaskListTypeNotStarted:
+        case TaskListTypeFinished:
+            tableView.separatorInset = UIEdgeInsetsMake(0, 30, 0, 20);
+            break;
+            
+        default:
+            tableView.separatorInset = UIEdgeInsetsMake(0, 12, 0, 20);
+            break;
+    }
+    
 
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     static NSString *CellIdentifier = @"Cell";
@@ -281,38 +289,32 @@
 
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
+    TaskModel *task = datas[indexPath.row];
+    cell.doctorNameLable.text = task.doctorName;
+    cell.medicalRecordNumLable.text  = task.medicalRecordNum;
+    cell.patientNameLabel.text = task.patientName;
+    cell.typeLabel.text = task.machineType;
+    
     //治疗参数详情弹窗
+    [cell.treatmentButton setTitle:[NSString stringWithFormat:@"治疗时间:%@分钟",task.treatTime] forState:UIControlStateNormal];
     [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
-    
-    NSDictionary *dataDic = datas[indexPath.row];
-    cell.doctorNameLable.text = dataDic[@"creater"];
-    cell.medicalRecordNumLable.text = dataDic[@"sickhistorynum"];
-    cell.patientNameLabel.text = dataDic[@"patientname"];
-    
-    NSDictionary *physicalTreatDic = dataDic[@"physicaltreat"];
-    NSString *type = physicalTreatDic[@"type"];
-    
 
-    
     //不同的tag配置不一样的cell
-    switch (self.segmentedControl.selectedSegmentIndex) {
+    switch (self.taskTag) {
         case TaskListTypeNotStarted:
         {
             //配置治疗设备显示文字
-            switch ([type integerValue]) {
+            switch ([task.machineTypeNumber integerValue]) {
                     
                 case ElectrotherapyTypeValue:
-                    cell.typeLabel.text = @"电疗";
                     [cell setTypeLableColor:UIColorFromHex(ElectrothetapyColor)];
                     break;
                     
                 case AladdinTypeValue:
-                    cell.typeLabel.text = @"血瘘";
                     [cell setTypeLableColor:UIColorFromHex(AladdinColor)];
                     break;
                     
                 case AirProTypeValue:
-                    cell.typeLabel.text = @"空气波";
                     [cell setTypeLableColor:UIColorFromHex(AirProColor)];
                     break;
                     
@@ -375,6 +377,8 @@
 - (void)scanAction:(id)sender {
     
     self.selectedRow = [sender tag];
+    
+    
     
     NSArray *types = @[AVMetadataObjectTypeQRCode,
                        AVMetadataObjectTypeEAN13Code,
@@ -480,10 +484,13 @@
         
         NSIndexPath* index = [self.tableView indexPathForCell:cell];
         
-        NSDictionary *dataDic = [datas objectAtIndex:index.row];
-        NSDictionary *treatWayDic = dataDic[@"physicaltreat"][@"treatway"];
+//        NSDictionary *dataDic = [datas objectAtIndex:index.row];
+//        NSDictionary *treatWayDic = dataDic[@"physicaltreat"][@"treatway"];
+//
+//        destination.treatWayDic = treatWayDic;
+        TaskModel *task = [datas objectAtIndex:index.row];
         
-        destination.treatWayDic = treatWayDic;
+        destination.treatParamDic = task.treatParam;
         
         UIButton *button = sender;
         popover.sourceView = button;

@@ -8,6 +8,7 @@
 
 #import "DeviceCollectionViewCell.h"
 #import "BaseHeader.h"
+
 #define kBlueColor 0x5e97fe
 
 #define kOrangeColor 0xf8b273
@@ -16,10 +17,7 @@
 
 #define kGreyColor 0xc1c1c1
 @interface DeviceCollectionViewCell()
-
-
-
-@property (weak, nonatomic) IBOutlet UIImageView *clockImageView;
+@property (strong, nonatomic) IBOutletCollection(MultiParamButton) NSArray *controlButtons;
 
 
 @end
@@ -27,6 +25,11 @@
 -(void)awakeFromNib{
     [super awakeFromNib];
     
+    //按钮自带控制参数
+    self.playButton.multiParamDic = @{@"cmdcode":@0};
+    self.pauseButton.multiParamDic = @{@"cmdcode":@1};
+    self.stopButton.multiParamDic = @{@"cmdcode":@2};
+
     self.contentView.layer.borderWidth = 0.5f;
     self.contentView.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
     [self.contentView.layer setMasksToBounds:YES];
@@ -40,9 +43,11 @@
 
 -(void)configureWithStyle:(CellStyle)style message:(NSString *)message{
     
-    self.style =style;
+    if(style != CellStyleGrey_Unfinished)
+    {
+        self.style =style;
+    }
 
-    
     switch (style) {
             
         //三种灰色未治疗结束的模板
@@ -133,8 +138,8 @@
 
     //online
     self.clockImageView.hidden = (style != CellStyleOngoing_MachineRunning);
-    self.leftButton.hidden  = (style != CellStyleOngoing_MachineRunning);
-    self.rightButton.hidden  = (style != CellStyleOngoing_MachineRunning);
+    self.pauseButton.hidden  = (style != CellStyleOngoing_MachineRunning);
+    self.stopButton.hidden  = (style != CellStyleOngoing_MachineRunning);
     self.middleImageView.hidden = (style != CellStyle_MachineException);
     self.playButton.hidden = (style == CellStyleOngoing_MachineRunning ||style == CellStyle_MachineException ||style == CellStyleFinished_MachineStop);
     self.remarkButton.hidden = (style == CellStyleFinished_MachineStop || style == CellStyle_LocalUnconnect)?NO:YES;
@@ -142,7 +147,6 @@
     
     //Local
     self.connectButton.hidden = (style == CellStyle_LocalUnconnect)? NO:YES;
-    
     
     self.BLEPlayButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalRunning))?YES:NO;
     self.BLEPauseButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning))?YES:NO;
@@ -165,4 +169,6 @@
     return animation;
 }
 
+- (IBAction)controlButttons:(id)sender {
+}
 @end

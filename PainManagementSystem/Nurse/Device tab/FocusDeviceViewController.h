@@ -20,6 +20,7 @@
 #import "DeviceViewController.h"
 
 #import "PatientModel.h"
+#import "MultiParamButton.h"
 
 //refresh
 #import "MJRefresh.h"

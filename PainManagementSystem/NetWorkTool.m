@@ -8,6 +8,7 @@
 
 #import "NetWorkTool.h"
 #import "MJRefresh.h"
+#import "AppDelegate.h"
 @interface NetWorkTool()
 
 @end
@@ -91,19 +92,31 @@ static NetWorkTool *_instance;
                NSString *errorString = [jsonDict objectForKey:@"msg"];
                
                
-               HttpResponse* responseObject = [[HttpResponse alloc]init];
-               responseObject.result = result;
-               responseObject.content = content;
-               responseObject.errorString = errorString;
-               
+               //token失效
+               if ([errorString isEqualToString:@"无法识别的用户"]) {
+                   [UserDefault setBool:NO forKey:@"IsLogined"];
+                   [UserDefault synchronize];
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       [SVProgressHUD showErrorWithStatus:@"账号验证过期，即将重新登录"];
 
-               responseBlock(responseObject);
-               
-               
-               //停止刷新
-               dispatch_async(dispatch_get_main_queue(), ^{
-                   [self endTableViewHeaderRefreshing];
-               });
+                       AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+                        [appDelegate performSelector:@selector(initRootViewController) withObject:nil afterDelay:1];
+//                       [appDelegate initRootViewController];
+                    
+                   });
+               }else{
+                   
+                   HttpResponse* responseObject = [[HttpResponse alloc]init];
+                   responseObject.result = result;
+                   responseObject.content = content;
+                   responseObject.errorString = errorString;
+                   responseBlock(responseObject);
+                   //停止刷新
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       [self endTableViewHeaderRefreshing];
+                   });
+               }
+
            }
        }
        failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {

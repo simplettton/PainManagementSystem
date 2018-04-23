@@ -47,20 +47,20 @@
             
         case CellStyleGrey_DownLoadedUnRunning:
             [self.scanButton setImage:[UIImage imageNamed:@"scancode"] forState:UIControlStateNormal];
-            self.statusImage.image = [UIImage imageNamed:@"triangle_grey"];
+            self.statusImage.image = [UIImage imageNamed:@"notstarted"];
 
             break;
         
         case CellStyleGreen_DownLoadedRunning:
 
-            self.statusImage.image = [UIImage imageNamed:@"triangle_green"];
-            [self.statusImage.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
+            self.statusImage.image = [UIImage imageNamed:@"processing"];
+//            [self.statusImage.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
 
             break;
             
         case CellStyleBlue_DownLoadedFinishRunning:
             [self.scanButton setImage:[UIImage imageNamed:@"remark"] forState:UIControlStateNormal];
-            self.statusImage.image = [UIImage imageNamed:@"triangle_blue"];
+            self.statusImage.image = [UIImage imageNamed:@"finished"];
 
             break;
         

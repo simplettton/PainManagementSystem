@@ -22,9 +22,7 @@
 
 @property (nonatomic, assign) NSUInteger state;
 
-@property(nonatomic,copy)NSString *treatModeName;
-
-@property(nonatomic,copy)NSString *treatModeValue;
+@property(nonatomic,copy)NSString *treatMode;
 
 @property(nonatomic,copy)NSString *treatTime;
 
@@ -33,6 +31,8 @@
 @property(nonatomic,copy)NSArray *paramlist;
 
 @property(nonatomic,copy)NSString *machineType;
+
+@property(nonatomic,copy)NSNumber *machineTypeNumber;
 
 @property(nonatomic,copy)NSString *doctorName;
 

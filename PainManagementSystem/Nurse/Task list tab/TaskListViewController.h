@@ -10,8 +10,8 @@
 typedef enum _TaskListType
 {
     TaskListTypeNotStarted= 0,
-    TaskListTypeProcessing = 1,
-    TaskListTypeFinished = 2,
+    TaskListTypeProcessing = 7,
+    TaskListTypeFinished = 15,
 }TaskListType;
 @interface TaskListViewController : UIViewController
 

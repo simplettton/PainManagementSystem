@@ -45,18 +45,18 @@
 -(void)initAll{
     
     self.tableView.tableFooterView = [[UIView alloc]init];
-    
-    NSArray *dataArray = self.treatWayDic[@"list"];
+    //获取数据源
+    NSArray *dataArray = self.treatParamDic[@"paramlist"];
     datas = [dataArray mutableCopy];
-    self.type = self.treatWayDic[@"type"];
     
+    self.type = self.treatParamDic[@"machinetype"];
+
     UIImageView *aladdinView = [self.topView viewWithTag:AladdinViewTag];
     
     UIImageView *leftView = [self.topView viewWithTag:ElectrotherapyViewTag];
     
     UILabel *electrotherapyLabel = [self.topView viewWithTag:ElectrotherapyLabelTag];
-    
-    self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 15);
+
     
     self.airProALabel.hidden = ([self.type integerValue] != AirProViewTag);
     self.airProBLabel.hidden = ([self.type integerValue] != AirProViewTag);
@@ -64,6 +64,8 @@
     electrotherapyLabel.hidden = ([self.type integerValue] != ElectrotherapyViewTag);
     aladdinView.hidden = ([self.type integerValue] != AladdinViewTag);
     
+    NSMutableDictionary *modeDic;
+    NSString *modeValue = self.treatParamDic[@"modeshowname"];
     switch ([self.type integerValue]) {
         case AladdinViewTag:
 
@@ -71,21 +73,50 @@
             break;
             
         case AirProViewTag:
+        {
 
 //            aladdinView.image = [UIImage imageNamed:@"airpro"];
+            //提取AB气囊
+            for (NSDictionary *dic in datas) {
+                NSString *key = dic[@"showname"];
+                NSString *value = dic[@"value"];
+                if ([key isEqualToString:@"A气囊类型"]) {
+                    self.airProALabel.text = [NSString stringWithFormat:@"A气囊类型 %@",value];
+                }
+                if ([key isEqualToString:@"B气囊类型"]) {
+                    self.airProBLabel.text = [NSString stringWithFormat:@"B气囊类型 %@",value];
+                }
+            }
+            
             leftView.image = [UIImage imageNamed:@"airIcon"];
-
+            //提取模式
+            modeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+            [modeDic setObject:@"治疗模式" forKey:@"showname"];
+            [modeDic setObject:modeValue forKey:@"value"];
+        }
             break;
             
         case ElectrotherapyViewTag:
+        case 56834:
+        case 56836:
         {
 
-            //电疗第一个参数就是通道数
-            NSDictionary *channelDic = [datas objectAtIndex:0];
-            NSString *channelNum = channelDic[@"value"];
-            
-            electrotherapyLabel.text = [NSString stringWithFormat:@"通道数:%@",channelNum];
+            //提取模式
+            modeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+            [modeDic setObject:@"电流波形" forKey:@"showname"];
+            [modeDic setObject:modeValue forKey:@"value"];
 
+            //提取电疗参数通道数
+            NSString *channelNum = [[NSString alloc]init];
+            for (NSDictionary *dic in datas) {
+                NSString *key = dic[@"showname"];
+                NSString *value = dic[@"value"];
+                if ([key isEqualToString:@"通道数"]) {
+                    electrotherapyLabel.text = [NSString stringWithFormat:@"通道数:%@",value];
+                    channelNum = value;
+                    break;
+                }
+            }
             NSDictionary *channelImageNameInfo = @{@"1":@"singlechannel",@"2":@"doublechannel",@"3":@"thirdchannel"};
             
             leftView.image = [UIImage imageNamed:[channelImageNameInfo objectForKey:channelNum]];
@@ -97,7 +128,16 @@
             
         default:
             break;
+            
     }
+
+    //插入显示治疗模式
+    if (modeDic) {
+        [datas insertObject:modeDic atIndex:0];
+    }
+    
+    self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 15);
+    
     
 }
 
@@ -120,7 +160,7 @@
     
     
     NSDictionary *dic = [datas objectAtIndex:indexPath.row];
-    NSString *key = dic[@"name"];
+    NSString *key = dic[@"showname"];
     cell.questionNameLabel.text = key;
     cell.selectionsLabel.text = dic[@"value"];
     

@@ -18,9 +18,9 @@
                                    @7681:@"空气波",
                                    @57119:@"血瘘",
                                    @56832:@"电疗",
-                                   @56833:@"电疗-100",
-                                   @56834:@"电疗-200",
-                                   @56836:@"电疗-400"
+                                   @56833:@"电疗100",
+                                   @56834:@"电疗200",
+                                   @56836:@"电疗400"
                                    };
         self.patientName = dict[@"name"];
         self.medicalRecordNum = dict[@"medicalrecordnum"];
@@ -28,13 +28,11 @@
 
         NSDictionary *treatParam = dict[@"treatparam"];
         self.treatParam = treatParam;
-
+        self.machineTypeNumber = treatParam[@"machinetype"];
         self.machineType = typeDic[treatParam[@"machinetype"]];
-        self.treatTime = treatParam[@"treattime"];
-        //治疗模式key
-        self.treatModeName = treatParam[@"modeshowname"];
-        //治疗模式value
-        self.treatModeValue = treatParam[@"modevalue"];
+        self.treatTime = treatParam[@"time"];
+        //治疗模式
+        self.treatMode = treatParam[@"modeshowname"];
         self.paramlist = treatParam[@"paramlist"];
 
         

@@ -59,18 +59,11 @@
 
 }
 - (IBAction)login:(id)sender {
-    
-    //登录时转圈圈提示
-    [self showIndicator];
-    
     [self loginCheck];
-
 }
 
--(void)showIndicator{
-    
-    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
-    
+-(void)showLoginingIndicator{
+
     [SVProgressHUD showWithStatus:@"正在登录中..."];
 }
 
@@ -116,11 +109,7 @@
         NSString *resutlt = responseObject.result;
         if ([resutlt intValue] == 1) {
             
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                [SVProgressHUD showSuccessWithStatus:@"登录成功"];
-//            });
-//
+            [self showLoginingIndicator];
             NSDictionary *content = responseObject.content;
             NSLog(@"receive content = %@",content);
             
