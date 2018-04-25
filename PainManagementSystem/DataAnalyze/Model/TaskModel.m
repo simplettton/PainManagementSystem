@@ -39,6 +39,8 @@
         self.taskStateNumber = dict[@"taskstate"];
         self.state = [self.taskStateNumber intValue];
 
+        //任务id
+        self.ID = dict[@"id"];
         
     }
     return self;

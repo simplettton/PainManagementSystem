@@ -80,6 +80,7 @@
             for (NSDictionary *dic in datas) {
                 NSString *key = dic[@"showname"];
                 NSString *value = dic[@"value"];
+
                 if ([key isEqualToString:@"A气囊类型"]) {
                     self.airProALabel.text = [NSString stringWithFormat:@"A气囊类型 %@",value];
                 }

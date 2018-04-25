@@ -22,9 +22,9 @@
 
         //0岁显示<1岁
         if ([ageNumber integerValue]==0) {
-            self.age = [NSString stringWithFormat:@"<1"];
+            self.age = [NSString stringWithFormat:@"<1岁"];
         }else{
-            self.age = [NSString stringWithFormat:@"%d",[ageNumber intValue]];
+            self.age = [NSString stringWithFormat:@"%d岁",[ageNumber intValue]];
         }
 
         

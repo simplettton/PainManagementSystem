@@ -59,13 +59,13 @@
 @property (nonatomic,strong) NSData *BLETreatParam;
 @property (nonatomic,assign) NSInteger selectedDeviceIndex;
 
+@property(nonatomic,strong)NSTimer *timer;
 
 @end
 
 @implementation TaskListViewController{
     BabyBluetooth *baby;
     NSMutableArray *datas;
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -84,6 +84,9 @@
     [baby cancelScan];
     [baby cancelAllPeripheralsConnection];
     [self endRefresh];
+    if (self.timer) {
+        [self closeTimer];
+    }
 }
 -(void)initAll{
     //初始tag为待处理
@@ -149,23 +152,21 @@
 
     
     MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
-
-    
     [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
     [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
     
     self.tableView.mj_header = header;
     
-//    [self.tableView.mj_header beginRefreshing];
+    [self.tableView.mj_header beginRefreshing];
     
     
-//    //上拉加载
-//    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
-//    [footer setTitle:@"" forState:MJRefreshStateIdle];
-//    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
-//    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
-//    self.tableView.mj_footer = footer;
+    //上拉加载
+    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
+    [footer setTitle:@"" forState:MJRefreshStateIdle];
+    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
+    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+    self.tableView.mj_footer = footer;
 }
 
 -(void)refresh{
@@ -202,9 +203,17 @@
                                          
                                          if([count intValue] > 0)
                                          {
+                                             self.tableView.tableHeaderView.hidden = NO;
                                              [self getNetworkData:isRefresh];
                                          }else{
+                                             [datas removeAllObjects];
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [self.tableView reloadData];
+                                             });
+                                             NSString *title = [self.segmentedControl titleForSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
                                              
+                                             [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"没有%@的处方~",title]];
+                                             self.tableView.tableHeaderView.hidden = YES;
                                          }
                                          
                                      }else{
@@ -235,6 +244,7 @@
                                   params:params
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
+                                     
                                      [self endRefresh];
                                      isRefreshing = NO;//数据获取成功后，设置为NO
                                      
@@ -265,9 +275,11 @@
                                          
                                          if (content) {
                                              for (NSDictionary *dic in content) {
+                                                 NSLog(@"dic = %@",dic);
+                                                 TaskModel *task = [TaskModel modelWithDic:dic];
+                                                 
                                                  if (![datas containsObject:dic]) {
-                                                     
-                                                     
+                                                     [datas addObject:task];
                                                  }
                                              }
                                              
@@ -275,6 +287,8 @@
                                                  [tableView reloadData];
                                              });
                                          }
+                                     }else{
+                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                      }
                                      
                                      
@@ -297,9 +311,8 @@
             tableView.separatorInset = UIEdgeInsetsMake(0, 12, 0, 20);
             break;
     }
-    
-
 }
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     static NSString *CellIdentifier = @"Cell";
@@ -363,7 +376,13 @@
                     cell.scanButton.tag = indexPath.row;
                     break;
                 case 3:
+                {
                    [cell configureWithStyle:CellStyleGreen_DownLoadedRunning];
+//                    UILongPressGestureRecognizer * longPressGesture =[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(remarkAction:)];
+//
+//                    longPressGesture.minimumPressDuration=1.5f;//设置长按 时间
+//                    [cell addGestureRecognizer:longPressGesture];
+                }
                     break;
                 case 7:
                     [cell configureWithStyle:CellStyleBlue_DownLoadedFinishRunning];
@@ -393,6 +412,19 @@
     return cell;
     
 }
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    TaskModel *task = datas[indexPath.row];
+    switch (self.taskTag) {
+        case TaskListTypeProcessing:
+            if(task.state == 3){
+                [self remarkAction:nil];
+            }
+            break;
+
+        default:
+            break;
+    }
+}
 
 -(void)showPopover:(UIButton *)sender {
 
@@ -421,7 +453,7 @@
 }
 - (void)remarkAction:(id)sender{
     
-    self.selectedRow = [sender tag];
+//    self.selectedRow = [sender tag];
     [self performSegueWithIdentifier:@"TaskGoToRemarkVAS" sender:sender];
     
 }
@@ -430,15 +462,44 @@
     [SVProgressHUD dismiss];
     [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
         NSLog(@"send to server设置关注 ");
+        TaskModel *task = [datas objectAtIndex:self.selectedRow];
+        NSString *serialNum = task.serialNum;
+        if([task.machineType isEqualToString:@"血瘘"]){
+            serialNum = @"P06A17A00001";
+        }
+
+        if(serialNum){
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
+        params:@{@"serialnum":serialNum}
+        hasToken:YES
+        success:^(HttpResponse *responseObject) {
+            if ([responseObject.result intValue]==1) {
+                NSLog(@"关注设备成功");
+                [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+            }else{
+                [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+            }
+        }
+        failure:nil];
+        }
     }];
     
 }
 
 -(void)showFailView{
     [SVProgressHUD dismiss];
+    [baby cancelScan];
+    [baby cancelAllPeripheralsConnection];
     [SendTreatmentFailView alertControllerAboveIn:self];
 }
-
+-(void)startTimer{
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:12 target:self selector:@selector(showFailView) userInfo:nil repeats:NO];
+}
+-(void)closeTimer{
+    // 停止定时器
+    [self.timer invalidate];
+    self.timer = nil;
+}
 
 #pragma mark - QRCodeReader Delegate Methods
 - (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result
@@ -447,8 +508,12 @@
         
         //去取对应的病人病历号
         TaskModel *task = [datas objectAtIndex:self.selectedRow];
-        NSString *medicalRecordNum = task.medicalRecordNum;
-        NSLog(@"medical  = %@",medicalRecordNum);
+        //保存扫描到的序列号到处方中
+        task.serialNum = result;
+        
+        NSString *taskId = task.ID;
+        NSLog(@"medical  = %@",taskId);
+
         [SVProgressHUD showWithStatus:@"处方下发中……"];
         
         if ([task.machineType isEqualToString:@"血瘘"]) {
@@ -464,15 +529,16 @@
             
             //连接设备
             [self BLEConnectDevice];
+            [self startTimer];
             
             
         }else{
             NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
             
             [params setObject:result forKey:@"serialnum"];
-            [params setObject:medicalRecordNum forKey:@"medicalrecordnum"];
             
-            [self performSelector:@selector(showFailView) withObject:nil afterDelay:5.0];
+            [params setObject:taskId forKey:@"id"];
+            
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/TreatmentParamDownload"]
                                           params:params
                                         hasToken:YES
@@ -481,9 +547,10 @@
                                                  
                                                  [self showSuccessView];
                                                  
+                                                 
                                              }else{
-                                                                                                                                           [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                                 [self showFailView];
+                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+//                                                 [self showFailView];
                                                  
                                              }
                                              
@@ -492,7 +559,7 @@
         //send treatment to server
 
         
- 
+        
         
         NSLog(@"QRretult == %@", result);
     }];
@@ -620,6 +687,12 @@
         if (cmdid == 0x9A) {
             if (dataByte == 1) {
                 [self showSuccessView];
+
+                [baby cancelScan];
+                [baby cancelAllPeripheralsConnection];
+                if (self.timer) {
+                    [self closeTimer];
+                }
             }else{
                 [self showFailView];
             }

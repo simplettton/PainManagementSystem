@@ -20,12 +20,13 @@
 
 @implementation TreatmentCourseRecordViewController{
     NSMutableArray *datas;
+    NSString *markDescribe;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initAll];
-    // Do any additional setup after loading the view.
+    self.title = @"治疗疗程记录";
 }
 
 -(void)initAll{
@@ -50,6 +51,10 @@
              @{@"medicalRecordNum":@"12345893",@"name":@"王力",@"gender":@"男",@"age":@"19",@"phone":@"15521064545"},
              @{@"medicalRecordNum":@"12345898",@"name":@"东东",@"gender":@"女",@"age":@"36",@"phone":@"18821654545"},
              nil];
+}
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    [self getStandardEvaluation];
 }
 
 #pragma mark - tableview delegate
@@ -90,7 +95,7 @@
         
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
-            [VASMarkView alertControllerAboveIn:self withMark:[array objectAtIndex:1] return:^(NSString *markString) {
+            [VASMarkView alertControllerAboveIn:self withMark:[array objectAtIndex:1] describe:markDescribe return:^(NSString *markString) {
 
                 [array replaceObjectAtIndex:1 withObject:markString];
                 
@@ -104,7 +109,8 @@
         [self presentViewController:alert animated:YES completion:nil];
         
     }else{
-        [VASMarkView alertControllerAboveIn:self withMark:@"20" return:^(NSString *markString) {
+
+        [VASMarkView alertControllerAboveIn:self withMark:@"20" describe:markDescribe return:^(NSString *markString) {
 
             [array replaceObjectAtIndex:1 withObject:markString];
             
@@ -114,18 +120,23 @@
         }];
     }
     
-//    [VASMarkView alertControllerAboveIn:self withMark:@"20" return:^(NSString *markString) {
-////        UIView *contentView = [sender superview];
-////        TreatRecordCell *cell = (TreatRecordCell *)[contentView superview];
-////
-////        NSMutableArray *array = (NSMutableArray *)[cell.vasLabel.text componentsSeparatedByString:@"/"];
-//        [array replaceObjectAtIndex:1 withObject:markString];
-//
-//        NSString *newValue = [array componentsJoinedByString:@"/"];
-//        cell.vasLabel.text = newValue;
-//        cell.vasAfterLB.text = markString;
-//    }];
     
+}
+-(void)getStandardEvaluation{
+    //获取评分标准
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/ScoreItem/List"] params:nil hasToken:YES success:^(HttpResponse *responseObject) {
+        if ([responseObject.result intValue] == 1) {
+            for (NSDictionary *dic in responseObject.content) {
+                if ([[dic objectForKey:@"name"]isEqualToString:@"vas"]) {
+                    markDescribe = dic[@"describe"];
+                    NSLog(@"%@",markDescribe);
+                    break;
+                }
+            }
+        }else{
+            [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+        }
+    } failure:nil];
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

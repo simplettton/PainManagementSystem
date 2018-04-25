@@ -10,6 +10,8 @@
 
 @interface TaskModel : NSObject
 
+@property(nonatomic,copy)NSString *ID;
+
 @property(nonatomic,copy)NSNumber *taskStateNumber;
 
 @property(nonatomic,copy)NSString *medicalRecordNum;
@@ -31,6 +33,9 @@
 @property(nonatomic,copy)NSNumber *machineTypeNumber;
 
 @property(nonatomic,copy)NSString *doctorName;
+
+//下发出访实际设备
+@property(nonatomic,copy)NSString *serialNum;
 
 -(instancetype)initWithDic:(NSDictionary* )dict;
 

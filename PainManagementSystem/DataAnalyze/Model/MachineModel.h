@@ -31,6 +31,8 @@
 //
 @property(nonatomic,copy)NSString *alertMessage;
 
+@property(nonatomic,assign)BOOL isWarning;
+
 //绑定患者信息
 @property(nonatomic,copy)NSString *userName;
 

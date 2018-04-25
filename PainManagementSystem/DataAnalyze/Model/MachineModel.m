@@ -91,7 +91,7 @@ typedef enum _CellStyle {
         
         //绑定患者信息
         self.userName = dict[@"name"];
-        self.userBedNum = [dict[@"bednum"]stringValue];
+        self.userBedNum = dict[@"bednum"];
         self.userMedicalNum = dict[@"medicalrecordnum"];
 
     }

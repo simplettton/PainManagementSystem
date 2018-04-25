@@ -158,10 +158,10 @@
     
     [params setObject:self.phoneTextFiled.text forKey:@"contact"];
     
-    if ([self.bedNumTextField.text length]>0) {
-        
-        [params setObject:self.bedNumTextField.text forKey:@"bednum"];
-    }
+//    if ([self.bedNumTextField.text length]>0) {
+    
+    [params setObject:self.bedNumTextField.text forKey:@"bednum"];
+//    }
 
 
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]

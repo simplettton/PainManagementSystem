@@ -3,66 +3,8 @@
 <plist version="1.0">
 <array>
 	<dict>
-		<key>creator</key>
-		<string>安妮</string>
-		<key>medicalrecordnum</key>
-		<string>1235461309627</string>
-		<key>name</key>
-		<string>王小明</string>
-		<key>bednum</key>
-		<integer>0</integer>
-		<key>taskstate</key>
-		<integer>1</integer>
-		<key>treatparam</key>
-		<dict>
-			<key>machinetype</key>
-			<integer>56833</integer>
-			<key>modeshowname</key>
-			<string>立体动态干扰电</string>
-			<key>time</key>
-			<integer>20</integer>
-			<key>paramlist</key>
-			<array>
-				<dict>
-					<key>showname</key>
-					<string>通道数</string>
-					<key>value</key>
-					<string>3</string>
-				</dict>
-				<dict>
-					<key>showname</key>
-					<string>时间(min)</string>
-					<key>value</key>
-					<string>20</string>
-				</dict>
-				<dict>
-					<key>showname</key>
-					<string>幅值</string>
-					<key>value</key>
-					<string>100</string>
-				</dict>
-				<dict>
-					<key>showname</key>
-					<string>载频</string>
-					<key>value</key>
-					<string>2000</string>
-				</dict>
-				<dict>
-					<key>showname</key>
-					<string>差频</string>
-					<key>value</key>
-					<string>200</string>
-				</dict>
-				<dict>
-					<key>showname</key>
-					<string>调制波形</string>
-					<key>value</key>
-					<string>方波</string>
-				</dict>
-			</array>
-		</dict>
-	</dict>
-	<dict>
+		<key>id</key>
+		<string>zdhklqjeowiwahf</string>
 		<key>bednum</key>
 		<integer>0</integer>
 		<key>creator</key>
@@ -72,7 +14,7 @@
 		<key>name</key>
 		<string>七堇年</string>
 		<key>taskstate</key>
-		<integer>3</integer>
+		<integer>1</integer>
 		<key>treatparam</key>
 		<dict>
 			<key>modeshowname</key>
@@ -123,6 +65,70 @@
 		</dict>
 	</dict>
 	<dict>
+		<key>id</key>
+		<string>zdhklqje2wiwahf</string>
+		<key>bednum</key>
+		<integer>0</integer>
+		<key>creator</key>
+		<string>安妮</string>
+		<key>medicalrecordnum</key>
+		<string>123124694720</string>
+		<key>name</key>
+		<string>涛涛</string>
+		<key>taskstate</key>
+		<integer>7</integer>
+		<key>treatparam</key>
+		<dict>
+			<key>modeshowname</key>
+			<string>自动偶极子向量干扰电</string>
+			<key>machinetype</key>
+			<integer>56833</integer>
+			<key>time</key>
+			<integer>120</integer>
+			<key>paramlist</key>
+			<array>
+				<dict>
+					<key>showname</key>
+					<string>通道数</string>
+					<key>value</key>
+					<string>2</string>
+				</dict>
+				<dict>
+					<key>showname</key>
+					<string>时间(min)</string>
+					<key>value</key>
+					<string>120</string>
+				</dict>
+				<dict>
+					<key>showname</key>
+					<string>幅值</string>
+					<key>value</key>
+					<string>100</string>
+				</dict>
+				<dict>
+					<key>showname</key>
+					<string>载频</string>
+					<key>value</key>
+					<string>2000</string>
+				</dict>
+				<dict>
+					<key>showname</key>
+					<string>差频</string>
+					<key>value</key>
+					<string>200</string>
+				</dict>
+				<dict>
+					<key>showname</key>
+					<string>调制波形</string>
+					<key>value</key>
+					<string>扇形波</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<dict>
+		<key>id</key>
+		<string>zdhklqjeo23256</string>
 		<key>bednum</key>
 		<integer>0</integer>
 		<key>creator</key>
@@ -183,6 +189,8 @@
 		</dict>
 	</dict>
 	<dict>
+		<key>id</key>
+		<string>aweqrwetya35</string>
 		<key>bednum</key>
 		<integer>0</integer>
 		<key>creator</key>
@@ -243,6 +251,8 @@
 		</dict>
 	</dict>
 	<dict>
+		<key>id</key>
+		<string>dasgew</string>
 		<key>bednum</key>
 		<integer>0</integer>
 		<key>creator</key>

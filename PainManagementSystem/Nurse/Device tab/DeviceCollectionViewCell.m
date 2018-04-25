@@ -96,8 +96,8 @@
             
             self.topView.backgroundColor = UIColorFromHex(kOrangeColor);
             
-            [self.middleImageView.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
-            [self.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
+//            [self.middleImageView.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
+//            [self.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
         
             self.machineStateLabel.text = (message == nil)?@"气囊类型不合适":message;
             [self.machineStateLabel setTextColor:UIColorFromHex(kOrangeColor)];

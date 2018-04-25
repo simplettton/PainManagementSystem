@@ -25,55 +25,12 @@
     [super awakeFromNib];
     self.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
     self.backgroundView.layer.cornerRadius = 5.0f;
-    
-    //    textview 改变字体的行间距
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.lineSpacing = 10;// 字体的行间距
-    
-    NSDictionary *attributes = @{
-                                 NSFontAttributeName:[UIFont systemFontOfSize:16 weight:UIFontWeightLight],
-                                 NSParagraphStyleAttributeName:paragraphStyle
-                                 };
-    //请求vas评分说明
-    NetWorkTool *netWorkTool = [NetWorkTool sharedNetWorkTool];
-    NSString *address = [HTTPServerURLString stringByAppendingString:@"Api/ScoreItem/List"];
-    
-    NSString *token = Token;
-    
-    NSDictionary *parameter = @{
-                                @"token":token,
-                                @"data":@""
-                                };
-    [netWorkTool POST:address
-           parameters:parameter
-             progress:nil
-              success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                  NSDictionary *jsonDict = responseObject;
-//                  if (jsonDict != nil) {
-//                      NSString *state = [jsonDict objectForKey:@"result"];
-//                      if ([state intValue] == 1) {
-//                          NSDictionary *dataDic = [jsonDict objectForKey:@"content"];
-//                          NSString *token = [dataDic objectForKey:@"token"];
-//                          NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-//                          [userDefault setObject:token forKey:@"Token"];
-//                          [userDefault synchronize];
-//
-//                      }
-//                  }
-                  
-                  NSLog(@"receive  %@",responseObject);
-              } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                  NSLog(@"error==%@",error);
-              }];
-    
-    self.scoreStandardsTV.attributedText = [[NSAttributedString alloc] initWithString:@"VAS评分说明(0分-100分): 0分:无痛； 30分以内:有轻微的疼痛，能忍受； 40分-60分:患者疼痛并影响睡眠，尚能忍受； 70分-100分:患者有渐强烈的疼痛，疼痛难忍，影响食欲，影响睡眠。" attributes:attributes];
-    
     self.slider.continuous = YES;
     [self.slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
     self.valueLabel.text = [NSString stringWithFormat:@"%.0f", self.slider.value];
 }
 
-+(void)alertControllerAboveIn:(UIViewController *)controller withMark:(NSString *)mark return:(returnMark)returnEvent{
++(void)alertControllerAboveIn:(UIViewController *)controller withMark:(NSString *)mark describe:(NSString *)describe return:(returnMark)returnEvent{
     
     VASMarkView *view = [[NSBundle mainBundle]loadNibNamed:@"VASMarkView" owner:nil options:nil][0];
     
@@ -94,6 +51,24 @@
     view.slider.value = [mark intValue];
     
     view.valueLabel.text = mark;
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 10;// 字体的行间距
+    
+    NSDictionary *attributes = @{
+                                 NSFontAttributeName:[UIFont systemFontOfSize:16 weight:UIFontWeightLight],
+                                 NSParagraphStyleAttributeName:paragraphStyle
+                                 };
+    if (describe) {
+        
+        view.scoreStandardsTV.attributedText = [[NSAttributedString alloc]initWithString:[NSString stringWithFormat:@"VAS评分说明(0分-100分):\n%@",describe] attributes:attributes];
+    }else{
+        NSString *defaultDescribe = @"0分:无痛； 30分以内:有轻微的疼痛，能忍受； 40分-60分:患者疼痛并影响睡眠，尚能忍受； 70分-100分:患者有渐强烈的疼痛，疼痛难忍，影响食欲，影响睡眠。";
+        view.scoreStandardsTV.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"VAS评分说明(0分-100分):\n%@",defaultDescribe] attributes:attributes];
+
+    }
+    
+
     
     [UIView animateWithDuration:0.3 delay:0.1 usingSpringWithDamping:0.5 initialSpringVelocity:10 options:UIViewAnimationOptionCurveLinear animations:^{
         view.backgroundView.transform = transform;

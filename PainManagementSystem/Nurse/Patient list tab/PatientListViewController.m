@@ -49,14 +49,12 @@
     
     self.searchBar.delegate = self;
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
-    
     self.searchBar.tintColor = UIColorFromHex(0x5E97FE);//出现光标
     
     
     //通过KVC获得到UISearchBar的私有变量
     //searchField
     UITextField *searchField = [self.searchBar valueForKey:@"searchField"];
-//    searchField.delegate =self;
     if (searchField) {
         
         [searchField setBackgroundColor:[UIColor whiteColor]];
@@ -70,6 +68,7 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 15, 0, 20);
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
 
@@ -168,12 +167,15 @@
                                          
                                          if([count intValue] > 0)
                                          {
+                                             self.tableView.tableHeaderView.hidden = NO;
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];
                                          }else{
                                              [datas removeAllObjects];
+                                             self.tableView.tableHeaderView.hidden = NO;
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
+                                             [SVProgressHUD showErrorWithStatus:@"系统中没有病历~"];
                                          }
  
                                      }else{
@@ -305,7 +307,11 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
 
+//    cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
+//    cell.selectedBackgroundView.backgroundColor = [UIColor clearColor];
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";
     
@@ -319,15 +325,15 @@
     cell.medicalRecordNumLabel.text = patient.medicalRecordNum;
     cell.nameLabel.text = patient.name;
     cell.genderLabel.text = patient.gender;
-
+    cell.bedNumLabel.text = patient.bednum;
     cell.ageLabel.text = patient.age;
 
     
     
     cell.editButton.tag = indexPath.row;
     [cell.editButton addTarget:self action:@selector(editPatientInfomation:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [cell.inquireButton addTarget:self action:@selector(showRecord:) forControlEvents:UIControlEventTouchUpInside];
+//
+//    [cell.inquireButton addTarget:self action:@selector(showRecord:) forControlEvents:UIControlEventTouchUpInside];
     
     
     return cell;
@@ -340,9 +346,6 @@
 -(void)editPatientInfomation:(UIButton *)sender{
 
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:sender.tag inSection:0];
-    
-//    PatientTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-//    [self performSegueWithIdentifier:@"EditPatientInfomation" sender:cell];
     
     PatientModel *patientInfo = datas[indexPath.row];
     [self performSegueWithIdentifier:@"EditPatientInfomation" sender:patientInfo];

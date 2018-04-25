@@ -15,7 +15,11 @@ NSString *const PORT = @"18826";
 NSString *const MQTTUserName = @"admin";
 NSString *const MQTTPassWord = @"lifotronic.com";
 
-@interface FocusDeviceViewController ()<MQTTSessionManagerDelegate,MQTTSessionDelegate>
+@interface FocusDeviceViewController ()<MQTTSessionManagerDelegate,MQTTSessionDelegate>{
+    int page;
+    int totalPage;  //总页数
+    BOOL isRefreshing; //是否正在下拉刷新或者上拉加载
+}
 
 @property (weak, nonatomic) IBOutlet UIButton *allTabButton;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
@@ -53,14 +57,13 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initUI];
-    [self initTableHeaderAndFooter];
 
 
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+
     [self connectMQTT];
-    
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
@@ -74,6 +77,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [self.manager removeObserver:self forKeyPath:@"state" context:nil];
     }
     [self disconnectMQTT];
+    [self endRefresh];
 }
 -(void)initUI{
     
@@ -159,6 +163,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [self.collectionView addGestureRecognizer:_longPress];
     }
     
+    //第一次加载的时候才自动刷新 以后都要手动刷新
+    [self initTableHeaderAndFooter];
+    
 }
 
 - (void)lonePressMoving:(UILongPressGestureRecognizer *)longPress
@@ -217,24 +224,114 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     //下拉刷新
     self.collectionView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
-//    [self.collectionView.mj_header beginRefreshing];
+    [self.collectionView.mj_header beginRefreshing];
     
     
-//    //上拉加载
-//    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
-//    [footer setTitle:@"" forState:MJRefreshStateIdle];
-//    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
-//    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
-//    self.collectionView.mj_footer = footer;
+    //上拉加载
+    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
+    [footer setTitle:@"" forState:MJRefreshStateIdle];
+    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
+    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+    self.collectionView.mj_footer = footer;
     
 }
 -(void)refresh{
-    
+    [self askForData:YES];
 }
 -(void)loadMore{
+    [self askForData:NO];
+}
+-(void)endRefresh{
+    if (page == 0) {
+        [self.collectionView.mj_header endRefreshing];
+    }
+    [self.collectionView.mj_footer endRefreshing];
+}
+-(void)askForData:(BOOL)isRefresh{
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    
+    if (self.isInAllTab) {
+        [params setObject:[NSNumber numberWithInteger:0] forKey:@"isfocus"];
+    }else{
+        [params setObject:[NSNumber numberWithInteger:1] forKey:@"isfocus"];
+    }
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTaskCount"]
+                                  params:(NSDictionary *)params
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if ([responseObject.result intValue] == 1) {
+
+                                         NSString *count = responseObject.content[@"count"];
+                                         
+                                         totalPage = ([count intValue]+9-2)/9;
+                                         
+                                         NSLog(@"totalPage = %d",totalPage);
+                                         
+                                         if ([count intValue]>0) {
+                                             [self getNetworkData:isRefresh withParam:params];
+                                         }else{
+                                             [datas removeAllObjects];
+                                             [self endRefresh];
+                                             [SVProgressHUD showErrorWithStatus:@"当前无设备连接上服务器"];
+                                         }
+                                         dispatch_async(dispatch_get_main_queue(), ^{
+                                             [self.collectionView reloadData];
+                                         });
+                                         
+                                     }else{
+                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                     }
+                                 }
+                                 failure:nil];
+}
+-(void)getNetworkData:(BOOL)isRefresh withParam:(NSMutableDictionary *)param{
+    if (isRefresh) {
+        page = 0;
+    }else{
+        page ++;
+    }
+    [param setObject:[NSNumber numberWithInt:page] forKey:@"page"];
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
+                                  params:param
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     [self endRefresh];
+                                     isRefreshing = NO;
+                                     
+                                     if (page == 0) {
+                                         [datas removeAllObjects];
+                                     }
+                                     if (isRefreshing) {
+                                         if (page >= totalPage) {
+                                             [self endRefresh];
+                                         }
+                                         return;
+                                     }
+                                     isRefreshing = YES;
+                                     
+                                     if (page >= totalPage) {
+                                         [self endRefresh];
+                                         [self.collectionView.mj_footer endRefreshingWithNoMoreData];
+                                         return;
+                                     }
+                                     if ([responseObject.result intValue]==1) {
+                                         NSArray *content = responseObject.content;
+                                         if (content) {
+                                             for (NSDictionary *dic in content) {
+                                                 MachineModel *machine = [MachineModel modelWithDic:dic];
+                                                 if (![datas containsObject:machine]) {
+                                                     [datas addObject:machine];
+                                                 }
+                                             }
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [self.collectionView reloadData];
+                                             });
+                                        }
+                                     }
+                                 }
+                                 failure:nil];
     
 }
-
 #pragma mark - initMQTT
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
@@ -378,18 +475,41 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                 //机器状态变化 刷新cell样式
                                 case 0x90:
                                 {
-                                    [machine changeState:content[@"state"]];
-                                    currentMachine = machine;
+                                    //等2秒才去除报警信息
+                                    if (machine.alertMessage !=nil) {
+                                        dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 4 * NSEC_PER_SEC);
+                                        dispatch_after(timer, dispatch_get_main_queue(), ^{
+                                            if(machine.alertMessage){
+                                                machine.alertMessage = nil;
+                                            }
+                                            
+                                        });
+                                    }else{
+                                        [machine changeState:content[@"state"]];
+                                        currentMachine = machine;
+                                    }
                                 }
                                     break;
                                     //运行中的实时包 刷新倒计时
                                 case 0x91:
-                                {   //运行状态才刷新倒计时
-                                    if([currentMachine.stateNumber isEqualToNumber:@0]){
-                                        NSNumber *second= content[@"lefttime"];
-                                        machine.leftTimeNumber = second;
-                                        machine.alertMessage = nil;
-                                        currentMachine = machine;
+                                {
+                                    //等2秒才去除报警信息
+                                    if (machine.alertMessage !=nil) {
+                                        dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 4 * NSEC_PER_SEC);
+                                        dispatch_after(timer, dispatch_get_main_queue(), ^{
+                                            if(machine.alertMessage){
+                                                machine.alertMessage = nil;
+                                            }
+
+                                        });
+                                    }
+                                    else{
+                                          //运行状态才刷新倒计时
+                                        if([currentMachine.stateNumber isEqualToNumber:@0]){
+                                            NSNumber *second= content[@"lefttime"];
+                                            machine.leftTimeNumber = second;
+                                            currentMachine = machine;
+                                        }
                                     }
                                 }
                                     break;
@@ -406,7 +526,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                         default:
                             break;
                     }
-                    NSNumber *machineState = currentMachine.stateNumber;
                     
                 }
                 //cpu匹配退出循环
@@ -467,6 +586,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 - (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
     
     NSLog(@"筛选设备%ld:%@",(long)index,itemName);
+    [self refresh];
     
 }
 
@@ -540,7 +660,24 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
     return [datas count];
 }
-
+-(void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath{
+    if (self.tag == DeviceTypeOnline) {
+        MachineModel *machine = [datas objectAtIndex:indexPath.row];
+        if (machine.alertMessage) {
+            cell.alpha = 0.0;
+            [UIView animateWithDuration:0.5 animations:^{
+                cell.transform = CGAffineTransformIdentity;
+                cell.alpha = 1.0;
+            } completion:^(BOOL finished) {
+                
+                
+            }];
+        }else{
+            [cell.layer removeAllAnimations];
+        }
+    }
+    
+}
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
 
     static NSString *CellIdentifier;
@@ -561,16 +698,18 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
         cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
         cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
-        //更新倒计时
-        if (machine.leftTimeNumber) {
-            //进行中才更新
-            if (cell.style == CellStyleOngoing_MachineRunning) {
-                [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
-            }
-        }
+
         //警告
         if (machine.alertMessage) {
             [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
+
+        }else if (machine.leftTimeNumber) {
+            //进行中才更新倒计时
+            if (cell.style == CellStyleOngoing_MachineRunning) {
+                [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
+            }
+        }else{
+
         }
         //按钮操作
         switch (cell.style) {
@@ -579,11 +718,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 break;
             case CellStyleOngoing_MachinePause:
             case CellStyleOngoing_MachineStop:
-//                [cell.playButton addTarget:self action:@selector(controllAction:) forControlEvents:UIControlEventTouchUpInside];
                 break;
             case CellStyleOngoing_MachineRunning:
-//                [cell.pauseButton addTarget:self action:@selector(controllAction:) forControlEvents:UIControlEventTouchUpInside];
-//                [cell.stopButton addTarget:self action:@selector(controllAction:) forControlEvents:UIControlEventTouchUpInside];
+
                 break;
                 
             default:
@@ -928,14 +1065,18 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         
         [weakSelf.HUD hideAnimated:YES];
         
-        NSMutableDictionary *machineDic = [[weakDatas objectAtIndex:weakSelf.selectedDeviceIndex]mutableCopy];
-        [weakDatas removeObject:machineDic];
-        
-        [machineDic setValue:@"unconnect" forKey:@"state"];
-        
-        [weakDatas insertObject:machineDic atIndex:weakSelf.selectedDeviceIndex];
-        
-        [weakSelf.collectionView reloadData];
+        if (weakSelf                                                                                                                                                                                                                                                                                                                                                                                                                                                                .tag == DeviceTypeLocal) {
+            
+            NSMutableDictionary *machineDic = [[weakDatas objectAtIndex:weakSelf.selectedDeviceIndex]mutableCopy];
+            [weakDatas removeObject:machineDic];
+            
+            [machineDic setValue:@"unconnect" forKey:@"state"];
+            
+            [weakDatas insertObject:machineDic atIndex:weakSelf.selectedDeviceIndex];
+            
+            [weakSelf.collectionView reloadData];
+        }
+
     }];
     
     //发现service的Characteristics
@@ -1090,6 +1231,21 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         TreatmentCourseRecordViewController *controller = segue.destinationViewController;
 
     }
+}
+
+#pragma mark - animation
+-(CABasicAnimation *)opacityForever_Animation:(float)time
+{
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
+    animation.fromValue = [NSNumber numberWithFloat:1.0f];
+    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
+    animation.autoreverses = YES;
+    animation.duration = time;
+    animation.repeatCount = MAXFLOAT;
+    animation.removedOnCompletion = NO;
+    animation.fillMode = kCAFillModeForwards;
+    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+    return animation;
 }
 
 @end
