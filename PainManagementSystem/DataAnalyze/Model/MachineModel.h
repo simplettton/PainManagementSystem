@@ -17,12 +17,18 @@
 
 @property(nonatomic,copy)NSString *type;
 
+@property(nonatomic,assign)BOOL isFocus;
+
 //设备运行状态（包括设备绑定病人的处方状态）
 @property(nonatomic,copy)NSNumber *stateNumber;
 
 @property(nonatomic,copy)NSString *state;
 
 @property(nonatomic,copy)NSNumber *taskStateNumber;
+
+@property(nonatomic,copy)NSNumber *treatTimeNumber;
+
+@property(nonatomic,copy)NSString *treatTime;
 
 ////这两个待定 去除特定的cell刷新还是刷新整个列表
 @property(nonatomic,copy)NSNumber *leftTimeNumber;

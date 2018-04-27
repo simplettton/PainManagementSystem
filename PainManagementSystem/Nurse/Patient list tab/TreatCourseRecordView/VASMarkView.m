@@ -30,7 +30,7 @@
     self.valueLabel.text = [NSString stringWithFormat:@"%.0f", self.slider.value];
 }
 
-+(void)alertControllerAboveIn:(UIViewController *)controller withMark:(NSString *)mark describe:(NSString *)describe return:(returnMark)returnEvent{
++(void)alertControllerAboveIn:(UIViewController *)controller withData:(NSDictionary *)data describe:(NSString *)describe return:(returnMark)returnEvent{
     
     VASMarkView *view = [[NSBundle mainBundle]loadNibNamed:@"VASMarkView" owner:nil options:nil][0];
     
@@ -46,11 +46,15 @@
     
     view.backgroundView.alpha = 0;
     
-    view.mark = mark;
+    view.mark = [data objectForKey:@"mark"];
     
-    view.slider.value = [mark intValue];
+    view.isForcedToStop = [data objectForKey:@"flag"];
     
-    view.valueLabel.text = mark;
+    view.idString = [data objectForKey:@"id"];
+    
+    view.slider.value = [[data objectForKey:@"mark"] intValue];
+    
+    view.valueLabel.text = [data objectForKey:@"mark"];
     
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 10;// 字体的行间距
@@ -67,10 +71,9 @@
         view.scoreStandardsTV.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"VAS评分说明(0分-100分):\n%@",defaultDescribe] attributes:attributes];
 
     }
-    
 
     
-    [UIView animateWithDuration:0.3 delay:0.1 usingSpringWithDamping:0.5 initialSpringVelocity:10 options:UIViewAnimationOptionCurveLinear animations:^{
+    [UIView animateWithDuration:0.3 delay:0.1 usingSpringWithDamping:1 initialSpringVelocity:10 options:UIViewAnimationOptionCurveLinear animations:^{
         view.backgroundView.transform = transform;
         view.backgroundView.alpha = 1;
     } completion:^(BOOL finished) {
@@ -84,8 +87,26 @@
 }
 - (IBAction)save:(id)sender {
     
-    NSString *string = self.valueLabel.text;
-    self.returnEvent(string);
+    __block NSString *string = self.valueLabel.text;
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
+    [params setObject:self.idString forKey:@"id"];
+    [params setObject:string forKey:@"afterscore"];
+    if ([self.isForcedToStop intValue] == 1) {
+        [params setObject:self.isForcedToStop forKey:@"forcedtostop"];
+    }
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/AddAfterScore"]
+                                  params:params
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if ([responseObject.result integerValue] == 1) {
+                                         [SVProgressHUD showSuccessWithStatus:@"治疗后VAS已保存"];
+                                         self.returnEvent(string);
+                                    
+                                     }else{
+                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                     }
+                                 } failure:nil];
+    
     [self removeFromSuperview];
 
 

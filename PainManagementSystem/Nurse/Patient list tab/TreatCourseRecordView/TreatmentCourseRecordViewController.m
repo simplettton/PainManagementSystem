@@ -9,7 +9,10 @@
 #import "TreatmentCourseRecordViewController.h"
 #import "VASMarkView.h"
 #import "TreatRecordCell.h"
+#import "RecordModel.h"
 #import "RecordDetailViewController.h"
+
+#import "MJRefresh.h"
 @interface TreatmentCourseRecordViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
@@ -35,26 +38,92 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
+    self.tableView.tableHeaderView.hidden = YES;
     
     if (self.patient) {
         self.title = @"治疗疗程记录";
-    
-        self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.patient.name];
-        self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.patient.age];
-        self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.patient.contact];
+        [self updatePatientInfo];
     }
     
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
-    datas = [NSMutableArray arrayWithObjects:
-             @{@"medicalRecordNum":@"12345896",@"name":@"小明",@"gender":@"男",@"age":@"20",@"phone":@"13782965445"},
-             @{@"medicalRecordNum":@"12345893",@"name":@"王力",@"gender":@"男",@"age":@"19",@"phone":@"15521064545"},
-             @{@"medicalRecordNum":@"12345898",@"name":@"东东",@"gender":@"女",@"age":@"36",@"phone":@"18821654545"},
-             nil];
+//    datas = [@[@"sae",@"3442",@"saf"]mutableCopy];
+
+    [self initTableHeaderAndFooter];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     [self getStandardEvaluation];
+}
+#pragma mark - refresh
+-(void)initTableHeaderAndFooter{
+    
+    //下拉刷新
+    MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    // 隐藏时间
+    header.lastUpdatedTimeLabel.hidden = YES;
+    header.stateLabel.hidden = YES;
+    self.tableView.mj_header = header;
+    [self.tableView.mj_header beginRefreshing];
+}
+-(void)refresh{
+    NSString *paramValue = self.medicalRecordNum != nil? self.medicalRecordNum : self.patient.medicalRecordNum;
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/TreatRecodeList"]
+                                  params:@{@"medicalrecordnum":paramValue}
+                                hasToken:YES success:^(HttpResponse *responseObject) {
+                                    [datas removeAllObjects];
+                                    if ([responseObject.result intValue] == 1) {
+                                        if (responseObject.content) {
+                                            NSLog(@"dic = %@",responseObject.content);
+
+                                            //从其他地方进入详情 刷新patientin信息
+                                            if (self.medicalRecordNum) {
+                                                self.patient = [PatientModel modelWithDic:responseObject.content[@"patient"]];
+                                                [self updatePatientInfo];
+                                            }
+                                            
+                                            NSArray *dataArray = responseObject.content[@"detail"];
+                                            for (NSDictionary *dic in dataArray) {
+                                                __block RecordModel *record = [RecordModel modelWithDic:dic];
+                                                record.patient = self.patient;
+                                                if(record.ID){
+                                                    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/RecodeDetail"]
+                                                                                  params:@{@"id":record.ID}
+                                                                                hasToken:YES
+                                                                                 success:^(HttpResponse *responseObject) {
+                                                                                     if ([responseObject.result integerValue]==1 ) {
+                                                                                         NSDictionary *answerDic = responseObject.content;
+                                                                                         [record appendQuestionsWithDic:answerDic];
+                                                                                         
+                                                                                     }else{
+                                                                                         
+                                                                                     }
+                                                                                }
+                                                                                 failure:nil];
+                                                }
+                                                
+                                                [datas addObject:record];
+                                            }
+                                           
+                                            self.tableView.tableHeaderView.hidden = NO;
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                [self.tableView reloadData];
+                                            });
+                                        }else{
+                                            [SVProgressHUD showErrorWithStatus:@"当前没有记录~"];
+                                            //没有数据隐藏表头
+                                            self.tableView.tableHeaderView.hidden = YES;
+
+                                        }
+                                    }else{
+                                        [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                    }
+                                } failure:nil];
+}
+-(void)updatePatientInfo{
+    self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.patient.name];
+    self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.patient.age];
+    self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.patient.contact];
 }
 
 #pragma mark - tableview delegate
@@ -71,8 +140,17 @@
     if (cell == nil) {
         cell = [[TreatRecordCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
+    RecordModel *record = [datas objectAtIndex:indexPath.row];
+    cell.treatTimeLB.text = record.timeString;
+    cell.painfactorLB.text = record.painfactorW;
+    cell.physicalTreatLB.text = record.machineType;
+    cell.vasLabel.text = record.vasString;
+    //不足三位前面补0
+    cell.medicalRecodNumLB.text = [NSString stringWithFormat:@"%03zd",indexPath.row+1];
+    
     [cell.markButton setTag:indexPath.row];
     [cell.markButton addTarget:self action:@selector(showVASMarkView:) forControlEvents:UIControlEventTouchUpInside];
+    [cell.markButton setTag:indexPath.row];
     
     return cell;
 }
@@ -80,7 +158,16 @@
     
     UIView *contentView = [sender superview];
     TreatRecordCell *cell = (TreatRecordCell *)[contentView superview];
+    RecordModel *record = [datas objectAtIndex:sender.tag];
     __block NSMutableArray *array = (NSMutableArray *)[cell.vasLabel.text componentsSeparatedByString:@"/"];
+    __block NSString *idString = record.ID;
+    __block NSNumber *isForceToStop;
+    if (self.medicalRecordNum || [record.machineType isEqualToString:@"血瘘"]) {
+        isForceToStop = @1;
+    }else{
+        isForceToStop = @0;
+    }
+    
     if (![[array objectAtIndex:1]isEqualToString:@"?"]) {
         
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
@@ -94,14 +181,16 @@
         [alert addAction:cancelAction];
         
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-            [VASMarkView alertControllerAboveIn:self withMark:[array objectAtIndex:1] describe:markDescribe return:^(NSString *markString) {
+            [VASMarkView alertControllerAboveIn:self withData:@{
+                                                                @"flag":isForceToStop,
+                                                                @"id":idString,
+                                                                @"mark":[array objectAtIndex:1]
+                                                                }describe:markDescribe return:^(NSString *markString) {
 
                 [array replaceObjectAtIndex:1 withObject:markString];
                 
                 NSString *newValue = [array componentsJoinedByString:@"/"];
                 cell.vasLabel.text = newValue;
-                cell.vasAfterLB.text = markString;
             }];
         }];
         
@@ -110,13 +199,16 @@
         
     }else{
 
-        [VASMarkView alertControllerAboveIn:self withMark:@"20" describe:markDescribe return:^(NSString *markString) {
+        [VASMarkView alertControllerAboveIn:self withData:@{
+                                                            @"flag":isForceToStop,
+                                                            @"id":idString,
+                                                            @"mark":@"20"
+                                                            } describe:markDescribe return:^(NSString *markString) {
 
             [array replaceObjectAtIndex:1 withObject:markString];
             
             NSString *newValue = [array componentsJoinedByString:@"/"];
             cell.vasLabel.text = newValue;
-            cell.vasAfterLB.text = markString;
         }];
     }
     
@@ -129,7 +221,7 @@
             for (NSDictionary *dic in responseObject.content) {
                 if ([[dic objectForKey:@"name"]isEqualToString:@"vas"]) {
                     markDescribe = dic[@"describe"];
-                    NSLog(@"%@",markDescribe);
+
                     break;
                 }
             }
@@ -140,12 +232,14 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self performSegueWithIdentifier:@"ShowRecordDetail" sender:nil];
+    [self performSegueWithIdentifier:@"ShowRecordDetail" sender:indexPath];
 }
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString:@"ShowRecordDetail"]) {
         RecordDetailViewController *controller = (RecordDetailViewController *)segue.destinationViewController;
         controller.patient = self.patient;
+        NSIndexPath *indexPath = (NSIndexPath *)sender;
+        controller.record = [datas objectAtIndex:indexPath.row];
     }
 }
 

@@ -38,23 +38,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"诊疗记录详情";
-    // Do any additional setup after loading the view.
     titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"物理治疗方法",@"设备治疗处方",nil];
     self.rootTableView.tableFooterView = [[UIView alloc]init];
     
     NSDictionary *dataDic = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Record" ofType:@"plist"]];
     
     //得到数据模型
-    self.recordModel = [RecordModel recordModelWithDic:dataDic];
-    
-//    for (QuestionItem *item in self.recordModel.questionW) {
-//        NSLog(@"item.name = %@",item.diagnosisType);
-//        for (Question *question in item.questionArray) {
-//            NSLog(@"question name = %@",question.name);
-//            NSLog(@"selection = %@",question.selectionString);
-//        }
-//    }
-    
+    if (self.record) {
+        self.recordModel = self.record;
+    }else{
+        self.recordModel = [RecordModel modelWithDic:dataDic];
+    }
 
 }
 
@@ -73,7 +67,6 @@
     }else {
         return 1;
     }
-
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -88,7 +81,7 @@
         
         return [self.recordModel.questionE[section].questionArray count];
     }else if(tableView.tag == KTreatParamViewTag){
-        return [self.recordModel.treatParam.allKeys count];
+        return [self.recordModel.treatParam count];
     }else{
         return 1;
     }
@@ -112,7 +105,7 @@
             return [self rowHeightWithQuestionArray:self.recordModel.questionE];
         }
         if (indexPath.section == [titles indexOfObject:@"设备治疗处方"]) {
-            return 44*([self.recordModel.treatParam.allKeys count]+1)+KTitleViewHeight +KPartInterval+KRowInterval;
+            return 44*([self.recordModel.treatParam count])+KTitleViewHeight +KPartInterval+KRowInterval*2;
         }
     }
     return 44;
@@ -209,8 +202,9 @@
             cell.selectionsLabel.text = question.selectionString;
         }else{
             //物理治疗方法
-            cell.questionNameLabel.text = self.recordModel.treatParam.allKeys[indexPath.row];
-            cell.selectionsLabel.text = self.recordModel.treatParam.allValues[indexPath.row];
+            Question *param = self.recordModel.treatParam[indexPath.row];
+            cell.questionNameLabel.text = param.name;
+            cell.selectionsLabel.text = param.selectionString;
         }
 
         return cell;
@@ -223,6 +217,9 @@
 #pragma mark -sectionStyle
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     if (tableView != self.rootTableView) {
+        if (tableView.tag == KTreatParamViewTag) {
+            return KRowInterval;
+        }
         return 44;
     }
     return 0;
@@ -232,8 +229,7 @@
     
     UIView *headerView = [[UIView alloc]init];
     
-    if (tableView != self.rootTableView) {
-        
+    if ((tableView != self.rootTableView) && (tableView.tag != KTreatParamViewTag)) {
         
         UILabel *label = [[UILabel alloc]init];
         

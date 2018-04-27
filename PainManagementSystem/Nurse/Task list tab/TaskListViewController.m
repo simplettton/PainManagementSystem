@@ -15,6 +15,7 @@
 #import "PopoverTreatwayController.h"
 #import "Pack.h"
 #import "Unpack.h"
+#import "TreatmentCourseRecordViewController.h"
 
 #import "BaseHeader.h"
 #import <SVProgressHUD.h>
@@ -75,7 +76,6 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    [self showSuccessView];
     [self initAll];
 
 }
@@ -96,11 +96,11 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
-    NSArray *dataArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"Task" ofType:@"plist"]];
-    for (NSDictionary *dataDic in dataArray) {
-        TaskModel *task = [TaskModel modelWithDic:dataDic];
-        [datas addObject:task];
-    }
+//    NSArray *dataArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"Task" ofType:@"plist"]];
+//    for (NSDictionary *dataDic in dataArray) {
+//        TaskModel *task = [TaskModel modelWithDic:dataDic];
+//        [datas addObject:task];
+//    }
 
     
     //配置segmentedcontrol
@@ -114,7 +114,6 @@
 }
 
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
-    
     NSInteger index = segmentedControl.selectedSegmentIndex;
     switch (index) {
         case 0:
@@ -141,7 +140,6 @@
     }
     [SVProgressHUD dismiss];
     [self.tableView.mj_header beginRefreshing];
-    [self.tableView reloadData];
     
     
 }
@@ -275,7 +273,6 @@
                                          
                                          if (content) {
                                              for (NSDictionary *dic in content) {
-                                                 NSLog(@"dic = %@",dic);
                                                  TaskModel *task = [TaskModel modelWithDic:dic];
                                                  
                                                  if (![datas containsObject:dic]) {
@@ -418,6 +415,7 @@
         case TaskListTypeProcessing:
             if(task.state == 3){
                 [self remarkAction:nil];
+                self.selectedRow = indexPath.row;
             }
             break;
 
@@ -453,7 +451,7 @@
 }
 - (void)remarkAction:(id)sender{
     
-//    self.selectedRow = [sender tag];
+    self.selectedRow = [sender tag];
     [self performSegueWithIdentifier:@"TaskGoToRemarkVAS" sender:sender];
     
 }
@@ -724,10 +722,6 @@
         
         NSIndexPath* index = [self.tableView indexPathForCell:cell];
         
-//        NSDictionary *dataDic = [datas objectAtIndex:index.row];
-//        NSDictionary *treatWayDic = dataDic[@"physicaltreat"][@"treatway"];
-//
-//        destination.treatWayDic = treatWayDic;
         TaskModel *task = [datas objectAtIndex:index.row];
         
         destination.treatParamDic = task.treatParam;
@@ -736,7 +730,9 @@
         popover.sourceView = button;
         popover.sourceRect = button.bounds;
     }else if ([segue.identifier isEqualToString:@"TaskGoToRemarkVAS"]){
-        
+        TreatmentCourseRecordViewController *controller = segue.destinationViewController;
+        TaskModel *task = [datas objectAtIndex:self.selectedRow];
+        controller.medicalRecordNum = task.medicalRecordNum;
     }
 }
 

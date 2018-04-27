@@ -245,13 +245,9 @@
                                          
                                          if (content) {
                                              for (NSDictionary *dic in content) {
-                                                 if (![datas containsObject:dic]) {
-                                                     
                                                      PatientModel *patient = [PatientModel modelWithDic:dic];
                                                      [datas addObject:patient];
-                                                 }
                                              }
-                                             
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [tableView reloadData];
                                              });
@@ -308,9 +304,6 @@
     return [datas count];
 }
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-
-//    cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
-//    cell.selectedBackgroundView.backgroundColor = [UIColor clearColor];
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";

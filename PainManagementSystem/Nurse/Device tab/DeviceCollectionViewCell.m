@@ -57,7 +57,13 @@
             [self.machineStateLabel setTextColor:UIColorFromHex(kBlueColor)];
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
             break;
-        
+        //不在线
+        case CellStyle_MachineOffline:
+            [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
+            self.machineStateLabel.text = @"设备不在线";
+            self.middleImageView.image = [UIImage imageNamed:@"offline"];
+            break;
+
         //灰色未治疗结束
         case CellStyleNotStarted_MachineStop:
             [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
@@ -95,13 +101,10 @@
         case CellStyle_MachineException:
             
             self.topView.backgroundColor = UIColorFromHex(kOrangeColor);
-            
-//            [self.middleImageView.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
-//            [self.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
-        
             self.machineStateLabel.text = (message == nil)?@"气囊类型不合适":message;
             [self.machineStateLabel setTextColor:UIColorFromHex(kOrangeColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
+            self.middleImageView.image = [UIImage imageNamed:@"alert"];
             
             break;
             
@@ -140,8 +143,8 @@
     self.clockImageView.hidden = (style != CellStyleOngoing_MachineRunning);
     self.pauseButton.hidden  = (style != CellStyleOngoing_MachineRunning);
     self.stopButton.hidden  = (style != CellStyleOngoing_MachineRunning);
-    self.middleImageView.hidden = (style != CellStyle_MachineException);
-    self.playButton.hidden = (style == CellStyleOngoing_MachineRunning ||style == CellStyle_MachineException ||style == CellStyleFinished_MachineStop);
+    self.middleImageView.hidden = !((style == CellStyle_MachineException)||(style == CellStyle_MachineOffline));
+    self.playButton.hidden = (style == CellStyleOngoing_MachineRunning ||style == CellStyle_MachineException ||style == CellStyleFinished_MachineStop ||style == CellStyle_MachineOffline);
     self.remarkButton.hidden = (style == CellStyleFinished_MachineStop || style == CellStyle_LocalUnconnect)?NO:YES;
     
     
@@ -154,21 +157,6 @@
     
     
 }
-#pragma mark - animation
--(CABasicAnimation *)opacityForever_Animation:(float)time
-{
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
-    animation.fromValue = [NSNumber numberWithFloat:1.0f];
-    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
-    animation.autoreverses = YES;
-    animation.duration = time;
-    animation.repeatCount = MAXFLOAT;
-    animation.removedOnCompletion = NO;
-    animation.fillMode = kCAFillModeForwards;
-    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
-    return animation;
-}
-
 - (IBAction)controlButttons:(id)sender {
 }
 @end

@@ -16,6 +16,7 @@ typedef enum _CellStyle {
     CellStyleOngoing_MachineStop,
     CellStyleFinished_MachineStop,
     CellStyle_MachineException,
+    CellStyle_MachineOffline,
     
     CellStyleGrey_Unfinished,//通用
 

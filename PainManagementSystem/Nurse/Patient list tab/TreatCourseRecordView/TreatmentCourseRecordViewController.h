@@ -10,4 +10,7 @@
 #import "PatientModel.h"
 @interface TreatmentCourseRecordViewController : UIViewController
 @property (nonatomic,strong)PatientModel *patient;
+//判断是否从处方列表里进入
+@property (nonatomic,strong)NSString *medicalRecordNum;
+
 @end

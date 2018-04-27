@@ -114,6 +114,7 @@ static NetWorkTool *_instance;
                    //停止刷新
                    dispatch_async(dispatch_get_main_queue(), ^{
                        [self endTableViewHeaderRefreshing];
+                       
                    });
                }
 
@@ -151,6 +152,7 @@ static NetWorkTool *_instance;
  
     [self traverseAllSubviews:controller.view];
     
+    
 }
 
 -(void)traverseAllSubviews:(UIView *)rootView {
@@ -164,6 +166,9 @@ static NetWorkTool *_instance;
         if ([subView isKindOfClass:[UITableView class]]) {
             __weak UITableView *tableview = (UITableView *)subView;
             [tableview.mj_header endRefreshing];
+        }else if([subView isKindOfClass:[UICollectionView class]]){
+            __weak UICollectionView *collectionview = (UICollectionView *)subView;
+            [collectionview.mj_header endRefreshing];
         }
         [self traverseAllSubviews:subView];
     }

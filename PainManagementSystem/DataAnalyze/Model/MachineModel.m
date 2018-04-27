@@ -15,6 +15,7 @@ typedef enum _CellStyle {
     CellStyleOngoing_MachineStop,
     CellStyleFinished_MachineStop,
     CellStyle_MachineException,
+    CellStyle_MachineOffline,
     
     CellStyleGrey_Unfinished,//通用
     
@@ -29,6 +30,8 @@ typedef enum _CellStyle {
     if (self = [super init]) {
         if (dict[@"nick"]!=[NSNull null]) {
             self.name = dict[@"nick"];
+        }else{
+            self.name = @"";
         }
         self.serialNum = dict[@"serialnum"];
         self.cpuid = dict[@"cpuid"];
@@ -44,15 +47,29 @@ typedef enum _CellStyle {
                                @56836:@"电疗ET-400"
                                
                                };
+        if (typeDic[typeNumber]) {
+            self.type = typeDic[typeNumber];
+        }else{
+            self.type = @"未知";
+        }
         
-        self.type = typeDic[typeNumber];
+
+        self.isFocus = ([dict[@"isfocus"]intValue] == 1)? YES:NO;
+        
+
         
         self.stateNumber = dict[@"machinestate"];
         
+        
+        self.treatTimeNumber = dict[@"treattime"];
+        self.treatTime = [NSString stringWithFormat:@"%@min",self.treatTimeNumber];
+    
+        
         NSDictionary *machineStateDic = @{
-                                          @"0":@"running",
-                                          @"1":@"pause",
-                                          @"2":@"stop"
+                                          @0:@"治疗中",
+                                          @1:@"暂停治疗",
+                                          @2:@"停止治疗",
+                                          @4:@"设备不在线"
                                           };
         
         
@@ -89,6 +106,11 @@ typedef enum _CellStyle {
                 break;
         }
         
+        if ([self.state isEqualToString:@"设备不在线"]) {
+            if ([dict[@"taskstate"] integerValue] != 7) {
+                self.cellStyle = CellStyle_MachineOffline;
+            }
+        }
         //绑定患者信息
         self.userName = dict[@"name"];
         self.userBedNum = dict[@"bednum"];

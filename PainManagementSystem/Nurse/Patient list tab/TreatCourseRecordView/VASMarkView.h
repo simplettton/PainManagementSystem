@@ -11,5 +11,7 @@ typedef void (^returnMark) (NSString *);
 @interface VASMarkView : UIView
 @property (nonatomic,strong)returnMark returnEvent;
 @property (nonatomic,strong)NSString *mark;
-+(void)alertControllerAboveIn:(UIViewController *)controller withMark:(NSString *)mark describe:(NSString *)describe return:(returnMark)returnEvent;
+@property (nonatomic,strong)NSString *idString;
+@property (nonatomic,strong)NSNumber *isForcedToStop;
++(void)alertControllerAboveIn:(UIViewController *)controller withData:(NSDictionary *)data describe:(NSString *)describe return:(returnMark)returnEvent;
 @end

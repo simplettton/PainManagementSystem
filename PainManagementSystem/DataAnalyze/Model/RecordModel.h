@@ -7,9 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "PatientModel.h"
 @class QuestionItem;
+@class Question;
 @interface RecordModel : NSObject
+
+@property (nonatomic,copy)NSString *ID;
+
+@property (nonatomic,strong)PatientModel *patient;
+
+@property(nonatomic,strong)NSData *time;
+
+@property(nonatomic,copy)NSString *timeString;
 
 @property (nonatomic,strong)NSMutableArray <QuestionItem *> *questionW;
 
@@ -23,28 +32,33 @@
 
 @property (nonatomic,copy)NSString *physicalTreat;
 
+@property (nonatomic,copy)NSString *machineType;
+
 @property (nonatomic,copy)NSString *vasBefore;
 
 @property (nonatomic,copy)NSString *vasAfter;
 
-@property (nonatomic,strong)NSMutableDictionary*treatParam;
+@property (nonatomic,copy)NSString *vasString;
+
+//@property (nonatomic,strong)NSMutableDictionary*treatParam;
+@property (nonatomic,copy)NSMutableArray<Question *>*treatParam;
 
 @property (nonatomic,copy)NSString *operator;
 
-+(instancetype)recordModelWithDic:(NSDictionary *)dic;
++(instancetype)modelWithDic:(NSDictionary *)dic;
+
+-(void)appendQuestionsWithDic:(NSDictionary *)dic;
 
 @end
 
 
-@class Question;
+
 
 @interface QuestionItem : NSObject
 
 @property (nonatomic,copy)NSString *diagnosisType;
 
 @property (nonatomic,strong)NSMutableArray <Question *>*questionArray;
-
-//-(instancetype)initWithDic:(NSDictionary *)dic;
 
 +(instancetype)questionItemWithDic:(NSDictionary *)dic;
 
@@ -55,13 +69,13 @@
 
 @property (nonatomic,copy)NSString *name;
 
-@property (nonatomic,assign)BOOL isMultiSelect;
-
-@property (nonatomic,strong)NSArray *selectionArray;
-
 @property (nonatomic,copy)NSString *selectionString;
 
-@property (nonatomic,strong)NSMutableDictionary *dataDic;
+
+//@property (nonatomic,assign)BOOL isMultiSelect;
+//
+//@property (nonatomic,strong)NSArray *selectionArray;
+//@property (nonatomic,strong)NSMutableDictionary *dataDic;
 
 //-(instancetype)initWithDic:(NSDictionary *)dic;
 

@@ -29,6 +29,7 @@
 //布局
 #import "Masonry.h"
 
+#import "MachineModel.h"
 #import "Pack.h"
 #import "Unpack.h"
 #define kOrangeColor 0xf8b273
