@@ -9,6 +9,7 @@
 #import "TaskListViewController.h"
 #import "TaskCell.h"
 #import "TaskModel.h"
+#import "LocalMachineModel.h"
 #import "SendTreatmentSuccessView.h"
 #import "SendTreatmentFailView.h"
 #import "QRCodeReaderViewController.h"
@@ -72,6 +73,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     [self initTableHeaderAndFooter];
+
     
 }
 - (void)viewDidLoad {
@@ -205,6 +207,7 @@
                                              [self getNetworkData:isRefresh];
                                          }else{
                                              [datas removeAllObjects];
+                                             [self endRefresh];
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
@@ -414,8 +417,9 @@
     switch (self.taskTag) {
         case TaskListTypeProcessing:
             if(task.state == 3){
-                [self remarkAction:nil];
                 self.selectedRow = indexPath.row;
+                [self remarkAction:nil];
+
             }
             break;
 
@@ -450,22 +454,56 @@
     
 }
 - (void)remarkAction:(id)sender{
-    
-    self.selectedRow = [sender tag];
+    if (sender) {
+        self.selectedRow = [sender tag];
+    }
+
     [self performSegueWithIdentifier:@"TaskGoToRemarkVAS" sender:sender];
     
 }
 
 -(void)showSuccessView{
     [SVProgressHUD dismiss];
+    __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
+                                  params:@{
+                                           @"serialnum":@"P06A17A00001",
+                                           @"id":task.ID
+                                           }
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if([responseObject.result integerValue] == 1){
+                                         NSLog(@"绑定成功");
+                                     }else{
+                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                         NSLog(@"bind error :%@",responseObject.errorString);
+                                     }
+                                 }
+                                 failure:nil];
+    
     [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
-        NSLog(@"send to server设置关注 ");
-        TaskModel *task = [datas objectAtIndex:self.selectedRow];
+
+        //设置关注
         NSString *serialNum = task.serialNum;
+        
+        //本地设备
         if([task.machineType isEqualToString:@"血瘘"]){
             serialNum = @"P06A17A00001";
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
+        params:@{
+                    @"medicalrecordnum":task.medicalRecordNum
+                 }
+        hasToken:YES
+        success:^(HttpResponse *responseObject) {
+            
+            NSLog(@"content = %@",responseObject.content);
+            NSArray *machineArray = responseObject.content;
+            LocalMachineModel *machine = [LocalMachineModel modelWithDic:machineArray[0]];
+            [self saveLocalDevice:machine];
+            }failure:nil];
         }
 
+        //在线设备
         if(serialNum){
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
         params:@{@"serialnum":serialNum}
@@ -482,6 +520,60 @@
         }
     }];
     
+}
+-(void)saveLocalDevice:(LocalMachineModel *)machine{
+    //文件名
+    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    if (!documents)
+    {
+        NSLog(@"目录未找到");
+    }
+    NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    //machine Array
+    NSArray *machineArray = [[NSArray alloc]init];
+    if (![fileManager fileExistsAtPath:documentPath])
+    {
+        //没有文件就新建文件
+        [fileManager createFileAtPath:documentPath contents:nil attributes:nil];
+    }else{
+        //有文件就去取文件中的数据
+
+        NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
+        NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
+        machineArray = [unArchiver decodeObjectForKey:@"machineArray"];
+    }
+    
+    NSMutableArray *array = [NSMutableArray arrayWithArray:machineArray];
+    BOOL isBinded = NO;
+    //病历号重复则重新绑定
+    for (LocalMachineModel *savedMachine in array) {
+        if ([savedMachine.userMedicalNum isEqualToString:machine.userMedicalNum]) {
+            NSUInteger index = [array indexOfObject:savedMachine];
+            [array replaceObjectAtIndex:index withObject:machine];
+            isBinded = YES;
+            break;
+        }
+    }
+    if (!isBinded) {
+        [array addObject:machine];
+    }
+    machineArray = [array copy];
+    
+    //写入文件
+    NSMutableData *data = [[NSMutableData alloc] init] ;
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data] ;
+    [archiver encodeObject:machineArray forKey:@"machineArray"];
+    [archiver finishEncoding];
+    
+    BOOL success = [data writeToFile:documentPath atomically:YES];
+    if (!success)
+    {
+        NSLog(@"写入文件失败");
+    }else{
+        NSLog(@"写入文件成功");
+    }
+
 }
 
 -(void)showFailView{
@@ -506,16 +598,19 @@
         
         //去取对应的病人病历号
         TaskModel *task = [datas objectAtIndex:self.selectedRow];
-        //保存扫描到的序列号到处方中
-        task.serialNum = result;
-        
+
         NSString *taskId = task.ID;
-        NSLog(@"medical  = %@",taskId);
+        
+        NSLog(@"%@", [NSString stringWithFormat:@"medicalnum = %@",task.medicalRecordNum]);
 
         [SVProgressHUD showWithStatus:@"处方下发中……"];
         
         if ([task.machineType isEqualToString:@"血瘘"]) {
-            self.BLEDeviceName = result;
+            if ([result isEqualToString:@"P06A17A00001"]) {
+                self.BLEDeviceName = @"ALX420";
+            }else{
+                self.BLEDeviceName = result;
+            }
             NSArray *paramArray = task.treatParam[@"paramlist"];
             
             NSString *time = [[paramArray objectAtIndex:0]objectForKey:@"value"];
@@ -542,9 +637,9 @@
                                         hasToken:YES
                                          success:^(HttpResponse *responseObject) {
                                              if ([responseObject.result intValue]==1) {
-                                                 
+                                                //保存扫描到的序列号到处方中
+                                                 task.serialNum = result;
                                                  [self showSuccessView];
-                                                 
                                                  
                                              }else{
                                                  [SVProgressHUD showErrorWithStatus:responseObject.errorString];
@@ -554,11 +649,7 @@
                                              
                                          } failure:nil];
         }
-        //send treatment to server
 
-        
-        
-        
         NSLog(@"QRretult == %@", result);
     }];
 }
@@ -685,7 +776,6 @@
         if (cmdid == 0x9A) {
             if (dataByte == 1) {
                 [self showSuccessView];
-
                 [baby cancelScan];
                 [baby cancelAllPeripheralsConnection];
                 if (self.timer) {

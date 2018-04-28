@@ -68,7 +68,7 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
-    self.tableView.separatorInset = UIEdgeInsetsMake(0, 15, 0, 20);
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 5, 0, 20);
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
 
@@ -79,8 +79,8 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
-    
     [self initTableHeaderAndFooter];
+
     
 }
 -(void)viewWillDisappear:(BOOL)animated{
@@ -171,7 +171,7 @@
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];
                                          }else{
                                              [datas removeAllObjects];
-                                             self.tableView.tableHeaderView.hidden = NO;
+                                             self.tableView.tableHeaderView.hidden = YES;
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
@@ -320,6 +320,7 @@
     cell.genderLabel.text = patient.gender;
     cell.bedNumLabel.text = patient.bednum;
     cell.ageLabel.text = patient.age;
+    cell.unfinishImage.hidden = !patient.isInTheTask;
 
     
     

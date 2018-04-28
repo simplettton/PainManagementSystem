@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *editButton;
 @property (weak, nonatomic) IBOutlet UIButton *inquireButton;
 
+@property (weak, nonatomic) IBOutlet UIImageView *unfinishImage;
 
 
 @end

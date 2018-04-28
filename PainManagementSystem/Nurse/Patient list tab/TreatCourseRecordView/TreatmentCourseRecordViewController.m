@@ -83,37 +83,40 @@
                                             }
                                             
                                             NSArray *dataArray = responseObject.content[@"detail"];
-                                            for (NSDictionary *dic in dataArray) {
-                                                __block RecordModel *record = [RecordModel modelWithDic:dic];
-                                                record.patient = self.patient;
-                                                if(record.ID){
-                                                    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/RecodeDetail"]
-                                                                                  params:@{@"id":record.ID}
-                                                                                hasToken:YES
-                                                                                 success:^(HttpResponse *responseObject) {
-                                                                                     if ([responseObject.result integerValue]==1 ) {
-                                                                                         NSDictionary *answerDic = responseObject.content;
-                                                                                         [record appendQuestionsWithDic:answerDic];
-                                                                                         
-                                                                                     }else{
-                                                                                         
+                                            if (![dataArray isEqual:[NSNull null]]) {
+
+                                                self.tableView.tableHeaderView.hidden = NO;
+                                                for (NSDictionary *dic in dataArray) {
+                                                    __block RecordModel *record = [RecordModel modelWithDic:dic];
+                                                    record.patient = self.patient;
+                                                    if(record.ID){
+                                                        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/RecodeDetail"]
+                                                                                      params:@{@"id":record.ID}
+                                                                                    hasToken:YES
+                                                                                     success:^(HttpResponse *responseObject) {
+                                                                                         if ([responseObject.result integerValue]==1 ) {
+                                                                                             NSDictionary *answerDic = responseObject.content;
+                                                                                             NSLog(@"answer = %@",answerDic);
+                                                                                             [record appendQuestionsWithDic:answerDic];
+                                                                                             
+                                                                                         }else{
+                                                                                             
+                                                                                         }
                                                                                      }
-                                                                                }
-                                                                                 failure:nil];
+                                                                                     failure:nil];
+                                                    }
+                                                    
+                                                    [datas addObject:record];
                                                 }
                                                 
-                                                [datas addObject:record];
+                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                    [self.tableView reloadData];
+                                                });
+                                            }else{
+                                                [SVProgressHUD showErrorWithStatus:@"当前没有记录~"];
+                                                //没有数据隐藏表头
+                                                self.tableView.tableHeaderView.hidden = YES;
                                             }
-                                           
-                                            self.tableView.tableHeaderView.hidden = NO;
-                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                [self.tableView reloadData];
-                                            });
-                                        }else{
-                                            [SVProgressHUD showErrorWithStatus:@"当前没有记录~"];
-                                            //没有数据隐藏表头
-                                            self.tableView.tableHeaderView.hidden = YES;
-
                                         }
                                     }else{
                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];

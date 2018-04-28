@@ -18,7 +18,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    [SVProgressHUD setMaximumDismissTimeInterval:1];
+    [SVProgressHUD setMaximumDismissTimeInterval:1.5];
     [SVProgressHUD setDefaultStyle:SVProgressHUDStyleCustom];
     [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
     [SVProgressHUD setMinimumSize:CGSizeMake(100, 50)];

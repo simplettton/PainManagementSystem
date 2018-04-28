@@ -145,7 +145,7 @@
     self.stopButton.hidden  = (style != CellStyleOngoing_MachineRunning);
     self.middleImageView.hidden = !((style == CellStyle_MachineException)||(style == CellStyle_MachineOffline));
     self.playButton.hidden = (style == CellStyleOngoing_MachineRunning ||style == CellStyle_MachineException ||style == CellStyleFinished_MachineStop ||style == CellStyle_MachineOffline);
-    self.remarkButton.hidden = (style == CellStyleFinished_MachineStop || style == CellStyle_LocalUnconnect)?NO:YES;
+    self.remarkButton.hidden = (style !=CellStyleFinished_MachineStop);
     
     
     //Local
@@ -154,8 +154,7 @@
     self.BLEPlayButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalRunning))?YES:NO;
     self.BLEPauseButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning))?YES:NO;
     self.BLEStopButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning))?YES:NO;
-    
-    
+    self.BLERemarkButton.hidden = (style == CellStyle_LocalRunning);
 }
 - (IBAction)controlButttons:(id)sender {
 }

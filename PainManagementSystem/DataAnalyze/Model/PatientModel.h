@@ -25,6 +25,8 @@
 
 @property(nonatomic,copy)NSString *bednum;
 
+@property(nonatomic,assign)BOOL isInTheTask;
+
 @property(nonatomic,strong)NSData *registeredTime;
 
 @property(nonatomic,copy)NSString *registeredTimeString;

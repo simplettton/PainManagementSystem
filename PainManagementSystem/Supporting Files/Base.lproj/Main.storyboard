@@ -59,7 +59,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="13719207669" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dn8-uV-GtA">
-                                        <rect key="frame" x="544" y="147" width="103.5" height="20.5"/>
+                                        <rect key="frame" x="544" y="147" width="131" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                                         <color key="textColor" red="0.97592383620000001" green="0.97666221860000002" blue="0.97603815790000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -970,6 +970,10 @@
                                                     <color key="textColor" red="0.37055522200000002" green="0.37056469920000001" blue="0.37055957319999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="inthetask" translatesAutoresizingMaskIntoConstraints="NO" id="L3y-Ug-Rr8">
+                                                    <rect key="frame" x="10" y="13" width="29" height="29"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
@@ -979,6 +983,7 @@
                                             <outlet property="genderLabel" destination="7ve-uX-cpW" id="4qK-7x-KJ1"/>
                                             <outlet property="medicalRecordNumLabel" destination="vad-pj-nnQ" id="SJi-fW-9p5"/>
                                             <outlet property="nameLabel" destination="fmj-kS-5xl" id="uRM-rb-E90"/>
+                                            <outlet property="unfinishImage" destination="L3y-Ug-Rr8" id="Zc9-Vd-9Od"/>
                                             <outletCollection property="buttons" destination="413-xe-bmm" id="NHH-ov-Akh"/>
                                         </connections>
                                     </tableViewCell>
@@ -1543,13 +1548,13 @@ CA
                                                 <connections>
                                                     <outlet property="BLEPauseButton" destination="qnF-CH-pgq" id="VuS-Sr-ntS"/>
                                                     <outlet property="BLEPlayButton" destination="d5f-pF-FQO" id="7et-D4-Qcy"/>
+                                                    <outlet property="BLERemarkButton" destination="CRz-TS-Jck" id="9fu-QW-5dU"/>
                                                     <outlet property="BLEStopButton" destination="OX9-QY-vh2" id="jb2-uU-koy"/>
                                                     <outlet property="bedNumLabel" destination="9tQ-nG-H2v" id="It5-jF-bFI"/>
                                                     <outlet property="btnDelete" destination="z5y-03-CjK" id="C82-Bg-wfx"/>
                                                     <outlet property="connectButton" destination="SRn-zY-c0w" id="ang-wv-5fv"/>
                                                     <outlet property="machineNameLabel" destination="Sjw-IS-A4v" id="y5R-d6-NhC"/>
                                                     <outlet property="patientLabel" destination="Myl-bd-mh9" id="uVT-4L-qBu"/>
-                                                    <outlet property="remarkButton" destination="CRz-TS-Jck" id="fzs-go-3CE"/>
                                                     <outlet property="topView" destination="qu3-or-ZGS" id="PMu-d8-hfT"/>
                                                 </connections>
                                             </collectionViewCell>
@@ -3025,6 +3030,7 @@ CA
         <image name="edit_green" width="28" height="28"/>
         <image name="exit" width="28" height="28"/>
         <image name="filter_green" width="28" height="28"/>
+        <image name="inthetask" width="28" height="28"/>
         <image name="key" width="28" height="28"/>
         <image name="list" width="28" height="28"/>
         <image name="loginBackground" width="1536" height="2048"/>
@@ -3050,9 +3056,9 @@ CA
         <image name="username" width="28" height="28"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="j0T-NC-lpM"/>
+        <segue reference="Br2-kz-FsG"/>
         <segue reference="mNo-bM-HVs"/>
-        <segue reference="K2N-0B-seC"/>
+        <segue reference="M1g-Ia-37y"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

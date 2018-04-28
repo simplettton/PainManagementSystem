@@ -43,6 +43,13 @@
         self.birthday = (NSData *)[NSDate dateWithTimeIntervalSince1970:[self.birthdayString doubleValue]];
         self.registeredTime = (NSData *)[NSDate dateWithTimeIntervalSince1970:[self.registeredTimeString doubleValue]];
         
+        NSNumber *isInTheTaskNumber = dict[@"inthetask"];
+        if ([isInTheTaskNumber integerValue] == 0) {
+            self.isInTheTask = NO;
+        }else{
+            self.isInTheTask = YES;
+        }
+        
     }
     return self;
 }

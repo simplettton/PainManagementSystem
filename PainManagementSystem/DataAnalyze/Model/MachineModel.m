@@ -28,7 +28,8 @@ typedef enum _CellStyle {
 @implementation MachineModel
 -(instancetype)initWithDic:(NSDictionary *)dict{
     if (self = [super init]) {
-        if (dict[@"nick"]!=[NSNull null]) {
+        id nickName = dict[@"nick"];
+        if (nickName != [NSNull null]) {
             self.name = dict[@"nick"];
         }else{
             self.name = @"";
@@ -113,7 +114,11 @@ typedef enum _CellStyle {
         }
         //绑定患者信息
         self.userName = dict[@"name"];
-        self.userBedNum = dict[@"bednum"];
+        if ([dict[@"bednum"]isEqual:[NSNull null]]) {
+            self.userBedNum = @"";
+        }else{
+            self.userBedNum = dict[@"bednum"];
+        }
         self.userMedicalNum = dict[@"medicalrecordnum"];
 
     }

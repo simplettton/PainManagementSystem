@@ -91,6 +91,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         baby = [BabyBluetooth shareBabyBluetooth];
         [self babyDelegate];
         baby.scanForPeripherals().begin();
+        self.tableView.tableHeaderView.hidden = NO;
         
 
     }else {
@@ -162,6 +163,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                              NSInteger numberOfPages = ([count integerValue]+15-1)/15;
                                              
                                              if ([count intValue] >0) {
+                                                 self.tableView.tableHeaderView.hidden = NO;
                                                  //遍历页数获取数据
                                                  for (int i =0; i<numberOfPages; i++) {
                                                      
@@ -188,13 +190,15 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                                  //                                             [datas removeAllObjects];
                                                  //                                             [self.tableView reloadData];
                                                  
-                                                 //假数据
-                                                 datas = [NSMutableArray arrayWithObjects:
-                                                          @{@"type":@"空气波",@"cpuid":@"dgahqaa",@"serialnum":@"13654979946"},
-                                                          @{@"type":@"空气波",@"cpuid":@"fjfjfds",@"serialnum":@"45645615764"},
-                                                          @{@"type":@"电疗",@"cpuid":@"fstjkst",@"serialnum":@"12367874456"},
-                                                          nil];
-                                                 [self.tableView reloadData];
+//                                                 //假数据
+//                                                 datas = [NSMutableArray arrayWithObjects:
+//                                                          @{@"type":@"空气波",@"cpuid":@"dgahqaa",@"serialnum":@"13654979946"},
+//                                                          @{@"type":@"空气波",@"cpuid":@"fjfjfds",@"serialnum":@"45645615764"},
+//                                                          @{@"type":@"电疗",@"cpuid":@"fstjkst",@"serialnum":@"12367874456"},
+//                                                          nil];
+//                                                 [self.tableView reloadData];
+                                                 [SVProgressHUD showErrorWithStatus:@"没有可录入的设备~"];
+                                                 self.tableView.tableHeaderView.hidden = YES;
                                                  
                                              }
                                          }
