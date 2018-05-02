@@ -35,7 +35,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"疼痛管理系统";
-    
     [self initAll];
 }
 
@@ -71,6 +70,7 @@
     self.tableView.separatorInset = UIEdgeInsetsMake(0, 5, 0, 20);
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
+    [self initTableHeaderAndFooter];
 
 }
 
@@ -79,7 +79,6 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
-    [self initTableHeaderAndFooter];
 
     
 }

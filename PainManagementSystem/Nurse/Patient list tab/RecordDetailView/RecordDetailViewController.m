@@ -107,6 +107,10 @@
         if (indexPath.section == [titles indexOfObject:@"设备治疗处方"]) {
             return 44*([self.recordModel.treatParam count])+KTitleViewHeight +KPartInterval+KRowInterval*2;
         }
+    }else if(tableView.tag == KWestTableViewTag){
+            return UITableViewAutomaticDimension;
+    }else if (tableView.tag == KEastTableViewTag){  //中医病历采集
+            return UITableViewAutomaticDimension;
     }
     return 44;
 }

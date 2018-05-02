@@ -72,7 +72,6 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    [self initTableHeaderAndFooter];
 
     
 }
@@ -113,6 +112,9 @@
     [self.segmentedControl setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15.0f]}forState:UIControlStateNormal];
     
     [self.segmentedControl addTarget:self action:@selector(didClicksegmentedControlAction:) forControlEvents:UIControlEventValueChanged];
+    
+    [self initTableHeaderAndFooter];
+
 }
 
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
@@ -141,7 +143,7 @@
             break;
     }
     [SVProgressHUD dismiss];
-    [self.tableView.mj_header beginRefreshing];
+    [self refresh];
     
     
 }
@@ -189,13 +191,13 @@
 
     NSDictionary *param = @{@"state":[NSNumber numberWithInt:self.taskTag]};
     
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/Count"]
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/List"]
                                   params:param
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
                                      if ([responseObject.result intValue] == 1) {
                                          
-                                         NSString *count = responseObject.content[@"count"];
+                                         NSNumber *count = responseObject.count;
                                          
                                          totalPage = ([count intValue]+15-1)/15;
                                          
@@ -231,8 +233,7 @@
     }else{
         page ++;
     }
-    
-    
+
     //配置请求http
     NSMutableDictionary *mutableParam = [[NSMutableDictionary alloc]init];
 
@@ -312,7 +313,9 @@
             break;
     }
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 56;
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     static NSString *CellIdentifier = @"Cell";
@@ -438,7 +441,9 @@
     
     self.selectedRow = [sender tag];
     
-    NSArray *types = @[AVMetadataObjectTypeQRCode,
+    
+    
+    NSArray *types = @[
                        AVMetadataObjectTypeEAN13Code,
                        AVMetadataObjectTypeEAN8Code,
                        AVMetadataObjectTypeUPCECode,
@@ -465,28 +470,32 @@
 -(void)showSuccessView{
     [SVProgressHUD dismiss];
     __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
-                                  params:@{
-                                           @"serialnum":@"P06A17A00001",
-                                           @"id":task.ID
-                                           }
-                                hasToken:YES
-                                 success:^(HttpResponse *responseObject) {
-                                     if([responseObject.result integerValue] == 1){
-                                         NSLog(@"绑定成功");
-                                     }else{
-                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                         NSLog(@"bind error :%@",responseObject.errorString);
+    //本地设备通知服务器绑定设备
+    if([task.machineType isEqualToString:@"血瘘"]){
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
+                                      params:@{
+                                               @"serialnum":@"P06A17A00001",
+                                               @"id":task.ID
+                                               }
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         if([responseObject.result integerValue] == 1){
+                                             NSLog(@"绑定成功");
+                                         }else{
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                             NSLog(@"bind error :%@",responseObject.errorString);
+                                         }
                                      }
-                                 }
-                                 failure:nil];
+                                     failure:nil];
+    }
+
     
     [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
 
         //设置关注
         NSString *serialNum = task.serialNum;
         
-        //本地设备
+        //本地设备关注存在文件里
         if([task.machineType isEqualToString:@"血瘘"]){
             serialNum = @"P06A17A00001";
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
@@ -503,7 +512,7 @@
             }failure:nil];
         }
 
-        //在线设备
+        //在线设备和本地设备通知服务器关注
         if(serialNum){
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
         params:@{@"serialnum":serialNum}

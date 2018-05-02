@@ -6,9 +6,14 @@
 //  Copyright © 2018年 Shenzhen Lifotronic Technology Co.,Ltd. All rights reserved.
 //
 
+
 #import "FocusMachineAlertView.h"
 #import "BaseHeader.h"
 #import "BEButton.h"
+#import "Pack.h"
+#define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
+#define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
+#define RX_CHARACTERISTIC_UUID @"8ac32d3f-5cb9-4d44-bec2-ee689169f626"
 @interface FocusMachineAlertView()
 @property (weak, nonatomic) IBOutlet UIView *backGroundView;
 @property (weak, nonatomic) IBOutlet UILabel *medicalNumLabel;
@@ -23,12 +28,19 @@
 @property (weak, nonatomic) IBOutlet BEButton *focusButton;
 @property (weak, nonatomic) IBOutlet BEButton *findButton;
 
+//蓝牙设备
+@property (nonatomic,strong) NSString *BLEDeviceName;
+@property (strong ,nonatomic) CBPeripheral *peripheral;
+@property (nonatomic,strong) CBCharacteristic *sendCharacteristic;
+@property (nonatomic,strong) CBCharacteristic *receiveCharacteristic;
 @end
-@implementation FocusMachineAlertView
+@implementation FocusMachineAlertView{
+    BabyBluetooth *baby;
+}
 -(void)awakeFromNib{
     [super awakeFromNib];
     self.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
-//    self.backGroundView.layer.cornerRadius = 5.0f;
+
 }
 
 +(void)alertControllerAboveIn:(UIViewController *)controller withDataModel:(MachineModel *)machine returnBlock:(returnBlock)returnEvent{
@@ -43,6 +55,12 @@
     if (machine) {
         [view configureUIWithDataModel:machine];
         view.dataModel = machine;
+        if ([machine.type isEqualToString:@"血瘘"]) {
+            view.isLocalMachine = YES;
+
+        }else{
+            view.isLocalMachine = NO;
+        }
     }
     
     [controller.view addSubview:view];
@@ -62,19 +80,34 @@
 }
 - (IBAction)close:(id)sender {
     [self removeFromSuperview];
+    [baby cancelScan];
+    [baby cancelAllPeripheralsConnection];
 }
 - (IBAction)tapFocusButton:(id)sender {
     self.returnEvent();
-
+    [baby cancelScan];
+    [baby cancelAllPeripheralsConnection];
     [self removeFromSuperview];
 }
 - (IBAction)tapFindMechineButton:(id)sender {
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Beep"] params:@{@"cpuid":self.dataModel.cpuid}
-                                hasToken:YES success:^(HttpResponse *responseObject) {
-                                    if ([responseObject.result intValue] == 0) {
-                                        [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                    }
-                                } failure:nil];
+    if (!_isLocalMachine) {
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Beep"] params:@{@"cpuid":self.dataModel.cpuid}
+                                    hasToken:YES success:^(HttpResponse *responseObject) {
+                                        if ([responseObject.result intValue] == 0) {
+                                            [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                        }
+                                    } failure:nil];
+    }else{
+        //本地设备
+        baby = [BabyBluetooth shareBabyBluetooth];
+        [self babyDelegate];
+        self.BLEDeviceName = [[NSString alloc]init];
+        if ([self.dataModel.serialNum isEqualToString:@"P06A17A00001"]) {
+            self.BLEDeviceName = @"ALX420";
+        }
+        baby.scanForPeripherals().begin();
+    }
+
 }
 
 -(void)configureUIWithDataModel:(MachineModel *)machine
@@ -106,12 +139,16 @@
             treatmentState = @"未知";
             break;
     }
-    
-    if([treatmentState isEqualToString:@"治疗处方已下发"]&&(machine.isFocus == NO)){
+    if ([machine.type isEqualToString:@"血瘘"]) {
         self.focusButton.hidden = NO;
     }else{
-        self.focusButton.hidden = YES;
+        if([treatmentState isEqualToString:@"治疗处方已下发"]&&(machine.isFocus == NO)){
+            self.focusButton.hidden = NO;
+        }else{
+            self.focusButton.hidden = YES;
+        }
     }
+
     self.findButton.hidden = !([treatmentState isEqualToString:@"治疗处方已下发"]||[treatmentState isEqualToString:@"治疗疗程已结束"]);
     
     
@@ -130,6 +167,103 @@
     }
 
     
+}
+#pragma mark - BLE
+-(void)babyDelegate{
+    
+    __weak typeof(self) weakSelf = self;
+    __weak typeof(BabyBluetooth*) weakBaby = baby;
+    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
+        if (central.state == CBManagerStatePoweredOff) {
+            if (weakSelf) {
+                [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
+            }
+        }else if(central.state == CBManagerStatePoweredOn) {
+            weakBaby.scanForPeripherals().begin();
+        }
+    }];
+    [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
+        
+        NSLog(@"连接成功");
+        
+    }];
+    [baby setBlockOnDisconnect:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
+        
+        NSLog(@"断开连接");
+        
+    }];
+    
+    //发现service的Characteristics
+    [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:SERVICE_UUID]]) {
+            
+            for (CBCharacteristic *characteristic in service.characteristics)
+            {
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:RX_CHARACTERISTIC_UUID]])
+                {
+                    weakSelf.receiveCharacteristic = characteristic;
+                    if (![characteristic isNotifying]) {
+                        [weakSelf setNotify:characteristic];
+                    }
+                }
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:TX_CHARACTERISTIC_UUID]])
+                {
+                    weakSelf.sendCharacteristic = characteristic;
+                    
+                    [weakSelf performSelector:@selector(BleBeep) withObject:nil afterDelay:0.5];
+                    
+                }
+            }
+        }
+        
+    }];
+    [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
+        NSLog(@"advertisementData = %@",advertisementData);
+        //连接设备
+        if ([peripheral.name isEqualToString:weakSelf.BLEDeviceName]) {
+            [weakBaby cancelScan];
+            weakSelf.peripheral = peripheral; weakBaby.having(peripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
+        }
+    }];
+    [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
+        if (peripheralName.length > 0 && [peripheralName isEqualToString:@"ALX420"]) {
+            
+            return YES;
+            
+        }
+        return NO;
+    }];
+    
+    NSDictionary *scanForPeripheralsWithOptions = @{CBCentralManagerScanOptionAllowDuplicatesKey:@YES};
+    [baby setBabyOptionsWithScanForPeripheralsWithOptions:scanForPeripheralsWithOptions connectPeripheralWithOptions:nil scanForPeripheralsWithServices:nil discoverWithServices:nil discoverWithCharacteristics:nil];
+}
+//接收数据
+- (void)setNotify:(CBCharacteristic *)characteristic {
+    __weak typeof(self)weakSelf = self;
+    [weakSelf.peripheral setNotifyValue:YES forCharacteristic:characteristic];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [baby notify:weakSelf.peripheral
+      characteristic:characteristic
+               block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
+                   NSLog(@"----------------------------------------------");
+                   NSData *data = characteristic.value;
+                   if (data) {
+//                       [weakSelf handleCompleteData:data];
+                   }
+                   
+               }];
+    });
+}
+-(void)BleBeep{
+    [self writeWithCmdid:0X90 data:nil];
+}
+-(void)writeWithCmdid:(Byte)cmdid data:(NSData*)data{
+    
+    [self.peripheral writeValue:[Pack packetWithCmdid:cmdid
+                                          dataEnabled:YES
+                                                 data:data]
+              forCharacteristic:self.sendCharacteristic
+                           type:CBCharacteristicWriteWithResponse];
 }
 
 @end

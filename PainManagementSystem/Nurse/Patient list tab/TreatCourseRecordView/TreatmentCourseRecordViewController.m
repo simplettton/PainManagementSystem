@@ -47,7 +47,6 @@
     
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
-//    datas = [@[@"sae",@"3442",@"saf"]mutableCopy];
 
     [self initTableHeaderAndFooter];
 }

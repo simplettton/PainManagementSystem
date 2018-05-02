@@ -81,6 +81,7 @@ static NetWorkTool *_instance;
                
                
                NSString *result = [jsonDict objectForKey:@"result"];
+               NSNumber *count = [jsonDict objectForKey:@"count"];
                
                id content;
                //返回null的content
@@ -110,6 +111,7 @@ static NetWorkTool *_instance;
                    responseObject.result = result;
                    responseObject.content = content;
                    responseObject.errorString = errorString;
+                   responseObject.count = count;
                    responseBlock(responseObject);
                    //停止刷新
                    dispatch_async(dispatch_get_main_queue(), ^{

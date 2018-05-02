@@ -366,7 +366,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
     self.selectedRow = [sender tag];
     
-    NSArray *types = @[AVMetadataObjectTypeQRCode,
+    NSArray *types = @[
                        AVMetadataObjectTypeEAN13Code,
                        AVMetadataObjectTypeEAN8Code,
                        AVMetadataObjectTypeUPCECode,
@@ -402,8 +402,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                         }
                                     } failure:nil];
     }
-    
-
 }
 
 -(void)localRing:(UIButton *)button{

@@ -8,10 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "MachineModel.h"
+#import <CoreBluetooth/CoreBluetooth.h>
+#import "BabyBluetooth.h"
 typedef void (^returnBlock)(void);
 @interface FocusMachineAlertView : UIView
-@property (nonatomic,strong)returnBlock returnEvent;
 
+@property (nonatomic,strong)returnBlock returnEvent;
 @property (nonatomic,strong)MachineModel *dataModel;
+@property (nonatomic,assign)BOOL isLocalMachine;
+
+
 +(void)alertControllerAboveIn:(UIViewController *)controller withDataModel:(MachineModel *)machine returnBlock:(returnBlock)returnEvent;
+
 @end

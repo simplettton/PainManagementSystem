@@ -81,12 +81,18 @@
 }
 -(void)appendQuestionsWithDic:(NSDictionary *)dic{
 
-    if ([dic[@"answer_eng"]isEqual:[NSNull null]] ||[dic[@"answer_zh"]isEqual:[NSNull null]]) {
-        
-    }else{
+    if (![dic[@"answer_eng"]isEqual:[NSNull null]]) {
         self.questionW = [self transformQuestionArray: dic[@"answer_eng"]];
+    }
+    if (![dic[@"answer_zh"]isEqual:[NSNull null]]) {
         self.questionE = [self transformQuestionArray:dic[@"answer_zh"]];
     }
+//    if ([dic[@"answer_eng"]isEqual:[NSNull null]] ||[dic[@"answer_zh"]isEqual:[NSNull null]]) {
+//        
+//    }else{
+//        self.questionW = [self transformQuestionArray: dic[@"answer_eng"]];
+//        self.questionE = [self transformQuestionArray:dic[@"answer_zh"]];
+//    }
 }
 
 +(instancetype)modelWithDic:(NSDictionary *)dic{

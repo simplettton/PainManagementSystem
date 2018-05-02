@@ -256,8 +256,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     if(self.tag == DeviceTypeOnline){
         [self askForData:YES];
     }
-
-    
     if ([self.searchBar.text length]>0) {
         self.searchBar.text = @"";
     }
@@ -280,37 +278,34 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(void)askForData:(BOOL)isRefresh{
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     
-    if (self.isInAllTab) {
-        [params setObject:[NSNumber numberWithInteger:0] forKey:@"isfocus"];
-    }else{
+    if (!self.isInAllTab) {
         [params setObject:[NSNumber numberWithInteger:1] forKey:@"isfocus"];
     }
     [params setObject:self.selectedTaskState forKey:@"taskstate"];
+//    [params setObject:@0 forKey:@"needlocal"];
     
-    
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTaskCount"]
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                   params:(NSDictionary *)params
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
                                      if ([responseObject.result intValue] == 1) {
 
-                                         NSString *count = responseObject.content[@"count"];
-                                         
+                                         NSNumber *count = responseObject.count;
+
                                          totalPage = ([count intValue]+9-1)/9;
-                                         
+
                                          NSLog(@"totalPage = %d",totalPage);
-                                         
+
                                          if ([count intValue]>0) {
                                              [self getNetworkData:isRefresh withParam:params];
                                          }else{
                                              [datas removeAllObjects];
                                              [self endRefresh];
-//                                             [SVProgressHUD showErrorWithStatus:@"当前无设备连接上服务器"];
                                          }
                                          dispatch_async(dispatch_get_main_queue(), ^{
                                              [self.collectionView reloadData];
                                          });
-                                         
+
                                      }else{
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                      }
@@ -517,17 +512,20 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
                                     NSNumber *machineState = content[@"state"];
                                     if ([machineState isEqualToNumber:@2] || [machineState isEqualToNumber:@1]) {
-                                        if (![machine.alertMessage isEqualToString:@"过压"]) {
-                                            dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC);
-                                            dispatch_after(timer, dispatch_get_main_queue(), ^{
-
-                                                machine.alertMessage = nil;
-                                                [machine changeState:machineState];
-                                                dispatch_async(dispatch_get_main_queue(), ^{
-                                                    [self.collectionView reloadData];
+                                        if(machine.alertMessage){
+                                            if (![machine.alertMessage isEqualToString:@"过压"]) {
+                                                dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC);
+                                                dispatch_after(timer, dispatch_get_main_queue(), ^{
+                                                    
+                                                    machine.alertMessage = nil;
+                                                    [machine changeState:machineState];
+                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                        [self.collectionView reloadData];
+                                                    });
                                                 });
-                                            });
+                                            }
                                         }
+
                                     }
                                         [machine changeState:machineState];
                                         currentMachine = machine;
@@ -754,40 +752,43 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [cell.pauseButton addTarget:self action:@selector(controllAction:) forControlEvents:UIControlEventTouchUpInside];
         [cell.stopButton addTarget:self action:@selector(controllAction:) forControlEvents:UIControlEventTouchUpInside];
         
-        MachineModel *machine = [datas objectAtIndex:indexPath.row];
-        
-        [cell configureWithStyle:machine.cellStyle message:nil];
-        cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
-        cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
-        cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
-
-        //警告
-        if (machine.alertMessage) {
-            [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
-
-        }else if (machine.leftTimeNumber) {
-            //进行中才更新倒计时
-            if (cell.style == CellStyleOngoing_MachineRunning) {
-                [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
-            }
-        }else{
-
-        }
-        //按钮操作
-        switch (cell.style) {
-            case CellStyleFinished_MachineStop:
-                [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
-                break;
-            case CellStyleOngoing_MachinePause:
-            case CellStyleOngoing_MachineStop:
-                break;
-            case CellStyleOngoing_MachineRunning:
-
-                break;
+        if(datas){
+            MachineModel *machine = [datas objectAtIndex:indexPath.row];
+            
+            [cell configureWithStyle:machine.cellStyle message:nil];
+            cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
+            cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
+            cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
+            
+            //警告
+            if (machine.alertMessage) {
+                [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
                 
-            default:
-                break;
+            }else if (machine.leftTimeNumber) {
+                //进行中才更新倒计时
+                if (cell.style == CellStyleOngoing_MachineRunning) {
+                    [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
+                }
+            }else{
+                
+            }
+            //按钮操作
+            switch (cell.style) {
+                case CellStyleFinished_MachineStop:
+                    [cell.remarkButton addTarget:self action:@selector(goToRemarkVAS:) forControlEvents:UIControlEventTouchUpInside];
+                    break;
+                case CellStyleOngoing_MachinePause:
+                case CellStyleOngoing_MachineStop:
+                    break;
+                case CellStyleOngoing_MachineRunning:
+                    
+                    break;
+                    
+                default:
+                    break;
+            }
         }
+
     }else if(self.tag == DeviceTypeLocal){
     
         CellIdentifier = @"LocalDeviceCell";
@@ -1138,18 +1139,41 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     if ([self.searchBar.text length]>0) {
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
-                                      params:@{@"medicalrecordnum":self.searchBar.text}
+                                      params:@{
+                                               @"medicalrecordnum":self.searchBar.text,
+                                               @"needlocal":@1
+                                               }
                                     hasToken:YES success:^(HttpResponse *responseObject) {
                                         if ([responseObject.result intValue] == 1) {
                                             [self.searchBar resignFirstResponder];
-                                            NSArray *content = responseObject.content;
+                                            __block NSArray *content = responseObject.content;
                                             if (content) {
-                                                for (NSDictionary *dic in content) {
-                                                    MachineModel *machine = [MachineModel modelWithDic:dic];
+                                                    __block MachineModel *machine = [MachineModel modelWithDic:content[0]];
                                                     [FocusMachineAlertView alertControllerAboveIn:self withDataModel:machine returnBlock:^{
                                                         
+                                                        //补关注设备
+                                                        if ([machine.type isEqualToString:@"血瘘"]) {
+                                                            LocalMachineModel *machine = [LocalMachineModel modelWithDic:content[0]];
+                                                            [self saveLocalDevice:machine];
+                                                        }
+                                                        if (machine.serialNum) {
+                                                            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
+                                                                                          params:@{@"serialnum":machine.serialNum}
+                                                                                        hasToken:YES
+                                                                                         success:^(HttpResponse *responseObject) {
+                                                                                             if ([responseObject.result intValue]==1) {
+                                                                                                 NSLog(@"关注设备成功");
+                                                                                                 [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+                                                                                             }else{
+                                                                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                                                             }
+                                                                                         }
+                                                                                         failure:nil];
+                                                        }
+  
+                                                        
                                                     }];
-                                                }
+
                                             }else{
                                                 [SVProgressHUD showErrorWithStatus:@"查找不到该病人的记录"];
                                             }
@@ -1161,6 +1185,60 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [SVProgressHUD showErrorWithStatus:@"请输入病历号查找设备~"];
     }
 
+}
+-(void)saveLocalDevice:(LocalMachineModel *)machine{
+    //文件名
+    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    if (!documents)
+    {
+        NSLog(@"目录未找到");
+    }
+    NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    //machine Array
+    NSArray *machineArray = [[NSArray alloc]init];
+    if (![fileManager fileExistsAtPath:documentPath])
+    {
+        //没有文件就新建文件
+        [fileManager createFileAtPath:documentPath contents:nil attributes:nil];
+    }else{
+        //有文件就去取文件中的数据
+        
+        NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
+        NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
+        machineArray = [unArchiver decodeObjectForKey:@"machineArray"];
+    }
+    
+    NSMutableArray *array = [NSMutableArray arrayWithArray:machineArray];
+    BOOL isBinded = NO;
+    //病历号重复则重新绑定
+    for (LocalMachineModel *savedMachine in array) {
+        if ([savedMachine.userMedicalNum isEqualToString:machine.userMedicalNum]) {
+            NSUInteger index = [array indexOfObject:savedMachine];
+            [array replaceObjectAtIndex:index withObject:machine];
+            isBinded = YES;
+            break;
+        }
+    }
+    if (!isBinded) {
+        [array addObject:machine];
+    }
+    machineArray = [array copy];
+    
+    //写入文件
+    NSMutableData *data = [[NSMutableData alloc] init] ;
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data] ;
+    [archiver encodeObject:machineArray forKey:@"machineArray"];
+    [archiver finishEncoding];
+    
+    BOOL success = [data writeToFile:documentPath atomically:YES];
+    if (!success)
+    {
+        NSLog(@"写入文件失败");
+    }else{
+        NSLog(@"写入文件成功");
+    }
+    
 }
 #pragma mark - BLE
 -(void)BLEConnectDevice:(UIButton *)button{

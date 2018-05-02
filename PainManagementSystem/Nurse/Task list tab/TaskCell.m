@@ -53,14 +53,17 @@
         
         case CellStyleGreen_DownLoadedRunning:
 
-            self.statusImage.image = [UIImage imageNamed:@"processing"];
-//            [self.statusImage.layer addAnimation:[self opacityForever_Animation:0.5] forKey:nil];
+            self.statusImage.animationImages = [self animationImages];
+//            self.statusImage.image = [UIImage imageNamed:@"processing"];
+            self.statusImage.animationDuration = 1;
+            [self.statusImage startAnimating];
 
             break;
             
         case CellStyleBlue_DownLoadedFinishRunning:
             [self.scanButton setImage:[UIImage imageNamed:@"remark"] forState:UIControlStateNormal];
             self.statusImage.image = [UIImage imageNamed:@"finished"];
+            
 
             break;
         
@@ -92,5 +95,20 @@
     animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
     return animation;
 }
+
+- (NSArray *)animationImages
+{
+    
+    NSMutableArray *imagesArr = [NSMutableArray array];
+    
+    for (NSUInteger i = 0; i<= 29; i++) {
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"processing_anim_000%zd",i]];
+        if (image) {
+            [imagesArr addObject:image];
+        }
+    }
+    return imagesArr;
+}
+
 
 @end

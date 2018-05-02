@@ -186,7 +186,7 @@
 }
 - (IBAction)scan:(id)sender {
     
-    NSArray *types = @[AVMetadataObjectTypeQRCode,
+    NSArray *types = @[
                        AVMetadataObjectTypeEAN13Code,
                        AVMetadataObjectTypeEAN8Code,
                        AVMetadataObjectTypeUPCECode,
