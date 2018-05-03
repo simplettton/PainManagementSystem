@@ -91,7 +91,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         baby = [BabyBluetooth shareBabyBluetooth];
         [self babyDelegate];
         baby.scanForPeripherals().begin();
-        self.tableView.tableHeaderView.hidden = NO;
+        
         
 
     }else {
@@ -271,6 +271,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }];
     
     [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
+        weakSelf.tableView.tableHeaderView.hidden = NO;
         [weakSelf insertTableView:peripheral advertisementData:advertisementData RSSI:RSSI];
     }];
     
@@ -397,7 +398,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                                }
                                     hasToken:YES success:^(HttpResponse *responseObject) {
                                         if ([responseObject.result intValue]!=1) {
-                                            [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                         }
                                     } failure:nil];
@@ -471,7 +471,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                              }
                                              failure:nil];
             }else{
-                [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
+
                 [SVProgressHUD showErrorWithStatus:@"序列号不能为空"];
             }
             

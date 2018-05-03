@@ -92,7 +92,7 @@
                                                                                         
                                                                                     });
                                                                                 }else{
-    
+                                                                                    [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                                                                 }
                                                                             
                                                                             }

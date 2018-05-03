@@ -79,6 +79,7 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
+    [self refresh];
 
     
 }
@@ -320,6 +321,17 @@
     cell.bedNumLabel.text = patient.bednum;
     cell.ageLabel.text = patient.age;
     cell.unfinishImage.hidden = !patient.isInTheTask;
+    
+//    if (!cell.unfinishImage.hidden) {
+//        CABasicAnimation* rotationAnimation;
+//        rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+//        rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0 ];
+//        rotationAnimation.duration = 1.0f;
+//        rotationAnimation.cumulative = YES;
+//        rotationAnimation.repeatCount = 100000;
+//        
+//        [cell.unfinishImage.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
+//    }
 
     
     

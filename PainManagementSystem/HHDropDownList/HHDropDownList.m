@@ -166,7 +166,7 @@
 }
 
 #pragma mark - Animation
-- (void)animateIndicator:(CAShapeLayer *)ind isforward:(BOOL)isForward withCompletion:(void(^)())completion {
+- (void)animateIndicator:(CAShapeLayer *)ind isforward:(BOOL)isForward withCompletion:(void(^)(void))completion {
     
     [CATransaction begin];
     [CATransaction setAnimationDuration:0.25];
@@ -189,7 +189,7 @@
     completion();
 }
 
-- (void)animateTableView:(UITableView *)tableView show:(BOOL)isShow completion:(void(^)())completion {
+- (void)animateTableView:(UITableView *)tableView show:(BOOL)isShow completion:(void(^)(void))completion {
     
     if (isShow) {
         
@@ -222,7 +222,7 @@
     completion();
 }
 
-- (void)animateTextLayer:(CATextLayer *)textLayer isShow:(BOOL)isShow completion:(void(^)())completion {
+- (void)animateTextLayer:(CATextLayer *)textLayer isShow:(BOOL)isShow completion:(void(^)(void))completion {
     
     CGSize size = [self p_calculateTitleSizeWithText:textLayer.string];
     
@@ -330,9 +330,16 @@
 
     ListCell *listCell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
     
+    
     listCell.selectedBackgroundView = [[UIView alloc] initWithFrame:listCell.frame];
     
-    listCell.selectedBackgroundView.backgroundColor = _highlightColor;
+    listCell.selectedBackgroundView.backgroundColor = [UIColor clearColor];
+    
+    if (listCell.isSelected) {
+        listCell.highlighted = YES;
+    }else{
+        listCell.highlighted = NO;
+    }
     
     listCell.centerLabel.text = _data[indexPath.row];
     

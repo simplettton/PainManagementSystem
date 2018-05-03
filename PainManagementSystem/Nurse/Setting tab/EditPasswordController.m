@@ -25,7 +25,7 @@
     NSString *oldPwd = self.oldPasswordTextField.text;
     [SVProgressHUD show];
     if (![self.confirmPassWordTextField.text isEqualToString:newPwd]) {
-        [SVProgressHUD showInfoWithStatus:@"请输入相同的密码"];
+        [SVProgressHUD showErrorWithStatus:@"请输入相同的密码"];
     }else{
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/ChangeSelfPwd"]
                                       params:@{@"newpwd":newPwd,
@@ -40,6 +40,7 @@
                                                  [self dismissViewControllerAnimated:YES completion:nil];
                                          }else{
                                              NSLog(@"error = %@",responseObject.errorString);
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                          }
                                         
                                      } failure:nil];

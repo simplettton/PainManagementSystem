@@ -170,7 +170,7 @@
         isForceToStop = @0;
     }
     
-    if (![[array objectAtIndex:1]isEqualToString:@"?"]) {
+    if (![[array objectAtIndex:1]isEqualToString:@"？"]) {
         
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
                                                                        message:@"该治疗疗程记录已有VAS评分，是否再次修改评分？"

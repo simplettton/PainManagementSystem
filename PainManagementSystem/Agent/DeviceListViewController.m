@@ -180,11 +180,13 @@
                                          
                                          if ([count intValue]>0) {
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];
+                                             self.tableView.tableHeaderView.hidden = NO;
                                          }else{
                                              [datas removeAllObjects];
                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
+                                             self.tableView.tableHeaderView.hidden = YES;
                                          }
 
                                          
@@ -356,8 +358,6 @@
         self.deleteButton.titleLabel.text = @"删除";
         [self.deleteButton setTitle:@"删除" forState:UIControlStateNormal];
         
-        [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
-        
         [SVProgressHUD show];
 
         NSMutableArray *deleteArray = [NSMutableArray array];
@@ -487,20 +487,12 @@
                 
                 filterparam = paramDic;
                 [self askForData:YES isFiltered:YES];
+            }else if([self.searchBar.text isEqualToString:@"血瘘"]){
+                [paramDic setObject:[NSNumber numberWithInt:57119] forKey:@"machinetype"];
+                
+                filterparam = paramDic;
+                [self askForData:YES isFiltered:YES];
             }
-//                检索字典有的key
-//                [_typeDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-//
-//                    if([obj isEqualToString:self.searchBar.text]){
-//
-//                        [paramDic setObject:key forKey:@"machinetype"];
-//
-//                        filterparam = paramDic;
-//
-//                        [self askForData:YES isFiltered:YES];
-//                    }
-//                }];
-//            }
 
             
         }else{

@@ -16,13 +16,14 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    
-    for (UIButton *button in _buttons) {
-        button.layer.borderWidth = 0.5f;
-        button.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
-        [button.layer setCornerRadius:5.0f];
-        [button.layer setMasksToBounds:YES];
-    }
+//    
+//    for (UIButton *button in _buttons) {
+//        button.layer.borderWidth = 0.5f;
+//        button.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
+//        [button.layer setCornerRadius:5.0f];
+//        [button.layer setMasksToBounds:YES];
+//    }
+
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -30,5 +31,6 @@
 
     // Configure the view for the selected state
 }
+
 
 @end

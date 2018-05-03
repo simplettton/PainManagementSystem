@@ -282,7 +282,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [params setObject:[NSNumber numberWithInteger:1] forKey:@"isfocus"];
     }
     [params setObject:self.selectedTaskState forKey:@"taskstate"];
-//    [params setObject:@0 forKey:@"needlocal"];
+    [params setObject:@0 forKey:@"needlocal"];
     
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                   params:(NSDictionary *)params

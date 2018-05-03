@@ -16,9 +16,9 @@
 @property (weak, nonatomic) IBOutlet UITableView *insertTableView;
 
 //内容label
-@property (weak, nonatomic) IBOutlet UILabel *basicInfoLabel;
+@property (weak, nonatomic) IBOutlet UILabel *medicalNumLabel;
+@property (weak, nonatomic) IBOutlet UILabel *patientLabel;
 @property (weak, nonatomic) IBOutlet UILabel *vasLabel;
-@property (weak, nonatomic) IBOutlet UILabel *doctorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *contentLabel;
 
 @end

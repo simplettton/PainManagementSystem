@@ -24,7 +24,7 @@
         self.vasBefore = [NSString stringWithFormat:@"%@",vasBeforeNum];
         NSNumber *vasAfterNum = dic[@"afterscore"];
         if ([vasAfterNum intValue] == -1) {
-            self.vasAfter = @"?";
+            self.vasAfter = @"？";
         }else{
             self.vasAfter = [NSString stringWithFormat:@"%@",vasAfterNum];
         }

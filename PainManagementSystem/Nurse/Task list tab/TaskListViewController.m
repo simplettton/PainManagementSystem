@@ -469,6 +469,7 @@
 
 -(void)showSuccessView{
     [SVProgressHUD dismiss];
+    
     __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
     //本地设备通知服务器绑定设备
     if([task.machineType isEqualToString:@"血瘘"]){
@@ -521,8 +522,10 @@
             if ([responseObject.result intValue]==1) {
                 NSLog(@"关注设备成功");
                 [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+                [self refresh];
             }else{
                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                [self refresh];
             }
         }
         failure:nil];

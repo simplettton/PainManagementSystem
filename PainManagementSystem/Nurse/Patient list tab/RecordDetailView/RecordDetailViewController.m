@@ -46,6 +46,7 @@
     //得到数据模型
     if (self.record) {
         self.recordModel = self.record;
+
     }else{
         self.recordModel = [RecordModel modelWithDic:dataDic];
     }
@@ -87,6 +88,9 @@
     }
 
 }
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 44;
+}
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView == self.rootTableView) {
         //基本情况
@@ -113,18 +117,27 @@
             return UITableViewAutomaticDimension;
     }
     return 44;
+
 }
 -(NSInteger)rowHeightWithQuestionArray:(NSMutableArray *)array{
     
     NSInteger sectionNumber = [array count];
     NSMutableArray <QuestionItem*> *quetionItemArray = array;
     NSInteger rowNumber = 0;
+    //自动分行行数 每多加一行增加高度18
+    NSInteger extralRowNum = 0;
     for (QuestionItem *item in quetionItemArray) {
+        NSMutableArray <Question *>*questionArray = item.questionArray;
+        for (Question *question in questionArray) {
+            if ([question.selectionString length]>18) {
+                extralRowNum ++;
+            }
+        }
         rowNumber += [item.questionArray count];
+        
     }
-    return 44*(sectionNumber + rowNumber)+KTitleViewHeight+KPartInterval+KRowInterval;
+    return 44*(sectionNumber + rowNumber)+extralRowNum * 18 + KTitleViewHeight+KPartInterval+KRowInterval;
 }
-
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier;
     if (tableView == self.rootTableView) {
@@ -145,37 +158,55 @@
         switch (indexPath.section) {
             case 0:
             {
-                cell.basicInfoLabel.text = [NSString stringWithFormat:@"姓名：%@          年龄：%@          电话：%@",self.patient.name,self.patient.age,self.patient.contact];
-                cell.vasLabel.text = [NSString stringWithFormat:@"治疗前vas：%@          治疗后vas：%@",self.recordModel.vasBefore,self.recordModel.vasAfter];
-                cell.doctorLabel.text = [NSString stringWithFormat:@"医生：%@",self.recordModel.operator];
+                cell.medicalNumLabel.text = [NSString stringWithFormat:@"病历号：%@",self.patient.medicalRecordNum];
+                NSString *name = [self CharacterStringMainString:[NSString stringWithFormat:@"姓名：%@",self.patient.name] AddDigit:20 AddString:@"  "];
+                NSString *age = [self CharacterStringMainString:[NSString stringWithFormat:@"年龄：%@",self.patient.age] AddDigit:20 AddString:@"  "];
+                cell.patientLabel.text = [NSString stringWithFormat:@"%@%@电话：%@",name,age,self.patient.contact];
+                
+                NSString *vasBefore = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗前vas：%@",self.recordModel.vasBefore] AddDigit:20 AddString:@"  "];
+                NSString *vasAfter = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗后vas：%@",self.recordModel.vasAfter] AddDigit:20  AddString:@"  "];
+                cell.vasLabel.text = [NSString stringWithFormat:@"%@%@医生：%@",vasBefore,vasAfter,self.recordModel.operator];
+                return cell;
             }
                 break;
             case 1:
             {
                 cell.insertTableView.tag = KWestTableViewTag;
+                 [cell.insertTableView reloadData];
             }
                 break;
             case 2:
             {
                 cell.insertTableView.tag = KEastTableViewTag;
+                [cell.insertTableView reloadData];
             }
                 break;
             case 3:
             {
                 cell.contentLabel.text = [NSString stringWithFormat:@"病理因素：%@          发病部位：%@         中医辨证：%@",self.recordModel.painfactorW,self.recordModel.painArea,self.recordModel.painfactorE];
+                return cell;
             }
                 break;
             case 4:
             {
                 
                 cell.contentLabel.text = [NSString stringWithFormat:@"%@",self.recordModel.physicalTreat];
+                
+                return cell;
             }
                 break;
             case 5:
             {
                 cell.insertTableView.tag = KTreatParamViewTag;
+                [cell.insertTableView reloadData];
+
             }
-            default: {      CellIdentifier = @"Cell";       }       break;
+                break;
+            default: {
+//                CellIdentifier = @"Cell";
+                
+            }
+                break;
         }
            return cell;
     }else {
@@ -188,33 +219,43 @@
         
         NSMutableArray *dataArray = [[NSMutableArray alloc]init];
         //西医病历采集
-        if (tableView.tag == KWestTableViewTag) {
+        if (tableView.tag == KWestTableViewTag)
+        {
             dataArray = self.recordModel.questionW;
+
             
-        }else if (tableView.tag == KEastTableViewTag){  //中医病历采集
+        }
+        else if (tableView.tag == KEastTableViewTag)
+        {  //中医病历采集
             dataArray = self.recordModel.questionE;
             
         }
-        if([dataArray count]>0){
-            
-            QuestionItem *questionItem = dataArray[indexPath.section];
-            
-            Question *question = questionItem.questionArray[indexPath.row];
-            
-            cell.questionNameLabel.text = question.name;
-            
-            cell.selectionsLabel.text = question.selectionString;
-        }else{
+        else if(tableView.tag == KTreatParamViewTag)
+        {
             //物理治疗方法
             Question *param = self.recordModel.treatParam[indexPath.row];
             cell.questionNameLabel.text = param.name;
             cell.selectionsLabel.text = param.selectionString;
         }
+        
+        if([dataArray count]>0){
+            
+            QuestionItem *questionItem = dataArray[indexPath.section];
+            if (indexPath.row < [questionItem.questionArray count]) {
+                
+                Question *question = questionItem.questionArray[indexPath.row];
+                
+                cell.questionNameLabel.text = question.name;
+                
+                cell.selectionsLabel.text = question.selectionString;
+            }
+            
+        }
+
 
         return cell;
         
     }
-
 
 }
 
@@ -274,6 +315,44 @@
     
     return headerView;
     
+}
+#pragma mark字符串自动补充方法
+
+- (NSString*)CharacterStringMainString:(NSString*)MainString AddDigit:(int)AddDigit AddString:(NSString*)AddString
+{
+    
+    for(int i = 0; i < MainString.length; i++)
+    {
+        if(AddDigit == 0){
+            break;
+        }
+        unichar ch = [MainString characterAtIndex:i];
+        
+        if ((0x4e00 < ch  && ch < 0x9fff) || ch == 0xff1a || ch == 0xff1f)
+        {
+            //若为汉字 中文问号 中文冒号
+
+            AddDigit = AddDigit - 2;
+        } else
+        {
+
+            AddDigit = AddDigit - 1;
+        }
+
+    }
+
+    NSString *ret = [[NSString alloc]init];
+
+    ret = MainString;
+
+    for(int y =0;y < AddDigit ;y++ ){
+
+        ret = [NSString stringWithFormat:@"%@%@",ret,AddString];
+
+    }
+
+    return ret;
+
 }
 
 
