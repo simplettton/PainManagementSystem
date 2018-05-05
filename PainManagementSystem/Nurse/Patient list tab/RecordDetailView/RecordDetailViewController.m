@@ -50,7 +50,6 @@
     }else{
         self.recordModel = [RecordModel modelWithDic:dataDic];
     }
-
 }
 
 #pragma mark - tableViewDataSource

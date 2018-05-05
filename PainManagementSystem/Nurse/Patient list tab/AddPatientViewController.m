@@ -15,6 +15,7 @@
 @interface AddPatientViewController ()<QRCodeReaderDelegate>
 @property (strong, nonatomic) IBOutletCollection(UIView) NSArray *editViews;
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *requiredTextFields;
+@property (weak, nonatomic) IBOutlet UIView *medicalNumView;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControll;
 @property (weak, nonatomic) IBOutlet UITextField *medicalRecordNumTextField;
@@ -61,6 +62,10 @@
 
         label.attributedText = string;
     }
+    for (UIView *view in self.editViews) {
+        view.layer.borderWidth = 0.5f;
+        view.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
+    }
     if (self.patient == nil) {
         self.title = @"增加病历";
         self.scanButton.hidden = NO;
@@ -78,6 +83,8 @@
         //病历不可修改
         self.medicalRecordNumTextField.text = self.patient.medicalRecordNum;
         self.medicalRecordNumTextField.enabled = NO;
+        self.medicalNumView.layer.borderWidth = 0.0f;
+
         
         self.nameTextField.text = self.patient.name;
         self.phoneTextFiled.text = self.patient.contact;
@@ -94,10 +101,7 @@
         [self.segmentedControll setSelectedSegmentIndex:selectedIndex];
         
     }
-    for (UIView *view in self.editViews) {
-        view.layer.borderWidth = 0.5f;
-        view.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
-    }
+
     
     CGRect frame=  self.segmentedControll.frame;
     CGFloat fNewHeight = 35.0f;

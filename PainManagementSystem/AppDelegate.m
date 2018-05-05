@@ -18,12 +18,19 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    [SVProgressHUD setMaximumDismissTimeInterval:1.5];
+    [SVProgressHUD setMaximumDismissTimeInterval:1];
     [SVProgressHUD setDefaultStyle:SVProgressHUDStyleCustom];
     [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
     [SVProgressHUD setMinimumSize:CGSizeMake(100, 50)];
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear]; //当HUD显示的时候，不允许用户交互，且显示背景图层自定义的颜色。
     [SVProgressHUD setBackgroundColor:UIColorFromHex(0xf9f9f9)];
+    
     [SVProgressHUD setCornerRadius:5];
+    
+    if (![UserDefault objectForKey:@"HTTPServerURLString"]) {
+        [UserDefault setObject:@"http://192.168.2.127:8888/" forKey:@"HTTPServerURLString"];
+        [UserDefault synchronize];
+    }
     
     [self registerAPN];
     

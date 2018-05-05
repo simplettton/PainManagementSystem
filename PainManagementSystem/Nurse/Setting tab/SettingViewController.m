@@ -32,9 +32,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    
-    
-
 
     [self setBorderWithView:self.nameLabel top:NO left:YES bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
 //    [self setBorderWithView:self.departmentLabel top:NO left:YES bottom:NO right:NO borderColor:[UIColor whiteColor] borderWidth:1.0];
@@ -57,8 +54,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.phoneLabel.text = [UserDefault objectForKey:@"Contact"];
     self.userNameLabel.text = [UserDefault objectForKey:@"UserName"];
     self.departmentLabel.text = [UserDefault objectForKey:@"Department"];
-    
-
 
 }
 /*

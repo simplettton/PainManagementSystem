@@ -90,19 +90,20 @@
     }
 }
 -(void)initAll{
+    
+    self.view.multipleTouchEnabled = NO;
     //初始tag为待处理
     self.taskTag = TaskListTypeNotStarted;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
     
+    UILongPressGestureRecognizer * longPressGesture =[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressToDo:)];
+//    longPressGesture.minimumPressDuration=1.5f;//设置长按 时间
+    [self.tableView addGestureRecognizer:longPressGesture];
+    
+    
     datas = [[NSMutableArray alloc]initWithCapacity:20];
-//    NSArray *dataArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"Task" ofType:@"plist"]];
-//    for (NSDictionary *dataDic in dataArray) {
-//        TaskModel *task = [TaskModel modelWithDic:dataDic];
-//        [datas addObject:task];
-//    }
-
     
     //配置segmentedcontrol
     self.segmentedControl.frame = CGRectMake(self.segmentedControl.frame.origin.x, self.segmentedControl.frame.origin.y, self.segmentedControl.frame.size.width, 35);
@@ -115,6 +116,43 @@
     
     [self initTableHeaderAndFooter];
 
+}
+-(void)longPressToDo:(UILongPressGestureRecognizer *)gesture
+{
+    
+    if(gesture.state == UIGestureRecognizerStateBegan)
+    {
+        
+        CGPoint point = [gesture locationInView:self.tableView];
+        
+        NSIndexPath * indexPath = [self.tableView indexPathForRowAtPoint:point];
+        
+        TaskModel *task = datas[indexPath.row];
+        
+        if(indexPath == nil) return ;
+        
+        if (self.taskTag == TaskListTypeProcessing) {
+            if (task.state == 3) {
+                self.selectedRow = indexPath.row;
+                
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+                                                                               message:@"当前处方设备正在治疗中，是否进行治疗后vas评分强制结束治疗？"
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * action) {}];
+                UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault
+                                                                 handler:^(UIAlertAction * action) {
+                                                                     [self remarkAction:nil];
+                                                                 }];
+                
+                [alert addAction:cancelAction];
+                [alert addAction:okAction];
+                
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        }
+    }
 }
 
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
@@ -151,8 +189,6 @@
 -(void)initTableHeaderAndFooter{
     
     //下拉刷新
-
-    
     MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
     [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
     [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
@@ -161,13 +197,11 @@
     self.tableView.mj_header = header;
     
     [self.tableView.mj_header beginRefreshing];
-    
-    
     //上拉加载
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
     [footer setTitle:@"" forState:MJRefreshStateRefreshing];
-    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+    [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
     self.tableView.mj_footer = footer;
 }
 
@@ -381,10 +415,7 @@
                 case 3:
                 {
                    [cell configureWithStyle:CellStyleGreen_DownLoadedRunning];
-//                    UILongPressGestureRecognizer * longPressGesture =[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(remarkAction:)];
-//
-//                    longPressGesture.minimumPressDuration=1.5f;//设置长按 时间
-//                    [cell addGestureRecognizer:longPressGesture];
+
                 }
                     break;
                 case 7:
@@ -418,8 +449,8 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     TaskModel *task = datas[indexPath.row];
     switch (self.taskTag) {
-        case TaskListTypeProcessing:
-            if(task.state == 3){
+        case TaskListTypeFinished:
+            if(task.state == 15){
                 self.selectedRow = indexPath.row;
                 [self remarkAction:nil];
 
@@ -440,8 +471,6 @@
 - (void)scanAction:(id)sender {
     
     self.selectedRow = [sender tag];
-    
-    
     
     NSArray *types = @[
                        AVMetadataObjectTypeEAN13Code,
@@ -470,6 +499,8 @@
 -(void)showSuccessView{
     [SVProgressHUD dismiss];
     
+    [self refresh];
+    
     __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
     //本地设备通知服务器绑定设备
     if([task.machineType isEqualToString:@"血瘘"]){
@@ -493,6 +524,7 @@
     
     [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
 
+        
         //设置关注
         NSString *serialNum = task.serialNum;
         
@@ -522,10 +554,9 @@
             if ([responseObject.result intValue]==1) {
                 NSLog(@"关注设备成功");
                 [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
-                [self refresh];
             }else{
                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                [self refresh];
+
             }
         }
         failure:nil];
@@ -618,11 +649,13 @@
         [SVProgressHUD showWithStatus:@"处方下发中……"];
         
         if ([task.machineType isEqualToString:@"血瘘"]) {
+
             if ([result isEqualToString:@"P06A17A00001"]) {
                 self.BLEDeviceName = @"ALX420";
             }else{
                 self.BLEDeviceName = result;
             }
+            
             NSArray *paramArray = task.treatParam[@"paramlist"];
             
             NSString *time = [[paramArray objectAtIndex:0]objectForKey:@"value"];
@@ -632,11 +665,29 @@
             Byte bytes[2] = {[time intValue],[levelDic[level] intValue]};
             self.BLETreatParam = [NSData dataWithBytes:bytes length:2];
             
-            //连接设备
-            [self BLEConnectDevice];
-            [self startTimer];
-            
-            
+            //检查设备是否被其他病人绑定了
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/CheckDeviceEnabled"]
+                                          params:@{@"serialnum":result}
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             if ([responseObject.result integerValue]== 1) {
+                                                 NSString *mac = responseObject.content[@"cpuid"];
+                                                 NSNumber *enabled = responseObject.content[@"enabled"];
+                                                 
+                                                 if ([enabled integerValue] ==1) {
+                                                     //连接设备
+                                                     [self BLEConnectDevice];
+                                                     [self startTimer];
+                                                     
+                                                 }else{
+                                                     [SVProgressHUD showErrorWithStatus:@"设备正忙"];
+                                                 }
+                                             }else{
+                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                             }
+                                         }
+                                         failure:nil];
+
         }else{
             NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
             

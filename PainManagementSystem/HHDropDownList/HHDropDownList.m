@@ -17,7 +17,7 @@
     
     NSMutableArray *_indicatorsArray;
     CAShapeLayer *_indicatorLayer;
-    CATextLayer *_textLayer;
+//    CATextLayer *_textLayer;
     BOOL _isShow;
     
     UITableView *_tableView;
@@ -79,7 +79,7 @@
     [self addGestureRecognizer:tapGesture];
     
     CGPoint position = CGPointMake(self.frame.size.width/2.0, self.frame.size.height/2.0);
-    _textLayer = [self createTextLayerWithText:@"iMac" color:UIColorFromHex(0x919191) withPosition:position];
+    _textLayer = [self createTextLayerWithText:@" " color:UIColorFromHex(0x919191) withPosition:position];
     [self.layer addSublayer:_textLayer];
     
     

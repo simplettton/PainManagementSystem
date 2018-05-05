@@ -15,7 +15,8 @@
 #import "Unpack.h"
 #import <MBProgressHUD.h>
 #import <AVFoundation/AVFoundation.h>
-
+#import "MJRefresh.h"
+#import "MJChiBaoZiHeader.h"
 
 #define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
 #define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
@@ -25,7 +26,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
 {
     electrotherapyTag = 1000,airProTag = 1001,aladdinTag = 1002
 };
-@interface AddDeviceViewController ()<QRCodeReaderDelegate,UITextFieldDelegate>
+@interface AddDeviceViewController ()<QRCodeReaderDelegate,UITextFieldDelegate>{
+    int page;
+    int totalPage;  //总页数
+    BOOL isRefreshing; //是否正在下拉刷新或者上拉加载
+}
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
@@ -64,10 +69,183 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [baby cancelAllPeripheralsConnection];
 }
 
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self initAll];
+
+}
+
+
+-(void)initAll{
+    
+    //默认选中电疗设备
+    UIButton *btn = (UIButton *)[self.contentView viewWithTag:electrotherapyTag];
+    [self changeDevice:btn];
+    //非本地设备
+    isLocalDeviceList = NO;
+    
+    self.tableView.tableFooterView = [[UIView alloc]init];
+
+    datas = [[NSMutableArray alloc]initWithCapacity:20];
+
+    [self initTableHeaderAndFooter];
+    
+}
+#pragma mark - refresh
+
+-(void)initTableHeaderAndFooter{
+    
+    //下拉刷新
+    //    self.tableView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
+    [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
+    [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
+    
+    self.tableView.mj_header = header;
+    [self refresh];
+    
+    
+    //上拉加载
+    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
+    [footer setTitle:@"" forState:MJRefreshStateIdle];
+    [footer setTitle:@"" forState:MJRefreshStateRefreshing];
+    [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
+    self.tableView.mj_footer = footer;
+}
+-(void)refresh{
+    [self askForData:YES];
+}
+
+-(void)loadMore{
+    [self askForData:NO];
+}
+
+
+-(void)endRefresh{
+    
+    if (page == 0) {
+        [self.tableView.mj_header endRefreshing];
+    }
+    [self.tableView.mj_footer endRefreshing];
+}
+
+-(void)askForData:(BOOL)isRefresh{
+    
+    if (!isLocalDeviceList) {
+        datas = [[NSMutableArray alloc]initWithCapacity:20];
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
+        
+        switch (self.selectedDeviceTag) {
+            case electrotherapyTag:
+                
+                [params setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
+                
+                break;
+            case airProTag:
+                
+                [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
+                
+            default:
+                break;
+        }
+        [params setObject:[NSNumber numberWithInt:0] forKey:@"isregistered"];
+        
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnlineCount"]
+                                      params:params
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+
+                                         if ([responseObject.result intValue] == 1) {
+                                             NSString *count = responseObject.content[@"count"];
+                                             NSLog(@"count = %@",count);
+                                             
+                                             //页数
+                                             totalPage = ([count intValue]+15-1)/15;
+                                             
+                                             if ([count intValue] >0) {
+                                                 self.tableView.tableHeaderView.hidden = NO;
+                                                 [self getNetworkData:isRefresh];
+
+                                             }else{
+                                                 [datas removeAllObjects];
+                                                 [self endRefresh];
+                                                 [self.tableView reloadData];
+                                                 self.tableView.tableHeaderView.hidden = YES;
+                                                 
+                                             }
+                                         }else{
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                         }
+                                     } failure:nil];
+        
+    }
+    
+    
+}
+-(void)getNetworkData:(BOOL)isRefresh{
+    
+    if (isRefresh) {
+        page = 0;
+    }else{
+        page ++;
+    }
+    
+    //配置请求http
+    NSMutableDictionary *mutableParam = [[NSMutableDictionary alloc]init];
+    
+    [mutableParam setObject:@0 forKey:@"isregistered"];
+    [mutableParam setObject:[NSNumber numberWithInt:page] forKey:@"page"];
+    NSDictionary *params = (NSDictionary *)mutableParam;
+    
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnline"]
+                                  params:params
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     [self endRefresh];
+                                     isRefreshing = NO;
+                                     
+                                     if (page == 0) {
+                                         [datas removeAllObjects];
+                                     }
+                                     
+                                     if (isRefreshing) {
+                                         if (page >= totalPage) {
+                                             [self endRefresh];
+                                         }
+                                         return;
+                                     }
+                                     
+                                     isRefreshing = YES;
+                                     
+                                     //上拉加载更多
+                                     if (page >=totalPage) {
+                                         [self endRefresh];
+                                         [self.tableView.mj_footer endRefreshingWithNoMoreData];
+                                         return;
+                                     }
+
+                                     if ([responseObject.result intValue] == 1) {
+                                         NSArray *content = responseObject.content;
+                                         if (content) {
+                                             for (NSDictionary *dic in content) {
+                                                 NSLog(@"device = %@",dic);
+                                                 [datas addObject:dic];
+                                             }
+                                             [self.tableView reloadData];
+                                         }
+
+                                     }
+                                 } failure:nil];
+}
+
+#pragma mark - changeDevice
+
 - (IBAction)changeDevice:(UIButton *)sender {
     
     self.selectedDeviceTag = [sender tag];
-
+    
     
     for (int i = electrotherapyTag; i<electrotherapyTag +3; i++) {
         UIButton *btn = (UIButton *)[self.contentView viewWithTag:i];
@@ -93,121 +271,21 @@ typedef NS_ENUM(NSUInteger,typeTags)
         baby.scanForPeripherals().begin();
         
         
-
+        
     }else {
         [baby cancelScan];
         [baby cancelAllPeripheralsConnection];
         
         isLocalDeviceList = NO;
         
-        [self askForData];
+        [self refresh];
         
     }
     [self.tableView reloadData];
 }
 
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self initAll];
-    
-    // Do any additional setup after loading the view.
-}
 
-
--(void)initAll{
-    
-    //默认选中电疗设备
-    UIButton *btn = (UIButton *)[self.contentView viewWithTag:electrotherapyTag];
-    [self changeDevice:btn];
-    //非本地设备
-    isLocalDeviceList = NO;
-    
-    self.tableView.tableFooterView = [[UIView alloc]init];
-
-    datas = [[NSMutableArray alloc]initWithCapacity:20];
-
-}
-
--(void)askForData{
-    if (!isLocalDeviceList) {
-        datas = [[NSMutableArray alloc]initWithCapacity:20];
-        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
-        
-        switch (self.selectedDeviceTag) {
-            case electrotherapyTag:
-
-                [params setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
-                
-                break;
-            case airProTag:
-
-                [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-                
-            default:
-                break;
-        }
-        [params setObject:[NSNumber numberWithInt:0] forKey:@"isregistered"];
-        
-        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnlineCount"]
-                                      params:params
-                                    hasToken:YES
-                                     success:^(HttpResponse *responseObject) {
-                                         
-                                         
-                                         if ([responseObject.result intValue]==1) {
-                                             NSString *count = responseObject.content[@"count"];
-                                             NSLog(@"count = %@",count);
-                                             
-                                             //页数
-                                             NSInteger numberOfPages = ([count integerValue]+15-1)/15;
-                                             
-                                             if ([count intValue] >0) {
-                                                 self.tableView.tableHeaderView.hidden = NO;
-                                                 //遍历页数获取数据
-                                                 for (int i =0; i<numberOfPages; i++) {
-                                                     
-                                                     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnline"]
-                                                                                   params:@{
-                                                                                            @"page":[NSString stringWithFormat:@"%d",i]
-                                                                                            
-                                                                                            }
-                                                                                 hasToken:YES
-                                                                                  success:^(HttpResponse *responseObject) {
-                                                                                      datas = [[NSMutableArray alloc]initWithCapacity:20];
-                                                                                      if ([responseObject.result intValue] == 1) {
-                                                                                          NSArray *content = responseObject.content;
-                                                                                          for (NSDictionary *dic in content) {
-                                                                                              NSLog(@"device = %@",dic);
-                                                                                              [datas addObject:dic];
-                                                                                          }
-                                                                                          
-                                                                                          [self.tableView reloadData];
-                                                                                      }
-                                                                                  } failure:nil];
-                                                 }
-                                             }else{
-                                                 //                                             [datas removeAllObjects];
-                                                 //                                             [self.tableView reloadData];
-                                                 
-//                                                 //假数据
-//                                                 datas = [NSMutableArray arrayWithObjects:
-//                                                          @{@"type":@"空气波",@"cpuid":@"dgahqaa",@"serialnum":@"13654979946"},
-//                                                          @{@"type":@"空气波",@"cpuid":@"fjfjfds",@"serialnum":@"45645615764"},
-//                                                          @{@"type":@"电疗",@"cpuid":@"fstjkst",@"serialnum":@"12367874456"},
-//                                                          nil];
-//                                                 [self.tableView reloadData];
-                                                 [SVProgressHUD showErrorWithStatus:@"没有可录入的设备~"];
-                                                 self.tableView.tableHeaderView.hidden = YES;
-                                                 
-                                             }
-                                         }
-                                     } failure:nil];
-        
-    }
-
-    
-}
 
 #pragma mark - BLE
 -(void)babyDelegate {
@@ -418,8 +496,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     
     //开始连接设备
  baby.having(self.peripheral).connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
-    
-    
+
 }
 
 - (IBAction)saveAll:(id)sender {
@@ -464,7 +541,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                                      [SVProgressHUD setMaximumDismissTimeInterval:0.5];
                                                      [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
                                                      [SVProgressHUD showSuccessWithStatus:@"录入成功"];
-                                                     [self askForData];
+                                                     [self refresh];
                                                  }else{
                                                      [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                                  }
@@ -474,7 +551,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
                 [SVProgressHUD showErrorWithStatus:@"序列号不能为空"];
             }
-            
         }
     }
 

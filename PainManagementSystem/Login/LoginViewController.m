@@ -53,7 +53,9 @@
     //用户名显示
     NSString *userName = [UserDefault objectForKey:@"UserName"];
     
-    self.userNameTextField.text = (userName==nil) ? @"" : userName;
+    BOOL hasRememberUserName = [UserDefault boolForKey:@"HasRememberName"];
+    
+    self.userNameTextField.text = hasRememberUserName ? userName : @"";
     
     [self.passwordTextField setSecureTextEntry:YES];
 
@@ -73,9 +75,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     if ([self.remenberNameSwitch isOn]) {
-        [defaults setObject:self.userNameTextField.text forKey:@"UserName"];
+        [defaults setBool:YES forKey:@"HasRememberName"];
     }else{
-        [defaults setObject:nil forKey:@"UserName"];
+        [defaults setBool:NO forKey:@"HasRememberName"];
     }
     [defaults synchronize];
     
@@ -123,20 +125,27 @@
                 controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
             }else if([role isEqualToString:@"_pmadmin"]){
                 controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
+            }else{
+                [SVProgressHUD showErrorWithStatus:@"该账号权限无法登陆系统"];
             }
             
-            //登录成功保存token role
-            NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+
             
-            [userDefault setObject:token forKey:@"Token"];
-            
-            [userDefault setObject:role forKey:@"Role"];
-            
-            [userDefault setBool:YES forKey:@"IsLogined"];
-            
-            [userDefault synchronize];
-            
-            [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+            if(controller !=nil){
+                //登录成功保存token role
+                NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+                
+                [userDefault setObject:token forKey:@"Token"];
+                
+                [userDefault setObject:role forKey:@"Role"];
+                
+                [userDefault setBool:YES forKey:@"IsLogined"];
+                
+                [userDefault synchronize];
+                
+                [self performSelector:@selector(initRootViewController:) withObject:controller afterDelay:0.25];
+            }
+
             
         }else{
             NSString *error = responseObject.errorString;

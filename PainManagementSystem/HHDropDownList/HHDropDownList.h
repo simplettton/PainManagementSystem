@@ -16,7 +16,6 @@
 - (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList;
 
 @optional
-
 @end
 
 
@@ -35,6 +34,8 @@
 @property (strong, nonatomic) UIColor *highlightColor;  /**< 指示三角 和 高亮文本 的颜色 */
 
 @property (assign, nonatomic) BOOL isExclusive;         /**< 是否对其他相同对象排斥(多个DropDownList对象的列表能否同时展开) */
+
+@property (strong, nonatomic) CATextLayer *textLayer;
 
 @property (weak, nonatomic) id<HHDropDownListDelegate> delegate;
 

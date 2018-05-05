@@ -34,7 +34,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = @"疼痛管理系统";
+//    self.navigationItem.title = @"疼痛管理系统";
     [self initAll];
 }
 
@@ -92,7 +92,13 @@
 -(void)initTableHeaderAndFooter{
     
     //下拉刷新
-    self.tableView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
+    [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
+    [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
+    
+    self.tableView.mj_header = header;
+    
     [self.tableView.mj_header beginRefreshing];
     
     
@@ -100,7 +106,7 @@
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
     [footer setTitle:@"" forState:MJRefreshStateRefreshing];
-    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+    [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
     self.tableView.mj_footer = footer;
 }
 

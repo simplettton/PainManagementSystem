@@ -832,7 +832,7 @@
             </objects>
             <point key="canvasLocation" x="6110.15625" y="-3514.453125"/>
         </scene>
-        <!--Patient List View Controller-->
+        <!--病历列表-->
         <scene sceneID="Nrd-5C-T6w">
             <objects>
                 <viewController id="EjQ-LL-Ts3" customClass="PatientListViewController" sceneMemberID="viewController">
@@ -1005,8 +1005,8 @@
                                     <outlet property="delegate" destination="EjQ-LL-Ts3" id="H6B-1E-946"/>
                                 </connections>
                             </tableView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="病历列表" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AXg-ai-ZTO">
-                                <rect key="frame" x="20" y="80" width="70" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="病历列表" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UQB-9C-xF8">
+                                <rect key="frame" x="28" y="92" width="70" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                                 <color key="textColor" red="0.66422420739999999" green="0.66424006219999998" blue="0.66423153879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1016,7 +1016,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="sla-r6-zMk"/>
                     </view>
-                    <navigationItem key="navigationItem" id="wKy-MB-oct"/>
+                    <navigationItem key="navigationItem" title="病历列表" id="wKy-MB-oct"/>
                     <connections>
                         <outlet property="searchBar" destination="lWE-PG-DQ7" id="ybR-dD-iMR"/>
                         <outlet property="tableView" destination="g3M-lR-9Ra" id="msd-Wm-uGu"/>
@@ -1071,7 +1071,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FHT-5M-7EW">
                                 <rect key="frame" x="10" y="191" width="748" height="70"/>
@@ -1251,6 +1251,7 @@
                         <outlet property="bedNumTextField" destination="CAC-b2-FfV" id="Cj4-p5-OVe"/>
                         <outlet property="birthDayView" destination="Vxs-LP-TUb" id="ALN-vI-oKh"/>
                         <outlet property="birthdayTF" destination="yCf-oN-lAN" id="Yro-Ci-RDt"/>
+                        <outlet property="medicalNumView" destination="4SZ-ep-4de" id="8Ds-00-Itg"/>
                         <outlet property="medicalRecordNumTextField" destination="dYT-kP-gN1" id="npU-Gg-fLj"/>
                         <outlet property="nameTextField" destination="eFV-jh-rXT" id="38e-Cy-pKD"/>
                         <outlet property="phoneTextFiled" destination="4pU-4L-b2M" id="8gx-bd-0uP"/>
@@ -1695,7 +1696,7 @@ CA
                                             <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RCf-K6-CYT">
+                                                <textField hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RCf-K6-CYT">
                                                     <rect key="frame" x="148" y="6" width="600" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="tintColor" red="0.01176470588" green="0.72156862749999995" blue="0.93333333330000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1714,6 +1715,11 @@ CA
                                                     <rect key="frame" x="20" y="11" width="20" height="20"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kz3-Xs-EpW" customClass="HHDropDownList">
+                                                    <rect key="frame" x="147" y="6" width="600" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </view>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -1740,6 +1746,7 @@ CA
                     <connections>
                         <outlet property="contactTextFiled" destination="fpe-OT-u4Y" id="zWI-vE-gTX"/>
                         <outlet property="departmentTextField" destination="RCf-K6-CYT" id="xAJ-JW-lsp"/>
+                        <outlet property="dropDownView" destination="kz3-Xs-EpW" id="aUW-sh-y8x"/>
                         <outlet property="nameTextField" destination="BwE-sW-p2v" id="a2E-ph-BtY"/>
                         <outletCollection property="textFields" destination="BwE-sW-p2v" id="h7a-Im-Com"/>
                         <outletCollection property="textFields" destination="fpe-OT-u4Y" id="ra9-rP-6nE"/>
@@ -2133,6 +2140,7 @@ CA
                                                                 <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="骨科一号" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cK9-1n-FzC">
                                                                     <rect key="frame" x="160" y="7" width="112" height="30"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <color key="tintColor" red="0.36862745099999999" green="0.59215686270000001" blue="0.99607843139999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
                                                                     <textInputTraits key="textInputTraits"/>
@@ -2629,15 +2637,8 @@ CA
                                             <rect key="frame" x="0.0" y="0.0" width="768" height="55.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1234579" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4wP-yD-pNO">
-                                                    <rect key="frame" x="48" y="17" width="110" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
-                                                    <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="王小明" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="08L-gW-LUl">
-                                                    <rect key="frame" x="166" y="17" width="86" height="21"/>
+                                                    <rect key="frame" x="166" y="17" width="84" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
                                                     <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -2673,10 +2674,17 @@ CA
                                                     <rect key="frame" x="681" y="12" width="28" height="28"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
-                                                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="triangle_blue" translatesAutoresizingMaskIntoConstraints="NO" id="6KN-Wh-4ki">
+                                                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="notstarted" translatesAutoresizingMaskIntoConstraints="NO" id="6KN-Wh-4ki">
                                                     <rect key="frame" x="2" y="5" width="46" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1234579" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4wP-yD-pNO">
+                                                    <rect key="frame" x="47" y="17" width="120" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
+                                                    <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
@@ -2717,7 +2725,7 @@ CA
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PoL-kB-Thu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4508.59375" y="-3514.453125"/>
+            <point key="canvasLocation" x="4476" y="-3526"/>
         </scene>
         <!--病历列表-->
         <scene sceneID="hsz-kq-a55">
@@ -3049,6 +3057,7 @@ CA
         <image name="loginBackground" width="1536" height="2048"/>
         <image name="menu_blue" width="28" height="28"/>
         <image name="menu_white" width="28" height="28"/>
+        <image name="notstarted" width="28" height="28"/>
         <image name="password" width="28" height="28"/>
         <image name="pause_green" width="32" height="32"/>
         <image name="pause_grey" width="32" height="32"/>
@@ -3064,14 +3073,13 @@ CA
         <image name="stop_grey" width="32" height="32"/>
         <image name="task" width="28" height="28"/>
         <image name="tips" width="28" height="28"/>
-        <image name="triangle_blue" width="28" height="28"/>
         <image name="user" width="28" height="28"/>
         <image name="username" width="28" height="28"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="j0T-NC-lpM"/>
+        <segue reference="OZU-bU-VP7"/>
         <segue reference="mNo-bM-HVs"/>
-        <segue reference="K2N-0B-seC"/>
+        <segue reference="SjD-3k-MPu"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

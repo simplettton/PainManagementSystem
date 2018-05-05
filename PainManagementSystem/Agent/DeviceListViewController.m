@@ -41,6 +41,7 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    [self refresh];
     [_filterButton.titleLabel addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
@@ -106,7 +107,14 @@
 -(void)initTableHeaderAndFooter{
     
     //下拉刷新
-    self.tableView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+//    self.tableView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
+    [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
+    [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
+    
+    self.tableView.mj_header = header;
+    
     [self.tableView.mj_header beginRefreshing];
     
     
@@ -114,7 +122,7 @@
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
     [footer setTitle:@"" forState:MJRefreshStateRefreshing];
-    [footer setTitle:@"No more data" forState:MJRefreshStateNoMoreData];
+    [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
     self.tableView.mj_footer = footer;
 }
 
@@ -363,6 +371,7 @@
         NSMutableArray *deleteArray = [NSMutableArray array];
         
         for (NSIndexPath *indexPath in self.tableView.indexPathsForSelectedRows) {
+            
             [deleteArray addObject:datas[indexPath.row]];
             
             NSString *cpuid = [datas[indexPath.row]objectForKey:@"cpuid"];
@@ -377,6 +386,26 @@
                                                  dispatch_async(dispatch_get_main_queue(), ^{
                                                      [SVProgressHUD dismiss];
                                                      
+                                                     //删除设备
+                                                     NSMutableArray *currentArray = datas;
+                                                     [currentArray removeObjectsInArray:deleteArray];
+                                                     
+                                                     datas = currentArray;
+                                                     
+                                                     [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
+                                                     
+                                                     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+                                                     dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+                                                         
+                                                         [self.tableView reloadData];
+                                                     });
+                                                     
+                                                     //完成删除后不给选中cell
+                                                     for (DeviceTableViewCell *cell in self.tableView.visibleCells) {
+                                                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                                                     }
+
+                                                     
                                                  });
                                              }else{
                                                  NSString *error = responseObject.errorString;
@@ -389,23 +418,7 @@
         }
         
 
-        NSMutableArray *currentArray = datas;
-        [currentArray removeObjectsInArray:deleteArray];
-        
-        datas = currentArray;
-        
-        [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
-        
-        dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
-        dispatch_after(delayTime, dispatch_get_main_queue(), ^{
-            
-            [self.tableView reloadData];
-        });
-        
-        //完成删除后不给选中cell
-        for (DeviceTableViewCell *cell in self.tableView.visibleCells) {
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        }
+
         
         
     }else{

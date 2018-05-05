@@ -73,7 +73,7 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *IPString = [defaults objectForKey:@"HTTPServerURLSting"];
-    self.IPTextFileld.text = IPString == nil? @"http://192.128.2.127:8888/" :IPString;
+    self.IPTextFileld.text = IPString == nil? @"http://192.168.2.127:8888/" :IPString;
 
     
 }
