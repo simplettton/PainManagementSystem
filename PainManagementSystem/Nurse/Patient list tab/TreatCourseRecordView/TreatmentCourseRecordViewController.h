@@ -12,5 +12,6 @@
 @property (nonatomic,strong)PatientModel *patient;
 //判断是否从处方列表里进入
 @property (nonatomic,strong)NSString *medicalRecordNum;
-
+//判断是否强制评分
+@property (nonatomic,assign)BOOL isFocusToStop;
 @end

@@ -72,7 +72,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-
+    [self refresh];
     
 }
 - (void)viewDidLoad {
@@ -88,7 +88,11 @@
     if (self.timer) {
         [self closeTimer];
     }
+    if ([self.presentedViewController isKindOfClass:[PopoverTreatwayController class]]) {
+        [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+    }
 }
+
 -(void)initAll{
     
     self.view.multipleTouchEnabled = NO;
@@ -156,6 +160,7 @@
 }
 
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
+    [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
     NSInteger index = segmentedControl.selectedSegmentIndex;
     switch (index) {
         case 0:
@@ -181,6 +186,8 @@
             break;
     }
     [SVProgressHUD dismiss];
+    [datas removeAllObjects];
+    [self.tableView reloadData];
     [self refresh];
     
     
@@ -310,8 +317,22 @@
                                          NSArray *content = responseObject.content;
                                          
                                          if (content) {
+                                             NSArray *localMachineTaskIds = [self returnLocalMachineTaskIdArray];
+                                             
                                              for (NSDictionary *dic in content) {
+                                                 
                                                  TaskModel *task = [TaskModel modelWithDic:dic];
+                                                 
+                                                 //处理中的任务 本地设备设置关注
+                                                 if (self.segmentedControl.selectedSegmentIndex == 1) {
+                                                     if ([task.machineType isEqualToString:@"血瘘"]) {
+                                                         if ([localMachineTaskIds containsObject:task.ID]) {
+                                                             task.isFocus = true;
+                                                         }else{
+                                                             task.isFocus = false;
+                                                         }
+                                                     }
+                                                 }
                                                  
                                                  if (![datas containsObject:dic]) {
                                                      [datas addObject:task];
@@ -352,7 +373,14 @@
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    static NSString *CellIdentifier = @"Cell";
+    TaskModel *task = datas[indexPath.row];
+    
+    static NSString *CellIdentifier;
+    if (self.taskTag == TaskListTypeFinished) {
+        CellIdentifier = @"FinishedTaskCell";
+    }else{
+        CellIdentifier = @"Cell";
+    }
     TaskCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     if (cell == nil) {
         cell = [[TaskCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -360,8 +388,8 @@
     
 
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.patientNameLabel.numberOfLines = 0;
 
-    TaskModel *task = datas[indexPath.row];
     cell.doctorNameLable.text = task.doctorName;
     cell.medicalRecordNumLable.text  = task.medicalRecordNum;
     cell.patientNameLabel.text = task.patientName;
@@ -375,6 +403,7 @@
     switch (self.taskTag) {
         case TaskListTypeNotStarted:
         {
+            self.headerLastLabel.hidden = NO;
             //配置治疗设备显示文字
             switch ([task.machineTypeNumber integerValue]) {
                     
@@ -399,28 +428,45 @@
             [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
             [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
             cell.scanButton.tag = indexPath.row;
+            self.headerLastLabel.text = @"下发处方";
         }
-
             break;
         case TaskListTypeProcessing:
+            self.headerLastLabel.hidden = YES;
             switch (task.state) {
                 case 1:
                     [cell configureWithStyle:CellStyleGrey_DownLoadedUnRunning];
                     
                     //扫描action
                     [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell.scanButton removeTarget:self action:@selector(focusAction:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell.scanButton removeTarget:self action:@selector(unfocusAction:) forControlEvents:UIControlEventTouchUpInside];
                     [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
                     cell.scanButton.tag = indexPath.row;
                     break;
                 case 3:
                 {
-                   [cell configureWithStyle:CellStyleGreen_DownLoadedRunning];
+                    [cell configureWithStyle:CellStyleGreen_DownLoadedRunning];
+                    [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell.scanButton removeTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
+                    if (task.isFocus) {
+                        [cell.scanButton setImage:[UIImage imageNamed:@"focus_fill"] forState:UIControlStateNormal];
+                        [cell.scanButton addTarget:self action:@selector(unfocusAction:) forControlEvents:UIControlEventTouchUpInside];
+                        
+                    }else{
+                        [cell.scanButton setImage:[UIImage imageNamed:@"focus_unfill"] forState:UIControlStateNormal];
+                        [cell.scanButton addTarget:self action:@selector(focusAction:) forControlEvents:UIControlEventTouchUpInside];
+                    }
+
+                    cell.scanButton.tag = indexPath.row;
 
                 }
                     break;
                 case 7:
                     [cell configureWithStyle:CellStyleBlue_DownLoadedFinishRunning];
                     //评分action
+                    [cell.scanButton removeTarget:self action:@selector(focusAction:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell.scanButton removeTarget:self action:@selector(unfocusAction:) forControlEvents:UIControlEventTouchUpInside];
                     [cell.scanButton removeTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
                     [cell.scanButton addTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
                     cell.scanButton.tag = indexPath.row;
@@ -432,34 +478,36 @@
             
             break;
         case TaskListTypeFinished:
+            self.headerLastLabel.hidden = NO;
+            self.headerLastLabel.text = @"完成时间";
             [cell configureWithStyle:CellStyle_DownLoadedRemarked];
             [cell setTypeLableColor:UIColorFromHex(0x212121)];
+            cell.finishTimeLabel.text =[self stringFromTimeIntervalString:task.finishTimeString dateFormat:@"yyyy-MM-dd"];
             break;
         default:
             break;
     }
     
-    //第一个tab显示下发处方
-    self.headerLastLabel.hidden = _segmentedControl.selectedSegmentIndex != TaskListTypeNotStarted;
+//    //第一个tab显示下发处方
+//    self.headerLastLabel.hidden = (_segmentedControl.selectedSegmentIndex == TaskListTypeProcessing);
 
-    
     return cell;
     
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     TaskModel *task = datas[indexPath.row];
-    switch (self.taskTag) {
-        case TaskListTypeFinished:
-            if(task.state == 15){
+//    switch (self.taskTag) {
+//        case TaskListTypeFinished:
+//        case TaskListTypeNotStarted:
+            if(task.state != 3){
                 self.selectedRow = indexPath.row;
                 [self remarkAction:nil];
-
             }
-            break;
-
-        default:
-            break;
-    }
+//            break;
+//
+//        default:
+//            break;
+//    }
 }
 
 -(void)showPopover:(UIButton *)sender {
@@ -495,6 +543,37 @@
     [self performSegueWithIdentifier:@"TaskGoToRemarkVAS" sender:sender];
     
 }
+-(void)focusAction:(id)sender{
+    
+    self.selectedRow = [sender tag];
+    
+    TaskModel *task = [datas objectAtIndex:self.selectedRow];
+    
+    [self focusMachineWithTask:task];
+    
+}
+-(void)unfocusAction:(id)sender{
+    
+    self.selectedRow = [sender tag];
+    
+    __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要取消关注设备吗？"
+                                                                   message:@"取消关注操作将不可恢复。"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                          handler:nil];
+    UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注"
+                                                                style:UIAlertActionStyleDestructive
+                                                              handler:^(UIAlertAction * _Nonnull action) {
+                                                                  [self unfocusMachineWithTask:task];
+                                                              }];
+    [alert addAction:defaultAction];
+    
+    [alert addAction:cancelFocusAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 -(void)showSuccessView{
     [SVProgressHUD dismiss];
@@ -524,99 +603,214 @@
     
     [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
 
-        
-        //设置关注
-        NSString *serialNum = task.serialNum;
-        
-        //本地设备关注存在文件里
-        if([task.machineType isEqualToString:@"血瘘"]){
-            serialNum = @"P06A17A00001";
-            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
-        params:@{
-                    @"medicalrecordnum":task.medicalRecordNum
-                 }
-        hasToken:YES
-        success:^(HttpResponse *responseObject) {
-            
-            NSLog(@"content = %@",responseObject.content);
-            NSArray *machineArray = responseObject.content;
-            LocalMachineModel *machine = [LocalMachineModel modelWithDic:machineArray[0]];
-            [self saveLocalDevice:machine];
-            }failure:nil];
-        }
-
-        //在线设备和本地设备通知服务器关注
-        if(serialNum){
-            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
-        params:@{@"serialnum":serialNum}
-        hasToken:YES
-        success:^(HttpResponse *responseObject) {
-            if ([responseObject.result intValue]==1) {
-                NSLog(@"关注设备成功");
-                [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
-            }else{
-                [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-
-            }
-        }
-        failure:nil];
-        }
+        [self focusMachineWithTask:task];
+//        //设置关注
+//        NSString *serialNum = task.serialNum;
+//
+//        //本地设备关注存在文件里
+//        if([task.machineType isEqualToString:@"血瘘"]){
+////            serialNum = @"P06A17A00001";
+//
+//            [self focusLocalMachineWithMedicalNum:task.medicalRecordNum];
+//        }else{
+//            //在线设备通知服务器关注
+//            [self focusMachineWithSerialNum:serialNum];
+//        }
     }];
+}
+-(void)focusMachineWithTask:(TaskModel *)task{
+    if ([task.machineType isEqualToString:@"血瘘"]) {
+        if (!task.serialNum) {
+            task.serialNum = @"P06A17A00001";
+        }
+        NSString *medicalNum = task.medicalRecordNum;
+        if (medicalNum) {
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
+                                          params:@{
+                                                   @"medicalrecordnum":medicalNum
+                                                   }
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             
+                                             if (responseObject.content) {
+                                                 NSLog(@"local machine = %@",responseObject.content);
+                                                 NSArray *machineArray = responseObject.content;
+                                                 LocalMachineModel *machine = [LocalMachineModel modelWithDic:machineArray[0]];
+                                                 machine.taskId = task.ID;
+                                                 
+                                                 
+                                                 //关注本地设备
+                                                 NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+                                                 
+                                                 
+                                                 if (!documents)
+                                                 {
+                                                     NSLog(@"目录未找到");
+                                                 }
+                                                 NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
+                                                 NSFileManager *fileManager = [NSFileManager defaultManager];
+                                                 //machine Array
+                                                 NSArray *localMachineArray = [[NSArray alloc]init];
+                                                 if (![fileManager fileExistsAtPath:documentPath])
+                                                 {
+                                                     //没有文件就新建文件
+                                                     [fileManager createFileAtPath:documentPath contents:nil attributes:nil];
+                                                 }else{
+                                                     //有文件就去取文件中的数据
+                                                     
+                                                     NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
+                                                     NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
+                                                     localMachineArray = [unArchiver decodeObjectForKey:@"machineArray"];
+                                                 }
+                                                 
+                                                 NSMutableArray *array = [NSMutableArray arrayWithArray:localMachineArray];
+                                                 BOOL isBinded = NO;
+                                                 //病历号重复则重新绑定
+                                                 for (LocalMachineModel *savedMachine in array) {
+                                                     if ([savedMachine.userMedicalNum isEqualToString:machine.userMedicalNum]) {
+                                                         NSUInteger index = [array indexOfObject:savedMachine];
+                                                         [array replaceObjectAtIndex:index withObject:machine];
+                                                         isBinded = YES;
+                                                         break;
+                                                     }
+                                                 }
+                                                 if (!isBinded) {
+                                                     [array addObject:machine];
+                                                 }
+                                                 localMachineArray = [array copy];
+                                                 
+                                                 //写入文件
+                                                 NSMutableData *data = [[NSMutableData alloc] init] ;
+                                                 NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data] ;
+                                                 [archiver encodeObject:localMachineArray forKey:@"machineArray"];
+                                                 [archiver finishEncoding];
+                                                 
+                                                 BOOL success = [data writeToFile:documentPath atomically:YES];
+                                                 if (!success)
+                                                 {
+                                                     NSLog(@"写入文件失败");
+                                                     [SVProgressHUD showErrorWithStatus:@"关注失败"];
+                                                 }else{
+                                                     NSLog(@"写入文件成功");
+                                                     [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+                                                     task.isFocus = YES;
+                                                     [self.tableView reloadData];
+                                                 }
+                                                
+                                             }
+                                         }failure:nil];
+        }
+
+    }
+    else if (task.serialNum) {
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
+                                          params:@{@"serialnum":task.serialNum}
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             if ([responseObject.result intValue]==1) {
+                                                 NSLog(@"关注设备成功");
+                                                 [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+
+                                                 task.isFocus = true;
+
+                                                 [self.tableView reloadData];
+                                             }else{
+                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                 
+                                             }
+                                         }
+                                         failure:nil];
+        }
     
 }
--(void)saveLocalDevice:(LocalMachineModel *)machine{
-    //文件名
-    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+-(void)unfocusMachineWithTask:(TaskModel *)task{
+    if ([task.machineType isEqualToString:@"血瘘"]) {
+        if(!task.serialNum){
+            task.serialNum = @"P06A17A00001";
+        }
+        NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+        NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        //machine Array
+        NSArray *machineArray = [[NSArray alloc]init];
+        if ([fileManager fileExistsAtPath:documentPath]) {
+            
+            NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
+            NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
+            machineArray = [unArchiver decodeObjectForKey:@"machineArray"];
+            NSMutableArray *array = [NSMutableArray arrayWithArray:machineArray];
+            
+            for (LocalMachineModel *savedMachine in array) {
+                if ([savedMachine.userMedicalNum isEqualToString:task.medicalRecordNum]) {
+                    NSUInteger index = [array indexOfObject:savedMachine];
+                    [array removeObjectAtIndex:index];
+                    break;
+                }
+                
+            }
+            machineArray = [array copy];
+            //写入文件
+            NSMutableData *data = [[NSMutableData alloc] init] ;
+            NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data] ;
+            [archiver encodeObject:machineArray forKey:@"machineArray"];
+            [archiver finishEncoding];
+            
+            BOOL success = [data writeToFile:documentPath atomically:YES];
+            if (!success)
+            {
+                NSLog(@"取消关注失败");
+                [SVProgressHUD showErrorWithStatus:@"无法取消关注"];
+
+            }else{
+                [SVProgressHUD showSuccessWithStatus:@"已取消关注"];
+                task.isFocus = NO;
+                [self.tableView reloadData];
+            }
+        }
+    }
+    else if(task.serialNum){
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Delete"]
+                                      params:@{@"serialnum":task.serialNum}
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         
+                                         if([responseObject.result intValue] == 1){
+                                             [SVProgressHUD showErrorWithStatus:@"已取消关注"];
+                                             task.isFocus = false;
+                                             [self.tableView reloadData];
+
+                                         }else{
+                                             NSLog(@"取消关注错误:%@",responseObject.errorString);
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                         }
+                                         
+                                     }
+                                     failure:nil];
+    }
+}
+-(NSArray *)returnLocalMachineTaskIdArray{
+    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject];
     if (!documents)
     {
         NSLog(@"目录未找到");
     }
     NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    //machine Array
-    NSArray *machineArray = [[NSArray alloc]init];
-    if (![fileManager fileExistsAtPath:documentPath])
-    {
-        //没有文件就新建文件
-        [fileManager createFileAtPath:documentPath contents:nil attributes:nil];
-    }else{
-        //有文件就去取文件中的数据
-
+    
+    NSMutableArray *mutableTaskIdArray = [[NSMutableArray alloc]initWithCapacity:20];
+    
+    if ([fileManager fileExistsAtPath:documentPath]) {
         NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
         NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
-        machineArray = [unArchiver decodeObjectForKey:@"machineArray"];
-    }
-    
-    NSMutableArray *array = [NSMutableArray arrayWithArray:machineArray];
-    BOOL isBinded = NO;
-    //病历号重复则重新绑定
-    for (LocalMachineModel *savedMachine in array) {
-        if ([savedMachine.userMedicalNum isEqualToString:machine.userMedicalNum]) {
-            NSUInteger index = [array indexOfObject:savedMachine];
-            [array replaceObjectAtIndex:index withObject:machine];
-            isBinded = YES;
-            break;
-        }
-    }
-    if (!isBinded) {
-        [array addObject:machine];
-    }
-    machineArray = [array copy];
-    
-    //写入文件
-    NSMutableData *data = [[NSMutableData alloc] init] ;
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data] ;
-    [archiver encodeObject:machineArray forKey:@"machineArray"];
-    [archiver finishEncoding];
-    
-    BOOL success = [data writeToFile:documentPath atomically:YES];
-    if (!success)
-    {
-        NSLog(@"写入文件失败");
-    }else{
-        NSLog(@"写入文件成功");
-    }
+        NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
 
+        for (LocalMachineModel *savedMachine in savedArray){
+            [mutableTaskIdArray addObject:savedMachine.taskId];
+        }
+
+    }
+    NSArray *taskIdArray = [mutableTaskIdArray copy];
+    return taskIdArray;
 }
 
 -(void)showFailView{
@@ -886,11 +1080,29 @@
         TreatmentCourseRecordViewController *controller = segue.destinationViewController;
         TaskModel *task = [datas objectAtIndex:self.selectedRow];
         controller.medicalRecordNum = task.medicalRecordNum;
+        if (task.state == 3) {
+            controller.isFocusToStop = TRUE;
+        }
     }
 }
 
 -(UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
     return UIModalPresentationNone;
 }
-
+//时间戳字符串转化为日期或时间
+- (NSString *)stringFromTimeIntervalString:(NSString *)timeString dateFormat:(NSString*)dateFormat
+{
+    // 格式化时间
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setTimeZone: [NSTimeZone timeZoneWithName:@"Asia/Beijing"]];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDateFormat:dateFormat];
+    
+    // 毫秒值转化为秒
+    NSDate* date = [NSDate dateWithTimeIntervalSince1970:[timeString doubleValue]];
+    NSString* dateString = [formatter stringFromDate:date];
+    
+    return dateString;
+}
 @end

@@ -142,11 +142,14 @@
     NSString *personName = self.nameTextField.text;
     NSString *contact = self.contactTextFiled.text;
 //    NSString *department = self.departmentTextField.text;
+    NSMutableDictionary *params = [[NSMutableDictionary alloc]initWithCapacity:20];
+    [params setObject:personName forKey:@"personname"];
+    [params setObject:contact forKey:@"contact"];
+    if (self.departmentId) {
+        [params setObject:self.departmentId forKey:@"department"];
+    }
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/ChangeSelfInfo"]
-                                                                             params:@{@"personname":personName,
-                                                                                      @"contact":contact,
-                                                                                      @"department":self.departmentId
-                                                                                      }
+                                                                             params:params
                                                                            hasToken:YES
                                                                             success:^(HttpResponse *responseObject) {
                                                                                 if ([responseObject.result intValue] == 1) {

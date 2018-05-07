@@ -16,6 +16,7 @@ typedef enum _CellStyle {
 } CellStyle;
 @implementation LocalMachineModel
 -(void)encodeWithCoder:(NSCoder *)aCoder{
+    [aCoder encodeObject:self.taskId forKey:@"taskId"];
     [aCoder encodeObject:self.name forKey:@"name"];
     [aCoder encodeObject:self.cpuid forKey:@"cpuid"];
     [aCoder encodeObject:self.serialNum forKey:@"serialNum"];
@@ -29,6 +30,8 @@ typedef enum _CellStyle {
 }
 -(instancetype)initWithCoder:(NSCoder *)aDecoder{
     if (self = [super init]) {
+        
+        self.taskId = [aDecoder decodeObjectForKey:@"taskId"];
         self.name = [aDecoder decodeObjectForKey:@"name"];
         self.cpuid = [aDecoder decodeObjectForKey:@"cpuid"];
         self.serialNum = [aDecoder decodeObjectForKey:@"serialNum"];

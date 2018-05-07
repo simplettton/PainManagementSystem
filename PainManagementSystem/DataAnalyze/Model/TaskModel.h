@@ -34,7 +34,13 @@
 
 @property(nonatomic,copy)NSString *doctorName;
 
-//下发出访实际设备
+@property(nonatomic,assign)BOOL isFocus;
+
+@property(nonatomic,strong)NSDate *finishTime;
+
+@property(nonatomic,copy)NSString *finishTimeString;
+
+//下发处方实际设备
 @property(nonatomic,copy)NSString *serialNum;
 
 -(instancetype)initWithDic:(NSDictionary* )dict;

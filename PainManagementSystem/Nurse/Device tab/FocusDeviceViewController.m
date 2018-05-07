@@ -929,6 +929,18 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                                   if(self.tag == DeviceTypeOnline){
                                                                       MachineModel *machine = (MachineModel *)objc;
                                                                       serialNum = machine.serialNum;
+                                                                      [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Delete"]
+                                                                                                    params:@{@"serialnum":serialNum}
+                                                                                                  hasToken:YES
+                                                                                                   success:^(HttpResponse *responseObject) {
+                                                                                                       if([responseObject.result intValue] == 1){
+                                                                                                           [SVProgressHUD showErrorWithStatus:@"已取消关注"];
+                                                                                                       }else{
+                                                                                                           [SVProgressHUD showErrorWithStatus:responseObject.errorString];                                NSLog(@"取消关注错误:%@",responseObject.errorString);
+                                                                                                       }
+                                                                                                       
+                                                                                                   }
+                                                                                                   failure:nil];
   
                                                                   }else{
                                                                       LocalMachineModel *machine = (LocalMachineModel *)objc;
@@ -936,19 +948,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                                       [self unfollowLocalDevice:machine];
                                                                       
                                                                   }
-                                                                  [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Delete"]
-                                                                                                params:@{@"serialnum":serialNum}
-                                                                                              hasToken:YES
-                                                                                               success:^(HttpResponse *responseObject) {
-                                                                                                   if([responseObject.result intValue] == 1){
-                                                                                                       [SVProgressHUD showErrorWithStatus:@"已取消关注"];
-                                                                                                   }else{
-                                                                                                       NSLog(@"取消关注错误:%@",responseObject.errorString);
-                                                                                                   }
-                                                                                                   
-                                                                                               }
-                                                                                               failure:nil];
-                                                                  
+
+
                                                                   for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
                                                                       [self stopShake:cell];
                                                                   }
@@ -973,6 +974,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
         NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
         machineArray = [unArchiver decodeObjectForKey:@"machineArray"];
+        
         NSMutableArray *array = [NSMutableArray arrayWithArray:machineArray];
         
         for (LocalMachineModel *savedMachine in array) {
@@ -993,9 +995,10 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         BOOL success = [data writeToFile:documentPath atomically:YES];
         if (!success)
         {
-            NSLog(@"取消关注成功");
+            [SVProgressHUD showErrorWithStatus:@"无法取消关注设备"];
+
         }else{
-            NSLog(@"取消关注失败");
+            [SVProgressHUD showSuccessWithStatus:@"已取消关注"];
         }
 
     }
@@ -1134,10 +1137,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                         //补关注设备
                                                         if ([machine.type isEqualToString:@"血瘘"]) {
                                                             LocalMachineModel *machine = [LocalMachineModel modelWithDic:content[0]];
+//                                                            machine.taskId = task.ID;
                                                             [self saveLocalDevice:machine];
                                                             
                                                         }
-                                                        if (machine.serialNum) {
+                                                        else if (machine.serialNum) {
                                                             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
                                                                                           params:@{@"serialnum":machine.serialNum}
                                                                                         hasToken:YES
@@ -1217,9 +1221,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     BOOL success = [data writeToFile:documentPath atomically:YES];
     if (!success)
     {
-        NSLog(@"写入文件失败");
+        [SVProgressHUD showErrorWithStatus:@"无法关注设备"];
     }else{
-        NSLog(@"写入文件成功");
+        [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
         [self loadLocalMachineData];
     }
     
@@ -1234,17 +1238,49 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     }
     NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
     NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    
     if ([fileManager fileExistsAtPath:documentPath]) {
         NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
         NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
-        NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
+        __block NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
         NSMutableArray *array = [NSMutableArray arrayWithArray:savedArray];
-        datas = array;
-        [self endRefresh];
-        if(datas){
-            [self.collectionView reloadData];
-        }
+ 
+        __block NSArray *serverTaskListArray = [[NSArray alloc]init];
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/RunningTaskList"]
+                                      params:nil
+                                    hasToken:YES success:^(HttpResponse *responseObject) {
+                                        if ([responseObject.result intValue] ==1) {
+                                            if (responseObject.content) {
+                                                serverTaskListArray = (NSArray *)responseObject.content;
+                                                
+                                                //比对处理中的任务 没有则取消关注
+                                                for (LocalMachineModel *machine in savedArray){
+                                                    if (![serverTaskListArray containsObject:machine.taskId]) {
+                                                        
+                                                        NSUInteger index = [array indexOfObject:machine];
+                                                        [array removeObjectAtIndex:index];
+//
+                                                    }
+                                                }
+                                                
+                                                datas = array;
+                                                [self endRefresh];
+                                                if(datas){
+                                                    [self.collectionView reloadData];
+                                                }
+                                            }
+                                        }else{
+                                            [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                        }
+                                        
+                                    } failure:nil];
+        
     }
+    
+
+    
+    
 }
 
 #pragma mark - BLE
@@ -1297,8 +1333,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 //    _HUD = [MBProgressHUD showHUDAddedTo:deviceCell animated:YES];
     [self.collectionView reloadData];
     [SVProgressHUD showWithStatus:[NSString stringWithFormat:@"连接设备%@中...",machine.name]];
-    
-    
+
 }
 -(void)babyDelegate{
     __weak typeof(self) weakSelf = self;

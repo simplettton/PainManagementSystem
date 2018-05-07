@@ -136,6 +136,7 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";
     TreatRecordCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
@@ -164,7 +165,13 @@
     __block NSMutableArray *array = (NSMutableArray *)[cell.vasLabel.text componentsSeparatedByString:@"/"];
     __block NSString *idString = record.ID;
     __block NSNumber *isForceToStop;
-    if (self.medicalRecordNum || [record.machineType isEqualToString:@"血瘘"]) {
+//    if (self.medicalRecordNum || [record.machineType isEqualToString:@"血瘘"]) {
+//        isForceToStop = @1;
+//    }else{
+//        isForceToStop = @0;
+//    }
+    
+    if (self.isFocusToStop || [record.machineType isEqualToString:@"血瘘"]) {
         isForceToStop = @1;
     }else{
         isForceToStop = @0;
@@ -193,6 +200,9 @@
                 
                 NSString *newValue = [array componentsJoinedByString:@"/"];
                 cell.vasLabel.text = newValue;
+                if (self.medicalRecordNum) {
+                    [self.navigationController popViewControllerAnimated:YES];
+                }
             }];
         }];
         
@@ -211,10 +221,13 @@
             
             NSString *newValue = [array componentsJoinedByString:@"/"];
             cell.vasLabel.text = newValue;
+                                                                
+            if (self.medicalRecordNum) {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
         }];
     }
-    
-    
+
 }
 -(void)getStandardEvaluation{
     //获取评分标准

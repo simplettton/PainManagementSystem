@@ -10,6 +10,8 @@
 
 @interface LocalMachineModel : NSObject<NSCoding>
 
+//taskId
+@property(nonatomic,copy)NSString *taskId;
 //设备基本信息
 @property(nonatomic,copy)NSString *name;
 

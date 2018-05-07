@@ -42,6 +42,18 @@
         //任务id
         self.ID = dict[@"id"];
         
+        //是否关注设备
+        self.isFocus = ([dict[@"isfocus"]intValue] == 1)? YES:NO;
+        
+        //治疗完成时间
+        
+        NSString *finishTimeString = dict[@"finishtime"];
+        self.finishTime = (NSDate *)[NSDate dateWithTimeIntervalSince1970:[finishTimeString doubleValue]];
+        self.finishTimeString = dict[@"finishtime"];
+        
+        //实际下发序列号
+        self.serialNum = dict[@"serialnum"];
+        
     }
     return self;
 }
