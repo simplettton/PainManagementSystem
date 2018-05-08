@@ -94,11 +94,13 @@
     if (tableView == self.rootTableView) {
         //基本情况
         if (indexPath.section == [titles indexOfObject:@"基本情况"]) {
-            return 4*KRowInterval+3*KRowHeight+KTitleViewHeight+KPartInterval;
+//            return 4*KRowInterval+3*KRowHeight+KTitleViewHeight+KPartInterval;
+            return UITableViewAutomaticDimension;
         }
         //诊断结果
         if ((indexPath.section == [titles indexOfObject:@"诊断结果"]) || (indexPath.section == [titles indexOfObject:@"物理治疗方法"])) {
-            return 2*KRowInterval+1*KRowHeight+KTitleViewHeight+KPartInterval;
+//            return 2*KRowInterval+1*KRowHeight+KTitleViewHeight+KPartInterval;
+            return UITableViewAutomaticDimension;
         }
         //西医病历采集
         if (indexPath.section == [titles indexOfObject:@"西医病历采集"]) {
@@ -156,6 +158,8 @@
         }
         cell.titleLabel.text = titles[indexPath.section];
         
+
+        
         switch (indexPath.section) {
             case 0:
             {
@@ -185,6 +189,10 @@
             case 3:
             {
                 cell.contentLabel.text = [NSString stringWithFormat:@"病理因素：%@          发病部位：%@         中医辨证：%@",self.recordModel.painfactorW,self.recordModel.painArea,self.recordModel.painfactorE];
+                
+                cell.contentLabel.numberOfLines = 0;
+                cell.contentLabel.lineBreakMode = NSLineBreakByWordWrapping;
+                
                 return cell;
             }
                 break;

@@ -21,6 +21,12 @@
     
     self.backGroundView.layer.borderWidth = 0.5f;
     self.backGroundView.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
+    
+    self.patientLabel.numberOfLines = 0;
+    self.patientLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    [self.patientLabel sizeToFit];
+    
+    
 
 }
 

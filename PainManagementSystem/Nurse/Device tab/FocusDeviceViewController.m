@@ -1124,7 +1124,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                       params:@{
                                                @"medicalrecordnum":self.searchBar.text,
-                                               @"needlocal":@1
+                                               @"needlocal":@1,
+                                               @"taskstate":@135
                                                }
                                     hasToken:YES success:^(HttpResponse *responseObject) {
                                         if ([responseObject.result intValue] == 1) {
@@ -1239,13 +1240,13 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    
+
     if ([fileManager fileExistsAtPath:documentPath]) {
         NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
         NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
         __block NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
         NSMutableArray *array = [NSMutableArray arrayWithArray:savedArray];
- 
+
         __block NSArray *serverTaskListArray = [[NSArray alloc]init];
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/RunningTaskList"]
                                       params:nil
@@ -1253,17 +1254,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                         if ([responseObject.result intValue] ==1) {
                                             if (responseObject.content) {
                                                 serverTaskListArray = (NSArray *)responseObject.content;
-                                                
+
                                                 //比对处理中的任务 没有则取消关注
                                                 for (LocalMachineModel *machine in savedArray){
                                                     if (![serverTaskListArray containsObject:machine.taskId]) {
-                                                        
+
                                                         NSUInteger index = [array indexOfObject:machine];
                                                         [array removeObjectAtIndex:index];
-//
                                                     }
                                                 }
-                                                
+
                                                 datas = array;
                                                 [self endRefresh];
                                                 if(datas){
@@ -1273,11 +1273,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                         }else{
                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                         }
-                                        
+
                                     } failure:nil];
-        
+
     }
-    
+
 
     
     

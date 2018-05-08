@@ -34,7 +34,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    self.navigationItem.title = @"疼痛管理系统";
     [self initAll];
 }
 
@@ -69,6 +68,9 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.separatorInset = UIEdgeInsetsMake(0, 5, 0, 20);
     
+    self.tableView.estimatedRowHeight = 53;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     [self initTableHeaderAndFooter];
 
@@ -79,9 +81,29 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
-    [self refresh];
-
     
+    BOOL isNewPatientAdded = true;
+    
+    if (self.patient) {
+        for (PatientModel *patient in datas) {
+            if ([patient.medicalRecordNum isEqualToString:self.patient.medicalRecordNum]) {
+                
+                NSInteger index = [datas indexOfObject:patient];
+                
+                [datas replaceObjectAtIndex:index withObject:self.patient];
+                
+                [self.tableView reloadData];
+                
+                isNewPatientAdded = false;
+                
+                break;
+            }
+        }
+        if (isNewPatientAdded) {
+            [self refresh];
+        }
+    }
+
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
@@ -112,7 +134,7 @@
 
 -(void)refresh
 {
-    
+
     isFilteredList = NO;
     //清空搜索框的文字
     if ([self.searchBar.text length]>0) {
@@ -302,9 +324,6 @@
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 53;
-}
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
@@ -328,18 +347,12 @@
     cell.ageLabel.text = patient.age;
     cell.unfinishImage.hidden = !patient.isInTheTask;
     
-//    if (!cell.unfinishImage.hidden) {
-//        CABasicAnimation* rotationAnimation;
-//        rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-//        rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0 ];
-//        rotationAnimation.duration = 1.0f;
-//        rotationAnimation.cumulative = YES;
-//        rotationAnimation.repeatCount = 100000;
-//        
-//        [cell.unfinishImage.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
-//    }
-
-    
+    //病历号和名字过长自动分行
+    cell.nameLabel.numberOfLines = 0;
+    cell.nameLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    cell.medicalRecordNumLabel.numberOfLines = 0;
+    cell.medicalRecordNumLabel.lineBreakMode = NSLineBreakByWordWrapping;
+ 
     
     cell.editButton.tag = indexPath.row;
     [cell.editButton addTarget:self action:@selector(editPatientInfomation:) forControlEvents:UIControlEventTouchUpInside];
@@ -373,7 +386,7 @@
     PatientModel *patientInfo = datas[interger];
     
     [self performSegueWithIdentifier:@"ShowTreatmentCourseRecord" sender:patientInfo];
-
+    
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{

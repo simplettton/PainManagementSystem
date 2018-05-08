@@ -162,6 +162,9 @@
     Question *question = [[Question alloc]init];
     question.name = dic[@"showname"];
     question.selectionString = dic[@"value"];
+    if ([dic[@"value"]isEqualToString:@""]) {
+        question.selectionString = @" ";
+    }
     
     return question;
     

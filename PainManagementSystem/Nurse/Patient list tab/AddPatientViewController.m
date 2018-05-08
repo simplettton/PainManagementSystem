@@ -7,6 +7,7 @@
 //
 
 #import "AddPatientViewController.h"
+#import "PatientListViewController.h"
 #import "QRCodeReaderViewController.h"
 #import "NSDate+BRAdd.h"
 #import "BETextField.h"
@@ -161,10 +162,10 @@
     
     [params setObject:self.phoneTextFiled.text forKey:@"contact"];
     
-//    if ([self.bedNumTextField.text length]>0) {
+
     
     [params setObject:self.bedNumTextField.text forKey:@"bednum"];
-//    }
+
 
 
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
@@ -177,7 +178,30 @@
 
                                          [SVProgressHUD showSuccessWithStatus:@"保存成功"];
                                          
-                                         [self.navigationController popViewControllerAnimated:YES];
+                                         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Patient/ListByQuery"]
+                                                                       params:@{@"medicalrecordnum":self.medicalRecordNumTextField.text}
+                                                                     hasToken:YES
+                                                                      success:^(HttpResponse *responseObject) {
+                                                                          if ([responseObject.result intValue] == 1) {
+                                                                              
+                                                                            NSDictionary *patientDic = [responseObject.content objectAtIndex:0];
+                                                                              
+                                                                              PatientListViewController *patientListController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
+                                                                              
+                                                                              patientListController.patient = nil;
+
+                                                                              patientListController.patient = [PatientModel modelWithDic:patientDic];
+                                                                              
+                                                                              //                                         [self.navigationController popViewControllerAnimated:YES];
+                                                                              [self.navigationController popToViewController:patientListController animated:YES];
+                                                                          }
+
+                                                                          
+                                                                          
+                                                                      }
+                                                                      failure:nil];
+
+                                         
 
                                      }else{
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
@@ -254,8 +278,7 @@
     NSInteger timeSp = [[NSNumber numberWithDouble:[date timeIntervalSince1970]] integerValue];
     NSString* timeStamp = [NSString stringWithFormat:@"%ld",timeSp];
     return timeStamp;
-    
-    
+
 }
 
 @end

@@ -77,6 +77,8 @@ typedef enum _CellStyle {
         self.userMedicalNum = dict[@"medicalrecordnum"];
         
         self.state = @"unconnect";
+        
+        self.taskId = dict[@"id"];
     }
     return self;
 }

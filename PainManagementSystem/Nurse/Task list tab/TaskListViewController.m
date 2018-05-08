@@ -121,6 +121,7 @@
     [self initTableHeaderAndFooter];
 
 }
+
 -(void)longPressToDo:(UILongPressGestureRecognizer *)gesture
 {
     
@@ -368,8 +369,23 @@
             break;
     }
 }
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 56;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+//    TaskModel *task = datas[indexPath.row];
+//    
+//    NSString *str = task.patientName; //你想显示的字符串
+//    
+//    CGSize size = [str sizeWithFont:[UIFont fontWithName:@"Helvetica" size:17] constrainedToSize:CGSizeMake(280, 999) lineBreakMode:NSLineBreakByWordWrapping];
+//    
+//    NSLog(@"%f",size.height);
+//    
+//    return size.height + 10;
+    
+    return UITableViewAutomaticDimension;
+//    return 56;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -388,7 +404,12 @@
     
 
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
     cell.patientNameLabel.numberOfLines = 0;
+    cell.patientNameLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    
+    cell.medicalRecordNumLable.numberOfLines = 0;
+    cell.medicalRecordNumLable.lineBreakMode = NSLineBreakByWordWrapping;
 
     cell.doctorNameLable.text = task.doctorName;
     cell.medicalRecordNumLable.text  = task.medicalRecordNum;
@@ -399,30 +420,32 @@
     [cell.treatmentButton setTitle:[NSString stringWithFormat:@"治疗时间:%@分钟",task.treatTime] forState:UIControlStateNormal];
     [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
 
+    //配置治疗设备显示文字颜色
+    switch ([task.machineTypeNumber integerValue]) {
+            
+        case ElectrotherapyTypeValue:
+            [cell setTypeLableColor:UIColorFromHex(ElectrothetapyColor)];
+            break;
+            
+        case AladdinTypeValue:
+            [cell setTypeLableColor:UIColorFromHex(AladdinColor)];
+            break;
+            
+        case AirProTypeValue:
+            [cell setTypeLableColor:UIColorFromHex(AirProColor)];
+            break;
+            
+        default:
+            break;
+    }
+    
     //不同的tag配置不一样的cell
     switch (self.taskTag) {
         case TaskListTypeNotStarted:
         {
             self.headerLastLabel.hidden = NO;
-            //配置治疗设备显示文字
-            switch ([task.machineTypeNumber integerValue]) {
-                    
-                case ElectrotherapyTypeValue:
-                    [cell setTypeLableColor:UIColorFromHex(ElectrothetapyColor)];
-                    break;
-                    
-                case AladdinTypeValue:
-                    [cell setTypeLableColor:UIColorFromHex(AladdinColor)];
-                    break;
-                    
-                case AirProTypeValue:
-                    [cell setTypeLableColor:UIColorFromHex(AirProColor)];
-                    break;
-                    
-                default:
-                    break;
-            }
-                [cell configureWithStyle:CellStyle_UnDownLoad];
+ 
+            [cell configureWithStyle:CellStyle_UnDownLoad];
             
             //扫描action
             [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -474,14 +497,14 @@
                     break;
             }
             //类型颜色恢复
-            [cell setTypeLableColor:UIColorFromHex(0x212121)];
+//            [cell setTypeLableColor:UIColorFromHex(0x212121)];
             
             break;
         case TaskListTypeFinished:
             self.headerLastLabel.hidden = NO;
             self.headerLastLabel.text = @"完成时间";
             [cell configureWithStyle:CellStyle_DownLoadedRemarked];
-            [cell setTypeLableColor:UIColorFromHex(0x212121)];
+//            [cell setTypeLableColor:UIColorFromHex(0x212121)];
             cell.finishTimeLabel.text =[self stringFromTimeIntervalString:task.finishTimeString dateFormat:@"yyyy-MM-dd"];
             break;
         default:
@@ -627,7 +650,8 @@
         if (medicalNum) {
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                           params:@{
-                                                   @"medicalrecordnum":medicalNum
+                                                   @"medicalrecordnum":medicalNum,
+                                                   @"taskstate":@7
                                                    }
                                         hasToken:YES
                                          success:^(HttpResponse *responseObject) {
@@ -637,7 +661,6 @@
                                                  NSArray *machineArray = responseObject.content;
                                                  LocalMachineModel *machine = [LocalMachineModel modelWithDic:machineArray[0]];
                                                  machine.taskId = task.ID;
-                                                 
                                                  
                                                  //关注本地设备
                                                  NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];

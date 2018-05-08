@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import  "PatientModel.h"
 @interface PatientListViewController : UIViewController<UISearchBarDelegate>
-
+@property (nonatomic,strong)PatientModel *patient;
 @end

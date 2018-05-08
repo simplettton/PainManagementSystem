@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *ageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
+@property (weak, nonatomic) IBOutlet UILabel *patientInfoLabel;
 
 @end
 
@@ -44,8 +45,14 @@
         self.title = @"治疗疗程记录";
         [self updatePatientInfo];
     }
+    self.nameLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.nameLabel.numberOfLines = 0;
+    [self.nameLabel sizeToFit];
     
-    
+    self.patientInfoLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.patientInfoLabel.numberOfLines = 0;
+    [self.patientInfoLabel sizeToFit];
+
     datas = [[NSMutableArray alloc]initWithCapacity:20];
 
     [self initTableHeaderAndFooter];
@@ -126,6 +133,7 @@
     self.nameLabel.text = [NSString stringWithFormat:@"姓名:%@",self.patient.name];
     self.ageLabel.text = [NSString stringWithFormat:@"年龄:%@",self.patient.age];
     self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.patient.contact];
+    self.patientInfoLabel.text = [NSString stringWithFormat:@"姓名:%@          年龄:%@          电话:%@",self.patient.name,self.patient.age,self.patient.contact];
 }
 
 #pragma mark - tableview delegate
