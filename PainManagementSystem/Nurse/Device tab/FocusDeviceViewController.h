@@ -55,9 +55,9 @@ typedef NS_ENUM(NSInteger,KCmdids)
     CMDID_CHANGE_STATE = 0X90,
     CMDID_UPDATE_DATA_REQUEST = 0X97
 };
-@interface FocusDeviceViewController : UIViewController<UISearchBarDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,HHDropDownListDelegate, HHDropDownListDataSource>
+@interface FocusDeviceViewController: UIViewController<UISearchBarDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,HHDropDownListDelegate, HHDropDownListDataSource>
 
 @property (assign,nonatomic) BOOL isInAllTab;
 @property (strong, nonatomic)MBProgressHUD * HUD;
-
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @end

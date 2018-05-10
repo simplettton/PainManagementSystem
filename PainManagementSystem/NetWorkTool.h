@@ -15,12 +15,6 @@ typedef void (^HttpResponseObject)(HttpResponse* responseObject);
 
 +(instancetype)sharedNetWorkTool;
 
-//-(void)POST:(NSString *)address
-// parameters:(NSDictionary *)parameters
-//   hasToken:(bool)hasToken
-//    success:(void (^)(NSURLSessionDataTask * , id ))success
-//    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure;
-
 -(void)POST:(NSString *)address
      params:(NSDictionary *)parameters
    hasToken:(bool)hasToken

@@ -16,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *setButton;
 @property (weak, nonatomic) IBOutlet UITextField *IPTextFileld;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIView *titleView;
 
 @end
 @implementation SetNetWorkView
@@ -24,6 +25,7 @@
     [super awakeFromNib];
     self.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
     self.backgroundView.layer.cornerRadius = 5;
+    self.titleView.layer.cornerRadius = 5;
     
     CALayer *layer = [CALayer layer];
     layer.frame = CGRectMake(0, self.contentView.frame.size.height - 1.0, _contentView.frame.size.width, 1.0);

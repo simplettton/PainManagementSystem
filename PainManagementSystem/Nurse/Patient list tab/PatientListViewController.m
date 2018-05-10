@@ -36,9 +36,22 @@
     [super viewDidLoad];
     [self initAll];
 }
+-(BOOL)isCurrentViewControllerVisible:(UIViewController *)viewController{
+    return (viewController.isViewLoaded && viewController.view.window);
+}
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    [self hideKeyBoard];
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    [self.tableView endEditing:YES];
+    
+}
 
 -(void)initAll{
-    
+
     //navigation 返回导航栏的样式
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc]init];
     backButton.title = @"";
@@ -71,6 +84,11 @@
     self.tableView.estimatedRowHeight = 53;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyBoard)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    
+    [self.tableView addGestureRecognizer:tapGestureRecognizer];
+    
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     [self initTableHeaderAndFooter];
 
@@ -81,6 +99,8 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
+    
+    self.tableView.mj_header.hidden = NO;
     
     BOOL isNewPatientAdded = true;
     
@@ -103,11 +123,22 @@
             [self refresh];
         }
     }
-
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
+}
+-(void)reloadDataWithNotification:(NSNotification *)notification{
+    if ([notification.object integerValue] == 1) {
+        [self.tableView.mj_header beginRefreshing];
+    }
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
+    if (self.tableView.mj_header.isRefreshing) {
+        [self.tableView.mj_header endRefreshing];
+        
+    }
+    self.tableView.mj_header.hidden = YES;
     [self endRefresh];
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
 #pragma mark - refresh
@@ -134,7 +165,6 @@
 
 -(void)refresh
 {
-
     isFilteredList = NO;
     //清空搜索框的文字
     if ([self.searchBar.text length]>0) {
@@ -142,7 +172,6 @@
     }
     [self.searchBar resignFirstResponder];
     [self askForData:YES isFiltered:NO];
-    
 }
 
 -(void)loadMore

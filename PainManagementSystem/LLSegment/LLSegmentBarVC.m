@@ -84,7 +84,9 @@
         title = @"全部";
     }
     NSLog(@"select %@",title);
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"ChangeDeviceSegmentBar" object:title];
     [self showChildVCViewAtIndex:toIndex];
+    
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{

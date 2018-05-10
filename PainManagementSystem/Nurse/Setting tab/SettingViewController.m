@@ -9,6 +9,7 @@
 #import "SettingViewController.h"
 #import "BaseHeader.h"
 #import "ContactServiceView.h"
+#import "LoginViewController.h"
 typedef NS_ENUM(NSUInteger,typeTags)
 {
     imageTag = 1000,nameTag = 1001
@@ -34,10 +35,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.tableView.delegate = self;
 
     [self setBorderWithView:self.nameLabel top:NO left:YES bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
-//    [self setBorderWithView:self.departmentLabel top:NO left:YES bottom:NO right:NO borderColor:[UIColor whiteColor] borderWidth:1.0];
-    
-    
-
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -167,5 +164,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }
 }
 - (IBAction)edit:(id)sender {
+}
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if ([segue.identifier isEqualToString:@"LogOut"]) {
+        [[[UIApplication sharedApplication].delegate window].rootViewController removeFromParentViewController];
+
+    }
 }
 @end

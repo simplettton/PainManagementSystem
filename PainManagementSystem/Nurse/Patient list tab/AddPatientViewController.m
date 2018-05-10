@@ -161,12 +161,8 @@
     [params setObject:birthdayString forKey:@"birthday"];
     
     [params setObject:self.phoneTextFiled.text forKey:@"contact"];
-    
 
-    
     [params setObject:self.bedNumTextField.text forKey:@"bednum"];
-
-
 
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
                                   params:params

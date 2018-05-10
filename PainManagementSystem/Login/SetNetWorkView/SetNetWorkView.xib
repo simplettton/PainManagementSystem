@@ -94,6 +94,7 @@
                 <outlet property="cancelButton" destination="T7s-Hg-CJz" id="cHV-Uf-3h4"/>
                 <outlet property="contentView" destination="rIW-Xd-0J8" id="4fe-RI-6a3"/>
                 <outlet property="setButton" destination="HYo-XT-lPR" id="S3L-Pl-VG0"/>
+                <outlet property="titleView" destination="1vS-jw-4PJ" id="yy3-3a-lkQ"/>
             </connections>
         </view>
     </objects>

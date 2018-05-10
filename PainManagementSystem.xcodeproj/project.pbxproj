@@ -29,6 +29,7 @@
 		04484FDB2064D72500467611 /* NetWorkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD92064D72500467611 /* NetWorkTool.m */; };
 		04484FDC2064D9ED00467611 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD72064D26100467611 /* LoginViewController.m */; };
 		0450B9F4208D7EF800D54F76 /* MultiParamButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 0450B9F3208D7EF800D54F76 /* MultiParamButton.m */; };
+		0452786E20A1B0AB00CA605E /* TapBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0452786D20A1B0AB00CA605E /* TapBarController.m */; };
 		045982B22080457C00B51DB9 /* DropdownButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 045982B12080457C00B51DB9 /* DropdownButton.m */; };
 		045982B82080B68F00B51DB9 /* MachineModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 045982B72080B68F00B51DB9 /* MachineModel.m */; };
 		045C01FC207B13EC00BB6A0A /* DeviceCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 045C01FB207B13EC00BB6A0A /* DeviceCollectionViewCell.xib */; };
@@ -158,6 +159,8 @@
 		04484FDA2064D72500467611 /* NetWorkTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetWorkTool.h; sourceTree = "<group>"; };
 		0450B9F2208D7EF800D54F76 /* MultiParamButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiParamButton.h; sourceTree = "<group>"; };
 		0450B9F3208D7EF800D54F76 /* MultiParamButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiParamButton.m; sourceTree = "<group>"; };
+		0452786C20A1B0AB00CA605E /* TapBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TapBarController.h; sourceTree = "<group>"; };
+		0452786D20A1B0AB00CA605E /* TapBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TapBarController.m; sourceTree = "<group>"; };
 		045982B02080457C00B51DB9 /* DropdownButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DropdownButton.h; sourceTree = "<group>"; };
 		045982B12080457C00B51DB9 /* DropdownButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DropdownButton.m; sourceTree = "<group>"; };
 		045982B62080B68F00B51DB9 /* MachineModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachineModel.h; sourceTree = "<group>"; };
@@ -667,6 +670,8 @@
 				045982B12080457C00B51DB9 /* DropdownButton.m */,
 				04ED0EB320528A1800638850 /* AppDelegate.h */,
 				04ED0EB420528A1800638850 /* AppDelegate.m */,
+				0452786C20A1B0AB00CA605E /* TapBarController.h */,
+				0452786D20A1B0AB00CA605E /* TapBarController.m */,
 				041A3E1E207C561600CC316A /* BaseHeader.h */,
 			);
 			path = PainManagementSystem;
@@ -950,6 +955,7 @@
 				0450B9F4208D7EF800D54F76 /* MultiParamButton.m in Sources */,
 				04ED0EB520528A1800638850 /* AppDelegate.m in Sources */,
 				04484FD12064CDBF00467611 /* DeviceViewController.m in Sources */,
+				0452786E20A1B0AB00CA605E /* TapBarController.m in Sources */,
 				045982B82080B68F00B51DB9 /* MachineModel.m in Sources */,
 				049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */,
 				046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */,
@@ -1169,7 +1175,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PainManagementSystem/Supporting Files/PrefixHeader.pch";
 				INFOPLIST_FILE = "PainManagementSystem/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Lifotronic.PainManagementSystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1188,7 +1194,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PainManagementSystem/Supporting Files/PrefixHeader.pch";
 				INFOPLIST_FILE = "PainManagementSystem/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Lifotronic.PainManagementSystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";

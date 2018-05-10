@@ -53,7 +53,14 @@
 
     [self initAll];
     self.tableView.tableFooterView = [[UIView alloc]init];
- 
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyBoard)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    [self.tableView addGestureRecognizer:tapGestureRecognizer];
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    [self.tableView endEditing:YES];
+    
 }
 -(void)initAll{
     

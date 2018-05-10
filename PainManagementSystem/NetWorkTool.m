@@ -28,8 +28,6 @@ static NetWorkTool *_instance;
         [_instance.requestSerializer didChangeValueForKey:@"timeoutInterval"];
         
         _instance.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html", nil];
-//
-//        _instance.responseSerializer = [AFHTTPResponseSerializer serializer];
     });
     return _instance;
 }
@@ -59,10 +57,9 @@ static NetWorkTool *_instance;
 //    NSLog(@"dic = %@",params);
     
         
-    //打开状态栏的风火轮
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    });
 
     [self POST:address
     parameters:params
@@ -72,8 +69,10 @@ static NetWorkTool *_instance;
        success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
            
            //请求结果出现后关闭风火轮
-
-           [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+           
+           dispatch_async(dispatch_get_main_queue(), ^{
+               [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+           });
 
            
            NSDictionary *jsonDict = responseObject;
@@ -124,9 +123,11 @@ static NetWorkTool *_instance;
        }
        failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
            //请求结果出现后关闭风火轮
-
-           [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
            
+           dispatch_async(dispatch_get_main_queue(), ^{
+               [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+           });
+
            NSLog(@"task = %@",task);
            
            NSLog(@"error = %@",error);

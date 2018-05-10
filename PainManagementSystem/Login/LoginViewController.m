@@ -58,7 +58,19 @@
     self.userNameTextField.text = hasRememberUserName ? userName : @"";
     
     [self.passwordTextField setSecureTextEntry:YES];
-
+    
+}
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+}
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    [self hideKeyBoard];
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    
 }
 - (IBAction)login:(id)sender {
     [self loginCheck];
@@ -84,17 +96,6 @@
     //UIStorybord 跳转
     UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     __block UINavigationController *controller ;
-    
-//    //假数据 不经过服务器
-//    if ([self.userNameTextField.text isEqualToString: @"agent"]) {
-//
-//        controller = [mainStoryBoard instantiateViewControllerWithIdentifier:@"AgentNavigation"];
-//
-//    }else if([self.userNameTextField.text isEqualToString:@"nurse"]){
-//
-//        controller =  [mainStoryBoard instantiateViewControllerWithIdentifier:@"NurseTabBarController"];
-//    }
-    
     
     //异步请求真的数据
     NSString *userName = self.userNameTextField.text;
@@ -128,7 +129,6 @@
             }else{
                 [SVProgressHUD showErrorWithStatus:@"该账号权限无法登陆系统"];
             }
-            
 
             
             if(controller !=nil){
@@ -173,7 +173,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
         myDelegate.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-        
+        [myDelegate.window.rootViewController removeFromParentViewController];
         [UIView transitionWithView:myDelegate.window
                           duration:0.25
                            options:UIViewAnimationOptionTransitionCrossDissolve
@@ -182,6 +182,7 @@
                         }
                         completion:nil];
         [myDelegate.window makeKeyAndVisible];
+        [SVProgressHUD dismiss];
     });
 }
 

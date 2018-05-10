@@ -45,17 +45,25 @@
     [_filterButton.titleLabel addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
+    self.tableView.mj_header.hidden = NO;
     
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
     [_filterButton.titleLabel removeObserver:self forKeyPath:@"text" context:nil];
+    self.tableView.mj_header.hidden = YES;
+    [self endRefresh];
+    [self cancelAllRequest];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"设备管理系统";
     [self initAll];
+    
+}
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
     
 }
 
@@ -188,7 +196,7 @@
                                          
                                          if ([count intValue]>0) {
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];
-                                             self.tableView.tableHeaderView.hidden = NO;
+                                              self.tableView.tableHeaderView.hidden = NO;
                                          }else{
                                              [datas removeAllObjects];
                                         dispatch_async(dispatch_get_main_queue(), ^{
@@ -366,8 +374,6 @@
         self.deleteButton.titleLabel.text = @"删除";
         [self.deleteButton setTitle:@"删除" forState:UIControlStateNormal];
         
-        [SVProgressHUD show];
-
         NSMutableArray *deleteArray = [NSMutableArray array];
         
         for (NSIndexPath *indexPath in self.tableView.indexPathsForSelectedRows) {
@@ -384,7 +390,6 @@
                                          success:^(HttpResponse *responseObject) {
                                              if ([responseObject.result intValue]==1) {
                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                     [SVProgressHUD dismiss];
                                                      
                                                      //删除设备
                                                      NSMutableArray *currentArray = datas;
@@ -527,13 +532,12 @@
         [self.searchBar resignFirstResponder];
 }
 
-
-
-
-//关闭键盘
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-
-    [self.view endEditing:YES];
+- (void)cancelAllRequest
+{
+    [[NetWorkTool sharedNetWorkTool].operationQueue cancelAllOperations];
 }
+
+
+
 
 @end

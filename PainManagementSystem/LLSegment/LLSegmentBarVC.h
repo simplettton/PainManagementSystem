@@ -8,5 +8,5 @@
 @property (nonatomic,weak) LLSegmentBar * segmentBar;
 
 - (void)setUpWithItems: (NSArray <NSString *>*)items childVCs: (NSArray <UIViewController *>*)childVCs;
-
+- (void)showChildVCViewAtIndex:(NSInteger)index;
 @end

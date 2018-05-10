@@ -26,7 +26,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UIView *deviceBackgroundView;
-@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
 
 //下拉框
 @property (strong,nonatomic)HHDropDownList *dropList;
@@ -75,8 +75,17 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             }
         }
     }
+    self.collectionView.mj_header.hidden = NO;
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didChangeDeviceSegmentBar:) name:@"ChangeDeviceSegmentBar" object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
 }
 
+-(void)reloadDataWithNotification:(NSNotification *)notification{
+    if ([notification.object integerValue] == 2) {
+        [self.collectionView.mj_header beginRefreshing];
+    }
+}
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
 
@@ -89,13 +98,25 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     }
     [self disconnectMQTT];
     [self endRefresh];
-    if (self.timer) {
-        [self closeTimer];
-    }
+//    if (self.timer) {
+//        [self closeTimer];
+//    }
+    self.collectionView.mj_header.hidden = YES;
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    [self hideKeyBoard];
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    [self.collectionView endEditing:YES];
 
 }
+
 -(void)initUI{
-    
+
     if (self.isInAllTab) {
         //隐藏本地设备
         self.allTabButton.hidden = NO;
@@ -130,6 +151,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     //UICollectionView 配置
     self.collectionView.dataSource = self;
     self.collectionView.delegate = self;
+    
+    //隐藏键盘手势
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyBoard)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    
+    [self.collectionView addGestureRecognizer:tapGestureRecognizer];
     
     //数据源
     datas = [NSMutableArray arrayWithCapacity:20];
@@ -184,17 +211,13 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 // 找到当前的cell
                 DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
                 // 定义cell的时候btn是隐藏的, 在这里设置为NO
-                [cell.btnDelete setHidden:NO];
+//                [cell.btnDelete setHidden:NO];
                 
                 cell.btnDelete.tag = selectIndexPath.item;
                 NSLog(@"selectIndexPath .item = %ld",(long)cell.btnDelete.tag);
+
                 
-                //添加删除的点击事件
-                [cell.btnDelete addTarget:self action:@selector(unfollowDevice:) forControlEvents:UIControlEventTouchUpInside];
-                
-                [_collectionView beginInteractiveMovementForItemAtIndexPath:selectIndexPath];
-                
-                
+                [self performSelector:@selector(unfollowDevice:) withObject:cell.btnDelete afterDelay:0.5];
                 //cell.layer添加抖动手势
                 for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
                     [self starShake:cell];
@@ -204,23 +227,25 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             break;
         }
         case UIGestureRecognizerStateChanged: {
-            [self.collectionView updateInteractiveMovementTargetPosition:[longPress locationInView:_longPress.view]];
+//            [self.collectionView updateInteractiveMovementTargetPosition:[longPress locationInView:_longPress.view]];
             break;
         }
         case UIGestureRecognizerStateEnded: {
             [self.collectionView endInteractiveMovement];
-            //cell.layer移除抖动手势
-            //            for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-            //                [self stopShake:cell];
-            //            }
-            
+
             break;
         }
         default: [self.collectionView cancelInteractiveMovement];
             break;
     }
 }
-
+//切换关注或者和全部
+-(void)didChangeDeviceSegmentBar:(NSNotification *)notification{
+    NSString *selected = notification.object;
+    NSLog(@"收到通知:切换%@tab",selected);
+    [self.searchBar resignFirstResponder];
+//    [self refresh];
+}
 #pragma mark - refresh
 -(void)initTableHeaderAndFooter{
     
@@ -346,10 +371,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                      MachineModel *machine = [MachineModel modelWithDic:dic];
                                                      [datas addObject:machine];
                                                      //订阅治疗中设备和未开始设备 taskstate = 1 ,taskstate = 3
-                                                     if ([machine.taskStateNumber integerValue] == 1 || [machine.taskStateNumber integerValue] == 3) {
+                                                     if ([self.selectedTaskState isEqual: @1] ||[self.selectedTaskState isEqual: @3]) {
                                                          [self subcribe:machine.cpuid];
                                                      }
-                                                     
                                                  }
                                                  dispatch_async(dispatch_get_main_queue(), ^{
                                                      [self.collectionView reloadData];
@@ -395,6 +419,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         self.manager = [[MQTTSessionManager alloc] init];
         self.manager.delegate = self;
 
+        NSString *userName = [UserDefault objectForKey:@"UserName"];
         
         //连接服务器
         [self.manager connectTo:HOST
@@ -410,7 +435,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                         willMsg:nil
                         willQos:MQTTQosLevelExactlyOnce
                  willRetainFlag:false
-                   withClientId:nil
+                   withClientId:userName
                  securityPolicy:nil
                    certificates:nil
                   protocolLevel:MQTTProtocolVersion31
@@ -424,8 +449,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         }];
     }
     //订阅主题 controller即将出现的时候订阅
-    
-//    [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:@"toapp/33ffd9054b583033206510431e01"];
     [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:@"warning/#"];
     self.manager.subscriptions = [self.subscriptions copy];
     [self.manager addObserver:self
@@ -490,85 +513,100 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexpath];
                 currentMachine = machine;
                 if (cell) {
-                    
-                    NSNumber *code = content[@"code"];
-                    switch ([currentMachine.taskStateNumber integerValue]) {
-                        case 1:
-                            if ([code integerValue] == 0x90){
-                                //未开始变成治疗中刷新列表
-                                NSNumber *machineState = content[@"state"];
-                                if ([machineState isEqual:@0]) {
-                                    [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@已开始治疗",machine.name]];
-                                    [self performSelector:@selector(refresh) withObject:nil afterDelay:0.5];
-                                }
+                    if (![content isEqual:[NSNull null]]) {
+                        NSNumber *code = content[@"code"];
+                        
+                        //上下线信息
+                        if ([code integerValue] == 0x97) {
+                            NSString *message = [[NSString alloc]init];
+                            if ([content[@"state"] isEqual:@2]) {
+                                message = @"上线";
+                            }else if( [content[@"state"] isEqual:@4]){
+                                message = @"下线";
                             }
-                            break;
-                        case 3:
-                            switch ([code integerValue]){
-                                //机器状态变化 刷新cell样式
-                                case 0x90:
-                                {
-
+                            [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@已%@",machine.name,message]];
+                            [self performSelector:@selector(refresh) withObject:nil afterDelay:0.5];
+                        }
+                        //其他信息
+                        switch ([currentMachine.taskStateNumber integerValue]) {
+                            case 1:
+                                if ([code integerValue] == 0x90){
+                                    //未开始变成治疗中刷新列表
                                     NSNumber *machineState = content[@"state"];
-                                    if ([machineState isEqualToNumber:@2] || [machineState isEqualToNumber:@1]) {
-                                        if(machine.alertMessage){
-                                            if (![machine.alertMessage isEqualToString:@"过压"]) {
-                                                dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC);
-                                                dispatch_after(timer, dispatch_get_main_queue(), ^{
-                                                    
-                                                    machine.alertMessage = nil;
-                                                    [machine changeState:machineState];
-                                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                                        [self.collectionView reloadData];
-                                                    });
-                                                });
-                                            }
-                                        }
-
+                                    if ([machineState isEqual:@0]) {
+                                        [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@已开始治疗",machine.name]];
+                                        [self performSelector:@selector(refresh) withObject:nil afterDelay:0.5];
                                     }
+                                }
+                                break;
+                            case 3:
+                                switch ([code integerValue]){
+                                        //机器状态变化 刷新cell样式
+                                    case 0x90:
+                                    {
+                                        
+                                        NSNumber *machineState = content[@"state"];
+                                        if ([machineState isEqualToNumber:@2] || [machineState isEqualToNumber:@1]) {
+                                            if(machine.alertMessage){
+                                                if (![machine.alertMessage isEqualToString:@"过压"]) {
+                                                    dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC);
+                                                    dispatch_after(timer, dispatch_get_main_queue(), ^{
+                                                        
+                                                        machine.alertMessage = nil;
+                                                        [machine changeState:machineState];
+                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                            [self.collectionView reloadData];
+                                                        });
+                                                    });
+                                                }
+                                            }
+                                            
+                                        }
                                         [machine changeState:machineState];
                                         currentMachine = machine;
-                                }
-                                    break;
-                                    //运行中的实时包 刷新倒计时
-                                case 0x91:
-                                {
-                                    //等4秒才去除报警信息
-                                    if (machine.alertMessage !=nil) {
-                                        dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC);
-                                        dispatch_after(timer, dispatch_get_main_queue(), ^{
-                                                machine.alertMessage = nil;
-                                        });
                                     }
-                                    else{
-                                          //运行状态才刷新倒计时
-                                        if([currentMachine.stateNumber isEqualToNumber:@0]){
-                                            NSNumber *second= content[@"lefttime"];
-                                            machine.leftTimeNumber = second;
-                                            currentMachine = machine;
+                                        break;
+                                        //运行中的实时包 刷新倒计时
+                                    case 0x91:
+                                    {
+                                        //等4秒才去除报警信息
+                                        if (machine.alertMessage !=nil) {
+                                            dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC);
+                                            dispatch_after(timer, dispatch_get_main_queue(), ^{
+                                                machine.alertMessage = nil;
+                                            });
+                                        }
+                                        else{
+                                            //运行状态才刷新倒计时
+                                            if([currentMachine.stateNumber isEqualToNumber:@0]){
+                                                NSNumber *second= content[@"lefttime"];
+                                                machine.leftTimeNumber = second;
+                                                currentMachine = machine;
+                                            }
                                         }
                                     }
+                                        break;
+                                    case 0x98:
+                                    {
+                                        [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@已结束治疗",machine.name]];
+                                        [self unsubcibe:machine.cpuid];
+                                        [self performSelector:@selector(refresh) withObject:nil afterDelay:0.5];
+                                        
+                                        NSLog(@"收到0x98");
+                                    }
+                                        break;
+                                        
+                                    default:
+                                        break;
                                 }
-                                    break;
-                                case 0x98:
-                                {
-                                    [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@已结束治疗",machine.name]];
-                                    [self unsubcibe:machine.cpuid];
-                                    [self performSelector:@selector(refresh) withObject:nil afterDelay:0.5];
-
-                                    NSLog(@"收到0x98");
-                                }
-                                    break;
-                                    
-                                default:
-                                    break;
-                            }
-                            break;
-                        default:
-                            break;
+                                break;
+                            default:
+                                break;
+                        }
+                        
                     }
-                    
-                }
+                    }
+
                 //cpu匹配退出循环
                 break;
             }
@@ -681,7 +719,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         default:
             break;
     }
-        [self refresh];
+    [self refresh];
+    [self.searchBar resignFirstResponder];
 
 }
 
@@ -729,7 +768,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         
         if(datas){
             MachineModel *machine = [datas objectAtIndex:indexPath.row];
-            
+            if([machine.type isEqualToString:@"血瘘"]){
+                
+            }
             [cell configureWithStyle:machine.cellStyle message:nil];
             cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
             cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
@@ -808,35 +849,36 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     return cell;
 }
 
--(BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
+//-(BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return YES;
+//}
 
 //4.移动完成后的方法  －－ 交换数据
--(void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    //    [datas exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
-    //    NSLog(@"data = %@",datas);
-    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
-    // 找到当前的cell
-    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
-    
-    //取出源item数据
-    id objc = [datas objectAtIndex:sourceIndexPath.item];
-    //从资源数组中移除该数据
-    [datas removeObject:objc];
-    //将数据插入到资源数组中的目标位置上
-    [datas insertObject:objc atIndex:destinationIndexPath.item];
-    [self.collectionView reloadData];
-    
-}
+//-(void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
+//{
+//    //    [datas exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+//    //    NSLog(@"data = %@",datas);
+//    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
+//    // 找到当前的cell
+//    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
+//
+//    //取出源item数据
+//    id objc = [datas objectAtIndex:sourceIndexPath.item];
+//    //从资源数组中移除该数据
+//    [datas removeObject:objc];
+//    //将数据插入到资源数组中的目标位置上
+//    [datas insertObject:objc atIndex:destinationIndexPath.item];
+//    [self.collectionView reloadData];
+//
+//}
 // 允许选中时，高亮
 -(BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath{
     return YES;
 }
 // 设置是否允许选中
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self.searchBar resignFirstResponder];
     NSLog(@"%s", __FUNCTION__);
     //cell.layer移除抖动手势
     for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
@@ -848,12 +890,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     return YES;
 }
 
-//选中后回调
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
-    
-}
+////选中后回调
+//- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+//
+//}
 //设置每个item的尺寸
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
     return CGSizeMake(220, 186);
@@ -900,8 +942,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     //cell的隐藏删除设置
     NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
     // 找到当前的cell
-    __block DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
-    cell.btnDelete.hidden = NO;
+//    __block DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
+    for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+        [self stopShake:cell];
+    }
+//    cell.btnDelete.hidden = NO;
     
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要取消关注设备吗？"
                                                                    message:@"取消关注操作将不可恢复。"
@@ -919,10 +964,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注" style:UIAlertActionStyleDestructive
                                                               handler:^(UIAlertAction * action) {
                                                                   //取出源item数据
-                                                                  id objc = [datas objectAtIndex:btn.tag];
-                                                                  //从资源数组中移除该数据
-                                                                  [datas removeObject:objc];
-                                                                  [self.collectionView reloadData];
+                                                                  //                                                                  id objc = [datas objectAtIndex:btn.tag];
+                                                                  id objc = [datas objectAtIndex:selectIndexPath.row];
                                                                   
                                                                   //sendToserver
                                                                   NSString *serialNum = [[NSString alloc]init];
@@ -935,6 +978,10 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                                                                    success:^(HttpResponse *responseObject) {
                                                                                                        if([responseObject.result intValue] == 1){
                                                                                                            [SVProgressHUD showErrorWithStatus:@"已取消关注"];
+
+            
+                                                                                                           [datas removeObject:objc];
+                                                                                                           [self.collectionView reloadData];
                                                                                                        }else{
                                                                                                            [SVProgressHUD showErrorWithStatus:responseObject.errorString];                                NSLog(@"取消关注错误:%@",responseObject.errorString);
                                                                                                        }
@@ -1233,15 +1280,15 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(void)loadLocalMachineData{
     
     NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject];
-    if (!documents)
-    {
-        NSLog(@"目录未找到");
-    }
     NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-
-    if ([fileManager fileExistsAtPath:documentPath]) {
+    if (![fileManager fileExistsAtPath:documentPath])
+    {
+        //没有文件就新建文件
+        [fileManager createFileAtPath:documentPath contents:nil attributes:nil];
+        [self endRefresh];
+    }else {
         NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
         NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
         __block NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
@@ -1275,12 +1322,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                         }
 
                                     } failure:nil];
-
     }
-
-
-    
-    
 }
 
 #pragma mark - BLE

@@ -73,7 +73,14 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     [self refresh];
+    self.tableView.mj_header.hidden = NO;
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
     
+}
+-(void)reloadDataWithNotification:(NSNotification *)notification{
+    if ([notification.object integerValue] == 0) {
+        [self.tableView.mj_header beginRefreshing];
+    }
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -91,10 +98,12 @@
     if ([self.presentedViewController isKindOfClass:[PopoverTreatwayController class]]) {
         [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
     }
+    self.tableView.mj_header.hidden = YES;
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
 -(void)initAll{
-    
+ 
     self.view.multipleTouchEnabled = NO;
     //初始tag为待处理
     self.taskTag = TaskListTypeNotStarted;
@@ -242,8 +251,6 @@
                                          NSNumber *count = responseObject.count;
                                          
                                          totalPage = ([count intValue]+15-1)/15;
-                                         
-                                         NSLog(@"totalPage = %d",totalPage);
                                          
                                          if([count intValue] > 0)
                                          {
@@ -416,8 +423,14 @@
     cell.patientNameLabel.text = task.patientName;
     cell.typeLabel.text = task.machineType;
     
+    NSString *buttonTitle = [[NSString alloc]init];
     //治疗参数详情弹窗
-    [cell.treatmentButton setTitle:[NSString stringWithFormat:@"治疗时间:%@分钟",task.treatTime] forState:UIControlStateNormal];
+    if([task.treatTime integerValue]==601){
+        buttonTitle = @"治疗时间:持续治疗";
+    }else{
+        buttonTitle = [NSString stringWithFormat:@"治疗时间:%@分钟",task.treatTime];
+    }
+    [cell.treatmentButton setTitle:buttonTitle forState:UIControlStateNormal];
     [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
 
     //配置治疗设备显示文字颜色
@@ -651,7 +664,7 @@
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                           params:@{
                                                    @"medicalrecordnum":medicalNum,
-                                                   @"taskstate":@7
+                                                   @"taskstate":@3
                                                    }
                                         hasToken:YES
                                          success:^(HttpResponse *responseObject) {

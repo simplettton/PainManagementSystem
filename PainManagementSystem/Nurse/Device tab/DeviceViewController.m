@@ -42,8 +42,40 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
+    
+    // 解决切换segmentbar同时切换tab时segmentbar的viewcontroller不归位的问题
+    if (self.segmentVC.segmentBar.selectIndex == 0) {
+        [self.segmentVC showChildVCViewAtIndex:0];
+        
+    }else if(self.segmentVC.segmentBar.selectIndex == 1){
+        
+        [self.segmentVC showChildVCViewAtIndex:1];
+    }
+    
+    for ( UIViewController *controller in self.segmentVC.childViewControllers) {
+        
+        if ([controller isKindOfClass:[FocusDeviceViewController class]]) {
+            
+            FocusDeviceViewController *focusController = (FocusDeviceViewController *)controller;
+            focusController.collectionView.mj_header.hidden = YES;
+            
+        }
+    }
 }
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    
+    for ( UIViewController *controller in self.segmentVC.childViewControllers) {
+        
+        if ([controller isKindOfClass:[FocusDeviceViewController class]]) {
+            
+            FocusDeviceViewController *focusController = (FocusDeviceViewController *)controller;
+            focusController.collectionView.mj_header.hidden = YES;
+            
+        }
+    }
 
+}
 #pragma mark - 定制导航条内容
 - (void) customNavItem {
     // 1 设置segmentBar的frame

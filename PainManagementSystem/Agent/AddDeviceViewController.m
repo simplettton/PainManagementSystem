@@ -60,6 +60,8 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.title = @"设备管理系统";
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
+    self.tableView.mj_header.hidden = NO;
+    self.tableView.tableHeaderView.hidden = YES;
 
 
 }
@@ -67,6 +69,8 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [super viewWillDisappear:YES];
     [baby cancelScan];
     [baby cancelAllPeripheralsConnection];
+    [self endRefresh];
+    self.tableView.mj_header.hidden = YES;
 }
 
 
@@ -75,7 +79,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [self initAll];
 
 }
-
 
 -(void)initAll{
     
@@ -97,7 +100,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 -(void)initTableHeaderAndFooter{
     
     //下拉刷新
-    //    self.tableView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+
     MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
     [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
     [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
@@ -270,15 +273,17 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [self babyDelegate];
         baby.scanForPeripherals().begin();
         
-        
-        
+        self.tableView.mj_header = nil;
+        self.tableView.mj_footer = nil;
+
     }else {
+
+        
         [baby cancelScan];
         [baby cancelAllPeripheralsConnection];
         
         isLocalDeviceList = NO;
-        
-        [self refresh];
+        [self initTableHeaderAndFooter];
         
     }
     [self.tableView reloadData];

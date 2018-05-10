@@ -8,17 +8,20 @@
 
 #import "EditUserInfoController.h"
 #import "BaseHeader.h"
-#import "HHDropDownList.h"
+#import "BETextField.h"
 
-@interface EditUserInfoController ()<HHDropDownListDelegate, HHDropDownListDataSource>
+#import <BRPickerView.h>
+
+@interface EditUserInfoController ()
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *textFields;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *contactTextFiled;
-@property (weak, nonatomic) IBOutlet UITextField *departmentTextField;
+
+@property (weak, nonatomic) IBOutlet BETextField *departmentTextField;
 
 //下拉框
-@property (weak, nonatomic) IBOutlet HHDropDownList *dropDownView;
-@property (strong, nonatomic) NSMutableArray *dropListArray;
+
+@property (strong, nonatomic) NSMutableArray *departmentNameArray;
 @property (strong, nonatomic) NSString *departmentId;
 @property (strong, nonatomic) NSString *department;
 
@@ -52,16 +55,18 @@
     self.department = [UserDefault objectForKey:@"Department"];
     
     datas = [NSMutableArray arrayWithCapacity:20];
-    self.dropListArray = [NSMutableArray arrayWithCapacity:20];
-    
-    self.dropDownView.dataSource = self;
-    self.dropDownView.delegate = self;
-    [self.dropDownView.layer setCornerRadius:5.0];
-    self.dropDownView.highlightColor = [UIColor clearColor];
-    [self.dropDownView.textLayer setAlignmentMode:kCAAlignmentLeft];
+    self.departmentNameArray = [NSMutableArray arrayWithCapacity:20];
 
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyBoard)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    [self.tableView addGestureRecognizer:tapGestureRecognizer];
     [self getDepartmentList];
 
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    [self.tableView endEditing:YES];
+    
 }
 -(void)getDepartmentList{
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingFormat:@"Api/Department/List"]
@@ -70,17 +75,34 @@
                                  success:^(HttpResponse *responseObject) {
                                      if ([responseObject.result intValue] == 1) {
                                          if (responseObject.content) {
+                                             
+                                             
                                              for (NSDictionary *dataDic in responseObject.content) {
                                                  NSString *name = dataDic[@"name"];
-                                                 [self.dropListArray addObject:name];
+                                                 [self.departmentNameArray addObject:name];
                                                  [datas addObject:dataDic];
                                                  
                                              }
+                                             if (datas) {
+                                                 
+                                                 NSArray *nameArray = [self.departmentNameArray copy];
+                                                 __weak typeof(self) weakSelf = self;
+                                                 
+                                                 [self.departmentTextField addTapAciton:^{
+                                                     [BRStringPickerView showStringPickerWithTitle:@"科室" dataSource:nameArray defaultSelValue:self.department resultBlock:^(id selectValue) {
+                                                         
+                                                         weakSelf.departmentTextField.text = selectValue;
+                                                         NSInteger index = [self.departmentNameArray indexOfObject:selectValue];
+                                                         weakSelf.department = selectValue;
+                                                         weakSelf.departmentId = datas[index][@"id"];
+                                                     }];
+                                                 }];
+                                             }
                                              
-                                             [self.dropDownView.textLayer setString:self.department];
-                                             [self.dropDownView reloadListData];
+//                                             [self.dropDownView.textLayer setString:self.department];
+//                                             [self.dropDownView reloadListData];
 
-                                             [self.tableView reloadData];
+//                                             [self.tableView reloadData];
                                          }
                                      }
                                      else{
@@ -94,21 +116,21 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 
 }
-#pragma mark - HHDropDownList
-
-- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
-    
-    return _dropListArray;
-}
-- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
-    
-    NSDictionary *dataDic = [datas objectAtIndex:index];
-    
-    self.departmentId = dataDic[@"id"];
-    
-    self.department = dataDic[@"name"];
-    
-}
+//#pragma mark - HHDropDownList
+//
+//- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
+//
+//    return _dropListArray;
+//}
+//- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
+//
+//    NSDictionary *dataDic = [datas objectAtIndex:index];
+//
+//    self.departmentId = dataDic[@"id"];
+//
+//    self.department = dataDic[@"name"];
+//
+//}
 
 
 #pragma mark - Table view data source
@@ -120,7 +142,8 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row == 2) {
-        return ([self.dropListArray count]+1)*44;
+//        return ([self.dropListArray count]+1)*44;
+        return 44;
     }else{
         return 44;
     }

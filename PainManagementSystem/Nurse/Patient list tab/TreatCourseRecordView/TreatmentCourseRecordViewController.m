@@ -208,9 +208,9 @@
                 
                 NSString *newValue = [array componentsJoinedByString:@"/"];
                 cell.vasLabel.text = newValue;
-                if (self.medicalRecordNum) {
-                    [self.navigationController popViewControllerAnimated:YES];
-                }
+//                if (self.medicalRecordNum) {
+//                    [self.navigationController popViewControllerAnimated:YES];
+//                }
             }];
         }];
         
@@ -230,9 +230,9 @@
             NSString *newValue = [array componentsJoinedByString:@"/"];
             cell.vasLabel.text = newValue;
                                                                 
-            if (self.medicalRecordNum) {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
+//            if (self.medicalRecordNum) {
+//                [self.navigationController popViewControllerAnimated:YES];
+//            }
         }];
     }
 
