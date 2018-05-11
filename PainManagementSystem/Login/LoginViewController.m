@@ -73,6 +73,7 @@
     
 }
 - (IBAction)login:(id)sender {
+    [self showLoginingIndicator];
     [self loginCheck];
 }
 
@@ -112,7 +113,7 @@
         NSString *resutlt = responseObject.result;
         if ([resutlt intValue] == 1) {
             
-            [self showLoginingIndicator];
+
             NSDictionary *content = responseObject.content;
             NSLog(@"receive content = %@",content);
             

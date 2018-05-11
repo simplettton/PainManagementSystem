@@ -132,7 +132,18 @@ static NetWorkTool *_instance;
            
            NSLog(@"error = %@",error);
            dispatch_async(dispatch_get_main_queue(), ^{
-               [SVProgressHUD showErrorWithStatus:error.localizedDescription];
+               
+               if ([error.localizedDescription hasSuffix:@"。"]) {
+
+                   NSString *string = [error.localizedDescription substringToIndex:[error.localizedDescription length] -1];
+                   
+                   [SVProgressHUD showErrorWithStatus:string];
+               }
+               else{
+                   [SVProgressHUD showErrorWithStatus:error.localizedDescription];
+               }
+
+
                //endrefresh操作
                [self endTableViewHeaderRefreshing];
 

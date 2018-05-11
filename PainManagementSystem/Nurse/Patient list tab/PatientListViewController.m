@@ -232,10 +232,20 @@
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
-                                             [SVProgressHUD showErrorWithStatus:@"系统中没有病历~"];
+                                             if (iSFiltered) {
+                                                 [SVProgressHUD showErrorWithStatus:@"没有找到该病人"];
+                                             }else{
+                                                 [SVProgressHUD showErrorWithStatus:@"系统中没有病历"];
+                                             }
+
                                          }
  
                                      }else{
+                                         if(iSFiltered){
+                                             if ([self.searchBar.text length]>0) {
+                                                 self.searchBar.text = @"";
+                                             }
+                                         }
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                      }
                                      
@@ -330,7 +340,7 @@
         
         isFilteredList = YES;
         
-        datas = [[NSMutableArray alloc]initWithCapacity:20];
+//        datas = [[NSMutableArray alloc]initWithCapacity:20];
         
         NSMutableDictionary *paramDic = [[NSMutableDictionary alloc]initWithCapacity:20];
         
@@ -342,7 +352,6 @@
     }else{
         
         [self.tableView.mj_header beginRefreshing];
-//        [self askForData:YES isFiltered:NO];
     }
     [self.searchBar resignFirstResponder];
 }

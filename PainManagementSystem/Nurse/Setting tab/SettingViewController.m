@@ -49,8 +49,9 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.hospitalLabel.text = [UserDefault objectForKey:@"Hospital"];
     self.nameLabel.text = [UserDefault objectForKey:@"PersonName"];
     self.phoneLabel.text = [UserDefault objectForKey:@"Contact"];
-    self.userNameLabel.text = [UserDefault objectForKey:@"UserName"];
-    self.departmentLabel.text = [UserDefault objectForKey:@"Department"];
+//    self.userNameLabel.text = [UserDefault objectForKey:@"UserName"];
+    self.userNameLabel.text = [NSString stringWithFormat:@"%@    %@",[UserDefault objectForKey:@"UserName"],[UserDefault objectForKey:@"Department"]];
+//    self.departmentLabel.text = [UserDefault objectForKey:@"Department"];
 
 }
 /*
@@ -140,9 +141,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }
     else if (indexPath.section *2 +indexPath.row == 2){
         
-        [UserDefault setBool:NO forKey:@"IsLogined"];
-        
-        [UserDefault synchronize];
+  
         
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
                                                                        message:@"退出后不会删除任何历史数据，下次登录依然可以使用本账号。"
@@ -154,7 +153,27 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [alert addAction:cancelAction];
         
         UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"退出登录" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-                [self performSegueWithIdentifier:@"LogOut" sender:nil];
+
+            [UserDefault setBool:NO forKey:@"IsLogined"];
+            
+            [UserDefault synchronize];
+            
+            [[[UIApplication sharedApplication].delegate window].rootViewController removeFromParentViewController];
+            
+            UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            
+            LoginViewController *vc = (LoginViewController *)[mainStoryBoard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+            [UIView transitionWithView:[[UIApplication sharedApplication].delegate window]
+                              duration:0.25
+                               options:UIViewAnimationOptionTransitionCrossDissolve
+                            animations:^{
+                                            [[UIApplication sharedApplication].delegate window].rootViewController = vc;
+                            }
+                            completion:nil];
+
+            [self presentViewController:vc animated:YES completion:nil];
+            
+            [[[UIApplication sharedApplication].delegate window] makeKeyAndVisible];
         }];
         
         [alert addAction:logoutAction];
@@ -165,10 +184,5 @@ typedef NS_ENUM(NSUInteger,typeTags)
 }
 - (IBAction)edit:(id)sender {
 }
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if ([segue.identifier isEqualToString:@"LogOut"]) {
-        [[[UIApplication sharedApplication].delegate window].rootViewController removeFromParentViewController];
 
-    }
-}
 @end

@@ -45,6 +45,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 @property (nonatomic,strong) CBCharacteristic *receiveCharacteristic;
 @property (nonatomic,strong) NSString *BLEDeviceName;
 @property (nonatomic,assign)NSInteger selectedDeviceIndex;
+@property (nonatomic,assign) BOOL isBLEPoweredOff;
 
 @property(nonatomic,strong)NSTimer *timer;
 
@@ -66,6 +67,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+
     [self connectMQTT];
     [self refresh];
     if (self.tag == DeviceTypeOnline) {
@@ -96,11 +98,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     if (self.manager) {
         [self.manager removeObserver:self forKeyPath:@"state" context:nil];
     }
+    
     [self disconnectMQTT];
     [self endRefresh];
-//    if (self.timer) {
-//        [self closeTimer];
-//    }
     self.collectionView.mj_header.hidden = YES;
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
@@ -112,6 +112,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(void)hideKeyBoard{
     [self.view endEditing:YES];
     [self.collectionView endEditing:YES];
+    [self.dropList pullBack];
 
 }
 
@@ -125,6 +126,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         self.allTabButton.hidden = YES;
         self.segmentedControl.hidden = NO;
     }
+        self.isBLEPoweredOff = YES;
     
     //配置searchbar样式
     self.searchBar.delegate = self;
@@ -435,7 +437,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                         willMsg:nil
                         willQos:MQTTQosLevelExactlyOnce
                  willRetainFlag:false
-                   withClientId:userName
+                   withClientId:nil
                  securityPolicy:nil
                    certificates:nil
                   protocolLevel:MQTTProtocolVersion31
@@ -447,10 +449,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [self.manager connectToLast:^(NSError *error) {
             NSLog(@"connectToLast error:%@",error);
         }];
+        self.manager.delegate = self;
     }
     //订阅主题 controller即将出现的时候订阅
-    [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:@"warning/#"];
-    self.manager.subscriptions = [self.subscriptions copy];
+    [self subcribe:@"warning/#"];
+
     [self.manager addObserver:self
                    forKeyPath:@"state"
                       options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
@@ -463,9 +466,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     [self.manager disconnectWithDisconnectHandler:nil];
 }
 -(void)subcribe:(NSString *)cpuid{
-    
-    [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:[NSString stringWithFormat:@"toapp/%@",cpuid]];
-    self.manager.subscriptions = [self.subscriptions copy];
+    NSString *newTopic = [NSString stringWithFormat:@"toapp/%@",cpuid];
+    if (![self.subscriptions.allKeys containsObject:newTopic]){
+        [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:newTopic];
+        self.manager.subscriptions = [self.subscriptions copy];
+    }
 
 }
 -(void)unsubcibe:(NSString *)cpuid{
@@ -964,42 +969,44 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注" style:UIAlertActionStyleDestructive
                                                               handler:^(UIAlertAction * action) {
                                                                   //取出源item数据
-                                                                  //                                                                  id objc = [datas objectAtIndex:btn.tag];
-                                                                  id objc = [datas objectAtIndex:selectIndexPath.row];
                                                                   
-                                                                  //sendToserver
-                                                                  NSString *serialNum = [[NSString alloc]init];
-                                                                  if(self.tag == DeviceTypeOnline){
-                                                                      MachineModel *machine = (MachineModel *)objc;
-                                                                      serialNum = machine.serialNum;
-                                                                      [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Delete"]
-                                                                                                    params:@{@"serialnum":serialNum}
-                                                                                                  hasToken:YES
-                                                                                                   success:^(HttpResponse *responseObject) {
-                                                                                                       if([responseObject.result intValue] == 1){
-                                                                                                           [SVProgressHUD showErrorWithStatus:@"已取消关注"];
-
-            
-                                                                                                           [datas removeObject:objc];
-                                                                                                           [self.collectionView reloadData];
-                                                                                                       }else{
-                                                                                                           [SVProgressHUD showErrorWithStatus:responseObject.errorString];                                NSLog(@"取消关注错误:%@",responseObject.errorString);
-                                                                                                       }
-                                                                                                       
-                                                                                                   }
-                                                                                                   failure:nil];
-  
-                                                                  }else{
-                                                                      LocalMachineModel *machine = (LocalMachineModel *)objc;
-                                                                      serialNum = machine.serialNum;
-                                                                      [self unfollowLocalDevice:machine];
+                                                                  if ([datas count]>0) {
+                                                                      id objc = [datas objectAtIndex:selectIndexPath.row];
                                                                       
+                                                                      //sendToserver
+                                                                      NSString *serialNum = [[NSString alloc]init];
+                                                                      if(self.tag == DeviceTypeOnline){
+                                                                          MachineModel *machine = (MachineModel *)objc;
+                                                                          serialNum = machine.serialNum;
+                                                                          [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Delete"]
+                                                                                                        params:@{@"serialnum":serialNum}
+                                                                                                      hasToken:YES
+                                                                                                       success:^(HttpResponse *responseObject) {
+                                                                                                           if([responseObject.result intValue] == 1){
+                                                                                                               [SVProgressHUD showErrorWithStatus:@"已取消关注"];
+                                                                                                               
+                                                                                                               
+                                                                                                               [datas removeObject:objc];
+                                                                                                               [self.collectionView reloadData];
+                                                                                                           }else{
+                                                                                                               [SVProgressHUD showErrorWithStatus:responseObject.errorString];                                NSLog(@"取消关注错误:%@",responseObject.errorString);
+                                                                                                           }
+                                                                                                           
+                                                                                                       }
+                                                                                                       failure:nil];
+                                                                          
+                                                                      }else{
+                                                                          LocalMachineModel *machine = (LocalMachineModel *)objc;
+                                                                          serialNum = machine.serialNum;
+                                                                          [self unfollowLocalDevice:machine];
+                                                                          
+                                                                      }
+
+                                                                      for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                          [self stopShake:cell];
+                                                                      }
                                                                   }
 
-
-                                                                  for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-                                                                      [self stopShake:cell];
-                                                                  }
                                                               }];
     
     [alert addAction:defaultAction];
@@ -1202,6 +1209,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                                                              }
                                                                                          }
                                                                                          failure:nil];
+
                                                         }
   
                                                         
@@ -1210,6 +1218,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                             }else{
                                                 [SVProgressHUD showErrorWithStatus:@"查找不到该病人的记录"];
                                             }
+                                        }else{
+                                            if ([self.searchBar.text length]>0) {
+                                                self.searchBar.text = @"";
+                                            }
+                                            [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                         }
                                     } failure:nil];
         
@@ -1328,15 +1341,18 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 #pragma mark - BLE
 -(void)BLEConnectDevice:(UIButton *)button{
     
+    baby = [BabyBluetooth shareBabyBluetooth];
+    [self babyDelegate];
+    
+    //判断蓝牙是否打开
+    
+    if (self.isBLEPoweredOff) {
+        [SVProgressHUD showErrorWithStatus:@"该设备没有打开蓝牙无法下发处方,请在设置中打开"];
+        return;
+    }
+    
     //old connected device
     [baby cancelAllPeripheralsConnection];
-    
-//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedDeviceIndex inSection:0];
-//
-//    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell  *)[self.collectionView cellForItemAtIndexPath:indexPath];
-//
-//    [cell configureWithStyle:CellStyle_LocalUnconnect message:nil];
-
 
     LocalMachineModel *oldMachine = [datas objectAtIndex:self.selectedDeviceIndex];
     
@@ -1353,9 +1369,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     self.selectedDeviceIndex = interger;
     
-//    if (interger < [datas count]) {
-//
-//    }
     LocalMachineModel *machine = [datas objectAtIndex:interger];
 
     NSString *serialNum = machine.serialNum;
@@ -1365,10 +1378,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     }else{
         self.BLEDeviceName = serialNum;
     }
-
     
-    baby = [BabyBluetooth shareBabyBluetooth];
-    [self babyDelegate];
+    
     baby.scanForPeripherals().begin();
     
     //连接中状态指示
@@ -1390,11 +1401,13 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 weakSelf.HUD.mode = MBProgressHUDModeText;
                 weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
                 [weakSelf.HUD showAnimated:YES];
+                weakSelf.isBLEPoweredOff = YES;
             }
         }else if(central.state == CBManagerStatePoweredOn) {
             if(weakSelf.HUD){
                 [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
                 weakBaby.scanForPeripherals().begin();
+                weakSelf.isBLEPoweredOff = NO;
             }
             
         }

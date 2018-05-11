@@ -7,6 +7,7 @@
 //
 
 #import "DeviceListViewController.h"
+#import "LoginViewController.h"
 #import "DeviceTableViewCell.h"
 #import "EditDeviceViewController.h"
 #import "BaseHeader.h"
@@ -62,8 +63,14 @@
     [self initAll];
     
 }
+
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    [self hideKeyBoard];
+}
+-(void)hideKeyBoard{
     [self.view endEditing:YES];
+    [self.tableView endEditing:YES];
     
 }
 
@@ -89,6 +96,11 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.allowsMultipleSelectionDuringEditing = YES;
     
+    //隐藏键盘手势
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyBoard)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    
+    [self.tableView addGestureRecognizer:tapGestureRecognizer];
     
     _typeDic = @{
                  @7681:@"空气波",
@@ -447,7 +459,26 @@
     [alert addAction:cancelAction];
     
     UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"退出登录" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        [self performSegueWithIdentifier:@"DeviceListLogout" sender:nil];
+
+        [UserDefault setBool:NO forKey:@"IsLogined"];
+        
+        [UserDefault synchronize];
+        
+        [[[UIApplication sharedApplication].delegate window].rootViewController removeFromParentViewController];
+        
+        UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        
+        LoginViewController *vc = (LoginViewController *)[mainStoryBoard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+        
+        [UIView transitionWithView:[[UIApplication sharedApplication].delegate window]
+                          duration:0.25
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{
+                            [[UIApplication sharedApplication].delegate window].rootViewController = vc;
+                        }
+                        completion:nil];
+        
+        [[[UIApplication sharedApplication].delegate window] makeKeyAndVisible];
     }];
     
     [alert addAction:logoutAction];
@@ -471,12 +502,6 @@
 }
 
 #pragma mark - searchBar delegate
-
-//-(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
-//    NSString *searchResult = self.searchBar.text;
-//
-//}
-//
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     

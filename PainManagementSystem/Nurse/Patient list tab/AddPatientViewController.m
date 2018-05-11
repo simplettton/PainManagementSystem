@@ -44,7 +44,6 @@
 }
 
 - (void)viewDidLoad {
-    
     [super viewDidLoad];
     [self initAll];
 }
@@ -131,85 +130,115 @@
     
 }
 - (IBAction)save:(id)sender {
-    
+    BOOL hasBlankTextFiled = NO;
     for (UITextField *textField in self.requiredTextFields) {
         if ([textField.text length] == 0) {
             [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
             [SVProgressHUD setMaximumDismissTimeInterval:0.5];
             [SVProgressHUD showErrorWithStatus:@"参数不能为空"];
+            hasBlankTextFiled = YES;
         }
     }
     
-    NSString *api;
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
-    if (self.patient == nil) {
-        api = @"Api/Patient/Add";
-    }else{
-        api = @"Api/Patient/ChangeInfo";
-    }
-    //参数
-    NSString *gender = genderArray[self.segmentedControll.selectedSegmentIndex];
-    
-    NSString *birthdayString = [self timeStampFromTimeString:self.birthdayTF.text dataFormat:@"yyyy-MM-dd"];
-    
-    [params setObject:self.medicalRecordNumTextField.text forKey:@"medicalrecordnum"];
-    
-    [params setObject:self.nameTextField.text forKey:@"name"];
-    
-    [params setObject:gender forKey:@"gender"];
-    
-    [params setObject:birthdayString forKey:@"birthday"];
-    
-    [params setObject:self.phoneTextFiled.text forKey:@"contact"];
-
-    [params setObject:self.bedNumTextField.text forKey:@"bednum"];
-
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
-                                  params:params
-                                hasToken:YES
-                                 success:^(HttpResponse *responseObject) {
-                                     
-                                     if ([responseObject.result intValue]==1) {
-                                         [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
-
-                                         [SVProgressHUD showSuccessWithStatus:@"保存成功"];
+    if (!hasBlankTextFiled) {
+        NSString *api;
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
+        if (self.patient == nil) {
+            api = @"Api/Patient/Add";
+        }else{
+            api = @"Api/Patient/ChangeInfo";
+        }
+        //参数
+        NSString *gender = genderArray[self.segmentedControll.selectedSegmentIndex];
+        
+        NSString *birthdayString = [self timeStampFromTimeString:self.birthdayTF.text dataFormat:@"yyyy-MM-dd"];
+        
+        [params setObject:self.medicalRecordNumTextField.text forKey:@"medicalrecordnum"];
+        
+        [params setObject:self.nameTextField.text forKey:@"name"];
+        
+        [params setObject:gender forKey:@"gender"];
+        
+        [params setObject:birthdayString forKey:@"birthday"];
+        
+        [params setObject:self.phoneTextFiled.text forKey:@"contact"];
+        
+        [params setObject:self.bedNumTextField.text forKey:@"bednum"];
+        
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
+                                      params:params
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
                                          
-                                         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Patient/ListByQuery"]
-                                                                       params:@{@"medicalrecordnum":self.medicalRecordNumTextField.text}
-                                                                     hasToken:YES
-                                                                      success:^(HttpResponse *responseObject) {
-                                                                          if ([responseObject.result intValue] == 1) {
+                                         if ([responseObject.result intValue]==1) {
+                                             [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
+                                             
+                                             [SVProgressHUD showSuccessWithStatus:@"保存成功"];
+                                             
+                                             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Patient/ListByQuery"]
+                                                                           params:@{@"medicalrecordnum":self.medicalRecordNumTextField.text}
+                                                                         hasToken:YES
+                                                                          success:^(HttpResponse *responseObject) {
+                                                                              if ([responseObject.result intValue] == 1) {
+                                                                                  
+                                                                                  NSDictionary *patientDic = [responseObject.content objectAtIndex:0];
+                                                                                  
+                                                                                  PatientListViewController *patientListController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
+                                                                                  
+                                                                                  patientListController.patient = nil;
+                                                                                  
+                                                                                  patientListController.patient = [PatientModel modelWithDic:patientDic];
+                                                                                  
+                                                                                  //                                         [self.navigationController popViewControllerAnimated:YES];
+                                                                                  [self.navigationController popToViewController:patientListController animated:YES];
+                                                                              }
                                                                               
-                                                                            NSDictionary *patientDic = [responseObject.content objectAtIndex:0];
                                                                               
-                                                                              PatientListViewController *patientListController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
                                                                               
-                                                                              patientListController.patient = nil;
-
-                                                                              patientListController.patient = [PatientModel modelWithDic:patientDic];
-                                                                              
-                                                                              //                                         [self.navigationController popViewControllerAnimated:YES];
-                                                                              [self.navigationController popToViewController:patientListController animated:YES];
                                                                           }
-
-                                                                          
-                                                                          
-                                                                      }
-                                                                      failure:nil];
-
+                                                                          failure:nil];
+                                             
+                                             
+                                             
+                                         }else{
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                             
+                                         }
                                          
-
-                                     }else{
-                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-
-                                     }
-
-
-                                  } failure:nil];
+                                         
+                                     } failure:nil];
+        
+    }
     
 }
 - (IBAction)scan:(id)sender {
-    
+    NSString *mediaType = AVMediaTypeVideo;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        
+        
+        
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"相机启用权限未开启"
+                                                                       message:[NSString stringWithFormat:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“%@”打开相机访问权限",[[[NSBundle mainBundle] infoDictionary]objectForKey:@"CFBundleDisplayName"]]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"去设置" style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
+                                                                  
+                                                                  NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                                                                  [[UIApplication sharedApplication] openURL:url];
+                                                                  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=CAMERA"]];
+                                                                  
+                                                                  
+                                                              }];
+        
+        [alert addAction:defaultAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        
+        
+        return;
+        
+    }
     NSArray *types = @[
                        AVMetadataObjectTypeEAN13Code,
                        AVMetadataObjectTypeEAN8Code,

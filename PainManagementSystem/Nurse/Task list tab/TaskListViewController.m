@@ -60,6 +60,7 @@
 @property (nonatomic,strong) NSString *BLEDeviceName;
 @property (nonatomic,strong) NSData *BLETreatParam;
 @property (nonatomic,assign) NSInteger selectedDeviceIndex;
+@property (nonatomic,assign) BOOL isBLEPoweredOff;
 
 @property(nonatomic,strong)NSTimer *timer;
 
@@ -118,6 +119,8 @@
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     
+    self.isBLEPoweredOff = YES;
+    
     //配置segmentedcontrol
     self.segmentedControl.frame = CGRectMake(self.segmentedControl.frame.origin.x, self.segmentedControl.frame.origin.y, self.segmentedControl.frame.size.width, 35);
     
@@ -128,7 +131,6 @@
     [self.segmentedControl addTarget:self action:@selector(didClicksegmentedControlAction:) forControlEvents:UIControlEventValueChanged];
     
     [self initTableHeaderAndFooter];
-
 }
 
 -(void)longPressToDo:(UILongPressGestureRecognizer *)gesture
@@ -554,6 +556,51 @@
 #pragma mark - action
 - (void)scanAction:(id)sender {
     
+    TaskModel *task = [datas objectAtIndex:[sender tag]];
+    
+    if ([task.machineType isEqualToString:@"血瘘"]) {
+        
+        //蓝牙的代理
+        baby = [BabyBluetooth shareBabyBluetooth];
+        [self babyDelegate];
+
+        //判断蓝牙是否打开
+        if (self.isBLEPoweredOff) {
+            [SVProgressHUD showErrorWithStatus:@"该设备没有打开蓝牙无法下发处方,请在设置中打开"];
+            return;
+        }
+    }
+    
+    //判断相机权限是否打开
+    NSString *mediaType = AVMediaTypeVideo;
+    
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    
+    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        
+
+
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"相机启用权限未开启"
+                                                                       message:[NSString stringWithFormat:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“%@”打开相机访问权限",[[[NSBundle mainBundle] infoDictionary]objectForKey:@"CFBundleDisplayName"]]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"去设置" style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
+
+                                                                  NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                                                                  [[UIApplication sharedApplication] openURL:url];
+                                                                  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=CAMERA"]];
+                                                                  
+                                                                  
+                                                              }];
+        
+        [alert addAction:defaultAction];
+        [self presentViewController:alert animated:YES completion:nil];
+
+        
+        return;
+        
+    }
     self.selectedRow = [sender tag];
     
     NSArray *types = @[
@@ -876,10 +923,13 @@
         
         NSLog(@"%@", [NSString stringWithFormat:@"medicalnum = %@",task.medicalRecordNum]);
 
-        [SVProgressHUD showWithStatus:@"处方下发中……"];
+
         
         if ([task.machineType isEqualToString:@"血瘘"]) {
 
+            
+            [SVProgressHUD showWithStatus:@"处方下发中……"];
+            
             if ([result isEqualToString:@"P06A17A00001"]) {
                 self.BLEDeviceName = @"ALX420";
             }else{
@@ -919,6 +969,8 @@
                                          failure:nil];
 
         }else{
+            [SVProgressHUD showWithStatus:@"处方下发中……"];
+            
             NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
             
             [params setObject:result forKey:@"serialnum"];
@@ -965,8 +1017,7 @@
     
     if (self.BLEDeviceName) {
         
-        baby = [BabyBluetooth shareBabyBluetooth];
-        [self babyDelegate];
+
         baby.scanForPeripherals().begin();
     }
 }
@@ -982,9 +1033,13 @@
         if (central.state == CBManagerStatePoweredOff) {
             if (weakSelf.view) {
                 [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
+                NSLog(@"BLE off");
+                weakSelf.isBLEPoweredOff = YES;
             }
         }else if(central.state == CBManagerStatePoweredOn) {
                 weakBaby.scanForPeripherals().begin();
+                NSLog(@"BLE on");
+            weakSelf.isBLEPoweredOff = NO;
         }
     }];
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {

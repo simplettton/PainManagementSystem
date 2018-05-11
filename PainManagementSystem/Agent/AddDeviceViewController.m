@@ -8,6 +8,7 @@
 
 //蓝牙uuid = 0167ED09-0C56-6EC8-232F-4DEAB6048FF4
 #import "AddDeviceViewController.h"
+#import "LoginViewController.h"
 #import "AddDeviceCell.h"
 #import "BaseHeader.h"
 #import "QRCodeReaderViewController.h"
@@ -447,7 +448,33 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
 #pragma mark - action
 - (void)scanAction:(id)sender {
-
+    NSString *mediaType = AVMediaTypeVideo;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        
+        
+        
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"相机启用权限未开启"
+                                                                       message:[NSString stringWithFormat:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“%@”打开相机访问权限",[[[NSBundle mainBundle] infoDictionary]objectForKey:@"CFBundleDisplayName"]]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"去设置" style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
+                                                                  
+                                                                  NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                                                                  [[UIApplication sharedApplication] openURL:url];
+                                                                  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=CAMERA"]];
+                                                                  
+                                                                  
+                                                              }];
+        
+        [alert addAction:defaultAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        
+        
+        return;
+        
+    }
     self.selectedRow = [sender tag];
     
     NSArray *types = @[
@@ -575,7 +602,27 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [alert addAction:cancelAction];
     
     UIAlertAction* logoutAction = [UIAlertAction actionWithTitle:@"退出登录" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        [self performSegueWithIdentifier:@"AddDeviceLogout" sender:nil];
+
+        [UserDefault setBool:NO forKey:@"IsLogined"];
+        
+        [UserDefault synchronize];
+        
+        [[[UIApplication sharedApplication].delegate window].rootViewController removeFromParentViewController];
+        
+        UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        
+        LoginViewController *vc = (LoginViewController *)[mainStoryBoard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+        
+        [UIView transitionWithView:[[UIApplication sharedApplication].delegate window]
+                          duration:0.25
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{
+                            [[UIApplication sharedApplication].delegate window].rootViewController = vc;
+                        }
+                        completion:nil];
+        
+        
+        [[[UIApplication sharedApplication].delegate window] makeKeyAndVisible];
     }];
     
     [alert addAction:logoutAction];
