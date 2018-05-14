@@ -21,6 +21,8 @@ typedef NS_ENUM(NSUInteger,typeTags)
 @property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *departmentLabel;
+//防止push多个相同的
+@property (assign,nonatomic)BOOL pushOnce;
 - (IBAction)edit:(id)sender;
 
 @end
@@ -30,11 +32,12 @@ typedef NS_ENUM(NSUInteger,typeTags)
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.tableView.tableFooterView = [[UIView alloc]init];
-    
+    self.tableView.multipleTouchEnabled = NO;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
 
     [self setBorderWithView:self.nameLabel top:NO left:YES bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
+    self.pushOnce = 1;
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -43,26 +46,17 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    self.pushOnce = 1;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
     
     self.hospitalLabel.text = [UserDefault objectForKey:@"Hospital"];
     self.nameLabel.text = [UserDefault objectForKey:@"PersonName"];
     self.phoneLabel.text = [UserDefault objectForKey:@"Contact"];
-//    self.userNameLabel.text = [UserDefault objectForKey:@"UserName"];
     self.userNameLabel.text = [NSString stringWithFormat:@"%@    %@",[UserDefault objectForKey:@"UserName"],[UserDefault objectForKey:@"Department"]];
-//    self.departmentLabel.text = [UserDefault objectForKey:@"Department"];
 
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 - (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
 {
     if (top) {
@@ -114,6 +108,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSArray *imageNames = @[@"key",@"phone",@""];
     NSArray *titles = @[@"修改密码",@"联系客服",@"退出登录"];
     
@@ -137,7 +132,12 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [self performSegueWithIdentifier:@"EditPassword" sender:nil];
     }
     else if (indexPath.section *2 +indexPath.row == 1) {
-        [ContactServiceView alertControllerAboveIn:self];
+        if(self.pushOnce == 1){
+            [ContactServiceView alertControllerAboveIn:self returnBlock:^{
+                self.pushOnce = 1;
+            }];
+            self.pushOnce = 0;
+        }
     }
     else if (indexPath.section *2 +indexPath.row == 2){
         
@@ -170,8 +170,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                             [[UIApplication sharedApplication].delegate window].rootViewController = vc;
                             }
                             completion:nil];
-
-            [self presentViewController:vc animated:YES completion:nil];
             
             [[[UIApplication sharedApplication].delegate window] makeKeyAndVisible];
         }];

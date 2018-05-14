@@ -61,7 +61,8 @@
 @property (nonatomic,strong) NSData *BLETreatParam;
 @property (nonatomic,assign) NSInteger selectedDeviceIndex;
 @property (nonatomic,assign) BOOL isBLEPoweredOff;
-
+//防止push多个相同的
+@property (assign,nonatomic)BOOL pushOnce;
 @property(nonatomic,strong)NSTimer *timer;
 
 @end
@@ -73,8 +74,11 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    [self refresh];
+
     self.tableView.mj_header.hidden = NO;
+    self.isBLEPoweredOff = YES;
+    self.pushOnce = 1;
+    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
     
 }
@@ -106,6 +110,8 @@
 -(void)initAll{
  
     self.view.multipleTouchEnabled = NO;
+    self.tableView.multipleTouchEnabled = NO;
+    
     //初始tag为待处理
     self.taskTag = TaskListTypeNotStarted;
     self.tableView.dataSource = self;
@@ -131,6 +137,7 @@
     [self.segmentedControl addTarget:self action:@selector(didClicksegmentedControlAction:) forControlEvents:UIControlEventValueChanged];
     
     [self initTableHeaderAndFooter];
+    self.pushOnce = 1;
 }
 
 -(void)longPressToDo:(UILongPressGestureRecognizer *)gesture
@@ -143,29 +150,31 @@
         
         NSIndexPath * indexPath = [self.tableView indexPathForRowAtPoint:point];
         
-        TaskModel *task = datas[indexPath.row];
-        
-        if(indexPath == nil) return ;
-        
-        if (self.taskTag == TaskListTypeProcessing) {
-            if (task.state == 3) {
-                self.selectedRow = indexPath.row;
-                
-                UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
-                                                                               message:@"当前处方设备正在治疗中，是否进行治疗后vas评分强制结束治疗？"
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-                
-                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
-                                                                     handler:^(UIAlertAction * action) {}];
-                UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault
-                                                                 handler:^(UIAlertAction * action) {
-                                                                     [self remarkAction:nil];
-                                                                 }];
-                
-                [alert addAction:cancelAction];
-                [alert addAction:okAction];
-                
-                [self presentViewController:alert animated:YES completion:nil];
+        if([datas count]>0){
+            TaskModel *task = datas[indexPath.row];
+            
+            if(indexPath == nil) return ;
+            
+            if (self.taskTag == TaskListTypeProcessing) {
+                if (task.state == 3) {
+                    self.selectedRow = indexPath.row;
+                    
+                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+                                                                                   message:@"当前处方设备正在治疗中，是否进行治疗后vas评分强制结束治疗？"
+                                                                            preferredStyle:UIAlertControllerStyleAlert];
+                    
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                                         handler:^(UIAlertAction * action) {}];
+                    UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * action) {
+                                                                         [self remarkAction:nil];
+                                                                     }];
+                    
+                    [alert addAction:cancelAction];
+                    [alert addAction:okAction];
+                    
+                    [self presentViewController:alert animated:YES completion:nil];
+                }
             }
         }
     }
@@ -201,8 +210,7 @@
     [datas removeAllObjects];
     [self.tableView reloadData];
     [self refresh];
-    
-    
+
 }
 #pragma mark - refresh
 -(void)initTableHeaderAndFooter{
@@ -533,90 +541,101 @@
     
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    TaskModel *task = datas[indexPath.row];
-//    switch (self.taskTag) {
-//        case TaskListTypeFinished:
-//        case TaskListTypeNotStarted:
+    
+    if ([datas count]>0) {
+        TaskModel *task = datas[indexPath.row];
+        //    switch (self.taskTag) {
+        //        case TaskListTypeFinished:
+        //        case TaskListTypeNotStarted:
+        if (self.pushOnce == 1) {
             if(task.state != 3){
                 self.selectedRow = indexPath.row;
                 [self remarkAction:nil];
             }
-//            break;
-//
-//        default:
-//            break;
-//    }
+            self.pushOnce = 0;
+        }
+
+        //            break;
+        //
+        //        default:
+        //            break;
+        //    }
+    }
+
 }
 
 -(void)showPopover:(UIButton *)sender {
+    if ([datas count]>0) {
+        [self performSegueWithIdentifier:@"ShowPopover" sender:sender];
+    }
 
-    [self performSegueWithIdentifier:@"ShowPopover" sender:sender];
 }
 
 #pragma mark - action
 - (void)scanAction:(id)sender {
-    
-    TaskModel *task = [datas objectAtIndex:[sender tag]];
-    
-    if ([task.machineType isEqualToString:@"血瘘"]) {
+    if ([datas count]>0) {
+        TaskModel *task = [datas objectAtIndex:[sender tag]];
         
-        //蓝牙的代理
-        baby = [BabyBluetooth shareBabyBluetooth];
-        [self babyDelegate];
-
-        //判断蓝牙是否打开
-        if (self.isBLEPoweredOff) {
-            [SVProgressHUD showErrorWithStatus:@"该设备没有打开蓝牙无法下发处方,请在设置中打开"];
-            return;
+        if ([task.machineType isEqualToString:@"血瘘"]) {
+            
+            //蓝牙的代理
+            baby = [BabyBluetooth shareBabyBluetooth];
+            [self babyDelegate];
+            
+//            //判断蓝牙是否打开
+//            if (self.isBLEPoweredOff) {
+//                [SVProgressHUD showErrorWithStatus:@"该设备没有打开蓝牙无法下发处方,请在设置中打开"];
+//                return;
+//            }
         }
+        
+        //判断相机权限是否打开
+        NSString *mediaType = AVMediaTypeVideo;
+        
+        AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+        
+        if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+            
+            
+            
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"相机启用权限未开启"
+                                                                           message:[NSString stringWithFormat:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“%@”打开相机访问权限",[[[NSBundle mainBundle] infoDictionary]objectForKey:@"CFBundleDisplayName"]]
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"去设置" style:UIAlertActionStyleDefault
+                                                                  handler:^(UIAlertAction * action) {
+                                                                      
+                                                                      NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                                                                      [[UIApplication sharedApplication] openURL:url];
+                                                                      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=CAMERA"]];
+                                                                      
+                                                                      
+                                                                  }];
+            
+            [alert addAction:defaultAction];
+            [self presentViewController:alert animated:YES completion:nil];
+            
+            
+            return;
+            
+        }
+        self.selectedRow = [sender tag];
+        
+        NSArray *types = @[
+                           AVMetadataObjectTypeEAN13Code,
+                           AVMetadataObjectTypeEAN8Code,
+                           AVMetadataObjectTypeUPCECode,
+                           AVMetadataObjectTypeCode39Code,
+                           AVMetadataObjectTypeCode39Mod43Code,
+                           AVMetadataObjectTypeCode93Code,
+                           AVMetadataObjectTypeCode128Code,
+                           AVMetadataObjectTypePDF417Code];
+        
+        _reader = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
+        _reader.delegate = self;
+        [self presentViewController:_reader animated:YES completion:NULL];
     }
-    
-    //判断相机权限是否打开
-    NSString *mediaType = AVMediaTypeVideo;
-    
-    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
-    
-    if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
-        
 
-
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"相机启用权限未开启"
-                                                                       message:[NSString stringWithFormat:@"请在iPhone的“设置”-“隐私”-“相机”功能中，找到“%@”打开相机访问权限",[[[NSBundle mainBundle] infoDictionary]objectForKey:@"CFBundleDisplayName"]]
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"去设置" style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {
-
-                                                                  NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                                                                  [[UIApplication sharedApplication] openURL:url];
-                                                                  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=CAMERA"]];
-                                                                  
-                                                                  
-                                                              }];
-        
-        [alert addAction:defaultAction];
-        [self presentViewController:alert animated:YES completion:nil];
-
-        
-        return;
-        
-    }
-    self.selectedRow = [sender tag];
-    
-    NSArray *types = @[
-                       AVMetadataObjectTypeEAN13Code,
-                       AVMetadataObjectTypeEAN8Code,
-                       AVMetadataObjectTypeUPCECode,
-                       AVMetadataObjectTypeCode39Code,
-                       AVMetadataObjectTypeCode39Mod43Code,
-                       AVMetadataObjectTypeCode93Code,
-                       AVMetadataObjectTypeCode128Code,
-                       AVMetadataObjectTypePDF417Code];
-    
-    _reader = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
-    _reader.delegate = self;
-    [self presentViewController:_reader animated:YES completion:NULL];
-    
 }
 - (void)remarkAction:(id)sender{
     if (sender) {
@@ -628,78 +647,76 @@
 }
 -(void)focusAction:(id)sender{
     
-    self.selectedRow = [sender tag];
-    
-    TaskModel *task = [datas objectAtIndex:self.selectedRow];
-    
-    [self focusMachineWithTask:task];
+    if ([datas count]>0) {
+        
+        self.selectedRow = [sender tag];
+        
+        TaskModel *task = [datas objectAtIndex:self.selectedRow];
+        
+        [self focusMachineWithTask:task];
+    }
+
     
 }
 -(void)unfocusAction:(id)sender{
     
-    self.selectedRow = [sender tag];
-    
-    __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要取消关注设备吗？"
-                                                                   message:@"取消关注操作将不可恢复。"
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
-                                                          handler:nil];
-    UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注"
-                                                                style:UIAlertActionStyleDestructive
-                                                              handler:^(UIAlertAction * _Nonnull action) {
-                                                                  [self unfocusMachineWithTask:task];
-                                                              }];
-    [alert addAction:defaultAction];
-    
-    [alert addAction:cancelFocusAction];
-    
-    [self presentViewController:alert animated:YES completion:nil];
+    if ([datas count]>0) {
+        self.selectedRow = [sender tag];
+        
+        __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要取消关注设备吗？"
+                                                                       message:@"取消关注操作将不可恢复。"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                              handler:nil];
+        UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注"
+                                                                    style:UIAlertActionStyleDestructive
+                                                                  handler:^(UIAlertAction * _Nonnull action) {
+                                                                      [self unfocusMachineWithTask:task];
+                                                                  }];
+        [alert addAction:defaultAction];
+        
+        [alert addAction:cancelFocusAction];
+        
+        [self presentViewController:alert animated:YES completion:nil];
+    }
 }
 
 -(void)showSuccessView{
     [SVProgressHUD dismiss];
-    
     [self refresh];
-    
-    __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
-    //本地设备通知服务器绑定设备
-    if([task.machineType isEqualToString:@"血瘘"]){
-        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
-                                      params:@{
-                                               @"serialnum":@"P06A17A00001",
-                                               @"id":task.ID
-                                               }
-                                    hasToken:YES
-                                     success:^(HttpResponse *responseObject) {
-                                         if([responseObject.result integerValue] == 1){
-                                             NSLog(@"绑定成功");
-                                         }else{
-                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                             NSLog(@"bind error :%@",responseObject.errorString);
+    if ([datas count ]>0) {
+        
+        
+        __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
+        //本地设备通知服务器绑定设备
+        if([task.machineType isEqualToString:@"血瘘"]){
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
+                                          params:@{
+                                                   @"serialnum":@"P06A17A00001",
+                                                   @"id":task.ID
+                                                   }
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             if([responseObject.result integerValue] == 1){
+                                                 NSLog(@"绑定成功");
+                                             }else{
+                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                 NSLog(@"bind error :%@",responseObject.errorString);
+                                             }
                                          }
-                                     }
-                                     failure:nil];
+                                         failure:nil];
+        }
+        
+        
+        [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
+            
+            [self focusMachineWithTask:task];
+            
+        }];
     }
-
     
-    [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
-
-        [self focusMachineWithTask:task];
-//        //设置关注
-//        NSString *serialNum = task.serialNum;
-//
-//        //本地设备关注存在文件里
-//        if([task.machineType isEqualToString:@"血瘘"]){
-////            serialNum = @"P06A17A00001";
-//
-//            [self focusLocalMachineWithMedicalNum:task.medicalRecordNum];
-//        }else{
-//            //在线设备通知服务器关注
-//            [self focusMachineWithSerialNum:serialNum];
-//        }
-    }];
 }
 -(void)focusMachineWithTask:(TaskModel *)task{
     if ([task.machineType isEqualToString:@"血瘘"]) {
@@ -1030,16 +1047,20 @@
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
     [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (central.state == CBManagerStatePoweredOff) {
-            if (weakSelf.view) {
-                [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
-                NSLog(@"BLE off");
-                weakSelf.isBLEPoweredOff = YES;
-            }
-        }else if(central.state == CBManagerStatePoweredOn) {
-                weakBaby.scanForPeripherals().begin();
+        if (@available(iOS 10.0, *)) {
+            if (central.state == CBManagerStatePoweredOff) {
+                if (weakSelf.view) {
+                    [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
+                    NSLog(@"BLE off");
+                    weakSelf.isBLEPoweredOff = YES;
+                }
+            }else if(central.state == CBManagerStatePoweredOn) {
+//                weakBaby.scanForPeripherals().begin();
                 NSLog(@"BLE on");
-            weakSelf.isBLEPoweredOff = NO;
+                weakSelf.isBLEPoweredOff = NO;
+            }
+        } else {
+            // Fallback on earlier versions
         }
     }];
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
@@ -1153,20 +1174,24 @@
         UIPopoverPresentationController *popover = destination.popoverPresentationController;
         popover.delegate = self;
         
-        //获取某个cell的数据
-        UIView *contentView = [(UIView *)sender superview];
-        
-        TaskCell *cell = (TaskCell*)[contentView superview];
-        
-        NSIndexPath* index = [self.tableView indexPathForCell:cell];
-        
-        TaskModel *task = [datas objectAtIndex:index.row];
-        
-        destination.treatParamDic = task.treatParam;
-        
-        UIButton *button = sender;
-        popover.sourceView = button;
-        popover.sourceRect = button.bounds;
+        if ([datas count]>0) {
+            //获取某个cell的数据
+            UIView *contentView = [(UIView *)sender superview];
+            
+            TaskCell *cell = (TaskCell*)[contentView superview];
+            
+            NSIndexPath* index = [self.tableView indexPathForCell:cell];
+            
+            
+            TaskModel *task = [datas objectAtIndex:index.row];
+            
+            destination.treatParamDic = task.treatParam;
+            
+            UIButton *button = sender;
+            popover.sourceView = button;
+            popover.sourceRect = button.bounds;
+        }
+
     }else if ([segue.identifier isEqualToString:@"TaskGoToRemarkVAS"]){
         TreatmentCourseRecordViewController *controller = segue.destinationViewController;
         TaskModel *task = [datas objectAtIndex:self.selectedRow];

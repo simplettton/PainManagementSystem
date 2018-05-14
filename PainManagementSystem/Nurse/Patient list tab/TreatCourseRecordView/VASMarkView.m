@@ -83,6 +83,7 @@
 }
 #pragma mark - action
 - (IBAction)cancel:(id)sender {
+    self.returnEvent(@"我按了取消按钮");
     [self removeFromSuperview];
 }
 - (IBAction)save:(id)sender {

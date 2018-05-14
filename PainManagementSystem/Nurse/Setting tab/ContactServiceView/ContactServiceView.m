@@ -17,6 +17,7 @@
 @end
 @implementation ContactServiceView
 - (IBAction)cancel:(id)sender {
+    self.returnEvent();
     [self removeFromSuperview];
 }
 
@@ -31,11 +32,13 @@
     [self.emailView.layer addSublayer:layer];
 }
 
-+(void)alertControllerAboveIn:(UIViewController *)controller{
++(void)alertControllerAboveIn:(UIViewController *)controller returnBlock:(returnBlock)returnEvent{
     
     ContactServiceView *view = [[NSBundle mainBundle]loadNibNamed:@"ContactServiceView" owner:nil options:nil][0];
     
     view.frame = CGRectMake(0, 0, KVIEW_W, KVIEW_H);
+    
+    view.returnEvent = returnEvent;
     
     [controller.view addSubview:view];
     

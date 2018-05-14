@@ -87,6 +87,7 @@
 		049C57842068C18B00180A8B /* PatientTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 049C57822068C18B00180A8B /* PatientTableViewCell.xib */; };
 		049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C57862068C5E200180A8B /* AddPatientViewController.m */; };
 		04A5530320737E4900822DB4 /* PopoverTreatwayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A5530220737E4900822DB4 /* PopoverTreatwayController.m */; };
+		04A79B2A20A9219100D96E88 /* BaseNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A79B2920A9219100D96E88 /* BaseNavigationController.m */; };
 		04C8B64F206B4ACD00DEB3F0 /* RecordDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */; };
 		04C8B65F206B711000DEB3F0 /* RecordItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C8B65E206B711000DEB3F0 /* RecordItemCell.m */; };
 		04C8B661206B75C400DEB3F0 /* Record.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04C8B660206B75C400DEB3F0 /* Record.plist */; };
@@ -260,6 +261,8 @@
 		049C57862068C5E200180A8B /* AddPatientViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddPatientViewController.m; sourceTree = "<group>"; };
 		04A5530120737E4900822DB4 /* PopoverTreatwayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopoverTreatwayController.h; sourceTree = "<group>"; };
 		04A5530220737E4900822DB4 /* PopoverTreatwayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopoverTreatwayController.m; sourceTree = "<group>"; };
+		04A79B2820A9219100D96E88 /* BaseNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseNavigationController.h; sourceTree = "<group>"; };
+		04A79B2920A9219100D96E88 /* BaseNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseNavigationController.m; sourceTree = "<group>"; };
 		04C8B64D206B4ACD00DEB3F0 /* RecordDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordDetailViewController.h; sourceTree = "<group>"; };
 		04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordDetailViewController.m; sourceTree = "<group>"; };
 		04C8B65D206B711000DEB3F0 /* RecordItemCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordItemCell.h; sourceTree = "<group>"; };
@@ -672,6 +675,8 @@
 				04ED0EB420528A1800638850 /* AppDelegate.m */,
 				0452786C20A1B0AB00CA605E /* TapBarController.h */,
 				0452786D20A1B0AB00CA605E /* TapBarController.m */,
+				04A79B2820A9219100D96E88 /* BaseNavigationController.h */,
+				04A79B2920A9219100D96E88 /* BaseNavigationController.m */,
 				041A3E1E207C561600CC316A /* BaseHeader.h */,
 			);
 			path = PainManagementSystem;
@@ -933,6 +938,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04A79B2A20A9219100D96E88 /* BaseNavigationController.m in Sources */,
 				046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */,
 				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
 				0495FD1A206F26EA00D01E2C /* Pack.m in Sources */,

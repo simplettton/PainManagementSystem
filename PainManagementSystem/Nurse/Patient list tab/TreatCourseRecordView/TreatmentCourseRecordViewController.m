@@ -19,7 +19,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *ageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
 @property (weak, nonatomic) IBOutlet UILabel *patientInfoLabel;
-
+//防止push多个相同的
+@property (assign,nonatomic)BOOL pushOnce;
 @end
 
 @implementation TreatmentCourseRecordViewController{
@@ -40,7 +41,9 @@
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.tableHeaderView.hidden = YES;
+    self.tableView.multipleTouchEnabled = NO;
     
+
     if (self.patient) {
         self.title = @"治疗疗程记录";
         [self updatePatientInfo];
@@ -55,10 +58,13 @@
 
     datas = [[NSMutableArray alloc]initWithCapacity:20];
 
+    self.pushOnce = 1;
     [self initTableHeaderAndFooter];
 }
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    self.pushOnce = 1;
     [self getStandardEvaluation];
 }
 #pragma mark - refresh
@@ -80,8 +86,6 @@
                                     [datas removeAllObjects];
                                     if ([responseObject.result intValue] == 1) {
                                         if (responseObject.content) {
-                                            NSLog(@"dic = %@",responseObject.content);
-
                                             //从其他地方进入详情 刷新patientin信息
                                             if (self.medicalRecordNum) {
                                                 self.patient = [PatientModel modelWithDic:responseObject.content[@"patient"]];
@@ -102,7 +106,6 @@
                                                                                      success:^(HttpResponse *responseObject) {
                                                                                          if ([responseObject.result integerValue]==1 ) {
                                                                                              NSDictionary *answerDic = responseObject.content;
-                                                                                             NSLog(@"answer = %@",answerDic);
                                                                                              [record appendQuestionsWithDic:answerDic];
                                                                                              
                                                                                          }else{
@@ -158,7 +161,8 @@
     cell.vasLabel.text = record.vasString;
     //不足三位前面补0
     cell.medicalRecodNumLB.text = [NSString stringWithFormat:@"%03zd",indexPath.row+1];
-    
+//    cell.contentView.multipleTouchEnabled = NO;
+//    cell.markButton.multipleTouchEnabled = NO;
     [cell.markButton setTag:indexPath.row];
     [cell.markButton addTarget:self action:@selector(showVASMarkView:) forControlEvents:UIControlEventTouchUpInside];
     [cell.markButton setTag:indexPath.row];
@@ -173,11 +177,6 @@
     __block NSMutableArray *array = (NSMutableArray *)[cell.vasLabel.text componentsSeparatedByString:@"/"];
     __block NSString *idString = record.ID;
     __block NSNumber *isForceToStop;
-//    if (self.medicalRecordNum || [record.machineType isEqualToString:@"血瘘"]) {
-//        isForceToStop = @1;
-//    }else{
-//        isForceToStop = @0;
-//    }
     
     if (self.isFocusToStop || [record.machineType isEqualToString:@"血瘘"]) {
         isForceToStop = @1;
@@ -203,14 +202,12 @@
                                                                 @"id":idString,
                                                                 @"mark":[array objectAtIndex:1]
                                                                 }describe:markDescribe return:^(NSString *markString) {
-
-                [array replaceObjectAtIndex:1 withObject:markString];
-                
-                NSString *newValue = [array componentsJoinedByString:@"/"];
-                cell.vasLabel.text = newValue;
-//                if (self.medicalRecordNum) {
-//                    [self.navigationController popViewControllerAnimated:YES];
-//                }
+                                                                    if (![markString isEqualToString:@"我按了取消按钮"]){
+                                                                        [array replaceObjectAtIndex:1 withObject:markString];
+                                                                        
+                                                                        NSString *newValue = [array componentsJoinedByString:@"/"];
+                                                                        cell.vasLabel.text = newValue;
+                                                                    }
             }];
         }];
         
@@ -218,24 +215,30 @@
         [self presentViewController:alert animated:YES completion:nil];
         
     }else{
+        if(self.pushOnce == 1){
+            [VASMarkView alertControllerAboveIn:self
+                                       withData:@{
+                                                @"flag":isForceToStop,
+                                                @"id":idString,
+                                                @"mark":@"20"
+                                                }
+                                       describe:markDescribe
+                                         return:^(NSString *markString) {
+                                            
+                                             if (![markString isEqualToString:@"我按了取消按钮"]) {
+                                                 [array replaceObjectAtIndex:1 withObject:markString];
+                                                 
+                                                 NSString *newValue = [array componentsJoinedByString:@"/"];
+                                                 cell.vasLabel.text = newValue;
 
-        [VASMarkView alertControllerAboveIn:self withData:@{
-                                                            @"flag":isForceToStop,
-                                                            @"id":idString,
-                                                            @"mark":@"20"
-                                                            } describe:markDescribe return:^(NSString *markString) {
+                                             }
+                                                self.pushOnce = 1;
+ 
 
-            [array replaceObjectAtIndex:1 withObject:markString];
-            
-            NSString *newValue = [array componentsJoinedByString:@"/"];
-            cell.vasLabel.text = newValue;
-                                                                
-//            if (self.medicalRecordNum) {
-//                [self.navigationController popViewControllerAnimated:YES];
-//            }
-        }];
+                                         }];
+            self.pushOnce = 0;
+        }
     }
-
 }
 -(void)getStandardEvaluation{
     //获取评分标准
@@ -255,7 +258,11 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self performSegueWithIdentifier:@"ShowRecordDetail" sender:indexPath];
+    if(self.pushOnce == 1){
+          [self performSegueWithIdentifier:@"ShowRecordDetail" sender:indexPath];
+        self.pushOnce = 0;
+    }
+
 }
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString:@"ShowRecordDetail"]) {

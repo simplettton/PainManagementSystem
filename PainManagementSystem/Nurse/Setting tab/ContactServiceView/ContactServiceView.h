@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
+typedef void(^returnBlock) (void);
 @interface ContactServiceView : UIView
-+(void)alertControllerAboveIn:(UIViewController *)controller;
+@property (nonatomic,strong)returnBlock returnEvent;
++(void)alertControllerAboveIn:(UIViewController *)controller returnBlock:(returnBlock)returnEvent;
 @end

@@ -47,7 +47,15 @@
     [super viewDidLoad];
     [self initAll];
 }
-
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    [self hideKeyBoard];
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    
+}
 -(void)initAll{
    
     
@@ -133,9 +141,9 @@
     BOOL hasBlankTextFiled = NO;
     for (UITextField *textField in self.requiredTextFields) {
         if ([textField.text length] == 0) {
-            [SVProgressHUD setErrorImage:[UIImage imageNamed:@""]];
+
             [SVProgressHUD setMaximumDismissTimeInterval:0.5];
-            [SVProgressHUD showErrorWithStatus:@"参数不能为空"];
+            [SVProgressHUD showErrorWithStatus:@"请填写完整信息"];
             hasBlankTextFiled = YES;
         }
     }

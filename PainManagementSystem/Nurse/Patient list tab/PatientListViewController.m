@@ -376,7 +376,7 @@
     if (cell == nil) {
         cell = [[PatientTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     PatientModel *patient = datas[indexPath.row];
     cell.medicalRecordNumLabel.text = patient.medicalRecordNum;
     cell.nameLabel.text = patient.name;

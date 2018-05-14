@@ -8,11 +8,12 @@
 
 #import "EditPasswordController.h"
 #import "BaseHeader.h"
-@interface EditPasswordController ()
+@interface EditPasswordController ()<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *oldPasswordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *confirmPassWordTextField;
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *textFields;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *finishButton;
 
 @end
 
@@ -21,6 +22,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (IBAction)done:(id)sender {
+    
     NSString *newPwd = self.passwordTextField.text;
     NSString *oldPwd = self.oldPasswordTextField.text;
     [SVProgressHUD show];
@@ -52,6 +54,7 @@
     self.title = @"设置密码";
 
     [self initAll];
+
     self.tableView.tableFooterView = [[UIView alloc]init];
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyBoard)];
     tapGestureRecognizer.cancelsTouchesInView = NO;
@@ -70,13 +73,36 @@
         textField.leftView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 51)];
         textField.leftViewMode=UITextFieldViewModeAlways;
         textField.layer.cornerRadius = 5.0f;
+        
+        textField.delegate = self;
     }
+    
+    self.finishButton.enabled = NO;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-//    self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
+
+}
+#pragma mark - UITextField Delegate
+
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    BOOL hasBlankTextFiled = NO;
+    for (UITextField *textField in self.textFields) {
+        if ([textField.text length] == 0) {
+            hasBlankTextFiled = YES;
+            if (textField.text.length >= 12) {
+                textField.text = [textField.text substringToIndex:12];
+            }
+        }
+    }
+    if(!hasBlankTextFiled){
+        self.finishButton.enabled = YES;
+    }
+    
+    return YES;
 }
 
 #pragma mark - Table view data source
@@ -88,8 +114,6 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 3;
 }
-
-
 
 
 @end

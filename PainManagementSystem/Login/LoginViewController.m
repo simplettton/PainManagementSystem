@@ -170,7 +170,7 @@
     
     //登录成功后保存账户信息
     [self saveUserInfo];
-    
+
     dispatch_async(dispatch_get_main_queue(), ^{
         AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
         myDelegate.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
