@@ -283,6 +283,7 @@
                                      }
                                  }
                                  failure:nil];
+    
 }
 
 -(void)getNetworkData:(BOOL)isRefresh{
@@ -933,86 +934,90 @@
 {
     [self dismissViewControllerAnimated:YES completion:^{
         
-        //去取对应的病人病历号
-        TaskModel *task = [datas objectAtIndex:self.selectedRow];
-
-        NSString *taskId = task.ID;
-        
-        NSLog(@"%@", [NSString stringWithFormat:@"medicalnum = %@",task.medicalRecordNum]);
-
-
-        
-        if ([task.machineType isEqualToString:@"血瘘"]) {
-
+        if (![self checkSerailNum:result]) {
+            [SVProgressHUD showErrorWithStatus:@"请扫描有效序列号"];
+        }else{
+            //去取对应的病人病历号
+            TaskModel *task = [datas objectAtIndex:self.selectedRow];
             
-            [SVProgressHUD showWithStatus:@"处方下发中……"];
+            NSString *taskId = task.ID;
             
-            if ([result isEqualToString:@"P06A17A00001"]) {
-                self.BLEDeviceName = @"ALX420";
+            NSLog(@"%@", [NSString stringWithFormat:@"medicalnum = %@",task.medicalRecordNum]);
+            
+            
+            if ([task.machineType isEqualToString:@"血瘘"]) {
+                
+                
+                [SVProgressHUD showWithStatus:@"处方下发中……"];
+                
+                if ([result isEqualToString:@"P06A17A00001"]) {
+                    self.BLEDeviceName = @"ALX420";
+                }else{
+                    self.BLEDeviceName = result;
+                }
+                
+                NSArray *paramArray = task.treatParam[@"paramlist"];
+                
+                NSString *time = [[paramArray objectAtIndex:0]objectForKey:@"value"];
+                NSDictionary *levelDic = @{@"一级":@"1",@"二级":@"2",@"三级":@"3"};
+                NSString *level = [[paramArray objectAtIndex:1]objectForKey:@"value"];
+                
+                Byte bytes[2] = {[time intValue],[levelDic[level] intValue]};
+                self.BLETreatParam = [NSData dataWithBytes:bytes length:2];
+                
+                //检查设备是否被其他病人绑定了
+                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/CheckDeviceEnabled"]
+                                              params:@{@"serialnum":result}
+                                            hasToken:YES
+                                             success:^(HttpResponse *responseObject) {
+                                                 if ([responseObject.result integerValue]== 1) {
+                                                     NSString *mac = responseObject.content[@"cpuid"];
+                                                     NSNumber *enabled = responseObject.content[@"enabled"];
+                                                     
+                                                     if ([enabled integerValue] ==1) {
+                                                         //连接设备
+                                                         [self BLEConnectDevice];
+                                                         [self startTimer];
+                                                         
+                                                     }else{
+                                                         [SVProgressHUD showErrorWithStatus:@"设备正忙"];
+                                                     }
+                                                 }else{
+                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                 }
+                                             }
+                                             failure:nil];
+                
             }else{
-                self.BLEDeviceName = result;
-            }
-            
-            NSArray *paramArray = task.treatParam[@"paramlist"];
-            
-            NSString *time = [[paramArray objectAtIndex:0]objectForKey:@"value"];
-            NSDictionary *levelDic = @{@"一级":@"1",@"二级":@"2",@"三级":@"3"};
-            NSString *level = [[paramArray objectAtIndex:1]objectForKey:@"value"];
-            
-            Byte bytes[2] = {[time intValue],[levelDic[level] intValue]};
-            self.BLETreatParam = [NSData dataWithBytes:bytes length:2];
-            
-            //检查设备是否被其他病人绑定了
-            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/CheckDeviceEnabled"]
-                                          params:@{@"serialnum":result}
-                                        hasToken:YES
-                                         success:^(HttpResponse *responseObject) {
-                                             if ([responseObject.result integerValue]== 1) {
-                                                 NSString *mac = responseObject.content[@"cpuid"];
-                                                 NSNumber *enabled = responseObject.content[@"enabled"];
-                                                 
-                                                 if ([enabled integerValue] ==1) {
-                                                     //连接设备
-                                                     [self BLEConnectDevice];
-                                                     [self startTimer];
+                [SVProgressHUD showWithStatus:@"处方下发中……"];
+                
+                NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
+                
+                [params setObject:result forKey:@"serialnum"];
+                
+                [params setObject:taskId forKey:@"id"];
+                
+                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/TreatmentParamDownload"]
+                                              params:params
+                                            hasToken:YES
+                                             success:^(HttpResponse *responseObject) {
+                                                 if ([responseObject.result intValue]==1) {
+                                                     //保存扫描到的序列号到处方中
+                                                     task.serialNum = result;
+                                                     [self showSuccessView];
                                                      
                                                  }else{
-                                                     [SVProgressHUD showErrorWithStatus:@"设备正忙"];
+                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                     //                                                 [self showFailView];
+                                                     
                                                  }
-                                             }else{
-                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                             }
-                                         }
-                                         failure:nil];
-
-        }else{
-            [SVProgressHUD showWithStatus:@"处方下发中……"];
-            
-            NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
-            
-            [params setObject:result forKey:@"serialnum"];
-            
-            [params setObject:taskId forKey:@"id"];
-            
-            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/TreatmentParamDownload"]
-                                          params:params
-                                        hasToken:YES
-                                         success:^(HttpResponse *responseObject) {
-                                             if ([responseObject.result intValue]==1) {
-                                                //保存扫描到的序列号到处方中
-                                                 task.serialNum = result;
-                                                 [self showSuccessView];
                                                  
-                                             }else{
-                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-//                                                 [self showFailView];
-                                                 
-                                             }
-                                             
-                                         } failure:nil];
+                                             } failure:nil];
+            }
+            
+            NSLog(@"QRretult == %@", result);
         }
-
-        NSLog(@"QRretult == %@", result);
+ 
     }];
 }
 
@@ -1220,5 +1225,12 @@
     NSString* dateString = [formatter stringFromDate:date];
     
     return dateString;
+}
+//序列号正则
+- (BOOL)checkSerailNum:(NSString *)inputString {
+    if (inputString.length == 0) return NO;
+    NSString *regex =@"^[A-Z]{1}[A-Z0-9]{3}\\d{2}[A-C1-9]{1}[A-Z0-9]{1}\\d{4}$";
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+    return [pred evaluateWithObject:inputString];
 }
 @end

@@ -47,6 +47,11 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
     self.tableView.mj_header.hidden = NO;
+    if (self.tableView.isEditing == YES) {
+        [self.tableView setEditing:NO];
+        self.deleteButton.titleLabel.text = @"删除";
+        [self.deleteButton setTitle:@"删除" forState:UIControlStateNormal];
+    }
     
 }
 -(void)viewWillDisappear:(BOOL)animated{
@@ -55,6 +60,9 @@
     self.tableView.mj_header.hidden = YES;
     [self endRefresh];
     [self cancelAllRequest];
+    [self hideKeyBoard];
+    
+    
 }
 
 - (void)viewDidLoad {
@@ -121,7 +129,6 @@
         [self search:nil];
     }
 }
-
 
 #pragma mark - refresh
 -(void)initTableHeaderAndFooter{
@@ -357,8 +364,6 @@
 
 //    }
 
-
-    
     //改变编辑状态下左侧圆圈勾选颜色
     cell.tintColor = UIColorFromHex(0x37BD9C);
     return cell;
@@ -403,14 +408,13 @@
                                              if ([responseObject.result intValue]==1) {
                                                  dispatch_async(dispatch_get_main_queue(), ^{
                                                      
+                                                      [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
                                                      //删除设备
                                                      NSMutableArray *currentArray = datas;
                                                      [currentArray removeObjectsInArray:deleteArray];
                                                      
                                                      datas = currentArray;
-                                                     
-                                                     [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
-                                                     
+
                                                      dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
                                                      dispatch_after(delayTime, dispatch_get_main_queue(), ^{
                                                          
@@ -428,16 +432,13 @@
                                                  NSString *error = responseObject.errorString;
                                                  dispatch_async(dispatch_get_main_queue(), ^{
                                                      [SVProgressHUD showErrorWithStatus:error];
+                                                     [self.tableView reloadData];
                                                  });
                                              }
                                          }
                                          failure:nil];
         }
-        
-
-
-        
-        
+    
     }else{
         self.deleteButton.titleLabel.text = @"完成";
         [self.deleteButton setTitle:@"完成" forState:UIControlStateNormal];

@@ -12,7 +12,7 @@
 
 #import <BRPickerView.h>
 
-@interface EditUserInfoController ()
+@interface EditUserInfoController ()<UITextFieldDelegate>
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *textFields;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *contactTextFiled;
@@ -53,6 +53,7 @@
     self.contactTextFiled.text = [UserDefault objectForKey:@"Contact"];
     self.departmentTextField.text = [UserDefault objectForKey:@"Department"];
     self.department = [UserDefault objectForKey:@"Department"];
+    self.contactTextFiled.delegate = self;
     
     datas = [NSMutableArray arrayWithCapacity:20];
     self.departmentNameArray = [NSMutableArray arrayWithCapacity:20];
@@ -113,25 +114,33 @@
 -(void)viewWillAppear:(BOOL)animated{
     
     [super viewWillAppear:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange) name:UITextFieldTextDidChangeNotification object:nil];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 
 }
-//#pragma mark - HHDropDownList
-//
-//- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
-//
-//    return _dropListArray;
-//}
-//- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
-//
-//    NSDictionary *dataDic = [datas objectAtIndex:index];
-//
-//    self.departmentId = dataDic[@"id"];
-//
-//    self.department = dataDic[@"name"];
-//
-//}
-
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
+}
+-(void)textFieldDidChange{
+    if (self.nameTextField.text.length > 10) {
+        self.nameTextField.text = [self.nameTextField.text substringToIndex:10];
+    }
+    if (self.contactTextFiled.text.length > 11) {
+        self.contactTextFiled.text = [self.contactTextFiled.text substringToIndex:11];
+    }
+}
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    NSCharacterSet*cs;
+    
+    cs = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet];
+    NSString*filtered = [[string componentsSeparatedByCharactersInSet:cs] componentsJoinedByString:@""];
+    BOOL basicTest = [string isEqualToString:filtered];
+    if (!basicTest) {
+        return NO;
+    }
+    return YES;
+}
 
 #pragma mark - Table view data source
 
@@ -161,39 +170,44 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (IBAction)save:(id)sender {
-    [SVProgressHUD show];
-    NSString *personName = self.nameTextField.text;
-    NSString *contact = self.contactTextFiled.text;
-//    NSString *department = self.departmentTextField.text;
-    NSMutableDictionary *params = [[NSMutableDictionary alloc]initWithCapacity:20];
-    [params setObject:personName forKey:@"personname"];
-    [params setObject:contact forKey:@"contact"];
-    if (self.departmentId) {
-        [params setObject:self.departmentId forKey:@"department"];
+
+    if (self.nameTextField.text.length == 0 || self.contactTextFiled.text.length == 0) {
+        [SVProgressHUD showErrorWithStatus:@"请填写完整信息"];
+        return;
+    }else{
+            [SVProgressHUD show];
+        NSString *personName = self.nameTextField.text;
+        NSString *contact = self.contactTextFiled.text;
+        
+        NSMutableDictionary *params = [[NSMutableDictionary alloc]initWithCapacity:20];
+        [params setObject:personName forKey:@"personname"];
+        [params setObject:contact forKey:@"contact"];
+        if (self.departmentId) {
+            [params setObject:self.departmentId forKey:@"department"];
+        }
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/ChangeSelfInfo"]
+                                      params:params
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         if ([responseObject.result intValue] == 1) {
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 
+                                                 [SVProgressHUD showSuccessWithStatus:@"保存成功"];
+                                                 [self dismissViewControllerAnimated:YES completion:nil];
+                                                 
+                                                 [UserDefault setObject:personName forKey:@"PersonName"];
+                                                 [UserDefault setObject:contact forKey:@"Contact"];
+                                                 [UserDefault setObject:self.department forKey:@"Department"];
+                                                 [UserDefault synchronize];
+                                                 
+                                             });
+                                         }else{
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                         }
+                                         
+                                     }
+                                     failure:nil];
     }
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/User/ChangeSelfInfo"]
-                                                                             params:params
-                                                                           hasToken:YES
-                                                                            success:^(HttpResponse *responseObject) {
-                                                                                if ([responseObject.result intValue] == 1) {
-                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
-
-                                                                                        [SVProgressHUD showSuccessWithStatus:@"保存成功"];
-                                                                                        [self dismissViewControllerAnimated:YES completion:nil];
-                                                                                        
-                                                                                        [UserDefault setObject:personName forKey:@"PersonName"];
-                                                                                        [UserDefault setObject:contact forKey:@"Contact"];
-                                                                                        [UserDefault setObject:self.department forKey:@"Department"];
-                                                                                        [UserDefault synchronize];
-                                                                                        
-                                                                                    });
-                                                                                }else{
-                                                                                    [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                                                                }
-                                                                            
-                                                                            }
-                                                                            failure:nil];
-
 }
 
 @end

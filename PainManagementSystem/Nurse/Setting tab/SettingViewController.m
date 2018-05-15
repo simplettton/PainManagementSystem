@@ -36,9 +36,14 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
 
-    [self setBorderWithView:self.nameLabel top:NO left:YES bottom:NO right:YES borderColor:[UIColor whiteColor] borderWidth:1.0];
     self.pushOnce = 1;
 
+}
+
+-(void)viewDidLayoutSubviews{
+    
+    [super viewDidLayoutSubviews];
+    
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
@@ -59,6 +64,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
 - (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
 {
+
     if (top) {
         CALayer *layer = [CALayer layer];
         layer.frame = CGRectMake(0, 0, view.frame.size.width, width);

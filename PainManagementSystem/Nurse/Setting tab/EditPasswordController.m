@@ -73,36 +73,35 @@
         textField.leftView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 51)];
         textField.leftViewMode=UITextFieldViewModeAlways;
         textField.layer.cornerRadius = 5.0f;
-        
-        textField.delegate = self;
     }
-    
     self.finishButton.enabled = NO;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange) name:UITextFieldTextDidChangeNotification object:nil];
 
+}
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
 }
 #pragma mark - UITextField Delegate
 
--(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    
-    BOOL hasBlankTextFiled = NO;
-    for (UITextField *textField in self.textFields) {
-        if ([textField.text length] == 0) {
-            hasBlankTextFiled = YES;
-            if (textField.text.length >= 12) {
-                textField.text = [textField.text substringToIndex:12];
-            }
-        }
-    }
-    if(!hasBlankTextFiled){
+-(void)textFieldDidChange{
+    if (self.oldPasswordTextField.text.length == 0 || self.passwordTextField.text.length == 0 || self.confirmPassWordTextField.text.length == 0 || self.oldPasswordTextField.text.length < 6 ||
+        self.confirmPassWordTextField.text.length < 6 ||self.passwordTextField.text.length < 6) {
+        self.finishButton.enabled = NO;
+    } else {
         self.finishButton.enabled = YES;
     }
-    
-    return YES;
+    for (UITextField *textField in self.textFields) {
+        if (textField.text.length > 20) {
+            textField.text = [textField.text substringToIndex:20];
+        }
+    }
 }
 
 #pragma mark - Table view data source
@@ -114,6 +113,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 3;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 44;
+}
 
 @end

@@ -62,7 +62,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
     self.tableView.mj_header.hidden = NO;
-    self.tableView.tableHeaderView.hidden = YES;
 
 
 }
@@ -72,9 +71,26 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [baby cancelAllPeripheralsConnection];
     [self endRefresh];
     self.tableView.mj_header.hidden = YES;
+
+}
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    [self hideKeyBoard];
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    [self.tableView endEditing:YES];
+    
 }
 
-
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    NSUInteger proposedNewLength = textField.text.length - range.length + string.length;
+    if (proposedNewLength > 20) {
+        return NO;//限制长度
+    }
+    return YES;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initAll];
@@ -169,15 +185,13 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                              totalPage = ([count intValue]+15-1)/15;
                                              
                                              if ([count intValue] >0) {
-                                                 self.tableView.tableHeaderView.hidden = NO;
+                                                 
                                                  [self getNetworkData:isRefresh];
 
                                              }else{
                                                  [datas removeAllObjects];
                                                  [self endRefresh];
                                                  [self.tableView reloadData];
-                                                 self.tableView.tableHeaderView.hidden = YES;
-                                                 
                                              }
                                          }else{
                                              [SVProgressHUD showErrorWithStatus:responseObject.errorString];
@@ -355,7 +369,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }];
     
     [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
-        weakSelf.tableView.tableHeaderView.hidden = NO;
         [weakSelf insertTableView:peripheral advertisementData:advertisementData RSSI:RSSI];
     }];
     
@@ -635,10 +648,14 @@ typedef NS_ENUM(NSUInteger,typeTags)
 - (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result
 {
     [self dismissViewControllerAnimated:YES completion:^{
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedRow inSection:0];
-        AddDeviceCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-        cell.serialNumTextField.text = result;
-        NSLog(@"QRretult == %@", result);
+        if (![self checkSerailNum:result]) {
+            [SVProgressHUD showErrorWithStatus:@"请扫描有效序列号"];
+        }else{
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedRow inSection:0];
+            AddDeviceCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+            cell.serialNumTextField.text = result;
+        }
+
     }];
 }
 
@@ -666,6 +683,8 @@ typedef NS_ENUM(NSUInteger,typeTags)
     if (cell == nil) {
         cell = [[AddDeviceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
+    cell.nameTextField.delegate = self;
+    
     //wifi设备
     if (!isLocalDeviceList) {
         
@@ -721,10 +740,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
     return indexPath;
 }
 
-
-//关闭键盘
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [self.view endEditing:YES];
+- (BOOL)checkSerailNum:(NSString *)inputString {
+    if (inputString.length == 0) return NO;
+    NSString *regex =@"^[A-Z]{1}[A-Z0-9]{3}\\d{2}[A-C1-9]{1}[A-Z0-9]{1}\\d{4}$";
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+    return [pred evaluateWithObject:inputString];
 }
 
 @end

@@ -155,9 +155,7 @@
             });
         }
     
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        
-    }];
+    } failure:nil];
 
     });
     if (controller) {

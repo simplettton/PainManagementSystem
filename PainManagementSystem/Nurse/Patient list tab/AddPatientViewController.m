@@ -13,7 +13,7 @@
 #import "BETextField.h"
 #import <BRPickerView.h>
 #import "BaseHeader.h"
-@interface AddPatientViewController ()<QRCodeReaderDelegate>
+@interface AddPatientViewController ()<QRCodeReaderDelegate,UITextFieldDelegate>
 @property (strong, nonatomic) IBOutletCollection(UIView) NSArray *editViews;
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *requiredTextFields;
 @property (weak, nonatomic) IBOutlet UIView *medicalNumView;
@@ -47,6 +47,54 @@
     [super viewDidLoad];
     [self initAll];
 }
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange) name:UITextFieldTextDidChangeNotification object:nil];
+}
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
+}
+-(void)textFieldDidChange{
+    if (self.nameTextField.text.length > 10) {
+        self.nameTextField.text = [self.nameTextField.text substringToIndex:10];
+    }
+    if (self.medicalRecordNumTextField.text.length > 20) {
+        self.medicalRecordNumTextField.text = [self.medicalRecordNumTextField.text substringToIndex:20];
+    }
+    if (self.phoneTextFiled.text.length > 12) {
+        self.phoneTextFiled.text = [self.phoneTextFiled.text substringToIndex:12];
+    }
+    if (self.bedNumTextField.text.length > 10) {
+        self.bedNumTextField.text = [self.bedNumTextField.text substringToIndex:10];
+    }
+    
+}
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if (textField == self.phoneTextFiled) {
+        NSCharacterSet*cs;
+        //限制联系方式只能是数字
+        cs = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789-"] invertedSet];
+        NSString*filtered = [[string componentsSeparatedByCharactersInSet:cs] componentsJoinedByString:@""];
+        BOOL basicTest = [string isEqualToString:filtered];
+        if (!basicTest) {
+            return NO;
+        }
+        return YES;
+    }else if(textField == self.medicalRecordNumTextField){
+
+        if (![self inputShouldLetterOrNumWithText:string]) {
+            return NO;
+        }
+        // Check for total length
+        NSUInteger proposedNewLength = textField.text.length - range.length + string.length;
+        if (proposedNewLength > 20) {
+            return NO;//限制长度
+        }
+        return YES;
+    }
+    return YES;
+}
 //关闭键盘
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
@@ -57,7 +105,8 @@
     
 }
 -(void)initAll{
-   
+    self.phoneTextFiled.delegate = self;
+    self.medicalRecordNumTextField.delegate = self;
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"保存" style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
     
@@ -248,6 +297,7 @@
         
     }
     NSArray *types = @[
+                       AVMetadataObjectTypeQRCode,
                        AVMetadataObjectTypeEAN13Code,
                        AVMetadataObjectTypeEAN8Code,
                        AVMetadataObjectTypeUPCECode,
@@ -259,15 +309,22 @@
     
     _reader = [QRCodeReaderViewController readerWithMetadataObjectTypes:types];
     _reader.delegate = self;
-    
-    
+
     [self presentViewController:_reader animated:YES completion:NULL];
 }
 #pragma mark - QRCodeReader Delegate Methods
 - (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result
 {
     [self dismissViewControllerAnimated:YES completion:^{
-        self.medicalRecordNumTextField.text = result;
+        
+        //病历号限制了20位
+        if(result.length <= 20 && [self inputShouldLetterOrNumWithText:result]){
+            self.medicalRecordNumTextField.text = result;
+        }else{
+            [SVProgressHUD showErrorWithStatus:@"请扫描有效的病历号"];
+            self.medicalRecordNumTextField.text = @"";
+        }
+
         NSLog(@"QRretult == %@", result);
     }];
 }
@@ -313,5 +370,11 @@
     return timeStamp;
 
 }
-
+//仅输入字母或数字 正则
+- (BOOL)inputShouldLetterOrNumWithText:(NSString *)inputString {
+    if (inputString.length == 0) return NO;
+    NSString *regex =@"[a-zA-Z0-9]*";
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+    return [pred evaluateWithObject:inputString];
+}
 @end

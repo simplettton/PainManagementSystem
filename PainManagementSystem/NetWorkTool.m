@@ -24,7 +24,7 @@ static NetWorkTool *_instance;
         
         //设置请求的超时时间
         [_instance.requestSerializer willChangeValueForKey:@"timeoutInterval"];
-        _instance.requestSerializer.timeoutInterval = 10.f;
+        _instance.requestSerializer.timeoutInterval = 3.f;
         [_instance.requestSerializer didChangeValueForKey:@"timeoutInterval"];
         
         _instance.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html", nil];
@@ -36,7 +36,7 @@ static NetWorkTool *_instance;
      params:(NSDictionary *)parameters
    hasToken:(bool)hasToken
     success:(HttpResponseObject)responseBlock
-    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure{
+    failure:(HttpFailureBlock)failureBlock{
     
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
     
@@ -61,13 +61,13 @@ static NetWorkTool *_instance;
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     });
 
+    
     [self POST:address
     parameters:params
       progress:^(NSProgress * _Nonnull uploadProgress) {
           
       }
        success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-           
            //请求结果出现后关闭风火轮
            
            dispatch_async(dispatch_get_main_queue(), ^{
@@ -101,7 +101,6 @@ static NetWorkTool *_instance;
 
                        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
                         [appDelegate performSelector:@selector(initRootViewController) withObject:nil afterDelay:1];
-//                       [appDelegate initRootViewController];
                     
                    });
                }else{
@@ -114,8 +113,7 @@ static NetWorkTool *_instance;
                    responseBlock(responseObject);
                    //停止刷新
                    dispatch_async(dispatch_get_main_queue(), ^{
-                       [self endTableViewHeaderRefreshing];
-                       
+                       [self endTableViewRefreshing:NO];
                    });
                }
 
@@ -123,36 +121,35 @@ static NetWorkTool *_instance;
        }
        failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
            //请求结果出现后关闭风火轮
-           
            dispatch_async(dispatch_get_main_queue(), ^{
                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
            });
+           if (failureBlock) {
+               failureBlock(error);
+           }
 
-           NSLog(@"task = %@",task);
-           
-           NSLog(@"error = %@",error);
            dispatch_async(dispatch_get_main_queue(), ^{
                
                if ([error.localizedDescription hasSuffix:@"。"]) {
 
                    NSString *string = [error.localizedDescription substringToIndex:[error.localizedDescription length] -1];
-                   
-                   [SVProgressHUD showErrorWithStatus:string];
+//                   if (![string isEqualToString:@"请求超时"]) {
+//                       [SVProgressHUD showErrorWithStatus:string];
+                     [SVProgressHUD showErrorWithStatus:string];
+//                   }
                }
                else{
                    [SVProgressHUD showErrorWithStatus:error.localizedDescription];
                }
-
-
                //endrefresh操作
-               [self endTableViewHeaderRefreshing];
+               [self endTableViewRefreshing:YES];
 
            });
        }];
 }
 #pragma mark - private method
 
--(void)endTableViewHeaderRefreshing{
+-(void)endTableViewRefreshing:(BOOL)includeFooter{
     
     UIViewController *controller = [self getCurrentVC];
     
@@ -164,12 +161,12 @@ static NetWorkTool *_instance;
         controller = [navi viewControllers][0];
     }
  
-    [self traverseAllSubviews:controller.view];
+    [self traverseAllSubviews:controller.view includeFooter:includeFooter];
     
     
 }
 
--(void)traverseAllSubviews:(UIView *)rootView {
+-(void)traverseAllSubviews:(UIView *)rootView includeFooter:(BOOL)includeFooter {
     for (UIView *subView in [rootView subviews])
     {
         if (!rootView.subviews.count) {
@@ -180,14 +177,19 @@ static NetWorkTool *_instance;
         if ([subView isKindOfClass:[UITableView class]]) {
             __weak UITableView *tableview = (UITableView *)subView;
             [tableview.mj_header endRefreshing];
-            
+            if (includeFooter) {
+                [tableview.mj_footer endRefreshing];
+            }
 
         }else if([subView isKindOfClass:[UICollectionView class]]){
             __weak UICollectionView *collectionview = (UICollectionView *)subView;
             [collectionview.mj_header endRefreshing];
+            if (includeFooter) {
+                [collectionview.mj_footer endRefreshing];
+            }
             
         }
-        [self traverseAllSubviews:subView];
+        [self traverseAllSubviews:subView includeFooter:includeFooter];
     }
 }
 

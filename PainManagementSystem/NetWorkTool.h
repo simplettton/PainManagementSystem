@@ -19,5 +19,5 @@ typedef void (^HttpResponseObject)(HttpResponse* responseObject);
      params:(NSDictionary *)parameters
    hasToken:(bool)hasToken
     success:(HttpResponseObject)responseBlock
-    failure:(void (^)(NSURLSessionDataTask * , NSError *))failure;
+    failure:(HttpFailureBlock)failureBlock;
 @end

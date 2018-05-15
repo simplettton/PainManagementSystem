@@ -333,7 +333,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                      }
                                  }
-                                 failure:nil];
+                                 failure:^(NSError *error) {
+                                     dispatch_async(dispatch_get_main_queue(), ^{
+                                         [self.collectionView reloadData];
+                                     });
+                                 }];
 }
 -(void)getNetworkData:(BOOL)isRefresh withParam:(NSMutableDictionary *)param{
     if (isRefresh) {
@@ -686,6 +690,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             self.collectionView.mj_footer.hidden = NO;
             NSLog(@"切换在线设备");
             [datas removeAllObjects];
+            [self.collectionView reloadData];
             self.tag = DeviceTypeOnline;
             
             self.dropList.hidden = NO;
@@ -773,26 +778,27 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         
         if(datas){
             MachineModel *machine = [datas objectAtIndex:indexPath.row];
-            if([machine.type isEqualToString:@"血瘘"]){
-                
-            }
+
             [cell configureWithStyle:machine.cellStyle message:nil];
             cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
             cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
             cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
             
-            //警告
-            if (machine.alertMessage) {
-                [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
-                
-            }else if (machine.leftTimeNumber) {
-                //进行中才更新倒计时
-                if (cell.style == CellStyleOngoing_MachineRunning) {
-                    [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
+            if(![machine.type isEqualToString:@"血瘘"]){
+                //警告
+                if (machine.alertMessage) {
+                    [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
+                    
+                }else if (machine.leftTimeNumber) {
+                    //进行中才更新倒计时
+                    if (cell.style == CellStyleOngoing_MachineRunning) {
+                        [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
+                    }
+                }else{
+                    
                 }
-            }else{
-                
             }
+
             //按钮操作
             switch (cell.style) {
                 case CellStyleFinished_MachineStop:
@@ -1306,7 +1312,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
         __block NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
         NSMutableArray *array = [NSMutableArray arrayWithArray:savedArray];
-
+        
+        if (array) {
+            datas = array;
+            [self.collectionView reloadData];
+        }
+        
         __block NSArray *serverTaskListArray = [[NSArray alloc]init];
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/RunningTaskList"]
                                       params:nil
@@ -1323,19 +1334,38 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                         [array removeObjectAtIndex:index];
                                                     }
                                                 }
-
+                                                //刷新列表
                                                 datas = array;
                                                 [self endRefresh];
                                                 if(datas){
                                                     [self.collectionView reloadData];
                                                 }
+                                                
+                                                //保存到文件中
+                                                NSMutableData *fileData = [[NSMutableData alloc] init] ;
+                                                NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:fileData] ;
+                                                [archiver encodeObject:array forKey:@"machineArray"];
+                                                [archiver finishEncoding];
+                                                
+                                                BOOL success = [fileData writeToFile:documentPath atomically:YES];
+                                                if (!success)
+                                                {
+                                                
+                                                }else{
+                                                    NSLog(@"同步服务器数据");
+                                                }
+
                                             }
                                         }else{
                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                         }
 
-                                    } failure:nil];
+                                    } failure:^(NSError *error) {
+
+                                    }];
     }
+
+
 }
 
 #pragma mark - BLE

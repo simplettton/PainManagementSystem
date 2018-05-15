@@ -30,12 +30,31 @@
     self.title = @"设备管理系统";
     [self initAll];
 }
-
+//关闭键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    [self hideKeyBoard];
+}
+-(void)hideKeyBoard{
+    [self.view endEditing:YES];
+    
+}
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange) name:UITextFieldTextDidChangeNotification object:nil];
+}
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:YES];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
+}
+-(void)textFieldDidChange{
+    //限制20位
+    if (self.nameTextField.text.length > 20) {
+        self.nameTextField.text = [self.nameTextField.text substringToIndex:20];
+    }
 }
 
 -(void)initAll{
@@ -181,12 +200,23 @@
 - (void)reader:(QRCodeReaderViewController *)reader didScanResult:(NSString *)result
 {
     [self dismissViewControllerAnimated:YES completion:^{
-        self.serialNumTextField.text = result;
+        if (![self checkSerailNum:result]) {
+            [SVProgressHUD showErrorWithStatus:@"请扫描有效序列号"];
+        }else{
+            self.serialNumTextField.text = result;
+        }
     }];
 }
 
 - (void)readerDidCancel:(QRCodeReaderViewController *)reader
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+//序列号正则
+- (BOOL)checkSerailNum:(NSString *)inputString {
+    if (inputString.length == 0) return NO;
+    NSString *regex =@"^[A-Z]{1}[A-Z0-9]{3}\\d{2}[A-C1-9]{1}[A-Z0-9]{1}\\d{4}$";
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+    return [pred evaluateWithObject:inputString];
 }
 @end
