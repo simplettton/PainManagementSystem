@@ -35,7 +35,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.tableView.multipleTouchEnabled = NO;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-
+    
     self.pushOnce = 1;
 
 }
@@ -43,6 +43,8 @@ typedef NS_ENUM(NSUInteger,typeTags)
 -(void)viewDidLayoutSubviews{
     
     [super viewDidLayoutSubviews];
+    self.hospitalLabel.numberOfLines = 0;
+    [self.hospitalLabel sizeToFit];
     
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -56,9 +58,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
     
     self.hospitalLabel.text = [UserDefault objectForKey:@"Hospital"];
+//    self.hospitalLabel.text = @"福建中医药大学附属人民医院附属人民医院药";
     self.nameLabel.text = [UserDefault objectForKey:@"PersonName"];
     self.phoneLabel.text = [UserDefault objectForKey:@"Contact"];
     self.userNameLabel.text = [NSString stringWithFormat:@"%@    %@",[UserDefault objectForKey:@"UserName"],[UserDefault objectForKey:@"Department"]];
+
 
 }
 

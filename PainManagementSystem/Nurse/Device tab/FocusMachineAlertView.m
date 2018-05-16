@@ -115,7 +115,7 @@
     //patient information
     self.medicalNumLabel.text = [NSString stringWithFormat:@"病历号： %@",machine.userMedicalNum];
     self.patientNameLabel.text = [NSString stringWithFormat:@"病人姓名： %@",machine.userName];
-    self.bedNumLabel.text = [NSString stringWithFormat:@"病历号： %@",machine.userBedNum];
+    self.bedNumLabel.text = [NSString stringWithFormat:@"病床号： %@",machine.userBedNum];
     
     //machine information
     self.machineTypeLabel.text = [NSString stringWithFormat:@"治疗设备：    %@", machine.type];

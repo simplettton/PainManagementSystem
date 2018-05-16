@@ -61,8 +61,7 @@
     [self endRefresh];
     [self cancelAllRequest];
     [self hideKeyBoard];
-    
-    
+
 }
 
 - (void)viewDidLoad {
@@ -407,19 +406,20 @@
                                          success:^(HttpResponse *responseObject) {
                                              if ([responseObject.result intValue]==1) {
                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                     
-                                                      [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
-                                                     //删除设备
-                                                     NSMutableArray *currentArray = datas;
-                                                     [currentArray removeObjectsInArray:deleteArray];
-                                                     
-                                                     datas = currentArray;
+//
+//                                                      [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
+//                                                     //删除设备
+//                                                     NSMutableArray *currentArray = datas;
+//                                                     [currentArray removeObjectsInArray:deleteArray];
+//
+//                                                     datas = currentArray;
 
-                                                     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
-                                                     dispatch_after(delayTime, dispatch_get_main_queue(), ^{
-                                                         
-                                                         [self.tableView reloadData];
-                                                     });
+//                                                     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+//                                                     dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+//
+//                                                         [self.tableView reloadData];
+//                                                     });
+                                                     [self refresh];
                                                      
                                                      //完成删除后不给选中cell
                                                      for (DeviceTableViewCell *cell in self.tableView.visibleCells) {

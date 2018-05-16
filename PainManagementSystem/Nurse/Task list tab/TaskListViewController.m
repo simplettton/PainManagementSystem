@@ -75,6 +75,9 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
 
+    if (self.taskTag == TaskListTypeProcessing) {
+        [self refresh];
+    }
     self.tableView.mj_header.hidden = NO;
     self.isBLEPoweredOff = YES;
     self.pushOnce = 1;
@@ -82,6 +85,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
     
 }
+//双击tab更新列表
 -(void)reloadDataWithNotification:(NSNotification *)notification{
     if ([notification.object integerValue] == 0) {
         [self.tableView.mj_header beginRefreshing];

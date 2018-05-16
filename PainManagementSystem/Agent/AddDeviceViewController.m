@@ -58,6 +58,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 -(void)viewWillAppear:(BOOL)animated{
     
     [super viewWillAppear:YES];
+    self.navigationItem.hidesBackButton = YES;
     self.title = @"设备管理系统";
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
@@ -212,6 +213,20 @@ typedef NS_ENUM(NSUInteger,typeTags)
     
     //配置请求http
     NSMutableDictionary *mutableParam = [[NSMutableDictionary alloc]init];
+    
+    switch (self.selectedDeviceTag) {
+        case electrotherapyTag:
+            
+            [mutableParam setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
+            
+            break;
+        case airProTag:
+            
+            [mutableParam setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
+            
+        default:
+            break;
+    }
     
     [mutableParam setObject:@0 forKey:@"isregistered"];
     [mutableParam setObject:[NSNumber numberWithInt:page] forKey:@"page"];
@@ -545,30 +560,32 @@ typedef NS_ENUM(NSUInteger,typeTags)
 }
 
 - (IBAction)saveAll:(id)sender {
+    
     NSArray *cells = self.tableView.visibleCells;
     NSMutableArray *saveArray = [NSMutableArray array];
+    NSString *api;
+    if (isLocalDeviceList) {
+        api = @"Api/LocalDevice/registered";
+    }else{
+        api = @"Api/OnlineDevice/registered";
+    }
     if ([cells count]>0) {
         for (AddDeviceCell *cell in cells) {
             
             //序列号输入了才录入
             if (cell.serialNumTextField.text.length>0 ) {
-                
-                
-                
+
                 NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:20];
-                NSString *api;
+
                 if (isLocalDeviceList) {
-                    api = @"Api/LocalDevice/registered";
-//                    [dic setObject:cell.ringButton.titleLabel.text forKey:@"cpuid"];
                     [dic setObject:@"900C84002DC2" forKey:@"cpuid"];
                     [dic setObject:[NSNumber numberWithInteger:57119] forKey:@"machinetype"];
                 
                 }else{
-                    api = @"Api/OnlineDevice/registered";
                     [dic setObject:cell.ringButton.titleLabel.text forKey:@"cpuid"];
                 }
 
-                if ([cell.serialNumTextField.text length]>0) {
+                if ([cell.nameTextField.text length]>0) {
                     [dic setObject:cell.nameTextField.text forKey:@"nick"];
                 }
                 
@@ -576,32 +593,57 @@ typedef NS_ENUM(NSUInteger,typeTags)
                 
                 //保存的数组
                 [saveArray addObject:dic];
-                NSDictionary  *param = (NSDictionary *)dic;
-                
-                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
-                                              params:param
-                                            hasToken:YES
-                                             success:^(HttpResponse *responseObject) {
-                                                 if ([responseObject.result intValue] == 1) {
-                                                     [SVProgressHUD setMaximumDismissTimeInterval:0.5];
-                                                     [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
-                                                     [SVProgressHUD showSuccessWithStatus:@"录入成功"];
-                                                     [self refresh];
-                                                 }else{
-                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                                 }
-                                             }
-                                             failure:nil];
-            }else{
-
-                [SVProgressHUD showErrorWithStatus:@"序列号不能为空"];
+//                NSDictionary  *param = (NSDictionary *)dic;
+//
+//                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
+//                                              params:param
+//                                            hasToken:YES
+//                                             success:^(HttpResponse *responseObject) {
+//                                                 if ([responseObject.result intValue] == 1) {
+//                                                     [SVProgressHUD setMaximumDismissTimeInterval:0.5];
+//                                                     [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
+//                                                     [SVProgressHUD showSuccessWithStatus:@"录入成功"];
+//                                                     [self refresh];
+//                                                 }else{
+//                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+//                                                 }
+//                                             }
+//                                             failure:nil];
             }
         }
     }
-
-    
     NSLog(@"send to server -----------add device array :%@",saveArray);
     
+    [self registerDeviceWithApi:api saveArray:saveArray];
+
+}
+-(void)registerDeviceWithApi:(NSString *)api saveArray:(NSMutableArray *)saveArray{
+    
+    if ([saveArray count]>0) {
+        
+        NSDictionary *param = [saveArray lastObject];
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
+                                      params:param
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         if ([responseObject.result intValue] == 1) {
+                                             [SVProgressHUD showSuccessWithStatus:@"录入成功"];
+                                             
+                                             [saveArray removeLastObject];
+                                             
+                                             if ([saveArray count] == 0) {
+                                                 [self refresh];
+                                             }
+                                             else{
+                                                 [self registerDeviceWithApi:api saveArray:saveArray];
+                                             }
+
+                                         }else{
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                         }
+                                     }
+                                     failure:nil];
+    }
 }
 
 - (IBAction)logout:(id)sender {
@@ -666,7 +708,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
 - (IBAction)backToDeviceList:(id)sender {
     [self.navigationController popViewControllerAnimated:NO];
-    [self dismissViewControllerAnimated:NO completion:nil];
+//    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 #pragma mark - tableview dataSource
@@ -688,43 +730,50 @@ typedef NS_ENUM(NSUInteger,typeTags)
     //wifi设备
     if (!isLocalDeviceList) {
         
-
-        NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
-        
-        [cell.ringButton setTitle:[dataDic objectForKey:@"cpuid"] forState:UIControlStateNormal];
-        [cell.ringButton addTarget:self action:@selector(ring:) forControlEvents:UIControlEventTouchUpInside];
-        cell.nameTextField.text = @"";
+        if([datas count]>0){
+            NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
+            
+            [cell.ringButton setTitle:[dataDic objectForKey:@"cpuid"] forState:UIControlStateNormal];
+            [cell.ringButton addTarget:self action:@selector(ring:) forControlEvents:UIControlEventTouchUpInside];
+            cell.nameTextField.text = @"";
+            NSString *serialNum = [dataDic objectForKey:@"serialnum"];
+            if ([serialNum isEqual:[NSNull null]]) {
+                cell.serialNumTextField.text = @"";
+            }
+        }
     }
     else{
         //蓝牙设备
-        NSDictionary *item = [datas objectAtIndex:indexPath.row];
-        
-        CBPeripheral *peripheral = [item objectForKey:@"peripheral"];
-        if (peripheral) {
-            NSDictionary *advertisementData = [item objectForKey:@"advertisementData"];
-            cell.nameTextField.text = peripheral.name;
+        if([datas count]>0){
+            NSDictionary *item = [datas objectAtIndex:indexPath.row];
             
-            //BLE的mac地址
-            NSData *data = (NSData *)[advertisementData objectForKey:@"kCBAdvDataManufacturerData"];
-            NSMutableArray *array = [NSMutableArray arrayWithCapacity:20];
-            if (data) {
-                Byte *dataByte = (Byte *)[data bytes];
-                for (int i =0 ; i < 6; i++) {
-                    [array addObject:[NSString stringWithFormat:@"%x",dataByte[i]]];
+            CBPeripheral *peripheral = [item objectForKey:@"peripheral"];
+            if (peripheral) {
+                NSDictionary *advertisementData = [item objectForKey:@"advertisementData"];
+                cell.nameTextField.text = peripheral.name;
+                
+                //BLE的mac地址
+                NSData *data = (NSData *)[advertisementData objectForKey:@"kCBAdvDataManufacturerData"];
+                NSMutableArray *array = [NSMutableArray arrayWithCapacity:20];
+                if (data) {
+                    Byte *dataByte = (Byte *)[data bytes];
+                    for (int i =0 ; i < 6; i++) {
+                        [array addObject:[NSString stringWithFormat:@"%x",dataByte[i]]];
+                    }
                 }
-            }
-            NSString *mac = [array componentsJoinedByString:@""];
-            
-            
-            if(!data) {
-                [cell.ringButton setTitle:peripheral.identifier.UUIDString forState:UIControlStateNormal];
-                NSLog(@"uuid = %@",peripheral.identifier.UUIDString);
-            }else {
-                [cell.ringButton setTitle:mac forState:UIControlStateNormal];
-            }
-            
-            [cell.ringButton addTarget:self action:@selector(localRing:) forControlEvents:UIControlEventTouchUpInside];
-            
+                NSString *mac = [array componentsJoinedByString:@""];
+                
+                
+                if(!data) {
+                    [cell.ringButton setTitle:peripheral.identifier.UUIDString forState:UIControlStateNormal];
+                    NSLog(@"uuid = %@",peripheral.identifier.UUIDString);
+                }else {
+                    [cell.ringButton setTitle:mac forState:UIControlStateNormal];
+                }
+                
+                [cell.ringButton addTarget:self action:@selector(localRing:) forControlEvents:UIControlEventTouchUpInside];
+        }
+
         }
     }
 

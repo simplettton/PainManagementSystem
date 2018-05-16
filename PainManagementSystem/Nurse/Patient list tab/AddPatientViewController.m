@@ -56,8 +56,8 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
 }
 -(void)textFieldDidChange{
-    if (self.nameTextField.text.length > 10) {
-        self.nameTextField.text = [self.nameTextField.text substringToIndex:10];
+    if (self.nameTextField.text.length > 20) {
+        self.nameTextField.text = [self.nameTextField.text substringToIndex:20];
     }
     if (self.medicalRecordNumTextField.text.length > 20) {
         self.medicalRecordNumTextField.text = [self.medicalRecordNumTextField.text substringToIndex:20];

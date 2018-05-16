@@ -10,6 +10,7 @@
 #import "LocalMachineModel.h"
 #import <MQTTClient/MQTTClient.h>
 #import <MQTTClient/MQTTSessionManager.h>
+#import <QuartzCore/QuartzCore.h>
 
 NSString *const HOST = @"192.168.2.127";
 NSString *const PORT = @"18826";
@@ -221,10 +222,10 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 
                 [self performSelector:@selector(unfollowDevice:) withObject:cell.btnDelete afterDelay:0.5];
                 //cell.layer添加抖动手势
-                for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-                    [self starShake:cell];
-                }
-                
+//                for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+//                    [self starShake:cell];
+//                }
+                [self starShake:cell];
             }
             break;
         }
@@ -424,8 +425,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     if (!self.manager) {
         self.manager = [[MQTTSessionManager alloc] init];
         self.manager.delegate = self;
-
-        NSString *userName = [UserDefault objectForKey:@"UserName"];
         
         //连接服务器
         [self.manager connectTo:HOST
@@ -456,7 +455,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         self.manager.delegate = self;
     }
     //订阅主题 controller即将出现的时候订阅
-    [self subcribe:@"warning/#"];
+    [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:@"warning/#"];
+    self.manager.subscriptions = [self.subscriptions copy];
 
     [self.manager addObserver:self
                    forKeyPath:@"state"
@@ -475,12 +475,22 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:newTopic];
         self.manager.subscriptions = [self.subscriptions copy];
     }
-
 }
 -(void)unsubcibe:(NSString *)cpuid{
     [self.manager.session unsubscribeTopic:[NSString stringWithFormat:@"toapp/%@",cpuid]];
 }
 //receiveData
+-(void)reloadItemAtIndex:(NSInteger)index{
+    if ([datas count]>0) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+        [indexPaths addObject:indexPath];
+        if (index < [datas count]) {
+            [self.collectionView reloadItemsAtIndexPaths:indexPaths];
+        }
+    }
+
+}
 -(void)handleMessage:(NSData *)data onTopic:(NSString *)topic retained:(BOOL)retained{
 
     NSString *receiveStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
@@ -491,29 +501,27 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     __block NSDictionary *content = jsonDict[@"content"];
     DeviceCollectionViewCell *cell;
-    MachineModel *currentMachine;
+    __block MachineModel *currentMachine;
 
-    
     if ([topic hasPrefix:@"warning"]) {
         NSLog(@"----------------------------------");
-        NSLog(@"receivedata = %@,topic = %@",content[@"msg"],topic);
+        NSLog(@"warnning = %@,topic = %@",content[@"msg"],topic);
         NSString *cpuid = [topic substringFromIndex:8];
         for (MachineModel *machine in datas) {
             if ([machine.cpuid isEqualToString:cpuid]) {
-                for (MachineModel *machine in datas) {
-                    if ([machine.cpuid isEqualToString:cpuid]) {
-                        machine.alertMessage = content[@"msg"];
-                        currentMachine = machine;
-                        break;
-                    }
-                }
+                machine.alertMessage = content[@"msg"];
+                currentMachine = machine;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSInteger index = [datas indexOfObject:machine];
+                    [self reloadItemAtIndex:index];
+                });
                 break;
             }
         }
     }else if ([topic hasPrefix:@"toapp"]){
         NSString *cpuid = [topic substringFromIndex:6];
-        NSLog(@"cpuid = %@",cpuid);
-        NSLog(@"content = %@",content);
+//        NSLog(@"cpuid = %@",cpuid);
+//        NSLog(@"content = %@",content);
         
         //遍历去取出cell
         for (MachineModel *machine in datas) {
@@ -564,7 +572,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                         machine.alertMessage = nil;
                                                         [machine changeState:machineState];
                                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                                            [self.collectionView reloadData];
+                                                            NSInteger index = [datas indexOfObject:machine];
+                                                            [self reloadItemAtIndex:index];
                                                         });
                                                     });
                                                 }
@@ -573,24 +582,32 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                         }
                                         [machine changeState:machineState];
                                         currentMachine = machine;
+                                        NSInteger index = [datas indexOfObject:machine];
+                                        [self reloadItemAtIndex:index];
                                     }
                                         break;
                                         //运行中的实时包 刷新倒计时
                                     case 0x91:
                                     {
-                                        //等4秒才去除报警信息
+                                        //等3秒才去除报警信息
                                         if (machine.alertMessage !=nil) {
                                             dispatch_time_t timer = dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC);
                                             dispatch_after(timer, dispatch_get_main_queue(), ^{
                                                 machine.alertMessage = nil;
+                                                NSInteger index = [datas indexOfObject:currentMachine];
+                                                [self reloadItemAtIndex:index];
                                             });
                                         }
                                         else{
-                                            //运行状态才刷新倒计时
+                                            //运行状态分钟有变化才刷新倒计时
                                             if([currentMachine.stateNumber isEqualToNumber:@0]){
                                                 NSNumber *second= content[@"lefttime"];
-                                                machine.leftTimeNumber = second;
-                                                currentMachine = machine;
+                                                if(![[self changeSecondToTimeString:second]isEqualToString:[self changeSecondToTimeString:machine.leftTimeNumber]]){
+                                                    machine.leftTimeNumber = second;
+                                                    currentMachine = machine;
+                                                    NSInteger index = [datas indexOfObject:currentMachine];
+                                                    [self reloadItemAtIndex:index];
+                                                }
                                             }
                                         }
                                     }
@@ -612,24 +629,17 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                             default:
                                 break;
                         }
-                        
                     }
-                    }
-
-                //cpu匹配退出循环
+                }
                 break;
             }
         }
- 
+
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.collectionView reloadData];
-    });
 }
 
 -(NSString *)changeSecondToTimeString:(NSNumber *)second{
-    NSLog(@"second = %@",second);
     NSInteger hour = [second intValue]/3600;
     NSInteger minute = [second integerValue]/60%60;
     
@@ -748,15 +758,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             
             DeviceCollectionViewCell *currentCell = (DeviceCollectionViewCell *)cell;
 
-            currentCell.middleImageView.alpha = 0.0;
-            currentCell.machineStateLabel.alpha = 0.0;
-            [UIView animateWithDuration:0.5 animations:^{
-                cell.transform = CGAffineTransformIdentity;
-                currentCell.middleImageView.alpha = 1.0;
-                currentCell.machineStateLabel.alpha = 1.0;
-            } completion:^(BOOL finished) {
-                
-            }];
+            [cell.layer removeAllAnimations];
+            
+            [currentCell.middleImageView.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
+            [currentCell.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
+
         }else{
             [cell.layer removeAllAnimations];
         }
@@ -1198,7 +1204,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                         //补关注设备
                                                         if ([machine.type isEqualToString:@"血瘘"]) {
                                                             LocalMachineModel *machine = [LocalMachineModel modelWithDic:content[0]];
-//                                                            machine.taskId = task.ID;
                                                             [self saveLocalDevice:machine];
                                                             
                                                         }
@@ -1210,6 +1215,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                                                              if ([responseObject.result intValue]==1) {
                                                                                                  NSLog(@"关注设备成功");
                                                                                                  [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+                                                                                                 [self refresh];
                                                                                              }else{
                                                                                                  [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                                                                              }
@@ -1643,6 +1649,19 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         }
     }
 }
-
+#pragma mark === 永久闪烁的动画 ======
+-(CABasicAnimation *)opacityForever_Animation:(float)time
+{
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
+    animation.fromValue = [NSNumber numberWithFloat:1.0f];
+    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
+    animation.autoreverses = YES;
+    animation.duration = time;
+    animation.repeatCount = 3;
+    animation.removedOnCompletion = NO;
+    animation.fillMode = kCAFillModeForwards;
+    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+    return animation;
+}
 
 @end

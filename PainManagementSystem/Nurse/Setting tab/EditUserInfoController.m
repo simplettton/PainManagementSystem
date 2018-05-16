@@ -123,8 +123,8 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
 }
 -(void)textFieldDidChange{
-    if (self.nameTextField.text.length > 10) {
-        self.nameTextField.text = [self.nameTextField.text substringToIndex:10];
+    if (self.nameTextField.text.length > 20) {
+        self.nameTextField.text = [self.nameTextField.text substringToIndex:20];
     }
     if (self.contactTextFiled.text.length > 11) {
         self.contactTextFiled.text = [self.contactTextFiled.text substringToIndex:11];
@@ -167,10 +167,11 @@
 }
 
 - (IBAction)cancel:(id)sender {
+    [self hideKeyBoard];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (IBAction)save:(id)sender {
-
+    [self hideKeyBoard];
     if (self.nameTextField.text.length == 0 || self.contactTextFiled.text.length == 0) {
         [SVProgressHUD showErrorWithStatus:@"请填写完整信息"];
         return;
