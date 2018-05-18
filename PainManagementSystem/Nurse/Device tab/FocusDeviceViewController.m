@@ -53,6 +53,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 //MQTT
 @property (strong, nonatomic) MQTTSessionManager *manager;
 @property (strong,nonatomic) NSMutableDictionary *subscriptions;
+
+//防止push多个相同的弹窗
+@property (assign,nonatomic)BOOL pushOnce;
 @end
 
 @implementation FocusDeviceViewController
@@ -63,6 +66,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.pushOnce = 1;
     [self initUI];
 
 }
@@ -82,6 +86,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didChangeDeviceSegmentBar:) name:@"ChangeDeviceSegmentBar" object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
+    self.pushOnce = 1;
 }
 
 -(void)reloadDataWithNotification:(NSNotification *)notification{
@@ -181,6 +186,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     //下拉框
     [self.deviceBackgroundView addSubview:self.dropList];
+    
     NSArray *array_1 = @[@"治疗中设备", @"未开始设备", @"治疗结束设备"];
     self.dropListArray = array_1;
     
@@ -318,8 +324,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
                                          totalPage = ([count intValue]+9-1)/9;
 
-                                         NSLog(@"totalPage = %d",totalPage);
-
+                                         if (totalPage <= 1) {
+                                             self.collectionView.mj_footer.hidden = YES;
+                                         }else{
+                                             self.collectionView.mj_footer.hidden = NO;
+                                         }
                                          if ([count intValue]>0) {
                                              [self getNetworkData:isRefresh withParam:params];
                                          }else{
@@ -426,8 +435,18 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         self.manager = [[MQTTSessionManager alloc] init];
         self.manager.delegate = self;
         
+        //端口
+        NSString *IPString = [UserDefault objectForKey:@"HTTPServerURLSting"];
+        NSString *host = [IPString substringFromIndex:7];
+        host = [host substringToIndex:[host length]-6];
+        
+        //clientid
+        NSString *clientId = [UserDefault objectForKey:@"UserName"];
+        if (self.isInAllTab) {
+            clientId = [clientId stringByAppendingString:@"1"];
+        }
         //连接服务器
-        [self.manager connectTo:HOST
+        [self.manager connectTo:host
                            port:18826
                             tls:false
                       keepalive:3600
@@ -440,7 +459,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                         willMsg:nil
                         willQos:MQTTQosLevelExactlyOnce
                  willRetainFlag:false
-                   withClientId:nil
+                   withClientId:clientId 
                  securityPolicy:nil
                    certificates:nil
                   protocolLevel:MQTTProtocolVersion31
@@ -504,7 +523,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     __block MachineModel *currentMachine;
 
     if ([topic hasPrefix:@"warning"]) {
-        NSLog(@"----------------------------------");
+        NSLog(@"--------------------------------------------------");
         NSLog(@"warnning = %@,topic = %@",content[@"msg"],topic);
         NSString *cpuid = [topic substringFromIndex:8];
         for (MachineModel *machine in datas) {
@@ -520,8 +539,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         }
     }else if ([topic hasPrefix:@"toapp"]){
         NSString *cpuid = [topic substringFromIndex:6];
-//        NSLog(@"cpuid = %@",cpuid);
-//        NSLog(@"content = %@",content);
+//        NSLog(@"=================================================");
+//        NSLog(@"to app :content = %@",content);
         
         //遍历去取出cell
         for (MachineModel *machine in datas) {
@@ -754,17 +773,15 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     if (self.tag == DeviceTypeOnline) {
 
         MachineModel *machine = [datas objectAtIndex:indexPath.row];
+        DeviceCollectionViewCell *currentCell = (DeviceCollectionViewCell *)cell;
         if (machine.alertMessage) {
-            
-            DeviceCollectionViewCell *currentCell = (DeviceCollectionViewCell *)cell;
-
-            [cell.layer removeAllAnimations];
+//
+//            [currentCell.middleImageView.layer removeAllAnimations];
+//            [currentCell.machineStateLabel.layer removeAllAnimations];
             
             [currentCell.middleImageView.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
             [currentCell.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
 
-        }else{
-            [cell.layer removeAllAnimations];
         }
     }
 }
@@ -788,7 +805,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             [cell configureWithStyle:machine.cellStyle message:nil];
             cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
             cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
+            
+            cell.bedNumLabel.hidden = [machine.userBedNum isEqualToString:@""];
+
             cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
+  
+
             
             if(![machine.type isEqualToString:@"血瘘"]){
                 //警告
@@ -1074,6 +1096,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 #pragma mark http control machine
 
 -(void)controllAction:(MultiParamButton *)button{
+    [SVProgressHUD show];
     UIView* contentView = [button superview];
     DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[contentView superview];
     NSIndexPath *indexPath = [self.collectionView indexPathForCell:deviceCell];
@@ -1085,12 +1108,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                   params:param
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
-                                     
+                                     if ([responseObject.result integerValue] == 1) {
+                                         [SVProgressHUD dismiss];
+                                     }else{
+                                         [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                     }
                                  }
                                  failure:nil];
 }
 -(void)playAction:(UIButton *)button{
-    
+    [SVProgressHUD show];
     UIView* contentView = [button superview];
     DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[contentView superview];
     NSIndexPath *indexPath = [self.collectionView indexPathForCell:deviceCell];
@@ -1102,13 +1129,15 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                   params:param
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
-                                     
+                                     if ([responseObject.result integerValue] == 1) {
+                                         [SVProgressHUD dismiss];
+                                     }
                                  }
                                  failure:nil];
 
 }
 -(void)stopAction:(UIButton *)button{
-    NSLog(@"停止治疗");
+    [SVProgressHUD show];
     DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
     
     NSInteger interger = [self.collectionView.visibleCells indexOfObject:deviceCell];
@@ -1124,12 +1153,15 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                   params:param
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
-                                     
+                                     if ([responseObject.result integerValue] == 1) {
+                                         [SVProgressHUD dismiss];
+                                     }
                                  }
                                  failure:nil];
     
 }
 -(void)pauseAction:(UIButton *)button{
+    [SVProgressHUD show];
     
     DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
     
@@ -1146,14 +1178,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                   params:param
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
-                                     
+                                     if ([responseObject.result integerValue] == 1) {
+                                         [SVProgressHUD dismiss];
+                                     }
                                  }
                                  failure:nil];
 }
 
 -(void)controlMahine:(NSString *)serialnum cmdcode:(int)cmdcode
 {
-    
+    [SVProgressHUD show];
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
     
     [params setObject:serialnum forKey:@"cpuid"];
@@ -1164,7 +1198,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                  params:params
                                hasToken:YES
                                 success:^(HttpResponse *responseObject) {
-                                    
+                                    if ([responseObject.result integerValue] == 1) {
+                                        [SVProgressHUD dismiss];
+                                    }
                                 }
                                 failure:nil];
 }
@@ -1187,6 +1223,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 - (IBAction)search:(id)sender {
     
     if ([self.searchBar.text length]>0) {
+        
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                       params:@{
                                                @"medicalrecordnum":self.searchBar.text,
@@ -1199,33 +1236,40 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                             __block NSArray *content = responseObject.content;
                                             if (content) {
                                                     __block MachineModel *machine = [MachineModel modelWithDic:content[0]];
-                                                    [FocusMachineAlertView alertControllerAboveIn:self withDataModel:machine returnBlock:^{
+                                                if (self.pushOnce == 1) {
+                                                    [FocusMachineAlertView alertControllerAboveIn:self withDataModel:machine returnBlock:^(NSString * returnString){
                                                         
-                                                        //补关注设备
-                                                        if ([machine.type isEqualToString:@"血瘘"]) {
-                                                            LocalMachineModel *machine = [LocalMachineModel modelWithDic:content[0]];
-                                                            [self saveLocalDevice:machine];
-                                                            
-                                                        }
-                                                        else if (machine.serialNum) {
-                                                            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
-                                                                                          params:@{@"serialnum":machine.serialNum}
-                                                                                        hasToken:YES
-                                                                                         success:^(HttpResponse *responseObject) {
-                                                                                             if ([responseObject.result intValue]==1) {
-                                                                                                 NSLog(@"关注设备成功");
-                                                                                                 [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
-                                                                                                 [self refresh];
-                                                                                             }else{
-                                                                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                        if (![returnString isEqualToString:@"我按了取消按钮"]) {
+                                                            //补关注设备
+                                                            if ([machine.type isEqualToString:@"血瘘"]) {
+                                                                LocalMachineModel *machine = [LocalMachineModel modelWithDic:content[0]];
+                                                                [self saveLocalDevice:machine];
+                                                                
+                                                            }
+                                                            else if (machine.serialNum) {
+                                                                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
+                                                                                              params:@{@"serialnum":machine.serialNum}
+                                                                                            hasToken:YES
+                                                                                             success:^(HttpResponse *responseObject) {
+                                                                                                 if ([responseObject.result intValue]==1) {
+                                                                                                     NSLog(@"关注设备成功");
+                                                                                                     [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+                                                                                                     [self refresh];
+                                                                                                 }else{
+                                                                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                                                                 }
                                                                                              }
-                                                                                         }
-                                                                                         failure:nil];
-
+                                                                                             failure:nil];
+                                                                
+                                                            }
                                                         }
-  
-                                                        
+
+                                                        self.pushOnce = 1;
+
                                                     }];
+                                                }
+                                                self.pushOnce = 0;
+
 
                                             }else{
                                                 [SVProgressHUD showErrorWithStatus:@"查找不到该病人的记录"];
@@ -1657,7 +1701,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
     animation.autoreverses = YES;
     animation.duration = time;
-    animation.repeatCount = 3;
+    animation.repeatCount = 6;
     animation.removedOnCompletion = NO;
     animation.fillMode = kCAFillModeForwards;
     animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。

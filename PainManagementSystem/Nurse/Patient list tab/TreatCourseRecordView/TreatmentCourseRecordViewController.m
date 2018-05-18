@@ -19,7 +19,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *ageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
 @property (weak, nonatomic) IBOutlet UILabel *patientInfoLabel;
-//防止push多个相同的
+//防止push多个相同的弹窗
 @property (assign,nonatomic)BOOL pushOnce;
 @end
 
@@ -42,7 +42,6 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.tableHeaderView.hidden = YES;
     self.tableView.multipleTouchEnabled = NO;
-    
 
     if (self.patient) {
         self.title = @"治疗疗程记录";
@@ -64,6 +63,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    [self refresh];
     self.pushOnce = 1;
     [self getStandardEvaluation];
 }

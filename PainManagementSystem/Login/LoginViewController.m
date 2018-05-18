@@ -73,6 +73,11 @@
     
 }
 - (IBAction)login:(id)sender {
+    
+    if (self.userNameTextField.text.length == 0 || self.passwordTextField.text.length == 0) {
+        [SVProgressHUD showErrorWithStatus:@"用户名或密码不能为空"];
+        return;
+    }
     [self showLoginingIndicator];
     [self loginCheck];
 }
@@ -217,6 +222,7 @@
 }
 
 - (IBAction)setNetwork:(id)sender {
+    [self hideKeyBoard];
     [SetNetWorkView alertControllerAboveIn:self return:^(NSString *ipString) {
         [UserDefault setObject:ipString forKey:@"HTTPServerURLString"];
         [UserDefault synchronize];

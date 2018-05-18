@@ -31,6 +31,8 @@
 {
     if (!_stateLabel) {
         [self addSubview:_stateLabel = [UILabel mj_label]];
+        _stateLabel.textColor = [UIColor colorWithRed:194/255.0 green:194/255.0 blue:194/255.0 alpha:1.0];
+        _stateLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightLight];
     }
     return _stateLabel;
 }

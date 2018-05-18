@@ -19,6 +19,8 @@
 #define AirProViewTag 7681
 #define ElectrotherapyLabelTag 2222
 
+#define maxHeight 575
+
 #define RowHeight 44
 @interface PopoverTreatwayController ()<UITableViewDelegate,UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
@@ -38,7 +40,6 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     [self initAll];
 
 }
@@ -61,7 +62,14 @@
     self.airProALabel.hidden = ([self.type integerValue] != AirProViewTag);
     self.airProBLabel.hidden = ([self.type integerValue] != AirProViewTag);
     leftView.hidden = ([self.type integerValue] == AladdinViewTag);
-    electrotherapyLabel.hidden = ([self.type integerValue] != ElectrotherapyViewTag);
+    
+    NSArray *electrotherapyType = @[@56832,@56833,@56834,@56836];
+    if ([electrotherapyType containsObject:self.type]) {
+        electrotherapyLabel.hidden = NO;
+    }else{
+        electrotherapyLabel.hidden = YES;
+    }
+//    electrotherapyLabel.hidden = ([self.type integerValue] != ElectrotherapyViewTag);
     aladdinView.hidden = ([self.type integerValue] != AladdinViewTag);
     
     NSMutableDictionary *modeDic;
@@ -118,15 +126,12 @@
                     break;
                 }
             }
-            NSDictionary *channelImageNameInfo = @{@"1":@"singlechannel",@"2":@"doublechannel",@"3":@"thirdchannel"};
-            
+            NSDictionary *channelImageNameInfo = @{@"单通道":@"singlechannel",@"双通道":@"doublechannel",@"三通道":@"thirdchannel"};
             leftView.image = [UIImage imageNamed:[channelImageNameInfo objectForKey:channelNum]];
             
         }
-
             break;
-            
-            
+
         default:
             break;
             
@@ -137,8 +142,13 @@
         [datas insertObject:modeDic atIndex:0];
     }
     
-    self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 15);
-    
+    if (self.topView.bounds.size.height + [datas count]*RowHeight + 30 >maxHeight) {
+        self.preferredContentSize = CGSizeMake(360, maxHeight);
+    }else{
+        self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 30);
+        
+    }
+
     
 }
 
@@ -171,11 +181,9 @@
         cell.waveFormImageView.image = [UIImage imageNamed:dic[@"value"]];
         
     }
-    
-    
+
     return cell;
-    
-    
+
 }
 
 

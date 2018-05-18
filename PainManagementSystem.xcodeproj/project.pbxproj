@@ -23,6 +23,7 @@
 		041D7DB0207DA9D100B392FB /* MJChiBaoZiHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D7DAE207DA9CF00B392FB /* MJChiBaoZiHeader.m */; };
 		041FDD5320722D2100BE6EC9 /* SendTreatmentFailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */; };
 		041FDD5620722D4300BE6EC9 /* SendTreatmentFailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */; };
+		04271AF520AEA6740026C83A /* UIImage+Rotate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04271AF320AEA6730026C83A /* UIImage+Rotate.m */; };
 		04484FCE2064CA5900467611 /* PatientListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FCD2064CA5900467611 /* PatientListViewController.m */; };
 		04484FD12064CDBF00467611 /* DeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD02064CDBF00467611 /* DeviceViewController.m */; };
 		04484FD52064CDF400467611 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04484FD42064CDF400467611 /* SettingViewController.m */; };
@@ -148,6 +149,8 @@
 		041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendTreatmentFailView.xib; sourceTree = "<group>"; };
 		041FDD5420722D4300BE6EC9 /* SendTreatmentFailView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendTreatmentFailView.h; sourceTree = "<group>"; };
 		041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SendTreatmentFailView.m; sourceTree = "<group>"; };
+		04271AF320AEA6730026C83A /* UIImage+Rotate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Rotate.m"; sourceTree = "<group>"; };
+		04271AF420AEA6730026C83A /* UIImage+Rotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Rotate.h"; sourceTree = "<group>"; };
 		04484FCC2064CA5900467611 /* PatientListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PatientListViewController.h; sourceTree = "<group>"; };
 		04484FCD2064CA5900467611 /* PatientListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PatientListViewController.m; sourceTree = "<group>"; };
 		04484FCF2064CDBF00467611 /* DeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceViewController.h; sourceTree = "<group>"; };
@@ -677,6 +680,8 @@
 				0452786D20A1B0AB00CA605E /* TapBarController.m */,
 				04A79B2820A9219100D96E88 /* BaseNavigationController.h */,
 				04A79B2920A9219100D96E88 /* BaseNavigationController.m */,
+				04271AF420AEA6730026C83A /* UIImage+Rotate.h */,
+				04271AF320AEA6730026C83A /* UIImage+Rotate.m */,
 				041A3E1E207C561600CC316A /* BaseHeader.h */,
 			);
 			path = PainManagementSystem;
@@ -964,6 +969,7 @@
 				0452786E20A1B0AB00CA605E /* TapBarController.m in Sources */,
 				045982B82080B68F00B51DB9 /* MachineModel.m in Sources */,
 				049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */,
+				04271AF520AEA6740026C83A /* UIImage+Rotate.m in Sources */,
 				046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */,
 				046C02102069E48100FDD974 /* BEButton.m in Sources */,
 				0462A40220746736006DB5E0 /* LLSegmentBarConfig.m in Sources */,

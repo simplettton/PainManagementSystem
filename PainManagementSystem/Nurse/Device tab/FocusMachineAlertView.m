@@ -79,12 +79,13 @@
     }];
 }
 - (IBAction)close:(id)sender {
+    self.returnEvent(@"我按了取消按钮");
     [self removeFromSuperview];
     [baby cancelScan];
     [baby cancelAllPeripheralsConnection];
 }
 - (IBAction)tapFocusButton:(id)sender {
-    self.returnEvent();
+    self.returnEvent(@"");
     [baby cancelScan];
     [baby cancelAllPeripheralsConnection];
     [self removeFromSuperview];

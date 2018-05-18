@@ -40,6 +40,8 @@
 
 @property (nonatomic,copy)NSString *vasString;
 
+@property (nonatomic,assign)BOOL hasImage;
+
 //@property (nonatomic,strong)NSMutableDictionary*treatParam;
 @property (nonatomic,copy)NSMutableArray<Question *>*treatParam;
 
@@ -50,9 +52,6 @@
 -(void)appendQuestionsWithDic:(NSDictionary *)dic;
 
 @end
-
-
-
 
 @interface QuestionItem : NSObject
 
@@ -71,11 +70,6 @@
 
 @property (nonatomic,copy)NSString *selectionString;
 
-
-//@property (nonatomic,assign)BOOL isMultiSelect;
-//
-//@property (nonatomic,strong)NSArray *selectionArray;
-//@property (nonatomic,strong)NSMutableDictionary *dataDic;
 
 //-(instancetype)initWithDic:(NSDictionary *)dic;
 

@@ -19,6 +19,12 @@
         self.painArea = dic[@"painarea"];
         self.painfactorE = dic[@"painfactor_zh"];
 
+        NSNumber *hasImage = dic[@"image"];
+        if ([hasImage integerValue] == 0) {
+            self.hasImage = NO;
+        }else{
+            self.hasImage = YES;
+        }
         
         NSNumber *vasBeforeNum = dic[@"prescore"];
         self.vasBefore = [NSString stringWithFormat:@"%@",vasBeforeNum];

@@ -10,8 +10,11 @@
 #import "RecordItemCell.h"
 #import "QuestionCell.h"
 #import "BaseHeader.h"
-
 #import "RecordModel.h"
+
+//image sdk
+#import <SDWebImage/UIImageView+WebCache.h>
+#import "UIImage+Rotate.h"
 
 #define KTitleViewHeight 48
 #define KRowHeight 21
@@ -22,9 +25,13 @@
 #define KEastTableViewTag 2222
 #define KTreatParamViewTag 3333
 
-@interface RecordDetailViewController ()<UITableViewDataSource,UITableViewDelegate>
+@interface RecordDetailViewController ()<UITableViewDataSource,UITableViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+@property (nonatomic, strong) UIImagePickerController *picker;
 @property (weak, nonatomic) IBOutlet UITableView *rootTableView;
 @property (strong,nonatomic)RecordModel *recordModel;
+
+//upload image
+@property (strong,nonatomic)UIImage *image;
 
 @end
 
@@ -33,16 +40,27 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    
+    if(self.record.hasImage){
+        NSString *api = [HTTPServerURLString stringByAppendingString:[NSString stringWithFormat:@"Api/TreatRecode/Treatimage?id=%@",self.record.ID]];
+        
+        //清除某一特定url的图片缓存
+        [[SDImageCache sharedImageCache] removeImageForKey:api withCompletion:nil];
+    }
+    [self.rootTableView reloadData];
+
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"诊疗记录详情";
-    titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"物理治疗方法",@"设备治疗处方",nil];
+    titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"物理治疗方法",@"设备治疗处方",@"治疗结果",nil];
     self.rootTableView.tableFooterView = [[UIView alloc]init];
     
     NSDictionary *dataDic = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Record" ofType:@"plist"]];
     
+
+
     //得到数据模型
     if (self.record) {
         self.recordModel = self.record;
@@ -50,13 +68,26 @@
     }else{
         self.recordModel = [RecordModel modelWithDic:dataDic];
     }
+    
+    //take photo
+    if (self.picker == nil)
+    {
+        self.picker = [[UIImagePickerController alloc]init];
+    }
+    self.picker.delegate = self;
+    self.picker.sourceType = UIImagePickerControllerSourceTypeCamera;
 }
 
 #pragma mark - tableViewDataSource
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     if (tableView == self.rootTableView) {
-        return [titles count];;
+        if(self.recordModel.hasImage || self.image){
+            return [titles count];
+        }else{
+            return [titles count] - 1;
+        }
+
     }else if(tableView.tag == KWestTableViewTag){
 
         return [self.recordModel.questionW count];
@@ -119,7 +150,7 @@
     }else if (tableView.tag == KEastTableViewTag){  //中医病历采集
             return UITableViewAutomaticDimension;
     }
-    return 44;
+    return UITableViewAutomaticDimension;
 
 }
 -(NSInteger)rowHeightWithQuestionArray:(NSMutableArray *)array{
@@ -149,6 +180,7 @@
             case 0: {   CellIdentifier = @"BasicInfomationCell";    }       break;
             case 3: {   CellIdentifier = @"ResultCell";     }
             case 4: {   CellIdentifier = @"ResultCell";     }       break;
+            case 6: {   CellIdentifier = @"PhotoCell" ;     }       break;
             default: {      CellIdentifier = @"Cell";       }       break;
         }
         
@@ -156,10 +188,11 @@
         if (cell == nil) {
             cell = [[RecordItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
+        
+        //roottableview每个section的标题
         cell.titleLabel.text = titles[indexPath.section];
         
 
-        
         switch (indexPath.section) {
             case 0:
             {
@@ -211,6 +244,26 @@
 
             }
                 break;
+            case 6:
+            {
+
+                //治疗结果照片
+                if (self.image) {
+                    cell.resultImageView.image = self.image;
+                }else{
+
+                    if(self.record.hasImage){
+
+                        NSString *api = [HTTPServerURLString stringByAppendingString:[NSString stringWithFormat:@"Api/TreatRecode/Treatimage?id=%@",self.record.ID]];
+
+                        [cell.resultImageView sd_setImageWithURL:[NSURL URLWithString:api]
+                                     placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+
+                    }
+                }
+                
+            }
+                break;
             default: {
 //                CellIdentifier = @"Cell";
                 
@@ -260,7 +313,6 @@
             }
             
         }
-
 
         return cell;
         
@@ -363,7 +415,108 @@
     return ret;
 
 }
+- (IBAction)uploadImage:(id)sender {
+    if(self.image){
+        NSString *api = [HTTPServerURLString stringByAppendingString:[NSString stringWithFormat:@"Api/TreatRecode/AddImage?token=%@&id=%@",Token,self.record.ID]];
+        
+        [[NetWorkTool sharedNetWorkTool]POST:api
+                                       image:self.image success:^(HttpResponse *responseObject) {
+                                           if ([responseObject.result intValue] == 1) {
+                                               [SVProgressHUD showSuccessWithStatus:@"治疗照片已保存"];
+                                           }else{
+                                               [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                           }
+                                       } failure:nil];
+    }
+}
+-(UIImage *) getImageFromURL:(NSString *)fileURL
+{
+    
+    UIImage * result;
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileURL]];
+    result = [UIImage imageWithData:data];
+    return result;
+}
+#pragma mark - addPhoto
+- (IBAction)addPhoto:(id)sender {
+//    if (self.record.hasImage) {
+//        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+//                                                                       message:@"该治疗疗程记录已经有治疗后照片，是否重新拍摄照片？"
+//                                                                preferredStyle:UIAlertControllerStyleAlert];
+//
+//        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+//                                                             handler:^(UIAlertAction * action) {}];
+//        [alert addAction:cancelAction];
+//
+//        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//
+//            [self presentViewController:self.picker animated:YES completion:NULL];
+//        }];
+//
+//        [alert addAction:okAction];
+//        [self presentViewController:alert animated:YES completion:nil];
+//
+//    }else{
+        [self presentPhotoLibraryOrCamera];
+//    }
+}
+-(void)presentPhotoLibraryOrCamera{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleAlert];
 
+    //按钮：拍照，类型：UIAlertActionStyleDefault
+    [alert addAction:[UIAlertAction actionWithTitle:@"拍照"
+                                              style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction * _Nonnull action){
+                                                UIImagePickerController *PickerImage = [[UIImagePickerController alloc]init];
+                                                //获取方式:通过相机
+                                                PickerImage.sourceType = UIImagePickerControllerSourceTypeCamera;
+                                                PickerImage.allowsEditing = NO;
+                                                PickerImage.delegate = self;
+                                                self.picker = PickerImage;
+                                                [self presentViewController:self.picker animated:YES completion:nil];
+                                            }]];
+    
+    //按钮：从相册选择，类型：UIAlertActionStyleDefault
+    [alert addAction:[UIAlertAction actionWithTitle:@"从相册选择"
+                                              style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction * _Nonnull action) {
+                                                UIImagePickerController *pickerImage = [[UIImagePickerController alloc]init];
+                                                pickerImage.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                                                pickerImage.allowsEditing = YES;
+                                                pickerImage.delegate = self;
+                                                self.picker = pickerImage;
+                                                [self presentViewController:self.picker animated:YES completion:nil];
+                                            }]];
+    
+    
+    //按钮：取消，类型：UIAlertActionStyleCancel
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+
+    [self.picker dismissViewControllerAnimated:YES completion:NULL];
+}
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
+    
+    //获取图片
+    UIImage *image = [[info objectForKey:UIImagePickerControllerOriginalImage]fixOrientation];
+
+    self.image = image;
+
+
+
+    [self.picker dismissViewControllerAnimated:YES completion:^{
+
+    }];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self.rootTableView reloadData];
+        
+    });
+}
 
 
 @end

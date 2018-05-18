@@ -16,8 +16,13 @@ typedef void (^HttpResponseObject)(HttpResponse* responseObject);
 +(instancetype)sharedNetWorkTool;
 
 -(void)POST:(NSString *)address
-     params:(NSDictionary *)parameters
+     params:(id)parameters
    hasToken:(bool)hasToken
+    success:(HttpResponseObject)responseBlock
+    failure:(HttpFailureBlock)failureBlock;
+
+-(void)POST:(NSString *)address
+      image:(UIImage *)image
     success:(HttpResponseObject)responseBlock
     failure:(HttpFailureBlock)failureBlock;
 @end

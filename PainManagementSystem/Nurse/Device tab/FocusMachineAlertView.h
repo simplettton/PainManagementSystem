@@ -10,7 +10,7 @@
 #import "MachineModel.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "BabyBluetooth.h"
-typedef void (^returnBlock)(void);
+typedef void (^returnBlock)(NSString *);
 @interface FocusMachineAlertView : UIView
 
 @property (nonatomic,strong)returnBlock returnEvent;

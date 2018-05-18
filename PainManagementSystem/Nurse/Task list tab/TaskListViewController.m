@@ -234,6 +234,7 @@
     [footer setTitle:@"" forState:MJRefreshStateRefreshing];
     [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
     self.tableView.mj_footer = footer;
+
 }
 
 -(void)refresh{
@@ -253,7 +254,6 @@
 
 -(void)askForData:(BOOL)isRefresh{
     
-
     NSDictionary *param = @{@"state":[NSNumber numberWithInt:self.taskTag]};
     
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/List"]
@@ -266,6 +266,11 @@
                                          
                                          totalPage = ([count intValue]+15-1)/15;
                                          
+                                         if (totalPage <= 1) {
+                                             self.tableView.mj_footer.hidden = YES;
+                                         }else{
+                                             self.tableView.mj_footer.hidden = NO;
+                                         }
                                          if([count intValue] > 0)
                                          {
                                              self.tableView.tableHeaderView.hidden = NO;
@@ -278,7 +283,7 @@
                                              });
                                              NSString *title = [self.segmentedControl titleForSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
                                              
-                                             [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"没有%@的处方~",title]];
+//                                             [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"没有%@的处方~",title]];
                                              self.tableView.tableHeaderView.hidden = YES;
                                          }
                                          
@@ -330,7 +335,16 @@
                                      //上拉加载更多
                                      if (page >=totalPage) {
                                          [self endRefresh];
+//                                          MJRefreshAutoNormalFooter *footer = (MJRefreshAutoNormalFooter *)tableView.mj_footer;
+//                                         if (totalPage >1) {
+//
+//                                             [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
+//                                         }else{
+//                                             [footer setTitle:@"" forState:MJRefreshStateNoMoreData];
+//                                         }
+//                                         tableView.mj_footer = footer;
                                          [tableView.mj_footer endRefreshingWithNoMoreData];
+
                                          return;
                                      }
                                      
@@ -452,6 +466,9 @@
     switch ([task.machineTypeNumber integerValue]) {
             
         case ElectrotherapyTypeValue:
+        case 56832:
+        case 56834:
+        case 56836:
             [cell setTypeLableColor:UIColorFromHex(ElectrothetapyColor)];
             break;
             
@@ -573,7 +590,6 @@
     if ([datas count]>0) {
         [self performSegueWithIdentifier:@"ShowPopover" sender:sender];
     }
-
 }
 
 #pragma mark - action
@@ -1190,8 +1206,7 @@
             TaskCell *cell = (TaskCell*)[contentView superview];
             
             NSIndexPath* index = [self.tableView indexPathForCell:cell];
-            
-            
+
             TaskModel *task = [datas objectAtIndex:index.row];
             
             destination.treatParamDic = task.treatParam;

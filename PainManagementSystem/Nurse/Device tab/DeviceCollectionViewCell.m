@@ -92,7 +92,11 @@
         case CellStyleOngoing_MachineRunning:
 
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
-            self.machineStateLabel.text = (message == nil)?@"  00:30":message;
+            //601加上1分钟就是持续治疗
+            if ([message isEqualToString:@"  10:02"]) {
+                message = @"     持续治疗";
+            }
+            self.machineStateLabel.text = (message == nil)?@"       ":message;
             [self.machineStateLabel setTextColor:UIColorFromHex(kGreenColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '65372CDE26D0282D768CE3125CF9D092'
+               BlueprintIdentifier = '7984B144DFCB140AB3CA693B69D70D37'
                BlueprintName = 'Pods-PainManagementSystem'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libPods-PainManagementSystem.a'>

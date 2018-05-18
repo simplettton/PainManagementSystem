@@ -45,6 +45,8 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [super viewDidLayoutSubviews];
     self.hospitalLabel.numberOfLines = 0;
     [self.hospitalLabel sizeToFit];
+    self.nameLabel.numberOfLines = 0;
+    [self.nameLabel sizeToFit];
     
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{

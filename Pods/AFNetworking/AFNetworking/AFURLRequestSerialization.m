@@ -519,8 +519,20 @@ forHTTPHeaderField:(NSString *)field
         if (![mutableRequest valueForHTTPHeaderField:@"Content-Type"]) {
             [mutableRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
         }
-        [mutableRequest setHTTPBody:[query dataUsingEncoding:self.stringEncoding]];
-    }
+        //-------AFNetworking默认不支持二进制传输方式-----------
+        switch (self.queryStringSerializationStyle) {
+            case AFHTTPRequestQueryStringDefaultStyle:
+                //query = AFQueryStringFromParameters(parameters);
+                query = parameters;
+                break;
+            }
+        }
+        [mutableRequest setHTTPBody:query];
+        //------------支持二进制修改---------------------------
+    
+        //----------原呆码-----------
+        //        [mutableRequest setHTTPBody:[query dataUsingEncoding:self.stringEncoding]];
+        //----------原呆码-----------
 
     return mutableRequest;
 }

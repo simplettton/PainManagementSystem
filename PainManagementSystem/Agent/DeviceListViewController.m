@@ -210,7 +210,11 @@
                                          
                                          totalPage = ([count intValue]+15-1)/15;
                                          
-                                         NSLog(@"totalPage = %d",totalPage);
+                                         if (totalPage <= 1) {
+                                             self.tableView.mj_footer.hidden = YES;
+                                         }else{
+                                             self.tableView.mj_footer.hidden = NO;
+                                         }
                                          
                                          if ([count intValue]>0) {
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];

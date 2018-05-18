@@ -9,6 +9,7 @@ target 'PainManagementSystem' do
 	pod 'MJRefresh'
 	pod 'MQTTClient'
 	pod 'Masonry'
+	pod 'SDWebImage'
 
 end
 #pods for app

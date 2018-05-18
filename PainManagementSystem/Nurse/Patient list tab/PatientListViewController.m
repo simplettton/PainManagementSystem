@@ -154,7 +154,6 @@
     
     [self.tableView.mj_header beginRefreshing];
     
-    
     //上拉加载
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
@@ -221,6 +220,12 @@
                                          totalPage = ([count intValue]+15-1)/15;
                                          
                                          NSLog(@"totalPage = %d",totalPage);
+                                         
+                                         if (totalPage <= 1) {
+                                             self.tableView.mj_footer.hidden = YES;
+                                         }else{
+                                             self.tableView.mj_footer.hidden = NO;
+                                         }
                                          
                                          if([count intValue] > 0)
                                          {
