@@ -74,6 +74,7 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
     [self hideKeyBoard];
+
 }
 -(void)hideKeyBoard{
     [self.view endEditing:YES];
@@ -155,11 +156,14 @@
 -(void)refresh
 {
     if ([self.searchBar.text length]>0) {
-        self.searchBar.text = @"";
+        [self search:nil];
+    }else{
+        isFilteredList = NO;
+        [self askForData:YES isFiltered:NO];
     }
     [self.searchBar resignFirstResponder];
-    isFilteredList = NO;
-    [self askForData:YES isFiltered:NO];
+    [self hideKeyBoard];
+
 
 }
 
@@ -410,19 +414,7 @@
                                          success:^(HttpResponse *responseObject) {
                                              if ([responseObject.result intValue]==1) {
                                                  dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                                                      [self.tableView deleteRowsAtIndexPaths:self.tableView.indexPathsForSelectedRows withRowAnimation:UITableViewRowAnimationLeft];//删除对应数据的cell
-//                                                     //删除设备
-//                                                     NSMutableArray *currentArray = datas;
-//                                                     [currentArray removeObjectsInArray:deleteArray];
-//
-//                                                     datas = currentArray;
 
-//                                                     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
-//                                                     dispatch_after(delayTime, dispatch_get_main_queue(), ^{
-//
-//                                                         [self.tableView reloadData];
-//                                                     });
                                                      [self refresh];
                                                      
                                                      //完成删除后不给选中cell
@@ -508,6 +500,12 @@
 
 #pragma mark - searchBar delegate
 
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    if (searchBar.text.length == 0) {
+        [self refresh];
+    }
+}
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     
     [self search:nil];
@@ -544,7 +542,7 @@
 
             
         }else{
-            
+
             //搜索序列号或者名称
             [paramDic setObject:self.searchBar.text forKey:@"key"];
             
@@ -556,6 +554,7 @@
     
     }else{
         //没有关键字显示全部
+        isFilteredList = NO;
         [self.tableView.mj_header beginRefreshing];
         [self askForData:YES isFiltered:NO];
     }
@@ -566,8 +565,5 @@
 {
     [[NetWorkTool sharedNetWorkTool].operationQueue cancelAllOperations];
 }
-
-
-
 
 @end

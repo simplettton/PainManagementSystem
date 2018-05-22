@@ -75,7 +75,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
 
-    if (self.taskTag == TaskListTypeProcessing) {
+    if (self.taskTag == TaskListTypeProcessing || self.taskTag == TaskListTypeNotStarted) {
         [self refresh];
     }
     self.tableView.mj_header.hidden = NO;
@@ -94,7 +94,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initAll];
-
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
@@ -122,9 +121,9 @@
     self.tableView.delegate = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
     
-    UILongPressGestureRecognizer * longPressGesture =[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressToDo:)];
-//    longPressGesture.minimumPressDuration=1.5f;//设置长按 时间
-    [self.tableView addGestureRecognizer:longPressGesture];
+//    UILongPressGestureRecognizer * longPressGesture =[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressToDo:)];
+//
+//    [self.tableView addGestureRecognizer:longPressGesture];
     
     
     datas = [[NSMutableArray alloc]initWithCapacity:20];
@@ -335,14 +334,7 @@
                                      //上拉加载更多
                                      if (page >=totalPage) {
                                          [self endRefresh];
-//                                          MJRefreshAutoNormalFooter *footer = (MJRefreshAutoNormalFooter *)tableView.mj_footer;
-//                                         if (totalPage >1) {
-//
-//                                             [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
-//                                         }else{
-//                                             [footer setTitle:@"" forState:MJRefreshStateNoMoreData];
-//                                         }
-//                                         tableView.mj_footer = footer;
+
                                          [tableView.mj_footer endRefreshingWithNoMoreData];
 
                                          return;
@@ -354,7 +346,7 @@
                                          NSArray *content = responseObject.content;
                                          
                                          if (content) {
-                                             NSArray *localMachineTaskIds = [self returnLocalMachineTaskIdArray];
+//                                             NSArray *localMachineTaskIds = [self returnLocalMachineTaskIdArray];
                                              
                                              for (NSDictionary *dic in content) {
                                                  
@@ -363,11 +355,12 @@
                                                  //处理中的任务 本地设备设置关注
                                                  if (self.segmentedControl.selectedSegmentIndex == 1) {
                                                      if ([task.machineType isEqualToString:@"血瘘"]) {
-                                                         if ([localMachineTaskIds containsObject:task.ID]) {
-                                                             task.isFocus = true;
-                                                         }else{
-                                                             task.isFocus = false;
-                                                         }
+//                                                         if ([localMachineTaskIds containsObject:task.ID]) {
+//                                                             task.isFocus = true;
+//                                                         }else{
+//                                                             task.isFocus = false;
+//                                                         }
+                                                         task.isFocus = [self checkLocalMachineFocus:task];
                                                      }
                                                  }
                                                  
@@ -375,7 +368,7 @@
                                                      [datas addObject:task];
                                                  }
                                              }
-                                             
+
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [tableView reloadData];
                                              });
@@ -383,10 +376,42 @@
                                      }else{
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                      }
-                                     
-                                     
+
                                  } failure:nil];
 }
+
+-(BOOL)checkLocalMachineFocus:(TaskModel *)task{
+    NSArray *localMachineTaskIds = [self returnLocalMachineTaskIdArray];
+    if ([localMachineTaskIds containsObject:task.ID]) {
+        return YES;
+    }
+    return NO;
+}
+-(NSArray *)returnLocalMachineTaskIdArray{
+    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject];
+    if (!documents)
+    {
+        NSLog(@"目录未找到");
+    }
+    NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSMutableArray *mutableTaskIdArray = [[NSMutableArray alloc]initWithCapacity:20];
+    
+    if ([fileManager fileExistsAtPath:documentPath]) {
+        NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
+        NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
+        NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
+        
+        for (LocalMachineModel *savedMachine in savedArray){
+            [mutableTaskIdArray addObject:savedMachine.taskId];
+        }
+        
+    }
+    NSArray *taskIdArray = [mutableTaskIdArray copy];
+    return taskIdArray;
+}
+
 
 #pragma mark - table view delegate
 
@@ -410,18 +435,8 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-//    TaskModel *task = datas[indexPath.row];
-//    
-//    NSString *str = task.patientName; //你想显示的字符串
-//    
-//    CGSize size = [str sizeWithFont:[UIFont fontWithName:@"Helvetica" size:17] constrainedToSize:CGSizeMake(280, 999) lineBreakMode:NSLineBreakByWordWrapping];
-//    
-//    NSLog(@"%f",size.height);
-//    
-//    return size.height + 10;
-    
     return UITableViewAutomaticDimension;
-//    return 56;
+
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -437,7 +452,6 @@
     if (cell == nil) {
         cell = [[TaskCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    
 
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
@@ -481,6 +495,7 @@
             break;
             
         default:
+            [cell setTypeLableColor:UIColorFromHex(0x212121)];
             break;
     }
     
@@ -541,8 +556,7 @@
                 default:
                     break;
             }
-            //类型颜色恢复
-//            [cell setTypeLableColor:UIColorFromHex(0x212121)];
+
             
             break;
         case TaskListTypeFinished:
@@ -566,24 +580,14 @@
     
     if ([datas count]>0) {
         TaskModel *task = datas[indexPath.row];
-        //    switch (self.taskTag) {
-        //        case TaskListTypeFinished:
-        //        case TaskListTypeNotStarted:
         if (self.pushOnce == 1) {
-            if(task.state != 3){
-                self.selectedRow = indexPath.row;
-                [self remarkAction:nil];
-            }
+//            if(task.state != 3){
+            self.selectedRow = indexPath.row;
+            [self remarkAction:nil];
+//            }
             self.pushOnce = 0;
         }
-
-        //            break;
-        //
-        //        default:
-        //            break;
-        //    }
     }
-
 }
 
 -(void)showPopover:(UIButton *)sender {
@@ -629,14 +633,11 @@
                                                                       NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
                                                                       [[UIApplication sharedApplication] openURL:url];
                                                                       [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=CAMERA"]];
-                                                                      
-                                                                      
                                                                   }];
             
             [alert addAction:defaultAction];
             [self presentViewController:alert animated:YES completion:nil];
-            
-            
+ 
             return;
             
         }
@@ -908,30 +909,6 @@
                                      }
                                      failure:nil];
     }
-}
--(NSArray *)returnLocalMachineTaskIdArray{
-    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject];
-    if (!documents)
-    {
-        NSLog(@"目录未找到");
-    }
-    NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    
-    NSMutableArray *mutableTaskIdArray = [[NSMutableArray alloc]initWithCapacity:20];
-    
-    if ([fileManager fileExistsAtPath:documentPath]) {
-        NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
-        NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
-        NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
-
-        for (LocalMachineModel *savedMachine in savedArray){
-            [mutableTaskIdArray addObject:savedMachine.taskId];
-        }
-
-    }
-    NSArray *taskIdArray = [mutableTaskIdArray copy];
-    return taskIdArray;
 }
 
 -(void)showFailView{

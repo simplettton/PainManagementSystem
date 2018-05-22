@@ -61,7 +61,7 @@
     
     self.airProALabel.hidden = ([self.type integerValue] != AirProViewTag);
     self.airProBLabel.hidden = ([self.type integerValue] != AirProViewTag);
-    leftView.hidden = ([self.type integerValue] == AladdinViewTag);
+    leftView.hidden = ([self.type integerValue] == AladdinViewTag) || [self.type isEqual:@0];
     
     NSArray *electrotherapyType = @[@56832,@56833,@56834,@56836];
     if ([electrotherapyType containsObject:self.type]) {
@@ -133,6 +133,7 @@
             break;
 
         default:
+            leftView.image = nil;
             break;
             
     }
@@ -148,8 +149,6 @@
         self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 30);
         
     }
-
-    
 }
 
 #pragma mark - tableViewDelegate

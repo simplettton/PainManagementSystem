@@ -1,12 +1,13 @@
 //
-//  LoginViewController.h
+//  CopyLabel.h
 //  PainManagementSystem
 //
-//  Created by Binger Zeng on 2018/3/22.
+//  Created by Binger Zeng on 2018/5/21.
 //  Copyright © 2018年 Shenzhen Lifotronic Technology Co.,Ltd. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@interface LoginViewController : UIViewController
+@interface CopyLabel : UILabel
+
 @end

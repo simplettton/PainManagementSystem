@@ -25,14 +25,11 @@
     [SVProgressHUD setMinimumSize:CGSizeMake(100, 50)];
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear]; //当HUD显示的时候，不允许用户交互，且显示背景图层自定义的颜色。
     [SVProgressHUD setBackgroundColor:UIColorFromHex(0xf9f9f9)];
+    [SVProgressHUD setRingRadius:14.0];
     
     [SVProgressHUD setCornerRadius:5];
     
-    if (![UserDefault objectForKey:@"HTTPServerURLString"]) {
-        [UserDefault setObject:@"http://192.168.2.127:8888/" forKey:@"HTTPServerURLString"];
-        [UserDefault synchronize];
-    }
-    
+
     [self registerAPN];
     
     //iOS 10 //请求通知权限, 本地和远程共用
@@ -59,6 +56,30 @@
     return YES;
 }
 
+-(void)configureNetWorkSetting{
+    if (![UserDefault objectForKey:@"HTTPServerURLString"]) {
+        [UserDefault setObject:@"http://192.168.2.127:8888/" forKey:@"HTTPServerURLString"];
+
+    }
+    
+    NSDictionary *defaultNetworkConfiguration = @{
+                                                  @"HTTPServerIP":@"192.168.2.127",
+                                                  @"HTTPServerPort":@"8888",
+                                                  @"MQTTPort":@"18826"
+                                                  };
+    if (![UserDefault objectForKey:@"HTTPServerIP"]) {
+        [UserDefault setObject:defaultNetworkConfiguration[@"HTTPServerIP"] forKey:@"HTTPServerIP"];
+    }
+    if (![UserDefault objectForKey:@"HTTPServerPort"]) {
+        [UserDefault setObject:defaultNetworkConfiguration[@"HTTPServerPort"] forKey:@"HTTPServerPort"];
+    }
+    if (![UserDefault objectForKey:@"MQTTPort"]) {
+        [UserDefault setObject:defaultNetworkConfiguration[@"MQTTPort"] forKey:@"MQTTPort"];
+    }
+    
+    [UserDefault synchronize];
+    
+}
 -(void)initRootViewController{
     
      UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

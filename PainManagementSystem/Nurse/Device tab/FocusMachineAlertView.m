@@ -8,6 +8,7 @@
 
 
 #import "FocusMachineAlertView.h"
+#import "LocalMachineModel.h"
 #import "BaseHeader.h"
 #import "BEButton.h"
 #import "Pack.h"
@@ -116,8 +117,14 @@
     //patient information
     self.medicalNumLabel.text = [NSString stringWithFormat:@"病历号： %@",machine.userMedicalNum];
     self.patientNameLabel.text = [NSString stringWithFormat:@"病人姓名： %@",machine.userName];
-    self.bedNumLabel.text = [NSString stringWithFormat:@"病床号： %@",machine.userBedNum];
     
+    if ([machine.userBedNum isEqualToString:@""]) {
+        self.bedNumLabel.hidden = YES;
+    }else{
+        self.bedNumLabel.hidden = NO;
+        self.bedNumLabel.text = [NSString stringWithFormat:@"病床号： %@",machine.userBedNum];
+    }
+
     //machine information
     self.machineTypeLabel.text = [NSString stringWithFormat:@"治疗设备：    %@", machine.type];
     self.machineNickLabel.text = [NSString stringWithFormat:@"设备昵称：    %@",machine.name];
@@ -125,15 +132,19 @@
     NSString *treatmentState = [NSString string];
     switch ([machine.taskStateNumber intValue]) {
         case 0:
-            treatmentState = @"治疗处方未下发";
+            treatmentState = @"处方尚未下发";
             break;
         case 1:
+            treatmentState = @"处方已下发，治疗尚未开始";
+            break;
         case 3:
+            treatmentState = @"诊疗进行中";
+            break;
         case 7:
-            treatmentState = @"治疗处方已下发";
+            treatmentState = @"治疗结束，尚未VAS评分";
             break;
         case 15:
-            treatmentState = @"治疗疗程已结束";
+            treatmentState = @"疗程结束";
             
             break;
         default:
@@ -141,18 +152,25 @@
             break;
     }
     if ([machine.type isEqualToString:@"血瘘"]) {
-        self.focusButton.hidden = NO;
+        
+        self.focusButton.enabled = ![self checkLocalMachineFocus:machine.taskId];
+        
     }else{
-        if([treatmentState isEqualToString:@"治疗处方已下发"]&&(machine.isFocus == NO)){
-            self.focusButton.hidden = NO;
+        if(machine.isFocus == NO){
+            self.focusButton.enabled = YES;
         }else{
-            self.focusButton.hidden = YES;
+            self.focusButton.enabled = NO;
         }
     }
+    if (self.focusButton.enabled) {
+        [self.focusButton setTitle:@"设置关注" forState:UIControlStateNormal];
+    }else{
+        [self.focusButton setTitle:@"已关注" forState:UIControlStateNormal];
+    }
+    
 
-    self.findButton.hidden = !([treatmentState isEqualToString:@"治疗处方已下发"]||[treatmentState isEqualToString:@"治疗疗程已结束"]);
-    
-    
+    self.findButton.hidden = ([treatmentState isEqualToString:@"处方尚未下发"]||[treatmentState isEqualToString:@"疗程结束"]);
+
     self.taskStateLabel.text = [NSString stringWithFormat:@"治疗状态：    %@",treatmentState];
 
     if (machine.state) {
@@ -166,8 +184,6 @@
         self.timeLabel.hidden = NO;
         self.timeLabel.text = [NSString stringWithFormat:@"治疗时间：    %@",machine.treatTime];
     }
-
-    
 }
 #pragma mark - BLE
 -(void)babyDelegate{
@@ -175,12 +191,16 @@
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
     [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (central.state == CBManagerStatePoweredOff) {
-            if (weakSelf) {
-                [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
+        if (@available(iOS 10.0, *)) {
+            if (central.state == CBManagerStatePoweredOff) {
+                if (weakSelf) {
+                    [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
+                }
+            }else if(central.state == CBManagerStatePoweredOn) {
+                weakBaby.scanForPeripherals().begin();
             }
-        }else if(central.state == CBManagerStatePoweredOn) {
-            weakBaby.scanForPeripherals().begin();
+        } else {
+            // Fallback on earlier versions
         }
     }];
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
@@ -265,6 +285,39 @@
                                                  data:data]
               forCharacteristic:self.sendCharacteristic
                            type:CBCharacteristicWriteWithResponse];
+}
+
+#pragma - private method
+-(BOOL)checkLocalMachineFocus:(NSString *)taskId{
+    NSArray *localMachineTaskIds = [self returnLocalMachineTaskIdArray];
+    if ([localMachineTaskIds containsObject:taskId]) {
+        return YES;
+    }
+    return NO;
+}
+-(NSArray *)returnLocalMachineTaskIdArray{
+    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject];
+    if (!documents)
+    {
+        NSLog(@"目录未找到");
+    }
+    NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSMutableArray *mutableTaskIdArray = [[NSMutableArray alloc]initWithCapacity:20];
+
+    if ([fileManager fileExistsAtPath:documentPath]) {
+        NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
+        NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
+        NSArray *savedArray = [unArchiver decodeObjectForKey:@"machineArray"];
+
+        for (LocalMachineModel *savedMachine in savedArray){
+            [mutableTaskIdArray addObject:savedMachine.taskId];
+        }
+
+    }
+    NSArray *taskIdArray = [mutableTaskIdArray copy];
+    return taskIdArray;
 }
 
 @end

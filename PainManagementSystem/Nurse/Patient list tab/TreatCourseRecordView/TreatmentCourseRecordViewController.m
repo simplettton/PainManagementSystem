@@ -147,7 +147,15 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
+//-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
+//    return 56;
+//}
 
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return UITableViewAutomaticDimension;
+    
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";
     TreatRecordCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
@@ -157,12 +165,16 @@
     RecordModel *record = [datas objectAtIndex:indexPath.row];
     cell.treatTimeLB.text = record.timeString;
     cell.painfactorLB.text = record.painfactorW;
+    
+    //超过两行分行显示
+    cell.painfactorLB.numberOfLines = 0;
+    cell.painfactorLB.lineBreakMode = NSLineBreakByWordWrapping;
+    
     cell.physicalTreatLB.text = record.machineType;
     cell.vasLabel.text = record.vasString;
     //不足三位前面补0
     cell.medicalRecodNumLB.text = [NSString stringWithFormat:@"%03zd",indexPath.row+1];
-//    cell.contentView.multipleTouchEnabled = NO;
-//    cell.markButton.multipleTouchEnabled = NO;
+
     [cell.markButton setTag:indexPath.row];
     [cell.markButton addTarget:self action:@selector(showVASMarkView:) forControlEvents:UIControlEventTouchUpInside];
     [cell.markButton setTag:indexPath.row];
@@ -198,7 +210,7 @@
         
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [VASMarkView alertControllerAboveIn:self withData:@{
-                                                                @"flag":isForceToStop,
+                                                                @"flag":@1,
                                                                 @"id":idString,
                                                                 @"mark":[array objectAtIndex:1]
                                                                 }describe:markDescribe return:^(NSString *markString) {
@@ -215,29 +227,71 @@
         [self presentViewController:alert animated:YES completion:nil];
         
     }else{
-        if(self.pushOnce == 1){
-            [VASMarkView alertControllerAboveIn:self
-                                       withData:@{
-                                                @"flag":isForceToStop,
-                                                @"id":idString,
-                                                @"mark":@"20"
-                                                }
-                                       describe:markDescribe
-                                         return:^(NSString *markString) {
-                                            
-                                             if (![markString isEqualToString:@"我按了取消按钮"]) {
-                                                 [array replaceObjectAtIndex:1 withObject:markString];
-                                                 
-                                                 NSString *newValue = [array componentsJoinedByString:@"/"];
-                                                 cell.vasLabel.text = newValue;
+        if (!record.isFinished) {
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+                                                                           message:@"当前处方设备正在治疗中，是否进行治疗后vas评分强制结束治疗？"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                                 handler:^(UIAlertAction * action) {}];
+            UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action) {
+                                                                 if(self.pushOnce == 1){
+                                                                     
+                                                                     [VASMarkView alertControllerAboveIn:self
+                                                                                                withData:@{
+                                                                                                           @"flag":@1,
+                                                                                                           @"id":idString,
+                                                                                                           @"mark":@"20"
+                                                                                                           }
+                                                                                                describe:markDescribe
+                                                                                                  return:^(NSString *markString) {
 
-                                             }
-                                                self.pushOnce = 1;
- 
+                                                                                                      if (![markString isEqualToString:@"我按了取消按钮"]) {
+                                                                                                          [array replaceObjectAtIndex:1 withObject:markString];
 
-                                         }];
-            self.pushOnce = 0;
+                                                                                                          NSString *newValue = [array componentsJoinedByString:@"/"];
+                                                                                                          cell.vasLabel.text = newValue;
+
+                                                                                                      }
+                                                                                                      self.pushOnce = 1;
+
+                                                                                                  }];
+                                                                     self.pushOnce = 0;
+                                                                 }
+                                                             }];
+            
+            [alert addAction:cancelAction];
+            [alert addAction:okAction];
+            
+            [self presentViewController:alert animated:YES completion:nil];
         }
+        else{
+            if(self.pushOnce == 1){
+                [VASMarkView alertControllerAboveIn:self
+                                           withData:@{
+                                                      @"flag":isForceToStop,
+                                                      @"id":idString,
+                                                      @"mark":@"20"
+                                                      }
+                                           describe:markDescribe
+                                             return:^(NSString *markString) {
+                                                 
+                                                 if (![markString isEqualToString:@"我按了取消按钮"]) {
+                                                     [array replaceObjectAtIndex:1 withObject:markString];
+                                                     
+                                                     NSString *newValue = [array componentsJoinedByString:@"/"];
+                                                     cell.vasLabel.text = newValue;
+                                                     
+                                                 }
+                                                 self.pushOnce = 1;
+                                                 
+                                                 
+                                             }];
+                self.pushOnce = 0;
+            }
+        }
+
     }
 }
 -(void)getStandardEvaluation{

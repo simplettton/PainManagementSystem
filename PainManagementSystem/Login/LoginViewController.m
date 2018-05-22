@@ -6,24 +6,13 @@
 //  Copyright © 2018年 Shenzhen Lifotronic Technology Co.,Ltd. All rights reserved.
 //
 
+
+//ip限制
+// "([1-9]|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}";
 #import "LoginViewController.h"
 #import "AppDelegate.h"
 #import "BaseHeader.h"
 #import "SetNetWorkView.h"
-#import <SVProgressHUD.h>
-
-#import "NetWorkTool.h"
-#import "Pack.h"
-#import "Unpack.h"
-
-#include <arpa/inet.h>
-#include <net/if.h>
-#include <ifaddrs.h>
-
-#import <GCDAsyncUdpSocket.h>
-
-#define UdpSendPort 32345
-#define UdpReceivePort 22345
 
 @interface LoginViewController ()
 
@@ -36,9 +25,6 @@
 @end
 
 @implementation LoginViewController
-{
-    GCDAsyncUdpSocket *udpSocket;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -46,9 +32,7 @@
     //编辑框下横线
     [self setBorderWithView:self.userView top:NO left:NO bottom:YES right:NO borderColor:UIColorFromHex(0Xbbbbbb) borderWidth:1.0];
     [self setBorderWithView:self.passwordView top:NO left:NO bottom:YES right:NO borderColor:UIColorFromHex(0XBBBBBB) borderWidth:1.0];
-    
-    //初始化udp soket
-    [self setupSocket];
+
 
     //用户名显示
     NSString *userName = [UserDefault objectForKey:@"UserName"];
@@ -89,6 +73,7 @@
 
 -(void)loginCheck{
     
+    [self hideKeyBoard];
     //是否记住与用户名
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -229,146 +214,8 @@
     }];
 }
 
-#pragma mark - udpSocket
-
-- (void)setupSocket
-{
-    
-    udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    
-    NSError *error = nil;
-    
-    [udpSocket enableBroadcast:YES error:&error];
-    
-    if (![udpSocket bindToPort:UdpReceivePort error:&error])
-    {
-        NSLog(@"error :%@",error);
-        return;
-    }
-    if (![udpSocket beginReceiving:&error])
-    {
-        NSLog(@"Error receiving: %@", error);
-        return;
-    }
-    
-    [self send:[Pack packetWithCmdid:0xff dataEnabled:NO data:nil]];
-    
-}
-     
-- (void)send:(NSData *)data
-{
-    NSDictionary *localWifiDic = [self getLocalInfoForCurrentWiFi];
-    
-    //获取当前wifi广播地址
-    NSString *broadCast = [localWifiDic objectForKey:@"broadcast"];
-    
-    [udpSocket sendData:data toHost:broadCast port:UdpSendPort withTimeout:-1 tag:1];
-
-}
-#pragma mark - udp socket delegate
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
-{
-    NSLog(@"did send");
-}
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error
-{
-    // You could add checks here
-}
-
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock
-   didReceiveData:(NSData *)data
-      fromAddress:(NSData *)address
-withFilterContext:(id)filterContext
-{
-    
-    NSData *receiveData = [Unpack unpackData:data];
-    
-    if (receiveData)
-    {
-        Byte *data = (Byte *)[receiveData bytes];
-        
-        Byte portByte[] = {data[5],data[6]};
-        
-        UInt16 PORT = [self lBytesToInt: portByte withLength:2];
-        
-        NSString *serverIp = [NSString stringWithFormat:@"http://%d.%d.%d.%d:%d/",data[1],data[2],data[3],data[4],PORT];
-        
-        NSLog(@"serverIp = %@",serverIp);
-        
-        [UserDefault setObject:serverIp forKey:@"HTTPServerURLString"];
-        
-        [UserDefault synchronize];
-        
-    }
-    else
-    {
-        NSString *host = nil;
-        uint16_t port = 22345;
-        [GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
-        
-        NSLog(@"RECV: Unknown message from: %@:%hu", host, port);
-    }
-}
 
 #pragma mark - private method
-
-- (NSMutableDictionary *)getLocalInfoForCurrentWiFi {
-    
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    struct ifaddrs *interfaces = NULL;
-    struct ifaddrs *temp_addr = NULL;
-    int success = 0;
-    
-    // retrieve the current interfaces - returns 0 on success
-    success = getifaddrs(&interfaces);
-    if (success == 0) {
-        // Loop through linked list of interfaces
-        temp_addr = interfaces;
-        //*/
-        while(temp_addr != NULL) {
-            if(temp_addr->ifa_addr->sa_family == AF_INET) {
-                // Check if interface is en0 which is the wifi connection on the iPhone
-                if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
-                    //----192.168.1.255 广播地址
-                    NSString *broadcast = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_dstaddr)->sin_addr)];
-                    if (broadcast) {
-                        [dict setObject:broadcast forKey:@"broadcast"];
-                    }
-
-                    //--192.168.1.106 本机地址
-                    NSString *localIp = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-                    if (localIp) {
-                        [dict setObject:localIp forKey:@"localIp"];
-                    }
-
-                    //--255.255.255.0 子网掩码地址
-                    NSString *netmask = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_netmask)->sin_addr)];
-                    if (netmask) {
-                        [dict setObject:netmask forKey:@"netmask"];
-                    }
-
-                    //--en0 端口地址
-                    NSString *interface = [NSString stringWithUTF8String:temp_addr->ifa_name];
-                    if (interface) {
-                        [dict setObject:interface forKey:@"interface"];
-                    }
-
-                    return dict;
-                }
-            }
-            
-            temp_addr = temp_addr->ifa_next;
-        }
-    }
-    
-    // Free memory
-    freeifaddrs(interfaces);
-    return dict;
-}
-
-
 
 - (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
 {
@@ -398,28 +245,7 @@ withFilterContext:(id)filterContext
     }
 }
 
-//Byte数组转成int类型
--(int) lBytesToInt:(Byte[]) byte withLength:(int)length
-{
-    int height = 0;
-    NSData * testData =[NSData dataWithBytes:byte length:length];
-    for (int i = 0; i < [testData length]; i++)
-    {
-        if (byte[[testData length]-i] >= 0)
-        {
-            height = height + byte[[testData length]-i];
-        } else
-        {
-            height = height + 256 + byte[[testData length]-i];
-        }
-        height = height * 256;
-    }
-    if (byte[0] >= 0)
-    {
-        height = height + byte[0];
-    } else {
-        height = height + 256 + byte[0];
-    }
-    return height;
-}
+
+
+
 @end

@@ -71,6 +71,7 @@ static NSString *CellIdentifier = @"DropDownCell";
 }
 
 - (void)startPackUpAnimation {
+    
     CGRect frame = listView.frame;
     //使listView高度在0.3秒内从最大高度过渡到0以隐藏全部列表项
     frame.size.height = 0;

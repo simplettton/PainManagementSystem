@@ -16,9 +16,16 @@
 
 @property (nonatomic,strong)PatientModel *patient;
 
-@property(nonatomic,strong)NSData *time;
+//createtime
+@property(nonatomic,strong)NSDate *time;
 
 @property(nonatomic,copy)NSString *timeString;
+//评分时间
+@property(nonatomic,strong)NSDate *finishTime;
+//是否结束治疗
+@property (nonatomic,assign)BOOL isFinished;
+
+@property(nonatomic,copy)NSString *finishTimeString;
 
 @property (nonatomic,strong)NSMutableArray <QuestionItem *> *questionW;
 

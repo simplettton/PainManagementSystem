@@ -72,6 +72,8 @@
 		046E2E3A2062370800DEFD70 /* QRCodeTopLeft@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */; };
 		046E2E3B2062370800DEFD70 /* QRCodeTopRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */; };
 		046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */; };
+		046F072120B3EAC200F3B881 /* JLImageMagnification.m in Sources */ = {isa = PBXBuildFile; fileRef = 046F072020B3EAC200F3B881 /* JLImageMagnification.m */; };
+		046F072320B409C900F3B881 /* RecordDetailFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 046F072220B409C900F3B881 /* RecordDetailFooter.xib */; };
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
 		047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */; };
 		047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */; };
@@ -87,6 +89,7 @@
 		049C57832068C18B00180A8B /* PatientTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C57812068C18B00180A8B /* PatientTableViewCell.m */; };
 		049C57842068C18B00180A8B /* PatientTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 049C57822068C18B00180A8B /* PatientTableViewCell.xib */; };
 		049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049C57862068C5E200180A8B /* AddPatientViewController.m */; };
+		04A2F90320B299090097066A /* CopyLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A2F90220B299090097066A /* CopyLabel.m */; };
 		04A5530320737E4900822DB4 /* PopoverTreatwayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A5530220737E4900822DB4 /* PopoverTreatwayController.m */; };
 		04A79B2A20A9219100D96E88 /* BaseNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A79B2920A9219100D96E88 /* BaseNavigationController.m */; };
 		04C8B64F206B4ACD00DEB3F0 /* RecordDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */; };
@@ -236,6 +239,9 @@
 		046E2E2A2062370800DEFD70 /* QRCodeTopLeft@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopLeft@3x.png"; sourceTree = "<group>"; };
 		046E2E2B2062370800DEFD70 /* QRCodeTopRight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@2x.png"; sourceTree = "<group>"; };
 		046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "QRCodeTopRight@3x.png"; sourceTree = "<group>"; };
+		046F071F20B3EAC200F3B881 /* JLImageMagnification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLImageMagnification.h; sourceTree = "<group>"; };
+		046F072020B3EAC200F3B881 /* JLImageMagnification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLImageMagnification.m; sourceTree = "<group>"; };
+		046F072220B409C900F3B881 /* RecordDetailFooter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecordDetailFooter.xib; sourceTree = "<group>"; };
 		047CA1E020639C0F00D6B1A4 /* wenshang.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = wenshang.ttf; sourceTree = "<group>"; };
 		047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetNetWorkView.h; sourceTree = "<group>"; };
 		047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetNetWorkView.m; sourceTree = "<group>"; };
@@ -262,6 +268,8 @@
 		049C57822068C18B00180A8B /* PatientTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PatientTableViewCell.xib; sourceTree = "<group>"; };
 		049C57852068C5E200180A8B /* AddPatientViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddPatientViewController.h; sourceTree = "<group>"; };
 		049C57862068C5E200180A8B /* AddPatientViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddPatientViewController.m; sourceTree = "<group>"; };
+		04A2F90120B299090097066A /* CopyLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyLabel.h; sourceTree = "<group>"; };
+		04A2F90220B299090097066A /* CopyLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CopyLabel.m; sourceTree = "<group>"; };
 		04A5530120737E4900822DB4 /* PopoverTreatwayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopoverTreatwayController.h; sourceTree = "<group>"; };
 		04A5530220737E4900822DB4 /* PopoverTreatwayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopoverTreatwayController.m; sourceTree = "<group>"; };
 		04A79B2820A9219100D96E88 /* BaseNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseNavigationController.h; sourceTree = "<group>"; };
@@ -424,6 +432,8 @@
 				041B791C2068EDB2001D04C8 /* BETextField.m */,
 				041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */,
 				041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */,
+				046F071F20B3EAC200F3B881 /* JLImageMagnification.h */,
+				046F072020B3EAC200F3B881 /* JLImageMagnification.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -517,6 +527,7 @@
 			children = (
 				04C8B64D206B4ACD00DEB3F0 /* RecordDetailViewController.h */,
 				04C8B64E206B4ACD00DEB3F0 /* RecordDetailViewController.m */,
+				046F072220B409C900F3B881 /* RecordDetailFooter.xib */,
 				04C8B65D206B711000DEB3F0 /* RecordItemCell.h */,
 				04C8B65E206B711000DEB3F0 /* RecordItemCell.m */,
 				0465E38B206C6D91009A2264 /* QuestionCell.h */,
@@ -682,6 +693,8 @@
 				04A79B2920A9219100D96E88 /* BaseNavigationController.m */,
 				04271AF420AEA6730026C83A /* UIImage+Rotate.h */,
 				04271AF320AEA6730026C83A /* UIImage+Rotate.m */,
+				04A2F90120B299090097066A /* CopyLabel.h */,
+				04A2F90220B299090097066A /* CopyLabel.m */,
 				041A3E1E207C561600CC316A /* BaseHeader.h */,
 			);
 			path = PainManagementSystem;
@@ -844,6 +857,7 @@
 				049C57842068C18B00180A8B /* PatientTableViewCell.xib in Resources */,
 				046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */,
 				04C8B661206B75C400DEB3F0 /* Record.plist in Resources */,
+				046F072320B409C900F3B881 /* RecordDetailFooter.xib in Resources */,
 				0411BC2120721629000FC687 /* SendTreatmentSuccessView.xib in Resources */,
 				0481E8D0207A04EB0099B506 /* Localizable.strings in Resources */,
 				0419F406207331A800C83C2B /* TreatmentParam.plist in Resources */,
@@ -976,6 +990,8 @@
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				0481E8C82079EB480099B506 /* ListCell.m in Sources */,
+				046F072120B3EAC200F3B881 /* JLImageMagnification.m in Sources */,
+				04A2F90320B299090097066A /* CopyLabel.m in Sources */,
 				047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */,
 				045F6C8B206E2241006DBBF7 /* HttpResponse.m in Sources */,
 				0465E390206C7563009A2264 /* RecordModel.m in Sources */,

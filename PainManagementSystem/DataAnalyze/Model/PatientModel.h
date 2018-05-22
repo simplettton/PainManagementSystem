@@ -12,7 +12,7 @@
 @property(nonatomic,copy)NSString *name;
 
 @property(nonatomic,strong)NSData *birthday;
-
+//实际使用的是这个时间戳
 @property(nonatomic,copy)NSString *birthdayString;
 
 @property(nonatomic,copy)NSString *gender;

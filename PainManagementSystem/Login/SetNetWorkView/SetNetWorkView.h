@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GCDAsyncUdpSocket.h"
+
 typedef void (^returnIP) (NSString *);
-@interface SetNetWorkView : UIView
+@interface SetNetWorkView : UIView<GCDAsyncUdpSocketDelegate>
 
 @property (nonatomic,copy)returnIP returnEvent;
 +(void)alertControllerAboveIn:(UIViewController *)controller return:(returnIP)returnEvent;

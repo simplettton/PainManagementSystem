@@ -446,8 +446,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             clientId = [clientId stringByAppendingString:@"1"];
         }
         //连接服务器
+        
+        NSString *port = [UserDefault objectForKey:@"MQTTPort"];
+        
         [self.manager connectTo:host
-                           port:18826
+                           port:[port intValue]
                             tls:false
                       keepalive:3600
                           clean:true
@@ -811,7 +814,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
   
 
-            
             if(![machine.type isEqualToString:@"血瘘"]){
                 //警告
                 if (machine.alertMessage) {
@@ -1087,6 +1089,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
         }else{
             [SVProgressHUD showSuccessWithStatus:@"已取消关注"];
+            if(self.tag == DeviceTypeLocal){
+                [self refresh];
+            }
         }
 
     }
@@ -1236,6 +1241,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                             __block NSArray *content = responseObject.content;
                                             if (content) {
                                                     __block MachineModel *machine = [MachineModel modelWithDic:content[0]];
+
                                                 if (self.pushOnce == 1) {
                                                     [FocusMachineAlertView alertControllerAboveIn:self withDataModel:machine returnBlock:^(NSString * returnString){
                                                         
@@ -1341,7 +1347,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         [SVProgressHUD showErrorWithStatus:@"无法关注设备"];
     }else{
         [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
-        [self loadLocalMachineData];
+        if (self.tag == DeviceTypeLocal) {
+            [self loadLocalMachineData];
+        }
     }
     
 }

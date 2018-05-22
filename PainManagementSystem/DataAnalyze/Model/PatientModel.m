@@ -14,6 +14,7 @@
     if (self = [super init]) {
         
         self.name = dict[@"name"];
+        
         self.birthdayString = dict[@"birthday"];
 
         self.gender = dict[@"gender"];

@@ -11,14 +11,29 @@
 @implementation RecordModel
 -(instancetype)initWithDic:(NSDictionary *)dic{
     if (self = [super init]) {
+        
         self.ID = dic[@"id"];
-        self.time = (NSData *)[NSDate dateWithTimeIntervalSince1970:[dic[@"time"] doubleValue]];
+        //creattime
+        self.time = (NSDate *)[NSDate dateWithTimeIntervalSince1970:[dic[@"time"] doubleValue]];
         self.timeString =  [self stringFromTimeIntervalString:dic[@"time"] dateFormat:@"yyyy-MM-dd"];
+        //finishtime
+        self.finishTime = (NSDate *)[NSDate dateWithTimeIntervalSince1970:[dic[@"time"] doubleValue]];
+        self.finishTimeString = dic[@"finishtime"];
+        if ([dic[@"state"]isEqualToString:@"治疗结束但未评分"]||[dic[@"state"]isEqualToString:@"已评分，任务结束"]) {
+            self.isFinished = YES;
+        }else{
+            self.isFinished = NO;
+        }
 
         self.painfactorW = dic[@"painfactor_eng"];
+        if ([self.painfactorW isEqualToString:@""]) {
+            self.painfactorW = @"无";
+        }
         self.painArea = dic[@"painarea"];
         self.painfactorE = dic[@"painfactor_zh"];
-
+        if ([self.painfactorE isEqualToString:@""]) {
+            self.painfactorE = @"无";
+        }
         NSNumber *hasImage = dic[@"image"];
         if ([hasImage integerValue] == 0) {
             self.hasImage = NO;
@@ -42,10 +57,23 @@
         NSDictionary *treatParamDic = dic[@"treatargs"];
         NSNumber *type = treatParamDic[@"machinetype"];
         NSString *modeValue = treatParamDic[@"mode"];
-        
         NSArray *dataArray = treatParamDic[@"lsargs"];
-        
         NSMutableArray *params = [NSMutableArray arrayWithCapacity:20];
+        
+        NSDictionary *typeDic =  @{
+                                   @0:@"其他",
+                                   @7681:@"空气波",
+                                   @57119:@"血瘘",
+                                   @56832:@"电疗",
+                                   @56833:@"电疗100",
+                                   @56834:@"电疗200",
+                                   @56836:@"电疗400",
+                                   @61200:@"光子C86",
+                                   @61201:@"光子C22",
+                                   @61202:@"光子C11",
+                                   };
+        
+        self.machineType = typeDic[type];
         
         switch ([type integerValue]) {
             case 56833:
@@ -54,33 +82,47 @@
             {
                 Question *treatMode = [Question questionWithDic:@{@"showname":@"电流波形",@"value":modeValue}];
                 [params addObject:treatMode];
-                self.machineType = @"电疗";
             }
-
+                
                 break;
             case 7681:
             {
                 Question *treatMode = [Question questionWithDic:@{@"showname":@"治疗模式",@"value":modeValue}];
                 [params addObject:treatMode];
-               self.machineType = @"空气波";
-            }
 
+            }
+                
                 break;
-            case 57119:
-                self.machineType = @"血瘘";
-                break;
+
             default:
-                self.machineType = @"未知设备";
+
                 break;
         }
         //物理治疗处方 设备（方案）
         self.physicalTreat = [NSString stringWithFormat:@"%@(%@)",self.machineType,dic[@"physicaltreatargs"] ];
         
-        for (NSDictionary *dic in dataArray) {
-            Question *param = [Question questionWithDic:dic];
-            [params addObject:param];
+        
+        if ([dataArray count] == 0) {
+            //不使用设备
+            NSString *value;
+            if (![treatParamDic[@"note"]isEqualToString:@""]) {
+                value = treatParamDic[@"note"];
+            }else{
+                value = @"无";
+            }
+            Question *nodataDisplay = [Question questionWithDic:@{@"showname":@"备注",@"value":value}];
+            [params addObject:nodataDisplay];
+
+        }else{
+
+            for (NSDictionary *dic in dataArray) {
+                Question *param = [Question questionWithDic:dic];
+                [params addObject:param];
+            }
             
+
         }
+  
         self.treatParam = params;
     }
     return self;

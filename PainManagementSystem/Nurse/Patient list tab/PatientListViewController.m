@@ -36,7 +36,7 @@
     [super viewDidLoad];
     [self initAll];
 }
--(BOOL)isCurrentViewControllerVisible:(UIViewController *)viewController{
+-(BOOL)isCurrentViewControllerVisible:(UIViewController *)viewController {
     return (viewController.isViewLoaded && viewController.view.window);
 }
 //关闭键盘
@@ -45,8 +45,10 @@
     [self hideKeyBoard];
 }
 -(void)hideKeyBoard{
+    
     [self.view endEditing:YES];
     [self.tableView endEditing:YES];
+    [self.searchBar resignFirstResponder];
     
 }
 
@@ -164,13 +166,16 @@
 
 -(void)refresh
 {
-    isFilteredList = NO;
+
     //清空搜索框的文字
     if ([self.searchBar.text length]>0) {
-        self.searchBar.text = @"";
+        [self search:nil];
+    }else{
+        isFilteredList = NO;
+        [self askForData:YES isFiltered:NO];
     }
     [self.searchBar resignFirstResponder];
-    [self askForData:YES isFiltered:NO];
+
 }
 
 -(void)loadMore
@@ -331,6 +336,12 @@
 }
 
 #pragma mark - searchBar delegate
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    if (searchBar.text.length == 0) {
+        [self refresh];
+    }
+}
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
 
@@ -355,7 +366,7 @@
         
         [self askForData:YES isFiltered:YES];
     }else{
-        
+        isFilteredList = NO;
         [self.tableView.mj_header beginRefreshing];
     }
     [self.searchBar resignFirstResponder];

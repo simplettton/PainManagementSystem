@@ -67,9 +67,10 @@ typedef enum _CellStyle {
     
         
         NSDictionary *machineStateDic = @{
-                                          @0:@"治疗中",
-                                          @1:@"暂停治疗",
-                                          @2:@"停止治疗",
+                                          @0:@"设备运行中",
+                                          @1:@"设备暂停中",
+                                          @2:@"设备未运行",
+                                          @3:@"设备运行中",
                                           @4:@"设备不在线"
                                           };
         
@@ -120,7 +121,8 @@ typedef enum _CellStyle {
             self.userBedNum = dict[@"bednum"];
         }
         self.userMedicalNum = dict[@"medicalrecordnum"];
-
+        
+        self.taskId = dict[@"id"];
     }
     return self;
 }

@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 @interface MachineModel : NSObject
+//taskId
+@property(nonatomic,copy)NSString *taskId;
 //设备基本信息
 @property(nonatomic,copy)NSString *name;
 

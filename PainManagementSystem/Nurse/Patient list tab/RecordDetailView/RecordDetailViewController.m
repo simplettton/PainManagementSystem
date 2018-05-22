@@ -15,6 +15,7 @@
 //image sdk
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "UIImage+Rotate.h"
+#import "JLImageMagnification.h"
 
 #define KTitleViewHeight 48
 #define KRowHeight 21
@@ -29,6 +30,10 @@
 @property (nonatomic, strong) UIImagePickerController *picker;
 @property (weak, nonatomic) IBOutlet UITableView *rootTableView;
 @property (strong,nonatomic)RecordModel *recordModel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *takePhotoButton;
+@property (weak, nonatomic) IBOutlet UIView *footerView;
+@property (weak, nonatomic) IBOutlet UILabel *docterLabel;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
 //upload image
 @property (strong,nonatomic)UIImage *image;
@@ -55,11 +60,8 @@
     [super viewDidLoad];
     self.title = @"诊疗记录详情";
     titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"物理治疗方法",@"设备治疗处方",@"治疗结果",nil];
-    self.rootTableView.tableFooterView = [[UIView alloc]init];
-    
-    NSDictionary *dataDic = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Record" ofType:@"plist"]];
-    
 
+    NSDictionary *dataDic = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Record" ofType:@"plist"]];
 
     //得到数据模型
     if (self.record) {
@@ -69,6 +71,15 @@
         self.recordModel = [RecordModel modelWithDic:dataDic];
     }
     
+    
+    self.rootTableView.tableFooterView = self.footerView;
+    self.docterLabel.text = [NSString stringWithFormat:@"诊断医生:%@",self.recordModel.operator];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setDateFormat:@"yyyy/MM/dd HH:mm:ss tt"];
+//    NSString *strDate = [dateFormatter stringFromDate:self.recordModel.time];
+    self.timeLabel.text = [self getDateDisplayString:self.recordModel.time];
+    
     //take photo
     if (self.picker == nil)
     {
@@ -76,8 +87,27 @@
     }
     self.picker.delegate = self;
     self.picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-}
+    
+    if(self.record.hasImage){
+        SDWebImageManager *manager = [SDWebImageManager sharedManager] ;
+        NSString *api = [HTTPServerURLString stringByAppendingString:[NSString stringWithFormat:@"Api/TreatRecode/Treatimage?id=%@",self.record.ID]];
+        [[manager imageDownloader]downloadImageWithURL:[NSURL URLWithString:api] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+            
+//            NSLog(@"%ld,%ld",receivedSize,expectedSize);
+            
+            float currentProgress = (float)receivedSize/(float)expectedSize;
+            
+            [SVProgressHUD showProgress:currentProgress status:@"正在加载中..."];
+        } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+            if (image) {
+                [SVProgressHUD dismiss];
+                self.image = image;
+                [self.rootTableView reloadData];
+            }
+        }];
+    }
 
+}
 #pragma mark - tableViewDataSource
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -197,13 +227,14 @@
             case 0:
             {
                 cell.medicalNumLabel.text = [NSString stringWithFormat:@"病历号：%@",self.patient.medicalRecordNum];
-                NSString *name = [self CharacterStringMainString:[NSString stringWithFormat:@"姓名：%@",self.patient.name] AddDigit:20 AddString:@"  "];
-                NSString *age = [self CharacterStringMainString:[NSString stringWithFormat:@"年龄：%@",self.patient.age] AddDigit:20 AddString:@"  "];
+                NSString *name = [self CharacterStringMainString:[NSString stringWithFormat:@"姓名：%@",self.patient.name] AddDigit:30 AddString:@"  "];
+                NSString *age = [self CharacterStringMainString:[NSString stringWithFormat:@"年龄：%@",self.patient.age] AddDigit:25 AddString:@"  "];
                 cell.patientLabel.text = [NSString stringWithFormat:@"%@%@电话：%@",name,age,self.patient.contact];
                 
-                NSString *vasBefore = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗前vas：%@",self.recordModel.vasBefore] AddDigit:20 AddString:@"  "];
-                NSString *vasAfter = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗后vas：%@",self.recordModel.vasAfter] AddDigit:20  AddString:@"  "];
-                cell.vasLabel.text = [NSString stringWithFormat:@"%@%@医生：%@",vasBefore,vasAfter,self.recordModel.operator];
+                NSString *vasBefore = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗前vas：%@",self.recordModel.vasBefore] AddDigit:30 AddString:@"  "];
+                NSString *vasAfter = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗后vas：%@",self.recordModel.vasAfter] AddDigit:25  AddString:@"  "];
+//                cell.vasLabel.text = [NSString stringWithFormat:@"%@%@医生：%@",vasBefore,vasAfter,self.recordModel.operator];
+                cell.vasLabel.text = [NSString stringWithFormat:@"%@%@",vasBefore,vasAfter];
                 return cell;
             }
                 break;
@@ -250,14 +281,21 @@
                 //治疗结果照片
                 if (self.image) {
                     cell.resultImageView.image = self.image;
+                    //图片添加点击放大手势
+                    UITapGestureRecognizer *tapGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(scanImageClick:)];
+                    [cell.resultImageView addGestureRecognizer:tapGestureRecognizer1];
+                    //让UIImageView和它的父类开启用户交互属性
+                    [cell.resultImageView setUserInteractionEnabled:YES];
+                    
                 }else{
 
                     if(self.record.hasImage){
 
                         NSString *api = [HTTPServerURLString stringByAppendingString:[NSString stringWithFormat:@"Api/TreatRecode/Treatimage?id=%@",self.record.ID]];
-
+                        
                         [cell.resultImageView sd_setImageWithURL:[NSURL URLWithString:api]
                                      placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+                        
 
                     }
                 }
@@ -426,6 +464,8 @@
                                            }else{
                                                [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                            }
+                                           
+                                           self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(addPhoto:)];
                                        } failure:nil];
     }
 }
@@ -500,6 +540,7 @@
 }
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
     
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(uploadImage:)];
     //获取图片
     UIImage *image = [[info objectForKey:UIImagePickerControllerOriginalImage]fixOrientation];
 
@@ -516,7 +557,71 @@
         [self.rootTableView reloadData];
         
     });
-}
+    
 
+}
+-(void)scanImageClick:(UITapGestureRecognizer *)tap{
+    
+    UIImageView *clickedImageView = (UIImageView *)tap.view;
+    [JLImageMagnification scanBigImageWithImageView:clickedImageView alpha:1];
+}
+//时间显示内容
+-(NSString *)getDateDisplayString:(NSDate *) myDate{
+    
+    NSCalendar *calendar = [ NSCalendar currentCalendar ];
+    int unit = NSCalendarUnitDay | NSCalendarUnitMonth |  NSCalendarUnitYear ;
+    NSDateComponents *nowCmps = [calendar components:unit fromDate:[ NSDate date ]];
+    NSDateComponents *myCmps = [calendar components:unit fromDate:myDate];
+    
+    NSDateFormatter *dateFmt = [[NSDateFormatter alloc ] init ];
+    
+    //2. 指定日历对象,要去取日期对象的那些部分.
+    NSDateComponents *comp =  [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitWeekday fromDate:myDate];
+    
+//    if (nowCmps.year != myCmps.year) {
+//        dateFmt.dateFormat = @"yyyy-MM-dd hh:mm";
+//    } else
+//    {
+//        if (nowCmps.day==myCmps.day) {
+            dateFmt.AMSymbol = @"上午";
+            dateFmt.PMSymbol = @"下午";
+            dateFmt.dateFormat = @"yyyy/MM/dd aaa hh:mm";
+//
+//        } else if((nowCmps.day-myCmps.day)==1) {
+//            dateFmt.dateFormat = @"昨天";
+//        } else {
+//            if ((nowCmps.day-myCmps.day) <=7) {
+//                switch (comp.weekday) {
+//                    case 1:
+//                        dateFmt.dateFormat = @"星期日";
+//                        break;
+//                    case 2:
+//                        dateFmt.dateFormat = @"星期一";
+//                        break;
+//                    case 3:
+//                        dateFmt.dateFormat = @"星期二";
+//                        break;
+//                    case 4:
+//                        dateFmt.dateFormat = @"星期三";
+//                        break;
+//                    case 5:
+//                        dateFmt.dateFormat = @"星期四";
+//                        break;
+//                    case 6:
+//                        dateFmt.dateFormat = @"星期五";
+//                        break;
+//                    case 7:
+//                        dateFmt.dateFormat = @"星期六";
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }else {
+//                dateFmt.dateFormat = @"yyyy-MM-dd hh:mm";
+//            }
+//        }
+//    }
+    return [dateFmt stringFromDate:myDate];
+}
 
 @end
