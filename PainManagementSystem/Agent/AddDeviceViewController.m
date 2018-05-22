@@ -25,7 +25,7 @@
 
 typedef NS_ENUM(NSUInteger,typeTags)
 {
-    electrotherapyTag = 1000,airProTag = 1001,aladdinTag = 1002
+    electrotherapyTag = 1000,airProTag = 1001,aladdinTag = 1002,LightTag = 1003
 };
 @interface AddDeviceViewController ()<QRCodeReaderDelegate,UITextFieldDelegate>{
     int page;
@@ -167,7 +167,10 @@ typedef NS_ENUM(NSUInteger,typeTags)
             case airProTag:
                 
                 [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-                
+                break;
+            case LightTag:
+                [params setObject:@61184 forKey:@"machinetype"];
+                break;
             default:
                 break;
         }
@@ -280,9 +283,8 @@ typedef NS_ENUM(NSUInteger,typeTags)
 - (IBAction)changeDevice:(UIButton *)sender {
     
     self.selectedDeviceTag = [sender tag];
-    
-    
-    for (int i = electrotherapyTag; i<electrotherapyTag +3; i++) {
+
+    for (int i = electrotherapyTag; i<electrotherapyTag +4; i++) {
         UIButton *btn = (UIButton *)[self.contentView viewWithTag:i];
         //配置选中按钮
         if ([btn tag] == [(UIButton *)sender tag]) {
@@ -310,7 +312,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
     }else {
 
-        
         [baby cancelScan];
         [baby cancelAllPeripheralsConnection];
         

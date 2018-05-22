@@ -114,12 +114,15 @@
                  @7681:@"空气波",
                  @57119:@"血瘘",
                  @56832:@"电疗",
-                 @56833:@"电疗-100",
-                 @56834:@"电疗-200",
-                 @56836:@"电疗-400"
+                 @56833:@"电疗100",
+                 @56834:@"电疗200",
+                 @56836:@"电疗400",
+                 @61200:@"光子C86",
+                 @61201:@"光子C22",
+                 @61202:@"光子C11",
                  
                  };
-    [self initTableHeaderAndFooter];
+    [self refresh];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{

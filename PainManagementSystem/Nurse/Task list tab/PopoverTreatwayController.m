@@ -131,6 +131,12 @@
             
         }
             break;
+            
+        case 61200:
+        case 61201:
+        case 61202:
+            self.tableView.tableHeaderView = [[UIView alloc]initWithFrame:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, 30)];
+            break;
 
         default:
             leftView.image = nil;
@@ -147,8 +153,8 @@
         self.preferredContentSize = CGSizeMake(360, maxHeight);
     }else{
         self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 30);
-        
     }
+    
 }
 
 #pragma mark - tableViewDelegate

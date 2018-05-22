@@ -473,8 +473,13 @@
     }else{
         buttonTitle = [NSString stringWithFormat:@"治疗时间:%@分钟",task.treatTime];
     }
-    [cell.treatmentButton setTitle:buttonTitle forState:UIControlStateNormal];
-    [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
+    if([task.machineType isEqualToString:@"其他"]){
+        [cell.treatmentButton setTitle:@"无" forState:UIControlStateNormal];
+        [cell.treatmentButton.layer setBorderColor:UIColorFromHex(0xffffff).CGColor];
+    }else{
+        [cell.treatmentButton setTitle:buttonTitle forState:UIControlStateNormal];
+        [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
+    }
 
     //配置治疗设备显示文字颜色
     switch ([task.machineTypeNumber integerValue]) {

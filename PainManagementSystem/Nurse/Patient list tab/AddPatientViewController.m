@@ -144,7 +144,8 @@
 
         
         self.nameTextField.text = self.patient.name;
-        self.phoneTextFiled.text = self.patient.contact;
+        
+        self.phoneTextFiled.text = [self.patient.contact stringByReplacingOccurrencesOfString:@"-" withString:@""];
         
         self.treatDateLabel.text = [self stringFromTimeIntervalString:self.patient.registeredTimeString dateFormat:@"yyyy-MM-dd"];
         

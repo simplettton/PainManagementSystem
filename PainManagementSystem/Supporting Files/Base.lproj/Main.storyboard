@@ -2329,7 +2329,7 @@ CA
                                         </connections>
                                     </button>
                                     <button opaque="NO" tag="1002" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sMQ-Nf-v22" customClass="BEButton">
-                                        <rect key="frame" x="296" y="67" width="80" height="30"/>
+                                        <rect key="frame" x="430" y="67" width="80" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="血瘘设备">
                                             <color key="titleColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -2463,6 +2463,16 @@ CA
                                         </subviews>
                                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                     </view>
+                                    <button opaque="NO" tag="1003" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="84p-N8-gga" customClass="BEButton">
+                                        <rect key="frame" x="292" y="67" width="94" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="光子治疗仪">
+                                            <color key="titleColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="changeDevice:" destination="JHi-Z1-hxW" eventType="touchUpInside" id="ca5-rA-1fS"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
@@ -2485,7 +2495,7 @@ CA
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c96-cY-hAu" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="Pc8-B6-vUo" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3552" y="-579"/>
+            <point key="canvasLocation" x="3551.5625" y="-579.4921875"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="2Vo-6G-UW1">
@@ -2499,7 +2509,7 @@ CA
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lifotronic" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uVW-bV-T1y">
-                                <rect key="frame" x="245.5" y="127" width="277" height="51"/>
+                                <rect key="frame" x="246" y="127" width="277" height="51"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="51" id="RgY-hP-b0v"/>
                                 </constraints>

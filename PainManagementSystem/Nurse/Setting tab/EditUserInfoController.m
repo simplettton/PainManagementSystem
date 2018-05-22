@@ -50,7 +50,10 @@
     }
     
     self.nameTextField.text = [UserDefault objectForKey:@"PersonName"];
-    self.contactTextFiled.text = [UserDefault objectForKey:@"Contact"];
+    
+    NSString *contactString = [[UserDefault objectForKey:@"Contact"]stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    self.contactTextFiled.text = contactString;
+    
     self.departmentTextField.text = [UserDefault objectForKey:@"Department"];
     self.department = [UserDefault objectForKey:@"Department"];
     self.contactTextFiled.delegate = self;
@@ -210,5 +213,4 @@
                                      failure:nil];
     }
 }
-
 @end

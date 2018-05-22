@@ -19,10 +19,11 @@
 
 @implementation EditPasswordController
 - (IBAction)cancel:(id)sender {
+    [self hideKeyBoard];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (IBAction)done:(id)sender {
-    
+    [self hideKeyBoard];
     NSString *newPwd = self.passwordTextField.text;
     NSString *oldPwd = self.oldPasswordTextField.text;
     [SVProgressHUD show];
