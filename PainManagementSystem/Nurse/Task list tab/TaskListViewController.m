@@ -84,6 +84,7 @@
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
     
+    
 }
 //双击tab更新列表
 -(void)reloadDataWithNotification:(NSNotification *)notification{
@@ -108,6 +109,8 @@
     }
     self.tableView.mj_header.hidden = YES;
     [[NSNotificationCenter defaultCenter]removeObserver:self];
+    
+    [[UIMenuController sharedMenuController] setMenuVisible:NO animated: YES];
 }
 
 -(void)initAll{
@@ -163,7 +166,7 @@
                     self.selectedRow = indexPath.row;
                     
                     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
-                                                                                   message:@"当前处方设备正在治疗中，是否进行治疗后vas评分强制结束治疗？"
+                                                                                   message:@"当前疗程正在进行中，是否进行治疗后vas评分强制结束治疗？"
                                                                             preferredStyle:UIAlertControllerStyleAlert];
                     
                     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
@@ -455,11 +458,15 @@
 
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
+    //设置label支持换行
     cell.patientNameLabel.numberOfLines = 0;
     cell.patientNameLabel.lineBreakMode = NSLineBreakByWordWrapping;
     
     cell.medicalRecordNumLable.numberOfLines = 0;
     cell.medicalRecordNumLable.lineBreakMode = NSLineBreakByWordWrapping;
+    
+    cell.finishTimeLabel.numberOfLines = 0;
+    cell.finishTimeLabel.lineBreakMode = NSLineBreakByWordWrapping;
 
     cell.doctorNameLable.text = task.doctorName;
     cell.medicalRecordNumLable.text  = task.medicalRecordNum;
@@ -474,12 +481,17 @@
         buttonTitle = [NSString stringWithFormat:@"治疗时间:%@分钟",task.treatTime];
     }
     if([task.machineType isEqualToString:@"其他"]){
-        [cell.treatmentButton setTitle:@"无" forState:UIControlStateNormal];
-        [cell.treatmentButton.layer setBorderColor:UIColorFromHex(0xffffff).CGColor];
+        [cell.treatmentButton setTitle:@"不使用设备" forState:UIControlStateNormal];
+        //去除边框
+//        [cell.treatmentButton.layer setBorderColor:UIColorFromHex(0xffffff).CGColor];
+//         [cell.treatmentButton removeTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
+        
     }else{
         [cell.treatmentButton setTitle:buttonTitle forState:UIControlStateNormal];
-        [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
+        [cell.treatmentButton.layer setBorderColor:UIColorFromHex(0xbbbbbb).CGColor];
     }
+    [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
 
     //配置治疗设备显示文字颜色
     switch ([task.machineTypeNumber integerValue]) {
@@ -568,8 +580,8 @@
             self.headerLastLabel.hidden = NO;
             self.headerLastLabel.text = @"完成时间";
             [cell configureWithStyle:CellStyle_DownLoadedRemarked];
-//            [cell setTypeLableColor:UIColorFromHex(0x212121)];
             cell.finishTimeLabel.text =[self stringFromTimeIntervalString:task.finishTimeString dateFormat:@"yyyy-MM-dd"];
+//            cell.finishTimeLabel.text = [self getDateDisplayString:task.finishTime];
             break;
         default:
             break;
@@ -1233,5 +1245,16 @@
     NSString *regex =@"^[A-Z]{1}[A-Z0-9]{3}\\d{2}[A-C1-9]{1}[A-Z0-9]{1}\\d{4}$";
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
     return [pred evaluateWithObject:inputString];
+}
+//时间显示内容
+-(NSString *)getDateDisplayString:(NSDate *) myDate{
+    
+    NSDateFormatter *dateFmt = [[NSDateFormatter alloc ] init ];
+
+    dateFmt.AMSymbol = @"上午";
+    dateFmt.PMSymbol = @"下午";
+    dateFmt.dateFormat = @"yyyy/MM/dd\naaa hh:mm";
+
+    return [dateFmt stringFromDate:myDate];
 }
 @end

@@ -28,6 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"设备管理系统";
+    self.navigationItem.hidesBackButton = YES;
     [self initAll];
 }
 //关闭键盘

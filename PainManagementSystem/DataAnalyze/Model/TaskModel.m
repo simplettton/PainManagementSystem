@@ -28,7 +28,10 @@
                                    };
         self.patientName = dict[@"name"];
         self.medicalRecordNum = dict[@"medicalrecordnum"];
-        self.doctorName = dict[@"creator"];
+        if (![dict[@"creator"]isKindOfClass:[NSNull class]]) {
+            self.doctorName = dict[@"creator"];
+        }
+
 
         NSDictionary *treatParam = dict[@"treatparam"];
         self.treatParam = treatParam;

@@ -95,7 +95,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initAll];
-
 }
 
 -(void)initAll{
@@ -195,11 +194,13 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                              if ([count intValue] >0) {
                                                  
                                                  [self getNetworkData:isRefresh];
+                                                 self.tableView.tableHeaderView.hidden = NO;
 
                                              }else{
                                                  [datas removeAllObjects];
                                                  [self endRefresh];
                                                  [self.tableView reloadData];
+                                            self.tableView.tableHeaderView.hidden = YES;
                                              }
                                          }else{
                                              [SVProgressHUD showErrorWithStatus:responseObject.errorString];
@@ -711,7 +712,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
 - (IBAction)backToDeviceList:(id)sender {
     [self.navigationController popViewControllerAnimated:NO];
-//    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 #pragma mark - tableview dataSource

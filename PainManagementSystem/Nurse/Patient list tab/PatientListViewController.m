@@ -141,6 +141,7 @@
     self.tableView.mj_header.hidden = YES;
     [self endRefresh];
     [[NSNotificationCenter defaultCenter]removeObserver:self];
+    [[UIMenuController sharedMenuController] setMenuVisible:NO animated: YES];
 }
 
 #pragma mark - refresh

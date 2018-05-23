@@ -61,23 +61,54 @@
     self.title = @"诊疗记录详情";
     titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"物理治疗方法",@"设备治疗处方",@"治疗结果",nil];
 
-    NSDictionary *dataDic = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Record" ofType:@"plist"]];
-
     //得到数据模型
     if (self.record) {
         self.recordModel = self.record;
+        if(self.recordModel.ID){
+//            [SVProgressHUD showWithStatus:@"正在加载中..."];
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/RecodeDetail"]
+                                          params:@{@"id":self.recordModel.ID}
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                             if ([responseObject.result integerValue]==1 ) {
+                                                 NSDictionary *answerDic = responseObject.content;
+                                                 [self.recordModel appendQuestionsWithDic:answerDic];
+                                                  [self.rootTableView reloadData];
+                                                 
+                                                 if(self.record.hasImage){
+                                                     SDWebImageManager *manager = [SDWebImageManager sharedManager] ;
+                                                     NSString *api = [HTTPServerURLString stringByAppendingString:[NSString stringWithFormat:@"Api/TreatRecode/Treatimage?id=%@",self.record.ID]];
+                                                     [[manager imageDownloader]downloadImageWithURL:[NSURL URLWithString:api] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
 
-    }else{
-        self.recordModel = [RecordModel modelWithDic:dataDic];
+                                                         float currentProgress = (float)receivedSize/(float)expectedSize;
+                                                         
+                                                         [SVProgressHUD showProgress:currentProgress status:@"正在加载中..."];
+                                                         
+                                                     } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+                                                         [SVProgressHUD dismiss];
+                                                         if (image) {
+                                                             self.image = image;
+                                                             [self.rootTableView reloadData];
+                                                         }else{
+                                                             [SVProgressHUD showErrorWithStatus:@"图片格式错误"];
+                                                         }
+                                                     }];
+                                                 }else{
+//                                                     [SVProgressHUD dismiss];
+                                                 }
+                                             }else{
+                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                             }
+                                         }
+                                         failure:nil];
+        }
+        
     }
     
     
     self.rootTableView.tableFooterView = self.footerView;
     self.docterLabel.text = [NSString stringWithFormat:@"诊断医生:%@",self.recordModel.operator];
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//    [dateFormatter setDateFormat:@"yyyy/MM/dd HH:mm:ss tt"];
-//    NSString *strDate = [dateFormatter stringFromDate:self.recordModel.time];
     self.timeLabel.text = [self getDateDisplayString:self.recordModel.time];
     
     //take photo
@@ -88,24 +119,6 @@
     self.picker.delegate = self;
     self.picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     
-    if(self.record.hasImage){
-        SDWebImageManager *manager = [SDWebImageManager sharedManager] ;
-        NSString *api = [HTTPServerURLString stringByAppendingString:[NSString stringWithFormat:@"Api/TreatRecode/Treatimage?id=%@",self.record.ID]];
-        [[manager imageDownloader]downloadImageWithURL:[NSURL URLWithString:api] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-            
-//            NSLog(@"%ld,%ld",receivedSize,expectedSize);
-            
-            float currentProgress = (float)receivedSize/(float)expectedSize;
-            
-            [SVProgressHUD showProgress:currentProgress status:@"正在加载中..."];
-        } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
-            if (image) {
-                [SVProgressHUD dismiss];
-                self.image = image;
-                [self.rootTableView reloadData];
-            }
-        }];
-    }
 
 }
 #pragma mark - tableViewDataSource
@@ -171,7 +184,9 @@
             return [self rowHeightWithQuestionArray:self.recordModel.questionE];
         }
         if (indexPath.section == [titles indexOfObject:@"设备治疗处方"]) {
-            return 44*([self.recordModel.treatParam count])+KTitleViewHeight +KPartInterval+KRowInterval*2;
+//            return 44*([self.recordModel.treatParam count])+KTitleViewHeight +KPartInterval+KRowInterval*2;
+            return [self rowHeightWithtreatParamArray:self.recordModel.treatParam];
+//             return UITableViewAutomaticDimension;
         }
     }else if(tableView.tag == KWestTableViewTag){
 
@@ -194,13 +209,29 @@
         NSMutableArray <Question *>*questionArray = item.questionArray;
         for (Question *question in questionArray) {
             if ([question.selectionString length]>18) {
-                extralRowNum ++;
+                NSInteger extraRowNum = ([question.selectionString length] +18 -1)/18 - 1;
+                extralRowNum += extraRowNum;
             }
         }
         rowNumber += [item.questionArray count];
         
     }
     return 44*(sectionNumber + rowNumber)+extralRowNum * 18 + KTitleViewHeight+KPartInterval+KRowInterval;
+}
+-(NSInteger)rowHeightWithtreatParamArray:(NSMutableArray *)array{
+    
+    NSInteger paramNumber = [array count];
+    NSMutableArray <Question*> *quetionArray = array;
+    //自动分行行数 每多加一行增加高度18
+    NSInteger extralRowNum = 0;
+    for (Question *question in quetionArray) {
+        if ([question.selectionString length]>18) {
+
+            NSInteger extraRowNum = ([question.selectionString length] +18 -1)/18 - 1;
+            extralRowNum += extraRowNum;
+        }
+    }
+    return 44*paramNumber+KTitleViewHeight+extralRowNum * 18 +KPartInterval+KRowInterval*2;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier;
@@ -232,8 +263,10 @@
                 cell.patientLabel.text = [NSString stringWithFormat:@"%@%@电话：%@",name,age,self.patient.contact];
                 
                 NSString *vasBefore = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗前vas：%@",self.recordModel.vasBefore] AddDigit:30 AddString:@"  "];
-                NSString *vasAfter = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗后vas：%@",self.recordModel.vasAfter] AddDigit:25  AddString:@"  "];
-//                cell.vasLabel.text = [NSString stringWithFormat:@"%@%@医生：%@",vasBefore,vasAfter,self.recordModel.operator];
+                
+                NSString *vasAfterString = [self.recordModel.vasAfter isEqualToString:@"？"]? @"尚未评分":self.recordModel.vasAfter;
+                NSString *vasAfter = [self CharacterStringMainString:[NSString stringWithFormat:@"治疗后vas：%@",vasAfterString] AddDigit:25  AddString:@"  "];
+
                 cell.vasLabel.text = [NSString stringWithFormat:@"%@%@",vasBefore,vasAfter];
                 return cell;
             }
@@ -323,7 +356,6 @@
         {
             dataArray = self.recordModel.questionW;
 
-            
         }
         else if (tableView.tag == KEastTableViewTag)
         {  //中医病历采集
@@ -479,26 +511,13 @@
 }
 #pragma mark - addPhoto
 - (IBAction)addPhoto:(id)sender {
-//    if (self.record.hasImage) {
-//        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
-//                                                                       message:@"该治疗疗程记录已经有治疗后照片，是否重新拍摄照片？"
-//                                                                preferredStyle:UIAlertControllerStyleAlert];
-//
-//        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
-//                                                             handler:^(UIAlertAction * action) {}];
-//        [alert addAction:cancelAction];
-//
-//        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//
-//            [self presentViewController:self.picker animated:YES completion:NULL];
-//        }];
-//
-//        [alert addAction:okAction];
-//        [self presentViewController:alert animated:YES completion:nil];
-//
-//    }else{
+    if ([self.recordModel.vasAfter isEqualToString:@"？"]) {
+        [SVProgressHUD showErrorWithStatus:@"治疗尚未结束，不允许拍照"];
+                                    
+
+    }else{
         [self presentPhotoLibraryOrCamera];
-//    }
+    }
 }
 -(void)presentPhotoLibraryOrCamera{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleAlert];

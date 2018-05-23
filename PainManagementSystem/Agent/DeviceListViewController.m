@@ -84,7 +84,7 @@
 
 -(void)initAll{
     
-    _filterButton.list = @[@"空气波",@"电疗",@"血瘘"];
+    _filterButton.list = @[@"空气波",@"电疗",@"光子",@"血瘘"];
 
     //pageControll
     
@@ -122,6 +122,7 @@
                  @61202:@"光子C11",
                  
                  };
+    [self initTableHeaderAndFooter];
     [self refresh];
 }
 
@@ -144,8 +145,8 @@
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
     
     self.tableView.mj_header = header;
-    
-    [self.tableView.mj_header beginRefreshing];
+//
+//    [self.tableView.mj_header beginRefreshing];
     
     
     //上拉加载
@@ -490,9 +491,11 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"EditDevice"]){
-        UINavigationController *navi = (UINavigationController  *)segue.destinationViewController;
+//        UINavigationController *navi = (UINavigationController  *)segue.destinationViewController;
         DeviceTableViewCell *cell= (DeviceTableViewCell *)sender;
-        EditDeviceViewController *controller = [navi.viewControllers firstObject];
+//        EditDeviceViewController *controller = [navi.viewControllers firstObject];
+        
+        EditDeviceViewController *controller = (EditDeviceViewController *)segue.destinationViewController;
         controller.type = cell.typeLabel.text;
         controller.name = cell.nameLabel.text;
         controller.macString = cell.macString;
@@ -538,6 +541,11 @@
                 [self askForData:YES isFiltered:YES];
             }else if([self.searchBar.text isEqualToString:@"血瘘"]){
                 [paramDic setObject:[NSNumber numberWithInt:57119] forKey:@"machinetype"];
+                
+                filterparam = paramDic;
+                [self askForData:YES isFiltered:YES];
+            }else if([self.searchBar.text isEqualToString:@"光子"]){
+                [paramDic setObject:[NSNumber numberWithInt:61184] forKey:@"machinetype"];
                 
                 filterparam = paramDic;
                 [self askForData:YES isFiltered:YES];

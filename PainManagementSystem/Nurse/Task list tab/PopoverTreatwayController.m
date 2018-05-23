@@ -14,10 +14,8 @@
 #define ValueTag 20000
 #define CellBorderViewTag 1111
 
-#define AladdinViewTag 57119
-#define ElectrotherapyViewTag 56833
-#define AirProViewTag 7681
-#define ElectrotherapyLabelTag 2222
+#define AladdinType 57119
+#define AirProType 7681
 
 #define maxHeight 575
 
@@ -25,8 +23,7 @@
 @interface PopoverTreatwayController ()<UITableViewDelegate,UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *topView;
-@property (weak, nonatomic) IBOutlet UILabel *airProALabel;
-@property (weak, nonatomic) IBOutlet UILabel *airProBLabel;
+@property (weak, nonatomic) IBOutlet UITextView *infomationView;
 
 @property (strong, nonatomic) NSString *type;
 @end
@@ -52,50 +49,47 @@
     
     self.type = self.treatParamDic[@"machinetype"];
 
-    UIImageView *aladdinView = [self.topView viewWithTag:AladdinViewTag];
+    UIImageView *middleView = [self.topView viewWithTag:20000];
     
-    UIImageView *leftView = [self.topView viewWithTag:ElectrotherapyViewTag];
+    UIImageView *leftView = [self.topView viewWithTag:10000];
     
-    UILabel *electrotherapyLabel = [self.topView viewWithTag:ElectrotherapyLabelTag];
+    leftView.hidden = ([self.type integerValue] == AladdinType);
+    self.infomationView.hidden = ([self.type integerValue] == AladdinType);
 
-    
-    self.airProALabel.hidden = ([self.type integerValue] != AirProViewTag);
-    self.airProBLabel.hidden = ([self.type integerValue] != AirProViewTag);
-    leftView.hidden = ([self.type integerValue] == AladdinViewTag) || [self.type isEqual:@0];
-    
-    NSArray *electrotherapyType = @[@56832,@56833,@56834,@56836];
-    if ([electrotherapyType containsObject:self.type]) {
-        electrotherapyLabel.hidden = NO;
-    }else{
-        electrotherapyLabel.hidden = YES;
-    }
-//    electrotherapyLabel.hidden = ([self.type integerValue] != ElectrotherapyViewTag);
-    aladdinView.hidden = ([self.type integerValue] != AladdinViewTag);
+    middleView.hidden = ([self.type integerValue] != AladdinType);
     
     NSMutableDictionary *modeDic;
     NSString *modeValue = self.treatParamDic[@"modeshowname"];
     switch ([self.type integerValue]) {
-        case AladdinViewTag:
+        case AladdinType:
 
-            aladdinView.image = [UIImage imageNamed:@"aladdin"];
+            middleView.image = [UIImage imageNamed:@"aladdin"];
             break;
             
-        case AirProViewTag:
+        case AirProType:
         {
 
-//            aladdinView.image = [UIImage imageNamed:@"airpro"];
+            NSString *aport;
+            NSString *bport;
             //提取AB气囊
             for (NSDictionary *dic in datas) {
                 NSString *key = dic[@"showname"];
                 NSString *value = dic[@"value"];
-
                 if ([key isEqualToString:@"A气囊类型"]) {
-                    self.airProALabel.text = [NSString stringWithFormat:@"A气囊类型 %@",value];
+
+                    aport = [NSString stringWithFormat:@"A气囊类型 %@",value];
                 }
                 if ([key isEqualToString:@"B气囊类型"]) {
-                    self.airProBLabel.text = [NSString stringWithFormat:@"B气囊类型 %@",value];
+
+                    bport  = [NSString stringWithFormat:@"B气囊类型 %@",value];
                 }
+                if (aport !=nil && bport!=nil) {
+                    break;
+                }
+
             }
+
+            self.infomationView.text = [NSString stringWithFormat:@"%@\n\n%@",aport,bport];
             
             leftView.image = [UIImage imageNamed:@"airIcon"];
             //提取模式
@@ -105,7 +99,7 @@
         }
             break;
             
-        case ElectrotherapyViewTag:
+        case 56833:
         case 56834:
         case 56836:
         {
@@ -121,8 +115,9 @@
                 NSString *key = dic[@"showname"];
                 NSString *value = dic[@"value"];
                 if ([key isEqualToString:@"通道数"]) {
-                    electrotherapyLabel.text = [NSString stringWithFormat:@"通道数:%@",value];
                     channelNum = value;
+                    self.infomationView.text = [NSString stringWithFormat:@"\n通道数: %@",value];
+                    self.infomationView.textColor = UIColorFromHex(0x0dbaa5);
                     break;
                 }
             }
@@ -131,15 +126,25 @@
             
         }
             break;
-            
+        //光子治疗仪
         case 61200:
         case 61201:
         case 61202:
-            self.tableView.tableHeaderView = [[UIView alloc]initWithFrame:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, 30)];
+            
+            //提取模式
+            modeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+            [modeDic setObject:@"主模式" forKey:@"showname"];
+            [modeDic setObject:modeValue forKey:@"value"];
+            self.infomationView.text = [NSString stringWithFormat:@"\n主模式: %@",modeValue];
+            leftView.image = [UIImage imageNamed:@"airIcon"];
+            
             break;
 
         default:
-            leftView.image = nil;
+            //未知设备显示方案备注
+            self.infomationView.text = [NSString stringWithFormat:@"%@",self.treatParamDic[@"note"]];
+
+            self.infomationView.textAlignment = NSTextAlignmentLeft;
             break;
             
     }
@@ -149,10 +154,10 @@
         [datas insertObject:modeDic atIndex:0];
     }
     
-    if (self.topView.bounds.size.height + [datas count]*RowHeight + 30 >maxHeight) {
+    if (self.tableView.tableHeaderView.bounds.size.height + [datas count]*RowHeight + 30 >maxHeight) {
         self.preferredContentSize = CGSizeMake(360, maxHeight);
     }else{
-        self.preferredContentSize = CGSizeMake(360, self.topView.bounds.size.height + [datas count]*RowHeight + 30);
+        self.preferredContentSize = CGSizeMake(360, self.tableView.tableHeaderView.bounds.size.height + [datas count]*RowHeight + 30);
     }
     
 }
@@ -180,12 +185,12 @@
     cell.questionNameLabel.text = key;
     cell.selectionsLabel.text = dic[@"value"];
     
-    if ([key isEqualToString:@"调制波形"]) {
-        cell.selectionsLabel.text = nil;
-        
-        cell.waveFormImageView.image = [UIImage imageNamed:dic[@"value"]];
-        
-    }
+//    if ([key isEqualToString:@"调制波形"]) {
+//        cell.selectionsLabel.text = nil;
+//
+//        cell.waveFormImageView.image = [UIImage imageNamed:dic[@"value"]];
+//
+//    }
 
     return cell;
 

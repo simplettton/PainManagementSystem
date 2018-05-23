@@ -30,7 +30,7 @@
         NSLog(@"被拦截");
         return;
     } else {
-        NSLog(@"push");
+//        NSLog(@"push");
         self.pushing = YES;
     }
     

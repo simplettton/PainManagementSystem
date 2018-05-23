@@ -99,22 +99,7 @@
                                                 for (NSDictionary *dic in dataArray) {
                                                     __block RecordModel *record = [RecordModel modelWithDic:dic];
                                                     record.patient = self.patient;
-                                                    if(record.ID){
-                                                        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/RecodeDetail"]
-                                                                                      params:@{@"id":record.ID}
-                                                                                    hasToken:YES
-                                                                                     success:^(HttpResponse *responseObject) {
-                                                                                         if ([responseObject.result integerValue]==1 ) {
-                                                                                             NSDictionary *answerDic = responseObject.content;
-                                                                                             [record appendQuestionsWithDic:answerDic];
-                                                                                             
-                                                                                         }else{
-                                                                                             
-                                                                                         }
-                                                                                     }
-                                                                                     failure:nil];
-                                                    }
-                                                    
+
                                                     [datas addObject:record];
                                                 }
                                                 
@@ -199,7 +184,7 @@
     if (![[array objectAtIndex:1]isEqualToString:@"？"]) {
         
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
-                                                                       message:@"该治疗疗程记录已有VAS评分，是否再次修改评分？"
+                                                                       message:@"该疗程记录已有VAS评分，是否再次修改评分？"
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
@@ -229,7 +214,7 @@
     }else{
         if (!record.isFinished) {
             UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
-                                                                           message:@"当前处方设备正在治疗中，是否进行治疗后vas评分强制结束治疗？"
+                                                                           message:@"当前疗程正在进行中，是否进行治疗后vas评分强制结束治疗？"
                                                                     preferredStyle:UIAlertControllerStyleAlert];
             
             UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
@@ -316,7 +301,6 @@
           [self performSegueWithIdentifier:@"ShowRecordDetail" sender:indexPath];
         self.pushOnce = 0;
     }
-
 }
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString:@"ShowRecordDetail"]) {

@@ -253,7 +253,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     NSString *selected = notification.object;
     NSLog(@"收到通知:切换%@tab",selected);
     [self.searchBar resignFirstResponder];
-//    [self refresh];
+    [self refresh];
 }
 #pragma mark - refresh
 -(void)initTableHeaderAndFooter{
@@ -1101,7 +1101,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 #pragma mark http control machine
 
 -(void)controllAction:(MultiParamButton *)button{
-    [SVProgressHUD show];
+    [SVProgressHUD showWithStatus:@"正在加载中..."];
     UIView* contentView = [button superview];
     DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[contentView superview];
     NSIndexPath *indexPath = [self.collectionView indexPathForCell:deviceCell];
@@ -1117,74 +1117,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                          [SVProgressHUD dismiss];
                                      }else{
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                     }
-                                 }
-                                 failure:nil];
-}
--(void)playAction:(UIButton *)button{
-    [SVProgressHUD show];
-    UIView* contentView = [button superview];
-    DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[contentView superview];
-    NSIndexPath *indexPath = [self.collectionView indexPathForCell:deviceCell];
-    MachineModel *machine = [datas objectAtIndex:indexPath.row];
-    NSString *cpuid = machine.cpuid;
-    NSDictionary *param = @{@"cpuid":cpuid,@"cmdcode":@0};
-    
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Control"]
-                                  params:param
-                                hasToken:YES
-                                 success:^(HttpResponse *responseObject) {
-                                     if ([responseObject.result integerValue] == 1) {
-                                         [SVProgressHUD dismiss];
-                                     }
-                                 }
-                                 failure:nil];
-
-}
--(void)stopAction:(UIButton *)button{
-    [SVProgressHUD show];
-    DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
-    
-    NSInteger interger = [self.collectionView.visibleCells indexOfObject:deviceCell];
-    
-    MachineModel *machine = [datas objectAtIndex:interger];
-    
-    NSString *cpuid = machine.cpuid;
-    
-    NSDictionary *param = @{@"cpuid":cpuid,@"cmdcode":@2};
-    
-    
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Control"]
-                                  params:param
-                                hasToken:YES
-                                 success:^(HttpResponse *responseObject) {
-                                     if ([responseObject.result integerValue] == 1) {
-                                         [SVProgressHUD dismiss];
-                                     }
-                                 }
-                                 failure:nil];
-    
-}
--(void)pauseAction:(UIButton *)button{
-    [SVProgressHUD show];
-    
-    DeviceCollectionViewCell *deviceCell = (DeviceCollectionViewCell *)[button superview];
-    
-    NSInteger interger = [self.collectionView.visibleCells indexOfObject:deviceCell];
-    
-    MachineModel *machine = [datas objectAtIndex:interger];
-    
-    NSString *cpuid = machine.cpuid;
-    
-    NSDictionary *param = @{@"cpuid":cpuid,@"cmdcode":@1};
-    
-    
-    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/Control"]
-                                  params:param
-                                hasToken:YES
-                                 success:^(HttpResponse *responseObject) {
-                                     if ([responseObject.result integerValue] == 1) {
-                                         [SVProgressHUD dismiss];
                                      }
                                  }
                                  failure:nil];
@@ -1287,8 +1219,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                         }
                                     } failure:nil];
-        
-
     }else{
         [SVProgressHUD showErrorWithStatus:@"请输入病历号查找设备~"];
     }
