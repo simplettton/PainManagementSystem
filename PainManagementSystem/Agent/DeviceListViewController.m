@@ -13,9 +13,8 @@
 #import "BaseHeader.h"
 #import "NetWorkTool.h"
 #import "DropdownButton.h"
-
+#import "NoDataPlaceHoler.h"
 #import "MJRefresh.h"
-#import "MJChiBaoZiHeader.h"
 
 @interface DeviceListViewController ()<UISearchBarDelegate>
 {
@@ -28,11 +27,13 @@
     NSMutableDictionary *filterparam;
     
 }
+@property (weak, nonatomic) IBOutlet UIView *tableBackgroundView;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 @property (weak, nonatomic) IBOutlet DropdownButton *filterButton;
-
+//没有记录view
+@property(nonatomic,strong)NoDataPlaceHoler *nodataView;
 @property (strong,nonatomic)NSDictionary * typeDic;
 
 @end
@@ -226,16 +227,16 @@
                                          
                                          if ([count intValue]>0) {
                                               [self getNetworkData:isRefresh isFiltered:iSFiltered];
+                                             [self hideNodataView];
                                               self.tableView.tableHeaderView.hidden = NO;
                                          }else{
                                              [datas removeAllObjects];
+                                             [self showNodataViewWithTitle:@"暂无已录入设备"];
                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
                                              self.tableView.tableHeaderView.hidden = YES;
                                          }
-
-                                         
                                          
                                      }else{
                                          [SVProgressHUD showErrorWithStatus:responseObject.errorString];
@@ -331,8 +332,24 @@
                                  } failure:nil];
     
 }
-
-
+#pragma mark - mark NoDataView
+-(void)showNodataViewWithTitle:(NSString *)title{
+    if (self.nodataView == nil) {
+        self.nodataView = [[[NSBundle mainBundle]loadNibNamed:@"NoDataPlaceHolder" owner:self options:nil]lastObject];
+        self.nodataView.center = CGPointMake(self.tableBackgroundView.center.x, self.tableBackgroundView.center.y-150);
+        
+        [self.view addSubview:self.nodataView];
+    }
+    
+    self.nodataView.titleLabel.text = title;
+    
+}
+-(void)hideNodataView{
+    if(self.nodataView){
+        [self.nodataView removeFromSuperview];
+        self.nodataView = nil;
+    }
+}
 
 
 #pragma mark - tableview dataSource

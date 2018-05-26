@@ -24,7 +24,6 @@
 
 //refresh
 #import "MJRefresh.h"
-#import "MJChiBaoZiHeader.h"
 
 //布局
 #import "Masonry.h"

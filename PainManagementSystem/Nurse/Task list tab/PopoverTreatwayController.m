@@ -16,7 +16,6 @@
 
 #define AladdinType 57119
 #define AirProType 7681
-
 #define maxHeight 575
 
 #define RowHeight 44
@@ -61,11 +60,6 @@
     NSMutableDictionary *modeDic;
     NSString *modeValue = self.treatParamDic[@"modeshowname"];
     switch ([self.type integerValue]) {
-        case AladdinType:
-
-            middleView.image = [UIImage imageNamed:@"aladdin"];
-            break;
-            
         case AirProType:
         {
 
@@ -142,8 +136,7 @@
 
         default:
             //未知设备显示方案备注
-            self.infomationView.text = [NSString stringWithFormat:@"%@",self.treatParamDic[@"note"]];
-
+            self.infomationView.text = [NSString stringWithFormat:@"方案：%@\n备注：%@",self.treatmentScheduleName,self.treatParamDic[@"note"]];
             self.infomationView.textAlignment = NSTextAlignmentLeft;
             break;
             
@@ -184,13 +177,6 @@
     NSString *key = dic[@"showname"];
     cell.questionNameLabel.text = key;
     cell.selectionsLabel.text = dic[@"value"];
-    
-//    if ([key isEqualToString:@"调制波形"]) {
-//        cell.selectionsLabel.text = nil;
-//
-//        cell.waveFormImageView.image = [UIImage imageNamed:dic[@"value"]];
-//
-//    }
 
     return cell;
 

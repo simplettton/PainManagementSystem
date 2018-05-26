@@ -37,6 +37,7 @@
 
 //upload image
 @property (strong,nonatomic)UIImage *image;
+@property (nonatomic,assign)BOOL isNoMachineRecord;
 
 @end
 
@@ -59,13 +60,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"诊疗记录详情";
-    titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"物理治疗方法",@"设备治疗处方",@"治疗结果",nil];
+    if(self.record){
+        if ([_record.machineType isEqualToString:@"其他"]) {
+            self.isNoMachineRecord = YES;
+            titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"治疗方案",@"治疗处方",@"治疗结果",nil];
+        }else{
+            self.isNoMachineRecord = NO;
+            titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"治疗方案",@"设备治疗参数",@"治疗结果",nil];
+        }
+    }
 
     //得到数据模型
     if (self.record) {
         self.recordModel = self.record;
         if(self.recordModel.ID){
-//            [SVProgressHUD showWithStatus:@"正在加载中..."];
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TreatRecode/RecodeDetail"]
                                           params:@{@"id":self.recordModel.ID}
                                         hasToken:YES
@@ -107,9 +115,9 @@
     
     
     self.rootTableView.tableFooterView = self.footerView;
-    self.docterLabel.text = [NSString stringWithFormat:@"诊断医生:%@",self.recordModel.operator];
+    self.docterLabel.text = [NSString stringWithFormat:@"诊断医生:  %@",self.recordModel.operator];
     
-    self.timeLabel.text = [self getDateDisplayString:self.recordModel.time];
+    self.timeLabel.text = [NSString stringWithFormat:@"就诊时间:  %@",[self getDateDisplayString:self.recordModel.time]];
     
     //take photo
     if (self.picker == nil)
@@ -145,6 +153,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (tableView == self.rootTableView) {
+
         return 1;
     }
     else if (tableView.tag == KWestTableViewTag){
@@ -168,32 +177,38 @@
     if (tableView == self.rootTableView) {
         //基本情况
         if (indexPath.section == [titles indexOfObject:@"基本情况"]) {
-//            return 4*KRowInterval+3*KRowHeight+KTitleViewHeight+KPartInterval;
+
             return UITableViewAutomaticDimension;
         }
         //诊断结果
         if ((indexPath.section == [titles indexOfObject:@"诊断结果"]) || (indexPath.section == [titles indexOfObject:@"物理治疗方法"])) {
-//            return 2*KRowInterval+1*KRowHeight+KTitleViewHeight+KPartInterval;
             return UITableViewAutomaticDimension;
         }
         //西医病历采集
         if (indexPath.section == [titles indexOfObject:@"西医病历采集"]) {
-            return [self rowHeightWithQuestionArray:self.recordModel.questionW];
+            if([self.recordModel.questionW count]>0){
+                return [self rowHeightWithQuestionArray:self.recordModel.questionW];
+            }else{
+                return 0;
+            }
         }
         if (indexPath.section == [titles indexOfObject:@"中医病历采集"]) {
-            return [self rowHeightWithQuestionArray:self.recordModel.questionE];
+            if ([self.recordModel.questionE count]>0) {
+                return [self rowHeightWithQuestionArray:self.recordModel.questionE];
+            }else{
+                return 0;
+            }
         }
-        if (indexPath.section == [titles indexOfObject:@"设备治疗处方"]) {
-//            return 44*([self.recordModel.treatParam count])+KTitleViewHeight +KPartInterval+KRowInterval*2;
+        if (indexPath.section == [titles indexOfObject:@"设备治疗参数"]) {
             return [self rowHeightWithtreatParamArray:self.recordModel.treatParam];
-//             return UITableViewAutomaticDimension;
         }
     }else if(tableView.tag == KWestTableViewTag){
 
-            return UITableViewAutomaticDimension;
+        return UITableViewAutomaticDimension;
 
     }else if (tableView.tag == KEastTableViewTag){  //中医病历采集
-            return UITableViewAutomaticDimension;
+
+        return UITableViewAutomaticDimension;
     }
     return UITableViewAutomaticDimension;
 
@@ -241,6 +256,15 @@
             case 0: {   CellIdentifier = @"BasicInfomationCell";    }       break;
             case 3: {   CellIdentifier = @"ResultCell";     }
             case 4: {   CellIdentifier = @"ResultCell";     }       break;
+            case 5:
+            {
+                if (self.isNoMachineRecord) {
+                    CellIdentifier = @"ResultCell";
+                }else{
+                    CellIdentifier = @"Cell";
+                }
+            }
+                break;
             case 6: {   CellIdentifier = @"PhotoCell" ;     }       break;
             default: {      CellIdentifier = @"Cell";       }       break;
         }
@@ -285,7 +309,14 @@
                 break;
             case 3:
             {
-                cell.contentLabel.text = [NSString stringWithFormat:@"病理因素：%@          发病部位：%@         中医辨证：%@",self.recordModel.painfactorW,self.recordModel.painArea,self.recordModel.painfactorE];
+                NSString *appendString = [NSString stringWithFormat:@"%@%@%@",self.recordModel.painfactorW,self.recordModel.painArea,self.recordModel.painfactorE];
+                if ([appendString length]>17) {
+                    cell.contentLabel.text = [NSString stringWithFormat:@"病理因素：%@\n\n发病部位：%@\n\n中医辨证：%@",self.recordModel.painfactorW,self.recordModel.painArea,self.recordModel.painfactorE];
+                }else{
+                    
+                    cell.contentLabel.text = [NSString stringWithFormat:@"病理因素：%@           发病部位：%@          中医辨证：%@",self.recordModel.painfactorW,self.recordModel.painArea,self.recordModel.painfactorE];
+                }
+
                 
                 cell.contentLabel.numberOfLines = 0;
                 cell.contentLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -303,8 +334,16 @@
                 break;
             case 5:
             {
-                cell.insertTableView.tag = KTreatParamViewTag;
-                [cell.insertTableView reloadData];
+                if (self.isNoMachineRecord) {
+                    //无设备显示备注的处方
+                    Question *param = self.recordModel.treatParam[0];
+                    cell.contentLabel.text = param.selectionString;
+                    return cell;
+                }else{
+                    //有设备显示设备治疗参数
+                    cell.insertTableView.tag = KTreatParamViewTag;
+                    [cell.insertTableView reloadData];
+                }
 
             }
                 break;
@@ -328,7 +367,6 @@
                         
                         [cell.resultImageView sd_setImageWithURL:[NSURL URLWithString:api]
                                      placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
-                        
 
                     }
                 }
@@ -366,8 +404,10 @@
         {
             //物理治疗方法
             Question *param = self.recordModel.treatParam[indexPath.row];
+
             cell.questionNameLabel.text = param.name;
             cell.selectionsLabel.text = param.selectionString;
+
         }
         
         if([dataArray count]>0){
@@ -496,7 +536,6 @@
                                            }else{
                                                [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                            }
-                                           
                                            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(addPhoto:)];
                                        } failure:nil];
     }
@@ -586,60 +625,11 @@
 }
 //时间显示内容
 -(NSString *)getDateDisplayString:(NSDate *) myDate{
-    
-    NSCalendar *calendar = [ NSCalendar currentCalendar ];
-    int unit = NSCalendarUnitDay | NSCalendarUnitMonth |  NSCalendarUnitYear ;
-    NSDateComponents *nowCmps = [calendar components:unit fromDate:[ NSDate date ]];
-    NSDateComponents *myCmps = [calendar components:unit fromDate:myDate];
-    
     NSDateFormatter *dateFmt = [[NSDateFormatter alloc ] init ];
-    
-    //2. 指定日历对象,要去取日期对象的那些部分.
-    NSDateComponents *comp =  [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitWeekday fromDate:myDate];
-    
-//    if (nowCmps.year != myCmps.year) {
-//        dateFmt.dateFormat = @"yyyy-MM-dd hh:mm";
-//    } else
-//    {
-//        if (nowCmps.day==myCmps.day) {
-            dateFmt.AMSymbol = @"上午";
-            dateFmt.PMSymbol = @"下午";
-            dateFmt.dateFormat = @"yyyy/MM/dd aaa hh:mm";
-//
-//        } else if((nowCmps.day-myCmps.day)==1) {
-//            dateFmt.dateFormat = @"昨天";
-//        } else {
-//            if ((nowCmps.day-myCmps.day) <=7) {
-//                switch (comp.weekday) {
-//                    case 1:
-//                        dateFmt.dateFormat = @"星期日";
-//                        break;
-//                    case 2:
-//                        dateFmt.dateFormat = @"星期一";
-//                        break;
-//                    case 3:
-//                        dateFmt.dateFormat = @"星期二";
-//                        break;
-//                    case 4:
-//                        dateFmt.dateFormat = @"星期三";
-//                        break;
-//                    case 5:
-//                        dateFmt.dateFormat = @"星期四";
-//                        break;
-//                    case 6:
-//                        dateFmt.dateFormat = @"星期五";
-//                        break;
-//                    case 7:
-//                        dateFmt.dateFormat = @"星期六";
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }else {
-//                dateFmt.dateFormat = @"yyyy-MM-dd hh:mm";
-//            }
-//        }
-//    }
+ 
+    dateFmt.AMSymbol = @"上午";
+    dateFmt.PMSymbol = @"下午";
+    dateFmt.dateFormat = @"yyyy/MM/dd aaa hh:mm";
     return [dateFmt stringFromDate:myDate];
 }
 

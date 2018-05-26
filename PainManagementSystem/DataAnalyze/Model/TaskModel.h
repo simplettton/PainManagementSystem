@@ -24,6 +24,8 @@
 
 @property(nonatomic,copy)NSString *treatTime;
 
+@property(nonatomic,copy)NSString *treatmentScheduleName;
+
 @property(nonatomic,copy)NSDictionary *treatParam;
 
 @property(nonatomic,copy)NSArray *paramlist;

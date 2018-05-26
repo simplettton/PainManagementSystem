@@ -11,7 +11,7 @@
 #import "TreatRecordCell.h"
 #import "RecordModel.h"
 #import "RecordDetailViewController.h"
-
+#import "NoDataPlaceHoler.h"
 #import "MJRefresh.h"
 @interface TreatmentCourseRecordViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -21,6 +21,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *patientInfoLabel;
 //防止push多个相同的弹窗
 @property (assign,nonatomic)BOOL pushOnce;
+//没有记录view
+@property(nonatomic,strong)NoDataPlaceHoler *nodataView;
+
 @end
 
 @implementation TreatmentCourseRecordViewController{
@@ -106,8 +109,9 @@
                                                 dispatch_async(dispatch_get_main_queue(), ^{
                                                     [self.tableView reloadData];
                                                 });
+                                                [self hideNodataView];
                                             }else{
-                                                [SVProgressHUD showErrorWithStatus:@"当前没有记录~"];
+                                                [self showNodataViewWithTitle:@"暂无诊疗记录"];
                                                 //没有数据隐藏表头
                                                 self.tableView.tableHeaderView.hidden = YES;
                                             }
@@ -123,7 +127,23 @@
     self.phoneLabel.text = [NSString stringWithFormat:@"电话:%@",self.patient.contact];
     self.patientInfoLabel.text = [NSString stringWithFormat:@"姓名:%@          年龄:%@          电话:%@",self.patient.name,self.patient.age,self.patient.contact];
 }
-
+#pragma mark - mark NoDataView
+-(void)showNodataViewWithTitle:(NSString *)title{
+    if (self.nodataView == nil) {
+        self.nodataView = [[[NSBundle mainBundle]loadNibNamed:@"NoDataPlaceHolder" owner:self options:nil]lastObject];
+        self.nodataView.center = self.view.center;
+        [self.view addSubview:self.nodataView];
+    }
+    
+    self.nodataView.titleLabel.text = title;
+    
+}
+-(void)hideNodataView{
+    if(self.nodataView){
+        [self.nodataView removeFromSuperview];
+        self.nodataView = nil;
+    }
+}
 #pragma mark - tableview delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -237,6 +257,7 @@
 
                                                                                                           NSString *newValue = [array componentsJoinedByString:@"/"];
                                                                                                           cell.vasLabel.text = newValue;
+                                                                                                          [self refresh];
 
                                                                                                       }
                                                                                                       self.pushOnce = 1;
@@ -267,6 +288,7 @@
                                                      
                                                      NSString *newValue = [array componentsJoinedByString:@"/"];
                                                      cell.vasLabel.text = newValue;
+                                                     [self refresh];
                                                      
                                                  }
                                                  self.pushOnce = 1;

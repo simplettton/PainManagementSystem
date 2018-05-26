@@ -17,7 +17,7 @@
 #import "Pack.h"
 #import "Unpack.h"
 #import "TreatmentCourseRecordViewController.h"
-
+#import "NoDataPlaceHoler.h"
 #import "BaseHeader.h"
 #import <SVProgressHUD.h>
 
@@ -38,6 +38,7 @@
 #define AirProColor 0xfd8574
 //#define AirProColor 0x9BADC3
 #define AladdinColor 0x5e97fe
+#define LightColor 0x57bd72
 
 @interface TaskListViewController ()<UITableViewDelegate,UITableViewDataSource,QRCodeReaderDelegate,UIPopoverPresentationControllerDelegate>{
     int page;
@@ -64,6 +65,8 @@
 //防止push多个相同的
 @property (assign,nonatomic)BOOL pushOnce;
 @property(nonatomic,strong)NSTimer *timer;
+//没有记录view
+@property(nonatomic,strong)NoDataPlaceHoler *nodataView;
 
 @end
 
@@ -123,12 +126,7 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
-    
-//    UILongPressGestureRecognizer * longPressGesture =[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressToDo:)];
-//
-//    [self.tableView addGestureRecognizer:longPressGesture];
-    
-    
+
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     
     self.isBLEPoweredOff = YES;
@@ -144,46 +142,6 @@
     
     [self initTableHeaderAndFooter];
     self.pushOnce = 1;
-}
-
--(void)longPressToDo:(UILongPressGestureRecognizer *)gesture
-{
-    
-    if(gesture.state == UIGestureRecognizerStateBegan)
-    {
-        
-        CGPoint point = [gesture locationInView:self.tableView];
-        
-        NSIndexPath * indexPath = [self.tableView indexPathForRowAtPoint:point];
-        
-        if([datas count]>0){
-            TaskModel *task = datas[indexPath.row];
-            
-            if(indexPath == nil) return ;
-            
-            if (self.taskTag == TaskListTypeProcessing) {
-                if (task.state == 3) {
-                    self.selectedRow = indexPath.row;
-                    
-                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
-                                                                                   message:@"当前疗程正在进行中，是否进行治疗后vas评分强制结束治疗？"
-                                                                            preferredStyle:UIAlertControllerStyleAlert];
-                    
-                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
-                                                                         handler:^(UIAlertAction * action) {}];
-                    UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault
-                                                                     handler:^(UIAlertAction * action) {
-                                                                         [self remarkAction:nil];
-                                                                     }];
-                    
-                    [alert addAction:cancelAction];
-                    [alert addAction:okAction];
-                    
-                    [self presentViewController:alert animated:YES completion:nil];
-                }
-            }
-        }
-    }
 }
 
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
@@ -277,15 +235,14 @@
                                          {
                                              self.tableView.tableHeaderView.hidden = NO;
                                              [self getNetworkData:isRefresh];
+                                             [self hideNodataView];
                                          }else{
                                              [datas removeAllObjects];
                                              [self endRefresh];
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
-                                             NSString *title = [self.segmentedControl titleForSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
-                                             
-//                                             [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"没有%@的处方~",title]];
+                                             [self showNodataViewWithTitle:[NSString stringWithFormat:@"暂无记录"]];
                                              self.tableView.tableHeaderView.hidden = YES;
                                          }
                                          
@@ -382,7 +339,23 @@
 
                                  } failure:nil];
 }
-
+#pragma mark - mark NoDataView
+-(void)showNodataViewWithTitle:(NSString *)title{
+    if (self.nodataView == nil) {
+        self.nodataView = [[[NSBundle mainBundle]loadNibNamed:@"NoDataPlaceHolder" owner:self options:nil]lastObject];
+        self.nodataView.center = self.view.center;
+        [self.view addSubview:self.nodataView];
+    }
+    
+    self.nodataView.titleLabel.text = title;
+    
+}
+-(void)hideNodataView{
+    if(self.nodataView){
+        [self.nodataView removeFromSuperview];
+        self.nodataView = nil;
+    }
+}
 -(BOOL)checkLocalMachineFocus:(TaskModel *)task{
     NSArray *localMachineTaskIds = [self returnLocalMachineTaskIdArray];
     if ([localMachineTaskIds containsObject:task.ID]) {
@@ -476,20 +449,17 @@
     NSString *buttonTitle = [[NSString alloc]init];
     //治疗参数详情弹窗
     if([task.treatTime integerValue]==601){
-        buttonTitle = @"治疗时间:持续治疗";
+        buttonTitle = @" 治疗时间:持续治疗 ";
     }else{
-        buttonTitle = [NSString stringWithFormat:@"治疗时间:%@分钟",task.treatTime];
+        buttonTitle = [NSString stringWithFormat:@" 治疗时间:%@分钟 ",task.treatTime];
     }
     if([task.machineType isEqualToString:@"其他"]){
-        [cell.treatmentButton setTitle:@"不使用设备" forState:UIControlStateNormal];
-        //去除边框
-//        [cell.treatmentButton.layer setBorderColor:UIColorFromHex(0xffffff).CGColor];
-//         [cell.treatmentButton removeTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
-        
+        [cell.treatmentButton setTitle:task.treatmentScheduleName forState:UIControlStateNormal];
+        //scanButton unenable
+        cell.scanButton.enabled = NO;
     }else{
-        [cell.treatmentButton setTitle:buttonTitle forState:UIControlStateNormal];
-//        [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.treatmentButton.layer setBorderColor:UIColorFromHex(0xbbbbbb).CGColor];
+        [cell.treatmentButton setTitle:[NSString stringWithFormat:@" %@ ",buttonTitle] forState:UIControlStateNormal];
+        cell.scanButton.enabled = YES;
     }
     [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -510,6 +480,11 @@
         case AirProTypeValue:
             [cell setTypeLableColor:UIColorFromHex(AirProColor)];
             break;
+        case 61200:
+        case 61201:
+        case 61202:
+            [cell setTypeLableColor:UIColorFromHex(LightColor)];
+            break;
             
         default:
             [cell setTypeLableColor:UIColorFromHex(0x212121)];
@@ -523,7 +498,6 @@
             self.headerLastLabel.hidden = NO;
  
             [cell configureWithStyle:CellStyle_UnDownLoad];
-            
             //扫描action
             [cell.scanButton removeTarget:self action:@selector(remarkAction:) forControlEvents:UIControlEventTouchUpInside];
             [cell.scanButton addTarget:self action:@selector(scanAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -1204,7 +1178,7 @@
             TaskModel *task = [datas objectAtIndex:index.row];
             
             destination.treatParamDic = task.treatParam;
-            
+            destination.treatmentScheduleName = task.treatmentScheduleName;
             UIButton *button = sender;
             popover.sourceView = button;
             popover.sourceRect = button.bounds;

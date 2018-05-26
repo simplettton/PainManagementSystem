@@ -17,21 +17,28 @@
 #import <MBProgressHUD.h>
 #import <AVFoundation/AVFoundation.h>
 #import "MJRefresh.h"
-#import "MJChiBaoZiHeader.h"
+#import "MachineSeriesModel.h"
+#import "BEButton.h"
+#import "NoDataPlaceHoler.h"
 
 #define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
 #define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
 #define RX_CHARACTERISTIC_UUID @"8ac32d3f-5cb9-4d44-bec2-ee689169f626"
 
+#define TYPE_ITEM_Height 30
+#define TYPE_ITEM_INTERVAL 48
 typedef NS_ENUM(NSUInteger,typeTags)
 {
     electrotherapyTag = 1000,airProTag = 1001,aladdinTag = 1002,LightTag = 1003
 };
-@interface AddDeviceViewController ()<QRCodeReaderDelegate,UITextFieldDelegate>{
+@interface AddDeviceViewController ()<QRCodeReaderDelegate,UITextFieldDelegate,UIScrollViewDelegate>{
     int page;
     int totalPage;  //总页数
     BOOL isRefreshing; //是否正在下拉刷新或者上拉加载
+    //类型总数
+    NSMutableArray *typeItemModels;
 }
+@property (weak, nonatomic) IBOutlet UIView *tableBackgroundView;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
@@ -39,6 +46,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 //条形码扫描
 @property (strong,nonatomic) QRCodeReaderViewController *reader;
 @property (assign,nonatomic) NSInteger selectedDeviceTag;
+@property (strong, nonatomic)MachineSeriesModel *selectedMachineSeries;
 @property (assign,nonatomic) NSInteger selectedRow;
 
 @property (strong, nonatomic)MBProgressHUD * HUD;
@@ -46,6 +54,9 @@ typedef NS_ENUM(NSUInteger,typeTags)
 @property (strong ,nonatomic) CBPeripheral *peripheral;
 @property (nonatomic,strong) CBCharacteristic *sendCharacteristic;
 @property (nonatomic,strong) CBCharacteristic *receiveCharacteristic;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+//没有记录view
+@property(nonatomic,strong)NoDataPlaceHoler *nodataView;
 
 @end
 
@@ -64,7 +75,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:46.0f/255.0f green:163.0f/255.0f blue:230.0f/255.0f alpha:1];
     self.tableView.mj_header.hidden = NO;
 
-
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
@@ -80,7 +90,9 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [self hideKeyBoard];
 }
 -(void)hideKeyBoard{
+    
     [self.view endEditing:YES];
+
     [self.tableView endEditing:YES];
     
 }
@@ -95,22 +107,97 @@ typedef NS_ENUM(NSUInteger,typeTags)
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initAll];
+    
 }
 
 -(void)initAll{
     
-    //默认选中电疗设备
-    UIButton *btn = (UIButton *)[self.contentView viewWithTag:electrotherapyTag];
-    [self changeDevice:btn];
+//    //默认选中电疗设备
+//    UIButton *btn = (UIButton *)[self.contentView viewWithTag:electrotherapyTag];
+//    [self changeDevice:btn];
     //非本地设备
     isLocalDeviceList = NO;
     
     self.tableView.tableFooterView = [[UIView alloc]init];
 
-    datas = [[NSMutableArray alloc]initWithCapacity:20];
-
-    [self initTableHeaderAndFooter];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyBoard)];
     
+    [self.tableView addGestureRecognizer:tap];
+    
+    datas = [[NSMutableArray alloc]initWithCapacity:20];
+    [self initMahineTypeModels];
+
+
+}
+-(void)initMahineTypeModels{
+    typeItemModels = [NSMutableArray arrayWithCapacity:20];
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/AgesShop/MachineSeries"]
+                                  params:nil
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if([responseObject.result integerValue] == 1){
+                                         NSArray *dataArray = responseObject.content;
+                                         if ([dataArray count]>0) {
+                                               for (NSDictionary *dic in dataArray) {
+                                                 MachineSeriesModel *machineSeries = [MachineSeriesModel modelWithDic:dic];
+                                                 [typeItemModels addObject:machineSeries];
+                                             }
+                                         }
+                                         if ([typeItemModels count]>0) {
+                                             //默认选中第一个
+                                             self.selectedMachineSeries = typeItemModels[0];
+                                             [self initScrollView];
+                                         }
+                                         [self initTableHeaderAndFooter];
+                                     }
+                                     
+                                 } failure:nil];
+    
+}
+- (void)initScrollView
+{
+    if ([typeItemModels count]>0) {
+
+        CGFloat contentsizeWidth = 20;
+        for (MachineSeriesModel *machineSerial in typeItemModels) {
+            contentsizeWidth += machineSerial.buttonWidth + TYPE_ITEM_INTERVAL;
+        }
+        self.scrollView.contentSize = CGSizeMake(contentsizeWidth, self.scrollView.bounds.size.height);
+        self.scrollView.delegate = self;
+        self.scrollView.showsHorizontalScrollIndicator = NO;
+        self.scrollView.showsVerticalScrollIndicator = NO;
+        //设置scrollView滚动的减速速率
+        self.scrollView.decelerationRate = 0.95f;
+        
+        CGFloat buttonYPositon = self.scrollView.bounds.size.height/2 - TYPE_ITEM_Height/2;
+        CGFloat XPostion = 20.0f;
+        for (int i = 0; i < [typeItemModels count]; i++){
+            
+            MachineSeriesModel *machineSerial = typeItemModels[i];
+            
+            
+            BEButton *button = [[BEButton alloc]initWithFrame:CGRectMake(XPostion, buttonYPositon, machineSerial.buttonWidth, TYPE_ITEM_Height)];
+            [button setTitle:machineSerial.name forState:UIControlStateNormal];
+            button.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightLight];
+            [button setTitleColor:UIColorFromHex(0X212121) forState:UIControlStateNormal];
+            
+            [button setBackgroundColor:UIColorFromHex(0xf8f8f8)];
+            
+            XPostion = button.frame.origin.x + button.frame.size.width + TYPE_ITEM_INTERVAL;
+            
+            button.tag = 1000 + i;
+            
+            [button addTarget:self action:@selector(selectDevice:) forControlEvents:UIControlEventTouchUpInside];
+            
+            [self.scrollView addSubview:button];
+            
+        }
+        UIButton *firstButton = [self.scrollView viewWithTag:1000];
+        [self selectDevice:firstButton];
+        
+    }
+
+
 }
 #pragma mark - refresh
 
@@ -157,22 +244,23 @@ typedef NS_ENUM(NSUInteger,typeTags)
         datas = [[NSMutableArray alloc]initWithCapacity:20];
         NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
         
-        switch (self.selectedDeviceTag) {
-            case electrotherapyTag:
-                
-                [params setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
-                
-                break;
-            case airProTag:
-                
-                [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-                break;
-            case LightTag:
-                [params setObject:@61184 forKey:@"machinetype"];
-                break;
-            default:
-                break;
-        }
+//        switch (self.selectedDeviceTag) {
+//            case electrotherapyTag:
+//
+//                [params setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
+//
+//                break;
+//            case airProTag:
+//
+//                [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
+//                break;
+//            case LightTag:
+//                [params setObject:@61184 forKey:@"machinetype"];
+//                break;
+//            default:
+//                break;
+//        }
+        [params setObject:self.selectedMachineSeries.code forKey:@"machinetype"];
         [params setObject:[NSNumber numberWithInt:0] forKey:@"isregistered"];
         
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/OnlineDevice/ListOnlineCount"]
@@ -182,7 +270,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
                                          if ([responseObject.result intValue] == 1) {
                                              NSString *count = responseObject.content[@"count"];
-                                             NSLog(@"count = %@",count);
                                              
                                              //页数
                                              totalPage = ([count intValue]+15-1)/15;
@@ -195,12 +282,15 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                                  
                                                  [self getNetworkData:isRefresh];
                                                  self.tableView.tableHeaderView.hidden = NO;
+                                                 [self hideNodataView];
 
                                              }else{
                                                  [datas removeAllObjects];
+                                                 [self showNodataViewWithTitle:@"暂无可录入设备"];
                                                  [self endRefresh];
                                                  [self.tableView reloadData];
                                             self.tableView.tableHeaderView.hidden = YES;
+                                                 
                                              }
                                          }else{
                                              [SVProgressHUD showErrorWithStatus:responseObject.errorString];
@@ -220,19 +310,25 @@ typedef NS_ENUM(NSUInteger,typeTags)
     //配置请求http
     NSMutableDictionary *mutableParam = [[NSMutableDictionary alloc]init];
     
-    switch (self.selectedDeviceTag) {
-        case electrotherapyTag:
-            
-            [mutableParam setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
-            
-            break;
-        case airProTag:
-            
-            [mutableParam setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-            
-        default:
-            break;
-    }
+//    switch (self.selectedDeviceTag) {
+//        case electrotherapyTag:
+//
+//            [mutableParam setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
+//
+//            break;
+//        case airProTag:
+//
+//            [mutableParam setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
+//
+//            break;
+//        case LightTag:
+//            [mutableParam setObject:@61184 forKey:@"machinetype"];
+//            break;
+//
+//        default:
+//            break;
+//    }
+    [mutableParam setObject:self.selectedMachineSeries.code forKey:@"machinetype"];
     
     [mutableParam setObject:@0 forKey:@"isregistered"];
     [mutableParam setObject:[NSNumber numberWithInt:page] forKey:@"page"];
@@ -278,9 +374,61 @@ typedef NS_ENUM(NSUInteger,typeTags)
                                      }
                                  } failure:nil];
 }
+#pragma mark - mark NoDataView
+-(void)showNodataViewWithTitle:(NSString *)title{
+    if (self.nodataView == nil) {
+        self.nodataView = [[[NSBundle mainBundle]loadNibNamed:@"NoDataPlaceHolder" owner:self options:nil]lastObject];
+
+        [self.view addSubview:self.nodataView];
+//
+        self.nodataView.center = CGPointMake(self.view.center.x + 80 , self.view.center.y-50);
+    }
+    
+    self.nodataView.titleLabel.text = title;
+    
+}
+-(void)hideNodataView{
+    if(self.nodataView){
+        [self.nodataView removeFromSuperview];
+        self.nodataView = nil;
+    }
+}
 
 #pragma mark - changeDevice
-
+-(void)selectDevice:(UIButton *)sender{
+    [self hideNodataView];
+    self.selectedDeviceTag = [sender tag];
+    self.selectedMachineSeries = typeItemModels[([sender tag])-1000];
+    for (int i = 1000; i<1000 + [typeItemModels count]; i++) {
+        UIButton *btn = (UIButton *)[self.scrollView viewWithTag:i];
+        //配置选中按钮
+        if ([btn tag] == [(UIButton *)sender tag]) {
+            btn.backgroundColor = UIColorFromHex(0x37bd9c);
+            [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        }else{
+            btn.backgroundColor = UIColorFromHex(0xf8f8f8);
+            [btn setTitleColor:UIColorFromHex(0x212121) forState:UIControlStateNormal];
+        }
+    }
+    if (self.selectedMachineSeries.isLocal) {
+        
+        isLocalDeviceList = YES;
+        datas = [[NSMutableArray alloc]initWithCapacity:20];
+        baby = [BabyBluetooth shareBabyBluetooth];
+        [self babyDelegate];
+        baby.scanForPeripherals().begin();
+        self.tableView.mj_header = nil;
+        self.tableView.mj_footer = nil;
+    }else{
+        [baby cancelScan];
+        [baby cancelAllPeripheralsConnection];
+        
+        isLocalDeviceList = NO;
+        [self refresh];
+    }
+        [self.tableView reloadData];
+    
+}
 - (IBAction)changeDevice:(UIButton *)sender {
     
     self.selectedDeviceTag = [sender tag];
@@ -317,7 +465,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [baby cancelAllPeripheralsConnection];
         
         isLocalDeviceList = NO;
-        [self initTableHeaderAndFooter];
+        [self refresh];
         
     }
     [self.tableView reloadData];
@@ -331,19 +479,23 @@ typedef NS_ENUM(NSUInteger,typeTags)
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
     [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (central.state == CBManagerStatePoweredOff) {
-            if (weakSelf.view) {
-                weakSelf.HUD = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-                weakSelf.HUD.mode = MBProgressHUDModeText;
-                weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
-                [weakSelf.HUD showAnimated:YES];
+        if (@available(iOS 10.0, *)) {
+            if (central.state == CBManagerStatePoweredOff) {
+                if (weakSelf.view) {
+                    weakSelf.HUD = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                    weakSelf.HUD.mode = MBProgressHUDModeText;
+                    weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
+                    [weakSelf.HUD showAnimated:YES];
+                }
+            }else if(central.state == CBManagerStatePoweredOn) {
+                if(weakSelf.HUD){
+                    [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
+                    weakBaby.scanForPeripherals().begin();
+                }
+                
             }
-        }else if(central.state == CBManagerStatePoweredOn) {
-            if(weakSelf.HUD){
-                [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
-                weakBaby.scanForPeripherals().begin();
-            }
-            
+        } else {
+            // Fallback on earlier versions
         }
     }];
     
@@ -597,22 +749,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
                 
                 //保存的数组
                 [saveArray addObject:dic];
-//                NSDictionary  *param = (NSDictionary *)dic;
-//
-//                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:api]
-//                                              params:param
-//                                            hasToken:YES
-//                                             success:^(HttpResponse *responseObject) {
-//                                                 if ([responseObject.result intValue] == 1) {
-//                                                     [SVProgressHUD setMaximumDismissTimeInterval:0.5];
-//                                                     [SVProgressHUD setSuccessImage:[UIImage imageNamed:@""]];
-//                                                     [SVProgressHUD showSuccessWithStatus:@"录入成功"];
-//                                                     [self refresh];
-//                                                 }else{
-//                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-//                                                 }
-//                                             }
-//                                             failure:nil];
             }
         }
     }
@@ -729,7 +865,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
         cell = [[AddDeviceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     cell.nameTextField.delegate = self;
-    
+    if ([datas count]>0) {
+        self.tableView.tableHeaderView.hidden = NO;
+    }else{
+        self.tableView.tableHeaderView.hidden = YES;
+    }
     //wifi设备
     if (!isLocalDeviceList) {
         

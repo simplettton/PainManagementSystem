@@ -10,4 +10,5 @@
 
 @interface PopoverTreatwayController : UIViewController
 @property(nonatomic,strong)NSDictionary *treatParamDic;
+@property(nonatomic,strong)NSString *treatmentScheduleName;
 @end

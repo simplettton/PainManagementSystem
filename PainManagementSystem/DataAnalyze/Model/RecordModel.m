@@ -19,7 +19,9 @@
         //finishtime
         self.finishTime = (NSDate *)[NSDate dateWithTimeIntervalSince1970:[dic[@"time"] doubleValue]];
         self.finishTimeString = dic[@"finishtime"];
-        if ([dic[@"state"]isEqualToString:@"治疗结束但未评分"]||[dic[@"state"]isEqualToString:@"已评分，任务结束"]) {
+        
+        self.taskStateNumber = dic[@"statecode"];
+        if ([self.taskStateNumber isEqual:@7]||[self.taskStateNumber isEqual:@15]) {
             self.isFinished = YES;
         }else{
             self.isFinished = NO;
@@ -30,6 +32,9 @@
             self.painfactorW = @"无";
         }
         self.painArea = dic[@"painarea"];
+        if ([self.painArea isEqualToString:@""]) {
+            self.painArea = @"无";
+        }
         self.painfactorE = dic[@"painfactor_zh"];
         if ([self.painfactorE isEqualToString:@""]) {
             self.painfactorE = @"无";

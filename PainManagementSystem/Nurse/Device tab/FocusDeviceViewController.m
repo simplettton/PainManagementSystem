@@ -27,6 +27,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UIView *deviceBackgroundView;
+@property (weak, nonatomic) IBOutlet UIView *noDataView;
 
 
 //下拉框
@@ -39,7 +40,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
 //在线tag还是本地tag
 @property (nonatomic,assign)int tag;
-
 //蓝牙设备
 @property (strong ,nonatomic) CBPeripheral *peripheral;
 @property (nonatomic,strong) CBCharacteristic *sendCharacteristic;
@@ -139,22 +139,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
     
     self.searchBar.tintColor = UIColorFromHex(0x5E97FE);//出现光标
-    //通过KVC获得到UISearchBar的私有变量
-    //searchField
-    UITextField *searchField = [self.searchBar valueForKey:@"searchField"];
-    if (searchField) {
-        [searchField setBackgroundColor:[UIColor whiteColor]];
-        searchField.font = [UIFont systemFontOfSize:14.0f];
-        searchField.layer.cornerRadius = 5.0f;
-        searchField.layer.borderColor = UIColorFromHex(0xBBBBBB).CGColor;
-        searchField.layer.borderWidth = 1;
-        searchField.layer.masksToBounds = YES;
-    }
+    UITextField * searchField = [_searchBar valueForKey:@"_searchField"];
     
-    //设备外框边框设置
-    self.deviceBackgroundView.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
-    self.deviceBackgroundView.layer.borderWidth = 0.5f;
-    [self.deviceBackgroundView.layer setMasksToBounds:YES];
+    [searchField setValue:[UIFont systemFontOfSize:15 weight:UIFontWeightLight] forKeyPath:@"_placeholderLabel.font"];
+    
+//    //设备外框边框设置
+//    [self setBorderWithView:self.deviceBackgroundView top:YES left:NO bottom:NO right:NO borderColor:UIColorFromHex(0xbbbbbb) borderWidth:0.5f];
     
     //UICollectionView 配置
     self.collectionView.dataSource = self;
@@ -314,6 +304,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     [params setObject:self.selectedTaskState forKey:@"taskstate"];
     [params setObject:@0 forKey:@"needlocal"];
     
+    NSDictionary *taskStateInfo = @{@3:@"治疗中设备",@1:@"未开始设备",@7:@"治疗结束设备"};
+    
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                   params:(NSDictionary *)params
                                 hasToken:YES
@@ -331,9 +323,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                          }
                                          if ([count intValue]>0) {
                                              [self getNetworkData:isRefresh withParam:params];
+                                             [self hideNodataView];
                                          }else{
                                              [datas removeAllObjects];
                                              [self endRefresh];
+                                             [self showNodataViewWithTitle:[NSString stringWithFormat:@"暂无%@",taskStateInfo[self.selectedTaskState]]];
                                          }
                                          dispatch_async(dispatch_get_main_queue(), ^{
                                              [self.collectionView reloadData];
@@ -349,6 +343,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                      });
                                  }];
 }
+
 -(void)getNetworkData:(BOOL)isRefresh withParam:(NSMutableDictionary *)param{
     if (isRefresh) {
         page = 0;
@@ -402,6 +397,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                  failure:nil];
     
 }
+#pragma mark - mark NoDataView
+-(void)showNodataViewWithTitle:(NSString *)title{
+    self.noDataView.hidden = NO;
+    UILabel *titleLabel = [self.noDataView viewWithTag:20000];
+    titleLabel.text = title;
+
+}
+-(void)hideNodataView{
+    self.noDataView.hidden = YES;
+}
 #pragma mark - initMQTT
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
@@ -434,19 +439,13 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     if (!self.manager) {
         self.manager = [[MQTTSessionManager alloc] init];
         self.manager.delegate = self;
-        
-        //端口
-        NSString *IPString = [UserDefault objectForKey:@"HTTPServerURLSting"];
-        NSString *host = [IPString substringFromIndex:7];
-        host = [host substringToIndex:[host length]-6];
-        
         //clientid
         NSString *clientId = [UserDefault objectForKey:@"UserName"];
         if (self.isInAllTab) {
             clientId = [clientId stringByAppendingString:@"1"];
         }
         //连接服务器
-        
+        NSString *host = [UserDefault objectForKey:@"HTTPServerIP"];
         NSString *port = [UserDefault objectForKey:@"MQTTPort"];
         
         [self.manager connectTo:host
@@ -706,7 +705,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 - (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
     NSDictionary *taskStateInfo = @{@"治疗中设备":@3,@"未开始设备":@1,@"治疗结束设备":@7};
     self.selectedTaskState = taskStateInfo[itemName];
-
     [self.collectionView.mj_header beginRefreshing];
     
 }
@@ -714,10 +712,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
     
     NSInteger Index = segmentedControl.selectedSegmentIndex;
-
+    [self hideNodataView];
     switch (Index) {
         case DeviceTypeOnline:
         {
+
             self.collectionView.mj_header.hidden = NO;
             self.collectionView.mj_footer.hidden = NO;
             NSLog(@"切换在线设备");
@@ -857,6 +856,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             LocalMachineModel *machine = [datas objectAtIndex:indexPath.row];
             cell.machineNameLabel.text = [NSString stringWithFormat:@"%@-%@",machine.type,machine.name];
             cell.patientLabel.text = [NSString stringWithFormat:@"%@   %@",machine.userMedicalNum,machine.userName];
+            cell.bedNumLabel.hidden = [machine.userBedNum isEqualToString:@""];
             cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
             
             NSDictionary *stateDic = @
@@ -890,29 +890,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     return cell;
 }
 
-//-(BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return YES;
-//}
-
-//4.移动完成后的方法  －－ 交换数据
-//-(void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-//{
-//    //    [datas exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
-//    //    NSLog(@"data = %@",datas);
-//    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
-//    // 找到当前的cell
-//    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
-//
-//    //取出源item数据
-//    id objc = [datas objectAtIndex:sourceIndexPath.item];
-//    //从资源数组中移除该数据
-//    [datas removeObject:objc];
-//    //将数据插入到资源数组中的目标位置上
-//    [datas insertObject:objc atIndex:destinationIndexPath.item];
-//    [self.collectionView reloadData];
-//
-//}
 // 允许选中时，高亮
 -(BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath{
     return YES;
@@ -1305,6 +1282,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             datas = array;
             [self.collectionView reloadData];
         }
+        if ([array count] == 0) {
+            [self showNodataViewWithTitle:@"暂无本地设备"];
+        }else{
+            [self hideNodataView];
+        }
         
         __block NSArray *serverTaskListArray = [[NSArray alloc]init];
         [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/RunningTaskList"]
@@ -1413,21 +1395,25 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     
     [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (central.state == CBManagerStatePoweredOff) {
-            if (weakSelf.view) {
-                weakSelf.HUD = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-                weakSelf.HUD.mode = MBProgressHUDModeText;
-                weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
-                [weakSelf.HUD showAnimated:YES];
-                weakSelf.isBLEPoweredOff = YES;
+        if (@available(iOS 10.0, *)) {
+            if (central.state == CBManagerStatePoweredOff) {
+                if (weakSelf.view) {
+                    weakSelf.HUD = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                    weakSelf.HUD.mode = MBProgressHUDModeText;
+                    weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
+                    [weakSelf.HUD showAnimated:YES];
+                    weakSelf.isBLEPoweredOff = YES;
+                }
+            }else if(central.state == CBManagerStatePoweredOn) {
+                if(weakSelf.HUD){
+                    [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
+                    weakBaby.scanForPeripherals().begin();
+                    weakSelf.isBLEPoweredOff = NO;
+                }
+                
             }
-        }else if(central.state == CBManagerStatePoweredOn) {
-            if(weakSelf.HUD){
-                [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
-                weakBaby.scanForPeripherals().begin();
-                weakSelf.isBLEPoweredOff = NO;
-            }
-            
+        } else {
+            // Fallback on earlier versions
         }
     }];
     
@@ -1645,5 +1631,32 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
     return animation;
 }
-
+- (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
+{
+    
+    if (top) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, 0, view.frame.size.width, width);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+    if (left) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, 0, width, view.frame.size.height);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+    if (bottom) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, view.frame.size.height - width, view.frame.size.width, width);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+    if (right) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(view.frame.size.width - width, 0, width, view.frame.size.height);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+}
 @end

@@ -19,4 +19,16 @@
     [self.layer setCornerRadius:5.0f];
     [self.layer setMasksToBounds:YES];
 }
+-(instancetype)initWithFrame:(CGRect)frame{
+    self = [super initWithFrame:frame];
+    if (self) {
+
+        [self.layer setBorderColor:UIColorFromHex(0xf8f8f8).CGColor];
+        [self.layer setCornerRadius:5.0f];
+        [self.layer setMasksToBounds:YES];
+        [self.layer setBorderWidth:0.5f];
+    };
+
+    return self;
+}
 @end

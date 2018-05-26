@@ -20,7 +20,6 @@
 		0419F4082073515900C83C2B /* Task.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0419F4072073515900C83C2B /* Task.plist */; };
 		041B791D2068EDB2001D04C8 /* BETextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791C2068EDB2001D04C8 /* BETextField.m */; };
 		041B79202068F3F2001D04C8 /* NSDate+BRAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */; };
-		041D7DB0207DA9D100B392FB /* MJChiBaoZiHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D7DAE207DA9CF00B392FB /* MJChiBaoZiHeader.m */; };
 		041FDD5320722D2100BE6EC9 /* SendTreatmentFailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */; };
 		041FDD5620722D4300BE6EC9 /* SendTreatmentFailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */; };
 		04271AF520AEA6740026C83A /* UIImage+Rotate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04271AF320AEA6730026C83A /* UIImage+Rotate.m */; };
@@ -49,6 +48,8 @@
 		04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DE8206091B6002641D1 /* DeviceTableViewCell.m */; };
 		04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04661DED2060999D002641D1 /* EditDeviceViewController.m */; };
 		0469E23F207EED410035D5AC /* PatientModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0469E23E207EED410035D5AC /* PatientModel.m */; };
+		046A9F8D20B7AAF900F43CE0 /* NoDataPlaceHolder.xib in Resources */ = {isa = PBXBuildFile; fileRef = 046A9F8C20B7AAF900F43CE0 /* NoDataPlaceHolder.xib */; };
+		046A9F9020B7AB2200F43CE0 /* NoDataPlaceHoler.m in Sources */ = {isa = PBXBuildFile; fileRef = 046A9F8F20B7AB2200F43CE0 /* NoDataPlaceHoler.m */; };
 		046C02102069E48100FDD974 /* BEButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 046C020F2069E48100FDD974 /* BEButton.m */; };
 		046C02132069EC3500FDD974 /* TreatmentCourseRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 046C02122069EC3500FDD974 /* TreatmentCourseRecordViewController.m */; };
 		046C021A2069F49A00FDD974 /* TreatRecordCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 046C02192069F49A00FDD974 /* TreatRecordCell.m */; };
@@ -74,6 +75,7 @@
 		046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */; };
 		046F072120B3EAC200F3B881 /* JLImageMagnification.m in Sources */ = {isa = PBXBuildFile; fileRef = 046F072020B3EAC200F3B881 /* JLImageMagnification.m */; };
 		046F072320B409C900F3B881 /* RecordDetailFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 046F072220B409C900F3B881 /* RecordDetailFooter.xib */; };
+		047AC09E20B66E0C004CDC26 /* MachineSeriesModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 047AC09D20B66E0C004CDC26 /* MachineSeriesModel.m */; };
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
 		047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */; };
 		047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E52063A88100D6B1A4 /* SetNetWorkView.xib */; };
@@ -147,8 +149,6 @@
 		041B791C2068EDB2001D04C8 /* BETextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETextField.m; sourceTree = "<group>"; };
 		041B791E2068F3F2001D04C8 /* NSDate+BRAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRAdd.m"; sourceTree = "<group>"; };
 		041B791F2068F3F2001D04C8 /* NSDate+BRAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+BRAdd.h"; sourceTree = "<group>"; };
-		041D7DAE207DA9CF00B392FB /* MJChiBaoZiHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJChiBaoZiHeader.m; sourceTree = "<group>"; };
-		041D7DAF207DA9D000B392FB /* MJChiBaoZiHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJChiBaoZiHeader.h; sourceTree = "<group>"; };
 		041FDD5220722D2100BE6EC9 /* SendTreatmentFailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendTreatmentFailView.xib; sourceTree = "<group>"; };
 		041FDD5420722D4300BE6EC9 /* SendTreatmentFailView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendTreatmentFailView.h; sourceTree = "<group>"; };
 		041FDD5520722D4300BE6EC9 /* SendTreatmentFailView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SendTreatmentFailView.m; sourceTree = "<group>"; };
@@ -203,6 +203,9 @@
 		04661DED2060999D002641D1 /* EditDeviceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditDeviceViewController.m; sourceTree = "<group>"; };
 		0469E23D207EED410035D5AC /* PatientModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PatientModel.h; sourceTree = "<group>"; };
 		0469E23E207EED410035D5AC /* PatientModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PatientModel.m; sourceTree = "<group>"; };
+		046A9F8C20B7AAF900F43CE0 /* NoDataPlaceHolder.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoDataPlaceHolder.xib; sourceTree = "<group>"; };
+		046A9F8E20B7AB2200F43CE0 /* NoDataPlaceHoler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoDataPlaceHoler.h; sourceTree = "<group>"; };
+		046A9F8F20B7AB2200F43CE0 /* NoDataPlaceHoler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NoDataPlaceHoler.m; sourceTree = "<group>"; };
 		046C020E2069E48100FDD974 /* BEButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BEButton.h; sourceTree = "<group>"; };
 		046C020F2069E48100FDD974 /* BEButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BEButton.m; sourceTree = "<group>"; };
 		046C02112069EC3500FDD974 /* TreatmentCourseRecordViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreatmentCourseRecordViewController.h; sourceTree = "<group>"; };
@@ -242,6 +245,8 @@
 		046F071F20B3EAC200F3B881 /* JLImageMagnification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLImageMagnification.h; sourceTree = "<group>"; };
 		046F072020B3EAC200F3B881 /* JLImageMagnification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLImageMagnification.m; sourceTree = "<group>"; };
 		046F072220B409C900F3B881 /* RecordDetailFooter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecordDetailFooter.xib; sourceTree = "<group>"; };
+		047AC09C20B66E0C004CDC26 /* MachineSeriesModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachineSeriesModel.h; sourceTree = "<group>"; };
+		047AC09D20B66E0C004CDC26 /* MachineSeriesModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MachineSeriesModel.m; sourceTree = "<group>"; };
 		047CA1E020639C0F00D6B1A4 /* wenshang.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = wenshang.ttf; sourceTree = "<group>"; };
 		047CA1E22063A86300D6B1A4 /* SetNetWorkView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetNetWorkView.h; sourceTree = "<group>"; };
 		047CA1E32063A86300D6B1A4 /* SetNetWorkView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetNetWorkView.m; sourceTree = "<group>"; };
@@ -400,6 +405,11 @@
 				04ED0EC520528A1800638850 /* main.m */,
 				041A3E1D207C543100CC316A /* PrefixHeader.pch */,
 				0481E8D2207A04EB0099B506 /* Localizable.strings */,
+				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
+				04271AF420AEA6730026C83A /* UIImage+Rotate.h */,
+				04271AF320AEA6730026C83A /* UIImage+Rotate.m */,
+				04A2F90120B299090097066A /* CopyLabel.h */,
+				04A2F90220B299090097066A /* CopyLabel.m */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -564,8 +574,52 @@
 				0412081A2087341C00993A49 /* TaskModel.m */,
 				0465E38E206C7563009A2264 /* RecordModel.h */,
 				0465E38F206C7563009A2264 /* RecordModel.m */,
+				047AC09C20B66E0C004CDC26 /* MachineSeriesModel.h */,
+				047AC09D20B66E0C004CDC26 /* MachineSeriesModel.m */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		046A9F9120B7AB4700F43CE0 /* CommanFile */ = {
+			isa = PBXGroup;
+			children = (
+				046A9F9220B7ABB500F43CE0 /* NetworkHelper */,
+				041A3E1E207C561600CC316A /* BaseHeader.h */,
+				046A9F8C20B7AAF900F43CE0 /* NoDataPlaceHolder.xib */,
+				046A9F8E20B7AB2200F43CE0 /* NoDataPlaceHoler.h */,
+				046A9F8F20B7AB2200F43CE0 /* NoDataPlaceHoler.m */,
+				04ED0EB320528A1800638850 /* AppDelegate.h */,
+				04ED0EB420528A1800638850 /* AppDelegate.m */,
+				0452786C20A1B0AB00CA605E /* TapBarController.h */,
+				0452786D20A1B0AB00CA605E /* TapBarController.m */,
+				04A79B2820A9219100D96E88 /* BaseNavigationController.h */,
+				04A79B2920A9219100D96E88 /* BaseNavigationController.m */,
+			);
+			path = CommanFile;
+			sourceTree = "<group>";
+		};
+		046A9F9220B7ABB500F43CE0 /* NetworkHelper */ = {
+			isa = PBXGroup;
+			children = (
+				04484FDA2064D72500467611 /* NetWorkTool.h */,
+				04484FD92064D72500467611 /* NetWorkTool.m */,
+				045F6C89206E2240006DBBF7 /* HttpResponse.h */,
+				045F6C8A206E2240006DBBF7 /* HttpResponse.m */,
+			);
+			path = NetworkHelper;
+			sourceTree = "<group>";
+		};
+		046A9F9320B7ABD900F43CE0 /* CustomButton */ = {
+			isa = PBXGroup;
+			children = (
+				046C020E2069E48100FDD974 /* BEButton.h */,
+				046C020F2069E48100FDD974 /* BEButton.m */,
+				0450B9F2208D7EF800D54F76 /* MultiParamButton.h */,
+				0450B9F3208D7EF800D54F76 /* MultiParamButton.m */,
+				045982B02080457C00B51DB9 /* DropdownButton.h */,
+				045982B12080457C00B51DB9 /* DropdownButton.m */,
+			);
+			path = CustomButton;
 			sourceTree = "<group>";
 		};
 		046E2E132062370800DEFD70 /* QRCodeReaderViewController */ = {
@@ -672,30 +726,8 @@
 				04484FD22064CDC900467611 /* Nurse */,
 				04484FD62064D25F00467611 /* Login */,
 				04112066205FBCF700C91BA0 /* Agent */,
-				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
-				04484FDA2064D72500467611 /* NetWorkTool.h */,
-				04484FD92064D72500467611 /* NetWorkTool.m */,
-				041D7DAF207DA9D000B392FB /* MJChiBaoZiHeader.h */,
-				041D7DAE207DA9CF00B392FB /* MJChiBaoZiHeader.m */,
-				045F6C89206E2240006DBBF7 /* HttpResponse.h */,
-				045F6C8A206E2240006DBBF7 /* HttpResponse.m */,
-				046C020E2069E48100FDD974 /* BEButton.h */,
-				046C020F2069E48100FDD974 /* BEButton.m */,
-				0450B9F2208D7EF800D54F76 /* MultiParamButton.h */,
-				0450B9F3208D7EF800D54F76 /* MultiParamButton.m */,
-				045982B02080457C00B51DB9 /* DropdownButton.h */,
-				045982B12080457C00B51DB9 /* DropdownButton.m */,
-				04ED0EB320528A1800638850 /* AppDelegate.h */,
-				04ED0EB420528A1800638850 /* AppDelegate.m */,
-				0452786C20A1B0AB00CA605E /* TapBarController.h */,
-				0452786D20A1B0AB00CA605E /* TapBarController.m */,
-				04A79B2820A9219100D96E88 /* BaseNavigationController.h */,
-				04A79B2920A9219100D96E88 /* BaseNavigationController.m */,
-				04271AF420AEA6730026C83A /* UIImage+Rotate.h */,
-				04271AF320AEA6730026C83A /* UIImage+Rotate.m */,
-				04A2F90120B299090097066A /* CopyLabel.h */,
-				04A2F90220B299090097066A /* CopyLabel.m */,
-				041A3E1E207C561600CC316A /* BaseHeader.h */,
+				046A9F9320B7ABD900F43CE0 /* CustomButton */,
+				046A9F9120B7AB4700F43CE0 /* CommanFile */,
 			);
 			path = PainManagementSystem;
 			sourceTree = "<group>";
@@ -855,6 +887,7 @@
 				046E2E362062370800DEFD70 /* QRCodeBottomRight@3x.png in Resources */,
 				04ED0EC020528A1800638850 /* Assets.xcassets in Resources */,
 				049C57842068C18B00180A8B /* PatientTableViewCell.xib in Resources */,
+				046A9F8D20B7AAF900F43CE0 /* NoDataPlaceHolder.xib in Resources */,
 				046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */,
 				04C8B661206B75C400DEB3F0 /* Record.plist in Resources */,
 				046F072320B409C900F3B881 /* RecordDetailFooter.xib in Resources */,
@@ -958,12 +991,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				04A79B2A20A9219100D96E88 /* BaseNavigationController.m in Sources */,
+				046A9F9020B7AB2200F43CE0 /* NoDataPlaceHoler.m in Sources */,
 				046E2E1220622FD600DEFD70 /* QRCodeViewController.m in Sources */,
 				046E2E302062370800DEFD70 /* QRCodeReaderMaskView.m in Sources */,
 				0495FD1A206F26EA00D01E2C /* Pack.m in Sources */,
 				0411BC1F2072160F000FC687 /* SendTreatmentSuccessView.m in Sources */,
 				045982B22080457C00B51DB9 /* DropdownButton.m in Sources */,
-				041D7DB0207DA9D100B392FB /* MJChiBaoZiHeader.m in Sources */,
 				046E2E2E2062370800DEFD70 /* QRCodeReader.m in Sources */,
 				0462A40B20746E74006DB5E0 /* FocusDeviceViewController.m in Sources */,
 				0462A40120746736006DB5E0 /* LLSegmentBar.m in Sources */,
@@ -985,6 +1018,7 @@
 				049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */,
 				04271AF520AEA6740026C83A /* UIImage+Rotate.m in Sources */,
 				046E2E2F2062370800DEFD70 /* QRCodeReaderAanimationLineView.m in Sources */,
+				047AC09E20B66E0C004CDC26 /* MachineSeriesModel.m in Sources */,
 				046C02102069E48100FDD974 /* BEButton.m in Sources */,
 				0462A40220746736006DB5E0 /* LLSegmentBarConfig.m in Sources */,
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,

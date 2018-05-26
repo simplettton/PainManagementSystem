@@ -69,6 +69,7 @@
     
     [[self layer] setBorderWidth:0.7];
     [[self layer] setBorderColor:[[UIColor colorWithRed:209/255.0 green:209/255.0 blue:209/255.0 alpha:1.0] CGColor]];
+    self.layer.cornerRadius = 5.0f;
     
     _indicatorLayer = [self createIndicatorWithColor:_highlightColor
                                          andPosition:CGPointMake(self.frame.size.width*6.0/7.0, self.frame.size.height/2.0)];

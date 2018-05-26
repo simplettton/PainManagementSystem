@@ -22,6 +22,8 @@
 @property(nonatomic,copy)NSString *timeString;
 //评分时间
 @property(nonatomic,strong)NSDate *finishTime;
+
+@property(nonatomic,copy)NSNumber *taskStateNumber;
 //是否结束治疗
 @property (nonatomic,assign)BOOL isFinished;
 

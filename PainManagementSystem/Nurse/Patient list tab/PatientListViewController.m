@@ -14,7 +14,7 @@
 #import "PatientModel.h"
 
 #import "MJRefresh.h"
-#import "MJChiBaoZiHeader.h"
+#import "NoDataPlaceHoler.h"
 
 @interface PatientListViewController()<UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate>{
     int page;
@@ -25,6 +25,8 @@
 }
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+//没有记录view
+@property(nonatomic,strong)NoDataPlaceHoler *nodataView;
 
 @end
 
@@ -65,17 +67,17 @@
     self.searchBar.tintColor = UIColorFromHex(0x5E97FE);//出现光标
     
     
-    //通过KVC获得到UISearchBar的私有变量
-    //searchField
-    UITextField *searchField = [self.searchBar valueForKey:@"searchField"];
-    if (searchField) {
-        
-        [searchField setBackgroundColor:[UIColor whiteColor]];
-        searchField.layer.cornerRadius = 5.0f;
-        searchField.layer.borderColor = UIColorFromHex(0xBBBBBB).CGColor;
-        searchField.layer.borderWidth = 1;
-        searchField.layer.masksToBounds = YES;
-    }
+//    //通过KVC获得到UISearchBar的私有变量
+//    //searchField
+//    UITextField *searchField = [self.searchBar valueForKey:@"searchField"];
+//    if (searchField) {
+//        
+//        [searchField setBackgroundColor:[UIColor whiteColor]];
+//        searchField.layer.cornerRadius = 5.0f;
+//        searchField.layer.borderColor = UIColorFromHex(0xBBBBBB).CGColor;
+//        searchField.layer.borderWidth = 1;
+//        searchField.layer.masksToBounds = YES;
+//    }
 
 
     self.tableView.delegate = self;
@@ -161,7 +163,7 @@
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
     [footer setTitle:@"" forState:MJRefreshStateRefreshing];
-    [footer setTitle:@"没有数据了~" forState:MJRefreshStateNoMoreData];
+    [footer setTitle:@"没有更多数据了" forState:MJRefreshStateNoMoreData];
     self.tableView.mj_footer = footer;
 }
 
@@ -236,7 +238,8 @@
                                          if([count intValue] > 0)
                                          {
                                              self.tableView.tableHeaderView.hidden = NO;
-                                              [self getNetworkData:isRefresh isFiltered:iSFiltered];
+                                             [self getNetworkData:isRefresh isFiltered:iSFiltered];
+                                             [self hideNodataView];
                                          }else{
                                              [datas removeAllObjects];
                                              self.tableView.tableHeaderView.hidden = YES;
@@ -246,7 +249,7 @@
                                              if (iSFiltered) {
                                                  [SVProgressHUD showErrorWithStatus:@"没有找到该病人"];
                                              }else{
-                                                 [SVProgressHUD showErrorWithStatus:@"系统中没有病历"];
+                                                 [self showNodataViewWithTitle:@"暂无记录"];
                                              }
 
                                          }
@@ -335,7 +338,23 @@
                                   } failure:nil];
     
 }
-
+#pragma mark - mark NoDataView
+-(void)showNodataViewWithTitle:(NSString *)title{
+    if (self.nodataView == nil) {
+        self.nodataView = [[[NSBundle mainBundle]loadNibNamed:@"NoDataPlaceHolder" owner:self options:nil]lastObject];
+        self.nodataView.center = self.view.center;
+        [self.view addSubview:self.nodataView];
+    }
+    
+    self.nodataView.titleLabel.text = title;
+    
+}
+-(void)hideNodataView{
+    if(self.nodataView){
+        [self.nodataView removeFromSuperview];
+        self.nodataView = nil;
+    }
+}
 #pragma mark - searchBar delegate
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
@@ -356,9 +375,7 @@
     if ([self.searchBar.text length]>0) {
         
         isFilteredList = YES;
-        
-//        datas = [[NSMutableArray alloc]initWithCapacity:20];
-        
+
         NSMutableDictionary *paramDic = [[NSMutableDictionary alloc]initWithCapacity:20];
         
         [paramDic setObject:self.searchBar.text forKey:@"key"];
@@ -376,9 +393,18 @@
 
 
 #pragma mark - table view delegate
+
+
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
+//-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+//
+//    UIView *header = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 30)];
+//    return header;
+////    return self.tableView.tableHeaderView;
+//}
+
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];

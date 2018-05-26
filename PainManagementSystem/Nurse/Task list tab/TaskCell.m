@@ -15,11 +15,20 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     //设置按钮的边框
-    [self.treatmentButton.layer setBorderWidth:0.5f];
-    [self.treatmentButton.layer setBorderColor:UIColorFromHex(0xbbbbbb).CGColor];
-    [self.treatmentButton.layer setCornerRadius:5.0f];
+//    [self.treatmentButton.layer setBorderWidth:0.5f];
+//    [self.treatmentButton.layer setBorderColor:UIColorFromHex(0xbbbbbb).CGColor];
+    [self.treatmentButton setBackgroundColor:UIColorFromHex(0xf0f0f0)];
+//    [self.treatmentButton.layer setCornerRadius:5.0f];
     [self.treatmentButton.layer setMasksToBounds:YES];
     
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.treatmentButton.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(15, 15)];
+
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc]init];
+
+    maskLayer.frame = self.treatmentButton.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.treatmentButton.layer.mask = maskLayer;
+
     self.patientNameLabel.numberOfLines = 0;
 }
 
@@ -96,6 +105,33 @@
     }
     return imagesArr;
 }
-
+- (void)setBorderWithView:(UIView *)view top:(BOOL)top left:(BOOL)left bottom:(BOOL)bottom right:(BOOL)right borderColor:(UIColor *)color borderWidth:(CGFloat)width
+{
+    
+    if (top) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, 0, view.frame.size.width, width);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+    if (left) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, 0, width, view.frame.size.height);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+    if (bottom) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, view.frame.size.height - width, view.frame.size.width, width);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+    if (right) {
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(view.frame.size.width - width, 0, width, view.frame.size.height);
+        layer.backgroundColor = color.CGColor;
+        [view.layer addSublayer:layer];
+    }
+}
 
 @end

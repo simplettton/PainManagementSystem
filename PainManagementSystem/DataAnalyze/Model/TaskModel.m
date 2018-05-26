@@ -43,6 +43,9 @@
         self.treatMode = treatParam[@"modeshowname"];
         self.paramlist = treatParam[@"paramlist"];
         
+        //治疗方案
+        self.treatmentScheduleName = dict[@"selecttreatargstext"];
+        
         //任务类型
         self.taskStateNumber = dict[@"taskstate"];
         self.state = [self.taskStateNumber intValue];
