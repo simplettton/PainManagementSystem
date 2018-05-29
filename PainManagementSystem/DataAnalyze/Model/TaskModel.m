@@ -9,23 +9,15 @@
 #define AirProTypeValue 7681
 #define AladdinTypeValue 57119
 #import "TaskModel.h"
+#import "AppDelegate.h"
+#import "MachineSeriesModel.h"
 
 @implementation TaskModel
 -(instancetype)initWithDic:(NSDictionary *)dict{
     if (self = [super init]) {
         
-        NSDictionary *typeDic =  @{
-                                   @0:@"其他",
-                                   @7681:@"空气波",
-                                   @57119:@"血瘘",
-                                   @56832:@"电疗",
-                                   @56833:@"电疗100",
-                                   @56834:@"电疗200",
-                                   @56836:@"电疗400",
-                                   @61200:@"光子C86",
-                                   @61201:@"光子C22",
-                                   @61202:@"光子C11",
-                                   };
+
+        
         self.patientName = dict[@"name"];
         self.medicalRecordNum = dict[@"medicalrecordnum"];
         if (![dict[@"creator"]isKindOfClass:[NSNull class]]) {
@@ -36,7 +28,11 @@
         NSDictionary *treatParam = dict[@"treatparam"];
         self.treatParam = treatParam;
         self.machineTypeNumber = treatParam[@"machinetype"];
-        self.machineType = typeDic[treatParam[@"machinetype"]];
+        
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSDictionary *typeDic = appDelegate.typeDic;
+        MachineSeriesModel *machineSeries = typeDic[treatParam[@"machinetype"]];
+        self.machineType = machineSeries.name;
 
         self.treatTime = treatParam[@"time"];
         //治疗模式

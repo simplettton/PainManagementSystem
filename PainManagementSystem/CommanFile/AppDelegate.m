@@ -8,15 +8,18 @@
 
 #import "AppDelegate.h"
 #import <UserNotifications/UserNotifications.h>
-
+#import <CoreBluetooth/CoreBluetooth.h>
+#import "BabyBluetooth.h"
 @interface AppDelegate ()<UNUserNotificationCenterDelegate>
 
 @end
 
-@implementation AppDelegate
-
+@implementation AppDelegate{
+    BabyBluetooth *baby;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
     [[UIButton appearance] setExclusiveTouch:YES];
     [SVProgressHUD setMaximumDismissTimeInterval:1];
     [SVProgressHUD setDefaultStyle:SVProgressHUDStyleCustom];
@@ -26,47 +29,37 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear]; //当HUD显示的时候，不允许用户交互，且显示背景图层自定义的颜色。
     [SVProgressHUD setBackgroundColor:UIColorFromHex(0xf9f9f9)];
     [SVProgressHUD setRingRadius:14.0];
-    
     [SVProgressHUD setCornerRadius:5];
-    
-
+    baby = [BabyBluetooth shareBabyBluetooth];
+    [self babyDelegate];
     [self registerAPN];
-    
-    //iOS 10 //请求通知权限, 本地和远程共用
-    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-    [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-        //用户允许了push权限的申请
-        if (granted) {
-            NSLog(@"请求成功");
-        } else {
-            NSLog(@"请求失败");
-        }
-        
-        if (!error) {
-            
-        }
-    }];
-    //注册远程通知
-    [[UIApplication sharedApplication]registerForRemoteNotifications];
-    
-    //设置通知的代理
-    center.delegate = self;
+
     //初始化
     [self initRootViewController];
+    [self configureNetWorkSetting];
     return YES;
+}
+-(void)babyDelegate{
+    
+    __weak typeof(self) weakSelf = self;
+    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
+        if (central.state == CBCentralManagerStatePoweredOff){
+            NSLog(@"蓝牙关了");
+            weakSelf.isBLEPoweredOff = YES;
+        }else if(central.state == CBCentralManagerStatePoweredOn) {
+            weakSelf.isBLEPoweredOff = NO;
+            NSLog(@"蓝牙是打开的");
+        }
+    }];
 }
 
 -(void)configureNetWorkSetting{
-    if (![UserDefault objectForKey:@"HTTPServerURLString"]) {
-        [UserDefault setObject:@"http://192.168.2.127:8888/" forKey:@"HTTPServerURLString"];
-
-    }
-    
     NSDictionary *defaultNetworkConfiguration = @{
                                                   @"HTTPServerIP":@"192.168.2.127",
                                                   @"HTTPServerPort":@"8888",
                                                   @"MQTTPort":@"18826"
                                                   };
+    
     if (![UserDefault objectForKey:@"HTTPServerIP"]) {
         [UserDefault setObject:defaultNetworkConfiguration[@"HTTPServerIP"] forKey:@"HTTPServerIP"];
     }
@@ -76,17 +69,20 @@
     if (![UserDefault objectForKey:@"MQTTPort"]) {
         [UserDefault setObject:defaultNetworkConfiguration[@"MQTTPort"] forKey:@"MQTTPort"];
     }
+
+    if (![UserDefault objectForKey:@"HTTPServerURLString"]) {
+        [UserDefault setObject:[NSString stringWithFormat:@"http://192.168.2.127:8888/"] forKey:@"HTTPServerURLString"];
+    }
     
     [UserDefault synchronize];
     
 }
+
 -(void)initRootViewController{
     
      UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     __block UINavigationController *controller ;
     
-
-//
     if ([self isUserLogin]) {
         
         NSString *role = [UserDefault objectForKey:@"Role"];
@@ -158,14 +154,34 @@
 
 -(void)registerAPN
 {
-    
-
-    
-    //
-    //    //iOS 10 before
-    //    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
-    //    [application registerUserNotificationSettings:settings];
-    
+    //iOS 10 //请求通知权限, 本地和远程共用
+    if (@available(iOS 10.0, *)) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+            //用户允许了push权限的申请
+            if (granted) {
+                NSLog(@"请求成功");
+            } else {
+                NSLog(@"请求失败");
+            }
+            
+            if (!error) {
+                
+            }
+        }];
+        //注册远程通知
+        [[UIApplication sharedApplication]registerForRemoteNotifications];
+        
+        //设置通知的代理
+        center.delegate = self;
+    } else {
+        // Fallback on earlier versions
+        //
+        //iOS 10 before
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        
+    }
 }
 
 

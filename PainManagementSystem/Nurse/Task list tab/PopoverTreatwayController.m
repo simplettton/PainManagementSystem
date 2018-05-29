@@ -134,10 +134,38 @@
             
             break;
 
-        default:
+        case 0:
+        {
             //未知设备显示方案备注
-            self.infomationView.text = [NSString stringWithFormat:@"方案：%@\n备注：%@",self.treatmentScheduleName,self.treatParamDic[@"note"]];
-            self.infomationView.textAlignment = NSTextAlignmentLeft;
+            leftView.hidden = YES;
+            [self.infomationView removeFromSuperview];
+            NSString *showString = [NSString stringWithFormat:@"方案：%@\n\n处方：%@",self.treatmentScheduleName,self.treatParamDic[@"note"]];
+            NSRange scheduleRange = [showString rangeOfString:@"方案："];
+            NSRange noteRange = [showString rangeOfString:@"处方："];
+
+            //突出方案和备注关键字
+            NSMutableAttributedString *str = [[NSMutableAttributedString alloc]initWithString:showString];
+            [str addAttribute:NSForegroundColorAttributeName value:UIColorFromHex(0x5e97fe) range:scheduleRange];
+            [str addAttribute:NSForegroundColorAttributeName value:UIColorFromHex(0x5e97fe) range:noteRange];
+            
+            middleView.hidden = NO;
+            UITextView *textView = [[UITextView alloc]initWithFrame:CGRectMake(20, middleView.frame.origin.y + middleView.frame.size.height +25, 300, 100)];
+            [self.topView addSubview:textView];
+            textView.attributedText = str;
+            textView.textAlignment = NSTextAlignmentLeft;
+            textView.font = [UIFont systemFontOfSize:16 weight:UIFontWeightLight];
+            [self refreshTextViewSize:textView];
+            
+            CGRect frame = self.topView.frame;
+            frame.size.height = textView.frame.size.height + textView.frame.origin.y;
+            self.topView.frame = frame;
+
+        }
+            break;
+        default:
+            middleView.hidden = NO;
+            leftView.hidden = YES;
+            [self.infomationView removeFromSuperview];
             break;
             
     }
@@ -182,6 +210,45 @@
 
 }
 
-
+- (CGSize)getStringRectInTextView:(NSString *)string InTextView:(UITextView *)textView;
+{
+    //
+    //    NSLog(@"行高  ＝ %f container = %@,xxx = %f",self.textview.font.lineHeight,self.textview.textContainer,self.textview.textContainer.lineFragmentPadding);
+    //
+    //实际textView显示时我们设定的宽
+    CGFloat contentWidth = CGRectGetWidth(textView.frame);
+    //但事实上内容需要除去显示的边框值
+    CGFloat broadWith    = (textView.contentInset.left + textView.contentInset.right
+                            + textView.textContainerInset.left
+                            + textView.textContainerInset.right
+                            + textView.textContainer.lineFragmentPadding/*左边距*/
+                            + textView.textContainer.lineFragmentPadding/*右边距*/);
+    
+    CGFloat broadHeight  = (textView.contentInset.top
+                            + textView.contentInset.bottom
+                            + textView.textContainerInset.top
+                            + textView.textContainerInset.bottom);//+self.textview.textContainer.lineFragmentPadding/*top*//*+theTextView.textContainer.lineFragmentPadding*//*there is no bottom padding*/);
+    
+    //由于求的是普通字符串产生的Rect来适应textView的宽
+    contentWidth -= broadWith;
+    
+    CGSize InSize = CGSizeMake(contentWidth, MAXFLOAT);
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
+    paragraphStyle.lineBreakMode = textView.textContainer.lineBreakMode;
+    NSDictionary *dic = @{NSFontAttributeName:textView.font, NSParagraphStyleAttributeName:[paragraphStyle copy]};
+    
+    CGSize calculatedSize =  [string boundingRectWithSize:InSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:dic context:nil].size;
+    
+    CGSize adjustedSize = CGSizeMake(ceilf(calculatedSize.width),calculatedSize.height + broadHeight);//ceilf(calculatedSize.height)
+    return adjustedSize;
+}
+- (void)refreshTextViewSize:(UITextView *)textView
+{
+    CGSize size = [textView sizeThatFits:CGSizeMake(CGRectGetWidth(textView.frame), MAXFLOAT)];
+    CGRect frame = textView.frame;
+    frame.size.height = size.height;
+    textView.frame = frame;
+}
 @end
 

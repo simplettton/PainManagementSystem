@@ -13,6 +13,7 @@
 #import "RecordDetailViewController.h"
 #import "NoDataPlaceHoler.h"
 #import "MJRefresh.h"
+#import "PatientListViewController.h"
 @interface TreatmentCourseRecordViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
@@ -45,6 +46,7 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.tableHeaderView.hidden = YES;
     self.tableView.multipleTouchEnabled = NO;
+    [self.tableView setSeparatorInset:UIEdgeInsetsMake(0, 10, 0, 10)];
 
     if (self.patient) {
         self.title = @"治疗疗程记录";
@@ -152,10 +154,10 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
-//-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    return 56;
-//}
 
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 56;
+}
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     return UITableViewAutomaticDimension;
@@ -174,6 +176,8 @@
     //超过两行分行显示
     cell.painfactorLB.numberOfLines = 0;
     cell.painfactorLB.lineBreakMode = NSLineBreakByWordWrapping;
+    cell.physicalTreatLB.numberOfLines = 0;
+    cell.physicalTreatLB.lineBreakMode = NSLineBreakByWordWrapping;
     
     cell.physicalTreatLB.text = record.machineType;
     cell.vasLabel.text = record.vasString;
@@ -308,7 +312,6 @@
             for (NSDictionary *dic in responseObject.content) {
                 if ([[dic objectForKey:@"name"]isEqualToString:@"vas"]) {
                     markDescribe = dic[@"describe"];
-
                     break;
                 }
             }

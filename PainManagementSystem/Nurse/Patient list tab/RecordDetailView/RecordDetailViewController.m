@@ -61,7 +61,7 @@
     [super viewDidLoad];
     self.title = @"诊疗记录详情";
     if(self.record){
-        if ([_record.machineType isEqualToString:@"其他"]) {
+        if ([_record.machineType isEqualToString:@"其它"]) {
             self.isNoMachineRecord = YES;
             titles = [NSMutableArray arrayWithObjects:@"基本情况",@"西医病历采集",@"中医病历采集",@"诊断结果",@"治疗方案",@"治疗处方",@"治疗结果",nil];
         }else{
@@ -344,7 +344,6 @@
                     cell.insertTableView.tag = KTreatParamViewTag;
                     [cell.insertTableView reloadData];
                 }
-
             }
                 break;
             case 6:

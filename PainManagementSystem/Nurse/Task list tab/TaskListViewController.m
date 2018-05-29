@@ -20,7 +20,8 @@
 #import "NoDataPlaceHoler.h"
 #import "BaseHeader.h"
 #import <SVProgressHUD.h>
-
+#import "AppDelegate.h"
+#import "MachineSeriesModel.h"
 #import "MJRefresh.h"
 
 #import <CoreBluetooth/CoreBluetooth.h>
@@ -61,7 +62,6 @@
 @property (nonatomic,strong) NSString *BLEDeviceName;
 @property (nonatomic,strong) NSData *BLETreatParam;
 @property (nonatomic,assign) NSInteger selectedDeviceIndex;
-@property (nonatomic,assign) BOOL isBLEPoweredOff;
 //防止push多个相同的
 @property (assign,nonatomic)BOOL pushOnce;
 @property(nonatomic,strong)NSTimer *timer;
@@ -82,7 +82,6 @@
         [self refresh];
     }
     self.tableView.mj_header.hidden = NO;
-    self.isBLEPoweredOff = YES;
     self.pushOnce = 1;
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
@@ -121,6 +120,7 @@
     self.view.multipleTouchEnabled = NO;
     self.tableView.multipleTouchEnabled = NO;
     
+    
     //初始tag为待处理
     self.taskTag = TaskListTypeNotStarted;
     self.tableView.dataSource = self;
@@ -128,8 +128,6 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
 
     datas = [[NSMutableArray alloc]initWithCapacity:20];
-    
-    self.isBLEPoweredOff = YES;
     
     //配置segmentedcontrol
     self.segmentedControl.frame = CGRectMake(self.segmentedControl.frame.origin.x, self.segmentedControl.frame.origin.y, self.segmentedControl.frame.size.width, 35);
@@ -140,10 +138,30 @@
     
     [self.segmentedControl addTarget:self action:@selector(didClicksegmentedControlAction:) forControlEvents:UIControlEventValueChanged];
     
-    [self initTableHeaderAndFooter];
-    self.pushOnce = 1;
-}
+    [self getTypeDic];
 
+    self.pushOnce = 1;
+
+}
+-(void)getTypeDic {
+    NSMutableDictionary *typeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/AgesShop/MachineList"]
+                                  params:nil
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if([responseObject.result integerValue] == 1){
+                                         NSArray *content = responseObject.content;
+                                         for (NSDictionary *dic in content) {
+                                             MachineSeriesModel *machineModel = [MachineSeriesModel modelWithDic:dic];
+                                             [typeDic setValue:machineModel forKey:dic[@"code"]];
+                                         }
+                                         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                                         appDelegate.typeDic = typeDic;
+                                         [self initTableHeaderAndFooter];
+                                     }
+                                 }
+                                 failure:nil];
+}
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
     [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
     NSInteger index = segmentedControl.selectedSegmentIndex;
@@ -417,7 +435,6 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     TaskModel *task = datas[indexPath.row];
-    
     static NSString *CellIdentifier;
     if (self.taskTag == TaskListTypeFinished) {
         CellIdentifier = @"FinishedTaskCell";
@@ -453,13 +470,17 @@
     }else{
         buttonTitle = [NSString stringWithFormat:@" 治疗时间:%@分钟 ",task.treatTime];
     }
-    if([task.machineType isEqualToString:@"其他"]){
+    if([task.machineType isEqualToString:@"其它"]){
         [cell.treatmentButton setTitle:task.treatmentScheduleName forState:UIControlStateNormal];
         //scanButton unenable
         cell.scanButton.enabled = NO;
+        cell.scanButton.alpha = 0;
+        cell.scanButton.hidden = YES;
     }else{
         [cell.treatmentButton setTitle:[NSString stringWithFormat:@" %@ ",buttonTitle] forState:UIControlStateNormal];
         cell.scanButton.enabled = YES;
+        cell.scanButton.alpha = 1;
+        cell.scanButton.hidden = NO;
     }
     [cell.treatmentButton addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -568,14 +589,10 @@
     
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    
     if ([datas count]>0) {
-        TaskModel *task = datas[indexPath.row];
         if (self.pushOnce == 1) {
-//            if(task.state != 3){
             self.selectedRow = indexPath.row;
             [self remarkAction:nil];
-//            }
             self.pushOnce = 0;
         }
     }
@@ -599,10 +616,11 @@
             [self babyDelegate];
             
 //            //判断蓝牙是否打开
-//            if (self.isBLEPoweredOff) {
-//                [SVProgressHUD showErrorWithStatus:@"该设备没有打开蓝牙无法下发处方,请在设置中打开"];
-//                return;
-//            }
+            AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            if (appDelegate.isBLEPoweredOff) {
+                [SVProgressHUD showErrorWithStatus:@"没有打开蓝牙无法下发处方,请在设置中打开"];
+                return;
+            }
         }
         
         //判断相机权限是否打开
@@ -1039,23 +1057,7 @@
     
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
-    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (@available(iOS 10.0, *)) {
-            if (central.state == CBManagerStatePoweredOff) {
-                if (weakSelf.view) {
-                    [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
-                    NSLog(@"BLE off");
-                    weakSelf.isBLEPoweredOff = YES;
-                }
-            }else if(central.state == CBManagerStatePoweredOn) {
-//                weakBaby.scanForPeripherals().begin();
-                NSLog(@"BLE on");
-                weakSelf.isBLEPoweredOff = NO;
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-    }];
+
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
 
         NSLog(@"连接成功");

@@ -7,6 +7,8 @@
 //
 
 #import "LocalMachineModel.h"
+#import "AppDelegate.h"
+#import "MachineSeriesModel.h"
 typedef enum _CellStyle {
 
     CellStyle_LocalUnconnect = 8,
@@ -58,12 +60,15 @@ typedef enum _CellStyle {
         self.cpuid = dict[@"cpuid"];
         NSNumber *typeNumber = dict[@"machinetype"];
         
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSDictionary *typeDic = appDelegate.typeDic;
         
-        NSDictionary *typeDic = @{
-                                  @57119:@"血瘘",
-                                  };
+//        NSDictionary *typeDic = @{
+//                                  @57119:@"血瘘",
+//                                  };
         if (typeDic[typeNumber]) {
-            self.type = typeDic[typeNumber];
+            MachineSeriesModel *machineSeries = typeDic[typeNumber];
+            self.type = machineSeries.name;
         }else{
             self.type = @"未知";
         }

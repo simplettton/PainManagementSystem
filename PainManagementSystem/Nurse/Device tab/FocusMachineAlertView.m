@@ -12,6 +12,7 @@
 #import "BaseHeader.h"
 #import "BEButton.h"
 #import "Pack.h"
+#import "AppDelegate.h"
 #define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
 #define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
 #define RX_CHARACTERISTIC_UUID @"8ac32d3f-5cb9-4d44-bec2-ee689169f626"
@@ -103,6 +104,11 @@
         //本地设备
         baby = [BabyBluetooth shareBabyBluetooth];
         [self babyDelegate];
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        if (appDelegate.isBLEPoweredOff) {
+            [SVProgressHUD showErrorWithStatus:@"请打开蓝牙寻找该设备"];
+            return;
+        }
         self.BLEDeviceName = [[NSString alloc]init];
         if ([self.dataModel.serialNum isEqualToString:@"P06A17A00001"]) {
             self.BLEDeviceName = @"ALX420";
@@ -190,19 +196,6 @@
     
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
-    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (@available(iOS 10.0, *)) {
-            if (central.state == CBManagerStatePoweredOff) {
-                if (weakSelf) {
-                    [SVProgressHUD showErrorWithStatus:@"该设备尚未打开蓝牙,请在设置中打开"];
-                }
-            }else if(central.state == CBManagerStatePoweredOn) {
-                weakBaby.scanForPeripherals().begin();
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-    }];
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
         
         NSLog(@"连接成功");

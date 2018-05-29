@@ -18,10 +18,11 @@
         
         if ([islocalNumber integerValue] == 1) {
             self.isLocal = YES;
-            self.serviceUUID = dic[@"serviceuuid"];
-            self.txCharacteristicUUID = dic[@"txcharacteristicuuid"];
-            self.rxCharacteristicUUID = dic[@"rxcharacteristicuuid"];
-            self.broadcastName = dic[@"broadcastname"];
+            NSDictionary *tagDic = dic[@"tag"];
+            self.serviceUUID = tagDic[@"serviceuuid"];
+            self.txCharacteristicUUID = tagDic[@"txcharacteristicuuid"];
+            self.rxCharacteristicUUID = tagDic[@"rxcharacteristicuuid"];
+            self.broadcastName = tagDic[@"broadcastname"];
         }else{
             self.isLocal = NO;
         }
@@ -30,7 +31,6 @@
         
         CGFloat length = [self.name boundingRectWithSize:CGSizeMake(552, 74) options:NSStringDrawingUsesLineFragmentOrigin attributes:attributes context:nil].size.width;
         self.buttonWidth = MAX(length + 20, MIN_BUTTONWIDTH);
-        
 
     }
     return self;

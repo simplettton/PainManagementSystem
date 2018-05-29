@@ -1,3 +1,6 @@
+
+
+
 //
 //  DropdownButton.m
 //  PainManagementSystem
@@ -7,11 +10,13 @@
 //
 
 #import "DropdownButton.h"
+#import "ListCell.h"
 static NSString *CellIdentifier = @"DropDownCell";
 
 @interface DropdownButton () <UITableViewDataSource, UITableViewDelegate> {
     UITableView *listView;
 }
+@property (nonatomic, strong) NSIndexPath *selectPath; //存放被点击的哪一行的标志
 @end
 @implementation DropdownButton
 
@@ -20,7 +25,6 @@ static NSString *CellIdentifier = @"DropDownCell";
     if (self) {
         self.title = [NSString stringWithString:title];
         self.list = [NSArray arrayWithArray:list];
-        
         [self setup];
     }
     
@@ -39,19 +43,20 @@ static NSString *CellIdentifier = @"DropDownCell";
 //设置表视图listView的布局、数据源和代理
 - (void)setupDefaultTable {
     //将listView放在当前按钮下方位置，保持宽度相同，初始高度设置为0
-    listView = [[UITableView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y+self.frame.size.height+10, self.frame.size.width*5, 0) style:UITableViewStylePlain];
+    listView = [[UITableView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y+self.frame.size.height+20, self.frame.size.width*7, 0) style:UITableViewStylePlain];
 
     listView.layer.cornerRadius = 5.0f;
-//    [listView setSeparatorColor:UIColorFromHex(0x5e97fe)];
+    [listView setSeparatorColor:UIColorFromHex(0x477bbe)];
+//    [listView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     listView.dataSource = self;
     listView.delegate = self;
     listView.layer.borderWidth = 0.5f;
-    listView.layer.borderColor = UIColorFromHex(0x3CBD9E).CGColor;
+    listView.layer.borderColor = UIColorFromHex(0x477bbe).CGColor;
     listView.allowsSelection = YES;
-    
-    listView.separatorStyle= UITableViewCellSeparatorStyleNone;
+
 }
 - (void)setup {
+    self.isShow = NO;
     [self setTitle:self.title forState:UIControlStateNormal];
     [self setupDefaultTable];
     [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
@@ -66,7 +71,7 @@ static NSString *CellIdentifier = @"DropDownCell";
     [UIView animateWithDuration:0.3 animations:^{
         listView.frame = frame;
     } completion:^(BOOL finished) {
-        
+        self.isShow = YES;
     }];
 }
 
@@ -78,18 +83,24 @@ static NSString *CellIdentifier = @"DropDownCell";
     [UIView animateWithDuration:0.3 animations:^{
         listView.frame = frame;
     } completion:^(BOOL finished) {
-        
+        self.isShow = NO;
     }];
 }
 //添加按钮点击事件，每点击一次按钮，tag值自加1，然后根据tag值执行下拉或收起列表动画，最后重新加载一次listView的数据，防止串改列表项后不能及时更新到listView中
 - (void)clickedToDropDown {
-    self.tag++;
-    self.tag%2 ? [self startDropDownAnimation] : [self startPackUpAnimation];
+//    self.tag++;
+//    self.tag%2 ? [self startDropDownAnimation] : [self startPackUpAnimation];
+    self.isShow ? [self startPackUpAnimation] : [self startDropDownAnimation];
+    self.isShow = !self.isShow;
     
-//    [listView reloadData];
+    [listView reloadData];
 }
 
 #pragma mark - table view data source
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    [listView setSeparatorInset:UIEdgeInsetsMake(0, 10, 0, 10)];
+    [listView setLayoutMargins:UIEdgeInsetsZero];
+}
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -104,20 +115,44 @@ static NSString *CellIdentifier = @"DropDownCell";
     if (nil == cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
+
+    if (_selectPath == indexPath) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }else{
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
     //设置列表中的每一项文本、字体、颜色等
     cell.textLabel.text = self.list[indexPath.row];
     cell.textLabel.font = self.titleLabel.font;
-    [cell.textLabel setTextColor:UIColorFromHex(0x3CBD9E)];
+    [cell.textLabel setTextColor:UIColorFromHex(0x477bbe)];
     
     cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
     
     cell.selectedBackgroundView.backgroundColor = [UIColor clearColor];
 
+    if (cell.isSelected) {
+        cell.highlighted = YES;
+//        [cell.textLabel setTextColor:UIColorFromHex(0x3CBD9E)];
+    }else{
+        cell.highlighted = NO;
+    }
+    
     return cell;
 }
 
 #pragma mark - table view delegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    int newRow = (int)[indexPath row];
+    int oldRow = (int)(_selectPath != nil) ? (int)[_selectPath row]:-1;
+    if (newRow != oldRow) {
+        UITableViewCell *newCell = [tableView cellForRowAtIndexPath:indexPath];
+        newCell.accessoryType = UITableViewCellAccessoryCheckmark;
+        
+        UITableViewCell *oldCell = [tableView cellForRowAtIndexPath:_selectPath];
+        oldCell.accessoryType = UITableViewCellAccessoryNone;
+        _selectPath = [indexPath copy];
+    }
+
     //选择某项后，使按钮标题内容变为当前选项
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [self setTitle:self.list[indexPath.row] forState:UIControlStateNormal];

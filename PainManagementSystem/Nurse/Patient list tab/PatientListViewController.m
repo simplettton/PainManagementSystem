@@ -61,23 +61,12 @@
     backButton.title = @"";
     self.navigationItem.backBarButtonItem = backButton;
 
-    
+    //searchbar style
     self.searchBar.delegate = self;
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
     self.searchBar.tintColor = UIColorFromHex(0x5E97FE);//出现光标
-    
-    
-//    //通过KVC获得到UISearchBar的私有变量
-//    //searchField
-//    UITextField *searchField = [self.searchBar valueForKey:@"searchField"];
-//    if (searchField) {
-//        
-//        [searchField setBackgroundColor:[UIColor whiteColor]];
-//        searchField.layer.cornerRadius = 5.0f;
-//        searchField.layer.borderColor = UIColorFromHex(0xBBBBBB).CGColor;
-//        searchField.layer.borderWidth = 1;
-//        searchField.layer.masksToBounds = YES;
-//    }
+    UITextField * searchField = [_searchBar valueForKey:@"_searchField"];
+    [searchField setValue:[UIFont systemFontOfSize:15 weight:UIFontWeightLight] forKeyPath:@"_placeholderLabel.font"];
 
 
     self.tableView.delegate = self;
@@ -103,11 +92,9 @@
     [super viewWillAppear:YES];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.barTintColor = UIColorFromHex(0x2EA3E6);
-    
     self.tableView.mj_header.hidden = NO;
     
     BOOL isNewPatientAdded = true;
-    
     if (self.patient) {
         for (PatientModel *patient in datas) {
             if ([patient.medicalRecordNum isEqualToString:self.patient.medicalRecordNum]) {
@@ -126,6 +113,8 @@
         if (isNewPatientAdded) {
             [self refresh];
         }
+    }else{
+        [self refresh];
     }
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
 }
@@ -226,9 +215,7 @@
                                          NSString *count = responseObject.content[@"count"];
                                          
                                          totalPage = ([count intValue]+15-1)/15;
-                                         
-                                         NSLog(@"totalPage = %d",totalPage);
-                                         
+
                                          if (totalPage <= 1) {
                                              self.tableView.mj_footer.hidden = YES;
                                          }else{

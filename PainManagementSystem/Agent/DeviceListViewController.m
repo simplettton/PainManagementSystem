@@ -15,6 +15,8 @@
 #import "DropdownButton.h"
 #import "NoDataPlaceHoler.h"
 #import "MJRefresh.h"
+#import "MachineSeriesModel.h"
+#import "AppDelegate.h"
 
 @interface DeviceListViewController ()<UISearchBarDelegate>
 {
@@ -25,6 +27,8 @@
     
     BOOL isFilteredList;
     NSMutableDictionary *filterparam;
+    //类型总数
+    NSMutableArray *typeItemModels;
     
 }
 @property (weak, nonatomic) IBOutlet UIView *tableBackgroundView;
@@ -34,7 +38,7 @@
 @property (weak, nonatomic) IBOutlet DropdownButton *filterButton;
 //没有记录view
 @property(nonatomic,strong)NoDataPlaceHoler *nodataView;
-@property (strong,nonatomic)NSDictionary * typeDic;
+@property (strong,nonatomic)NSMutableDictionary * typeDic;
 
 @end
 
@@ -69,9 +73,26 @@
     [super viewDidLoad];
     self.title = @"设备管理系统";
     [self initAll];
-    
 }
-
+-(void)getTypeDic {
+    self.typeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/AgesShop/MachineList"]
+                                  params:nil
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if([responseObject.result integerValue] == 1){
+                                         NSArray *content = responseObject.content;
+                                         for (NSDictionary *dic in content) {
+                                             [self.typeDic setValue:dic[@"name"] forKey:dic[@"code"]];
+                                         }
+                                         [self.tableView reloadData];
+                                         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                                         appDelegate.typeDic = self.typeDic;
+                                         [self initTableHeaderAndFooter];
+                                     }
+                                 }
+                                 failure:nil];
+}
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
     [self hideKeyBoard];
@@ -80,26 +101,31 @@
 -(void)hideKeyBoard{
     [self.view endEditing:YES];
     [self.tableView endEditing:YES];
+    if (self.filterButton.isShow) {
+        [self.filterButton clickedToDropDown];
+    }
     
 }
 
 -(void)initAll{
-    
-    _filterButton.list = @[@"空气波",@"电疗",@"光子",@"血瘘"];
-
+    [self initMahineTypeModels];
+    [self getTypeDic];
+//
+//    _filterButton.list = @[@"空气波",@"电疗",@"光子",@"血瘘"];
     //pageControll
     
     page = 0;
     isFirstCome = YES;
     isJuhua = NO;
     isFilteredList = NO;
-    //
     datas = [[NSMutableArray alloc]initWithCapacity:20];
     
     //searchBarDelegate
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
     self.searchBar.tintColor = UIColorFromHex(0x5e97fe);//出现光标
     self.searchBar.delegate = self;
+    UITextField * searchField = [_searchBar valueForKey:@"_searchField"];
+    [searchField setValue:[UIFont systemFontOfSize:15 weight:UIFontWeightLight] forKeyPath:@"_placeholderLabel.font"];
     
     //tableview
     self.tableView.tableFooterView = [[UIView alloc]init];
@@ -111,19 +137,20 @@
     
     [self.tableView addGestureRecognizer:tapGestureRecognizer];
     
-    _typeDic = @{
-                 @7681:@"空气波",
-                 @57119:@"血瘘",
-                 @56832:@"电疗",
-                 @56833:@"电疗100",
-                 @56834:@"电疗200",
-                 @56836:@"电疗400",
-                 @61200:@"光子C86",
-                 @61201:@"光子C22",
-                 @61202:@"光子C11",
-                 
-                 };
-    [self initTableHeaderAndFooter];
+
+//    _typeDic = @{
+//                 @7681:@"空气波",
+//                 @57119:@"血瘘",
+//                 @56832:@"电疗",
+//                 @56833:@"电疗100",
+//                 @56834:@"电疗200",
+//                 @56836:@"电疗400",
+//                 @61200:@"光子C86",
+//                 @61201:@"光子C22",
+//                 @61202:@"光子C11",
+//
+//                 };
+    
     [self refresh];
 }
 
@@ -134,7 +161,31 @@
         [self search:nil];
     }
 }
-
+-(void)initMahineTypeModels{
+    typeItemModels = [NSMutableArray arrayWithCapacity:20];
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/AgesShop/MachineSeries"]
+                                  params:nil
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                     if([responseObject.result integerValue] == 1){
+                                         NSArray *dataArray = responseObject.content;
+                                         
+                                         if ([dataArray count]>0) {
+                                             for (NSDictionary *dic in dataArray) {
+                                                 MachineSeriesModel *machineSeries = [MachineSeriesModel modelWithDic:dic];
+                                                 if (![typeItemModels containsObject:machineSeries]) {
+                                                     [typeItemModels addObject:machineSeries];
+                                                 }
+                                             }
+                                             NSMutableArray *machineNameArray = [NSMutableArray arrayWithCapacity:20];
+                                             for (MachineSeriesModel *machineModel in typeItemModels) {
+                                                 [machineNameArray addObject:machineModel.name];
+                                             }
+                                             _filterButton.list = machineNameArray;
+                                         }
+                                     }
+                                 } failure:nil];
+}
 #pragma mark - refresh
 -(void)initTableHeaderAndFooter{
     
@@ -146,10 +197,7 @@
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
     
     self.tableView.mj_header = header;
-//
-//    [self.tableView.mj_header beginRefreshing];
-    
-    
+    [self.tableView.mj_header beginRefreshing];
     //上拉加载
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
@@ -212,6 +260,9 @@
                                   params:params
                                 hasToken:YES
                                  success:^(HttpResponse *responseObject) {
+                                     
+                                     [self.searchBar resignFirstResponder];
+                                     [self hideKeyBoard];
                                      
                                      if ([responseObject.result intValue] == 1) {
                                          
@@ -337,7 +388,6 @@
     if (self.nodataView == nil) {
         self.nodataView = [[[NSBundle mainBundle]loadNibNamed:@"NoDataPlaceHolder" owner:self options:nil]lastObject];
         self.nodataView.center = CGPointMake(self.tableBackgroundView.center.x, self.tableBackgroundView.center.y-150);
-        
         [self.view addSubview:self.nodataView];
     }
     
@@ -542,34 +592,45 @@
         datas = [[NSMutableArray alloc]initWithCapacity:20];
 
         NSMutableDictionary *paramDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+        NSMutableDictionary *serialTypeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+        for (MachineSeriesModel *model in typeItemModels) {
+            if ([self.searchBar.text isEqualToString:model.name]) {
+                [paramDic setObject:model.code forKey:@"machinetype"];
+                filterparam = paramDic;
+                [self askForData:YES isFiltered:YES];
+                [self.searchBar resignFirstResponder];
+                return;
+            }
+        }
         
-        if ([[_typeDic allValues]containsObject:self.searchBar.text]) {
-            if ([self.searchBar.text isEqualToString: @"电疗"]) {
-                [paramDic setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
-                
-                filterparam = paramDic;
-                [self askForData:YES isFiltered:YES];
-            }
-            else if([self.searchBar.text isEqualToString:@"空气波"]){
-                
-                [paramDic setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-                
-                filterparam = paramDic;
-                [self askForData:YES isFiltered:YES];
-            }else if([self.searchBar.text isEqualToString:@"血瘘"]){
-                [paramDic setObject:[NSNumber numberWithInt:57119] forKey:@"machinetype"];
-                
-                filterparam = paramDic;
-                [self askForData:YES isFiltered:YES];
-            }else if([self.searchBar.text isEqualToString:@"光子"]){
-                [paramDic setObject:[NSNumber numberWithInt:61184] forKey:@"machinetype"];
-                
-                filterparam = paramDic;
-                [self askForData:YES isFiltered:YES];
-            }
+        
+//        if ([[_typeDic allValues]containsObject:self.searchBar.text]) {
+//            if ([self.searchBar.text isEqualToString: @"电疗"]) {
+//                [paramDic setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
+//
+//                filterparam = paramDic;
+//                [self askForData:YES isFiltered:YES];
+//            }
+//            else if([self.searchBar.text isEqualToString:@"空气波"]){
+//
+//                [paramDic setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
+//
+//                filterparam = paramDic;
+//                [self askForData:YES isFiltered:YES];
+//            }else if([self.searchBar.text isEqualToString:@"血瘘"]){
+//                [paramDic setObject:[NSNumber numberWithInt:57119] forKey:@"machinetype"];
+//
+//                filterparam = paramDic;
+//                [self askForData:YES isFiltered:YES];
+//            }else if([self.searchBar.text isEqualToString:@"光子"]){
+//                [paramDic setObject:[NSNumber numberWithInt:61184] forKey:@"machinetype"];
+//
+//                filterparam = paramDic;
+//                [self askForData:YES isFiltered:YES];
+//            }
 
             
-        }else{
+//        }else{
 
             //搜索序列号或者名称
             [paramDic setObject:self.searchBar.text forKey:@"key"];
@@ -577,8 +638,8 @@
             filterparam = paramDic;
             
             [self askForData:YES isFiltered:YES];
-            
-        }
+//
+//        }
     
     }else{
         //没有关键字显示全部

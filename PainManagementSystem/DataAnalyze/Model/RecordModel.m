@@ -7,6 +7,8 @@
 //
 
 #import "RecordModel.h"
+#import "AppDelegate.h"
+#import "MachineSeriesModel.h"
 
 @implementation RecordModel
 -(instancetype)initWithDic:(NSDictionary *)dic{
@@ -65,20 +67,10 @@
         NSArray *dataArray = treatParamDic[@"lsargs"];
         NSMutableArray *params = [NSMutableArray arrayWithCapacity:20];
         
-        NSDictionary *typeDic =  @{
-                                   @0:@"其他",
-                                   @7681:@"空气波",
-                                   @57119:@"血瘘",
-                                   @56832:@"电疗",
-                                   @56833:@"电疗100",
-                                   @56834:@"电疗200",
-                                   @56836:@"电疗400",
-                                   @61200:@"光子C86",
-                                   @61201:@"光子C22",
-                                   @61202:@"光子C11",
-                                   };
-        
-        self.machineType = typeDic[type];
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSDictionary *typeDic = appDelegate.typeDic;
+        MachineSeriesModel *machineSeries = typeDic[type];
+        self.machineType = machineSeries.name;
         
         switch ([type integerValue]) {
             case 56833:
@@ -104,9 +96,13 @@
                 break;
         }
         //物理治疗处方 设备（方案）
-        self.physicalTreat = [NSString stringWithFormat:@"%@(%@)",self.machineType,dic[@"physicaltreatargs"] ];
-        
-        
+
+        if([type isEqual:@0]){
+            self.physicalTreat = [NSString stringWithFormat:@"%@",dic[@"physicaltreatargs"]];
+        }else{
+            self.physicalTreat = [NSString stringWithFormat:@"%@    使用设备:%@",dic[@"physicaltreatargs"],self.machineType];
+        }
+
         if ([dataArray count] == 0) {
             //不使用设备
             NSString *value;
@@ -124,8 +120,6 @@
                 Question *param = [Question questionWithDic:dic];
                 [params addObject:param];
             }
-            
-
         }
   
         self.treatParam = params;
@@ -140,12 +134,6 @@
     if (![dic[@"answer_zh"]isEqual:[NSNull null]]) {
         self.questionE = [self transformQuestionArray:dic[@"answer_zh"]];
     }
-//    if ([dic[@"answer_eng"]isEqual:[NSNull null]] ||[dic[@"answer_zh"]isEqual:[NSNull null]]) {
-//        
-//    }else{
-//        self.questionW = [self transformQuestionArray: dic[@"answer_eng"]];
-//        self.questionE = [self transformQuestionArray:dic[@"answer_zh"]];
-//    }
 }
 
 +(instancetype)modelWithDic:(NSDictionary *)dic{

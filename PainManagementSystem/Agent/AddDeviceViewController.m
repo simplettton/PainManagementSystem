@@ -20,6 +20,7 @@
 #import "MachineSeriesModel.h"
 #import "BEButton.h"
 #import "NoDataPlaceHoler.h"
+#import "AppDelegate.h"
 
 #define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
 #define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
@@ -239,27 +240,11 @@ typedef NS_ENUM(NSUInteger,typeTags)
 }
 
 -(void)askForData:(BOOL)isRefresh{
-    
+    [self hideNodataView];
     if (!isLocalDeviceList) {
         datas = [[NSMutableArray alloc]initWithCapacity:20];
         NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:20];
-        
-//        switch (self.selectedDeviceTag) {
-//            case electrotherapyTag:
-//
-//                [params setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
-//
-//                break;
-//            case airProTag:
-//
-//                [params setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-//                break;
-//            case LightTag:
-//                [params setObject:@61184 forKey:@"machinetype"];
-//                break;
-//            default:
-//                break;
-//        }
+
         [params setObject:self.selectedMachineSeries.code forKey:@"machinetype"];
         [params setObject:[NSNumber numberWithInt:0] forKey:@"isregistered"];
         
@@ -412,18 +397,24 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }
     if (self.selectedMachineSeries.isLocal) {
         
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        
+        if (appDelegate.isBLEPoweredOff) {
+            [SVProgressHUD showErrorWithStatus:@"打开蓝牙才可以录入该设备"];
+            return;
+        }
         isLocalDeviceList = YES;
         datas = [[NSMutableArray alloc]initWithCapacity:20];
         baby = [BabyBluetooth shareBabyBluetooth];
         [self babyDelegate];
         baby.scanForPeripherals().begin();
-        self.tableView.mj_header = nil;
+        self.tableView.mj_header.hidden = YES;
         self.tableView.mj_footer = nil;
     }else{
         [baby cancelScan];
         [baby cancelAllPeripheralsConnection];
-        
         isLocalDeviceList = NO;
+        self.tableView.mj_header.hidden = NO;
         [self refresh];
     }
         [self.tableView reloadData];
@@ -478,26 +469,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 -(void)babyDelegate {
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
-    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (@available(iOS 10.0, *)) {
-            if (central.state == CBManagerStatePoweredOff) {
-                if (weakSelf.view) {
-                    weakSelf.HUD = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-                    weakSelf.HUD.mode = MBProgressHUDModeText;
-                    weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
-                    [weakSelf.HUD showAnimated:YES];
-                }
-            }else if(central.state == CBManagerStatePoweredOn) {
-                if(weakSelf.HUD){
-                    [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
-                    weakBaby.scanForPeripherals().begin();
-                }
-                
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-    }];
     
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
         
@@ -517,26 +488,27 @@ typedef NS_ENUM(NSUInteger,typeTags)
     
     //发现service的Characteristics
     [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        if ([service.UUID isEqual:[CBUUID UUIDWithString:SERVICE_UUID]]) {
-            
-            for (CBCharacteristic *characteristic in service.characteristics)
-            {
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:RX_CHARACTERISTIC_UUID]])
+        if (weakSelf.selectedMachineSeries.serviceUUID) {
+            if ([service.UUID isEqual:[CBUUID UUIDWithString:weakSelf.selectedMachineSeries.serviceUUID]]) {
+                
+                for (CBCharacteristic *characteristic in service.characteristics)
                 {
-                    weakSelf.receiveCharacteristic = characteristic;
-                    if (![characteristic isNotifying]) {
-                        [weakSelf setNotify:characteristic];
+                    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:weakSelf.selectedMachineSeries.rxCharacteristicUUID]])
+                    {
+                        weakSelf.receiveCharacteristic = characteristic;
+                        if (![characteristic isNotifying]) {
+                            [weakSelf setNotify:characteristic];
+                        }
+                    }
+                    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:weakSelf.selectedMachineSeries.txCharacteristicUUID]])
+                    {
+                        weakSelf.sendCharacteristic = characteristic;
+                        [weakSelf BleBeep];
                     }
                 }
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:TX_CHARACTERISTIC_UUID]])
-                {
-                    weakSelf.sendCharacteristic = characteristic;
-                    [weakSelf BleBeep];
-                }
-                
             }
         }
-        
+ 
     }];
     
     [baby setBlockOnDiscoverToPeripherals:^(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
@@ -544,10 +516,12 @@ typedef NS_ENUM(NSUInteger,typeTags)
     }];
     
     [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
-        if (peripheralName.length > 0 && [peripheralName isEqualToString:@"ALX420"]) {
-            
-            return YES;
-            
+        if (weakSelf.selectedMachineSeries.name) {
+            if (peripheralName.length > 0 && [peripheralName isEqualToString:weakSelf.selectedMachineSeries.broadcastName]) {
+                
+                return YES;
+                
+            }
         }
         return NO;
     }];
@@ -699,6 +673,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
 }
 
 -(void)localRing:(UIButton *)button{
+    
     
     AddDeviceCell *cell = (AddDeviceCell *)[[button superview]superview];
     

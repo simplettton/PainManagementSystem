@@ -61,6 +61,9 @@
     if (self.userNameTextField.text.length == 0 || self.passwordTextField.text.length == 0) {
         [SVProgressHUD showErrorWithStatus:@"用户名或密码不能为空"];
         return;
+    }else if(self.passwordTextField.text.length <6){
+        [SVProgressHUD showErrorWithStatus:@"密码不小于6位"];
+        return;
     }
     [self showLoginingIndicator];
     [self loginCheck];

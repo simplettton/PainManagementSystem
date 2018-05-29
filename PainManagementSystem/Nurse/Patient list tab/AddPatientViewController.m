@@ -142,14 +142,10 @@
         self.medicalRecordNumTextField.enabled = NO;
         self.medicalNumView.layer.borderWidth = 0.0f;
 
-        
         self.nameTextField.text = self.patient.name;
-        
         self.phoneTextFiled.text = [self.patient.contact stringByReplacingOccurrencesOfString:@"-" withString:@""];
-        
         self.treatDateLabel.text = [self stringFromTimeIntervalString:self.patient.registeredTimeString dateFormat:@"yyyy-MM-dd"];
-        
-        
+
         self.birthdayTF.text = [self stringFromTimeIntervalString:self.patient.birthdayString dateFormat:@"yyyy-MM-dd"];
         
         self.bedNumTextField.text = self.patient.bednum;
@@ -246,8 +242,7 @@
                                                                                   patientListController.patient = nil;
                                                                                   
                                                                                   patientListController.patient = [PatientModel modelWithDic:patientDic];
-                                                                                  
-                                                                                  //                                         [self.navigationController popViewControllerAnimated:YES];
+
                                                                                   [self.navigationController popToViewController:patientListController animated:YES];
                                                                               }
                                                                               
@@ -262,8 +257,6 @@
                                              [SVProgressHUD showErrorWithStatus:responseObject.errorString];
                                              
                                          }
-                                         
-                                         
                                      } failure:nil];
         
     }

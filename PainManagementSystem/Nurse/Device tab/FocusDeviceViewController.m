@@ -11,6 +11,7 @@
 #import <MQTTClient/MQTTClient.h>
 #import <MQTTClient/MQTTSessionManager.h>
 #import <QuartzCore/QuartzCore.h>
+#import "AppDelegate.h"
 
 NSString *const HOST = @"192.168.2.127";
 NSString *const PORT = @"18826";
@@ -46,7 +47,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 @property (nonatomic,strong) CBCharacteristic *receiveCharacteristic;
 @property (nonatomic,strong) NSString *BLEDeviceName;
 @property (nonatomic,assign)NSInteger selectedDeviceIndex;
-@property (nonatomic,assign) BOOL isBLEPoweredOff;
 
 @property(nonatomic,strong)NSTimer *timer;
 
@@ -132,7 +132,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         self.allTabButton.hidden = YES;
         self.segmentedControl.hidden = NO;
     }
-        self.isBLEPoweredOff = YES;
     
     //配置searchbar样式
     self.searchBar.delegate = self;
@@ -742,7 +741,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             [datas removeAllObjects];
             
             [self endRefresh];
-//            self.collectionView.mj_header.hidden = YES;
             self.collectionView.mj_footer.hidden = YES;
             NSLog(@"切换本地设备");
             self.tag = DeviceTypeLocal;
@@ -750,7 +748,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             self.dropList.hidden = YES;
 
             [self disconnectMQTT];
-
+            baby = [BabyBluetooth shareBabyBluetooth];
+            [self babyDelegate];
             //位置布局
             UICollectionViewFlowLayout *collectionViewLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
             collectionViewLayout.headerReferenceSize = CGSizeMake(50, 20);
@@ -1334,20 +1333,15 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
                                     }];
     }
-
-
 }
 
 #pragma mark - BLE
 -(void)BLEConnectDevice:(UIButton *)button{
     
-    baby = [BabyBluetooth shareBabyBluetooth];
-    [self babyDelegate];
-    
     //判断蓝牙是否打开
-    
-    if (self.isBLEPoweredOff) {
-        [SVProgressHUD showErrorWithStatus:@"该设备没有打开蓝牙无法下发处方,请在设置中打开"];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (appDelegate.isBLEPoweredOff) {
+        [SVProgressHUD showErrorWithStatus:@"没有打开蓝牙无法连接设备,请在设置中打开"];
         return;
     }
     
@@ -1379,7 +1373,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         self.BLEDeviceName = serialNum;
     }
     
-    
     baby.scanForPeripherals().begin();
     
     //连接中状态指示
@@ -1392,30 +1385,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
     __weak typeof(NSMutableArray *)weakDatas = datas;
-    
-    
-    [baby setBlockOnCentralManagerDidUpdateState:^(CBCentralManager *central) {
-        if (@available(iOS 10.0, *)) {
-            if (central.state == CBManagerStatePoweredOff) {
-                if (weakSelf.view) {
-                    weakSelf.HUD = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-                    weakSelf.HUD.mode = MBProgressHUDModeText;
-                    weakSelf.HUD.label.text = @"该设备尚未打开蓝牙,请在设置中打开";
-                    [weakSelf.HUD showAnimated:YES];
-                    weakSelf.isBLEPoweredOff = YES;
-                }
-            }else if(central.state == CBManagerStatePoweredOn) {
-                if(weakSelf.HUD){
-                    [MBProgressHUD hideHUDForView:weakSelf.view animated:YES];
-                    weakBaby.scanForPeripherals().begin();
-                    weakSelf.isBLEPoweredOff = NO;
-                }
-                
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-    }];
     
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
         

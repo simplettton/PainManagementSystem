@@ -7,6 +7,8 @@
 //
 
 #import "MachineModel.h"
+#import "AppDelegate.h"
+#import "MachineSeriesModel.h"
 typedef enum _CellStyle {
     
     CellStyleNotStarted_MachineStop = 0,
@@ -38,22 +40,26 @@ typedef enum _CellStyle {
         self.cpuid = dict[@"cpuid"];
         NSNumber *typeNumber = dict[@"machinetype"];
 
+//
+//        NSDictionary *typeDic = @{
+//                                  @0:@"其它",
+//                                  @7681:@"空气波",
+//                                  @57119:@"血瘘",
+//                                  @56832:@"电疗",
+//                                  @56833:@"电疗100",
+//                                  @56834:@"电疗200",
+//                                  @56836:@"电疗400",
+//                                  @61200:@"光子C86",
+//                                  @61201:@"光子C22",
+//                                  @61202:@"光子C11",
+//
+//                               };
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSDictionary *typeDic = appDelegate.typeDic;
         
-        NSDictionary *typeDic = @{
-                                  @0:@"其他",
-                                  @7681:@"空气波",
-                                  @57119:@"血瘘",
-                                  @56832:@"电疗",
-                                  @56833:@"电疗100",
-                                  @56834:@"电疗200",
-                                  @56836:@"电疗400",
-                                  @61200:@"光子C86",
-                                  @61201:@"光子C22",
-                                  @61202:@"光子C11",
-                               
-                               };
         if (typeDic[typeNumber]) {
-            self.type = typeDic[typeNumber];
+            MachineSeriesModel *machineSeries = typeDic[typeNumber];
+            self.type = machineSeries.name;
         }else{
             self.type = @"未知";
         }

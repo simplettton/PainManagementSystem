@@ -30,13 +30,13 @@
     self.pauseButton.multiParamDic = @{@"cmdcode":@1};
     self.stopButton.multiParamDic = @{@"cmdcode":@2};
 
-    self.contentView.layer.borderWidth = 0.5f;
-    self.contentView.layer.borderColor = UIColorFromHex(0xbbbbbb).CGColor;
+    self.contentView.layer.borderWidth = 1.f;
+    self.contentView.layer.borderColor = UIColorFromHex(0xe9e7ef).CGColor;
     [self.contentView.layer setMasksToBounds:YES];
     
     CALayer *layer = [CALayer layer];
-    layer.frame = CGRectMake(0, self.topView.frame.size.height - 0.5, self.topView.frame.size.width, 0.5f);
-    layer.backgroundColor = UIColorFromHex(0xbbbbbb).CGColor;
+    layer.frame = CGRectMake(0, self.topView.frame.size.height - 1, self.topView.frame.size.width, 1.f);
+    layer.backgroundColor = UIColorFromHex(0xe9e7ef).CGColor;
     [self.topView.layer addSublayer:layer];
     
 }
@@ -53,7 +53,7 @@
         //三种灰色未治疗结束的模板
         case CellStyleGrey_Unfinished:
             
-            self.topView.backgroundColor = UIColorFromHex(0xf9f9f9);
+            self.topView.backgroundColor = UIColorFromHex(0xf0f0f4);
             [self.machineStateLabel setTextColor:UIColorFromHex(kBlueColor)];
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
             break;
@@ -122,7 +122,7 @@
             break;
         case CellStyle_LocalUnconnect:
             
-            self.topView.backgroundColor =UIColorFromHex(0xf9f9f9);
+            self.topView.backgroundColor = UIColorFromHex(0xefeff4);
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
             
 

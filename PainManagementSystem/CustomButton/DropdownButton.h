@@ -11,7 +11,7 @@
 @interface DropdownButton : UIButton
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSArray *list;
-
+@property (nonatomic, assign)BOOL isShow;
 /**
  *  初始化DropDownButton
  *
@@ -22,4 +22,5 @@
  *  @return DropDownButton实例
  */
 - (instancetype)initWithFrame:(CGRect)frame Title:(NSString*)title List:(NSArray *)list;
+- (void)clickedToDropDown;
 @end
