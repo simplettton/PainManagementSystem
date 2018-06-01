@@ -67,15 +67,17 @@
         //灰色未治疗结束
         case CellStyleNotStarted_MachineStop:
             [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
-            self.machineStateLabel.text = @"本次治疗未开始";
+            self.machineStateLabel.text = @"治疗尚未开始";
             break;
         case CellStyleOngoing_MachineStop:
             [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
-            self.machineStateLabel.text = @"当前设备停止了";
+            self.machineStateLabel.text = @"设备未运行";
+            [self.playButton setImage:[UIImage imageNamed:@"play_green"] forState:UIControlStateNormal];
             break;
         case CellStyleOngoing_MachinePause:
             [self configureWithStyle:CellStyleGrey_Unfinished message:nil];
-            self.machineStateLabel.text = @"当前设备暂停中";
+            self.machineStateLabel.text = @"设备暂停中";
+            [self.playButton setImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
             break;
 
         //治疗结束
@@ -93,7 +95,7 @@
 
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
             //601加上1分钟就是持续治疗
-            if ([message isEqualToString:@"  10:02"]) {
+            if ([message isEqualToString:@"  10:01"]) {
                 message = @"     持续治疗";
             }
             self.machineStateLabel.text = (message == nil)?@"  00:00":message;
@@ -112,8 +114,7 @@
             
             break;
             
-        //local machine
-        case CellStyle_LocalConnect:
+        //local machine        case CellStyle_LocalConnect:
             
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
@@ -138,7 +139,14 @@
             
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
+            [self.BLEPlayButton setImage:[UIImage imageNamed:@"play_green"] forState:UIControlStateNormal];
+            break;
             
+        case CellStyle_LocalPause:
+            self.topView.backgroundColor = UIColorFromHex(kGreenColor);
+            [self.machineNameLabel setTextColor:[UIColor whiteColor]];
+            [self.BLEPlayButton setImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
+            break;
         default:
             break;
     }
@@ -156,8 +164,8 @@
     self.connectButton.hidden = (style == CellStyle_LocalUnconnect)? NO:YES;
     
     self.BLEPlayButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalRunning))?YES:NO;
-    self.BLEPauseButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning))?YES:NO;
-    self.BLEStopButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning))?YES:NO;
+    self.BLEPauseButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning)||(style == CellStyle_LocalPause))?YES:NO;
+    self.BLEStopButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning)||(style == CellStyle_LocalPause))?YES:NO;
     self.BLERemarkButton.hidden = (style == CellStyle_LocalRunning);
 }
 - (IBAction)controlButttons:(id)sender {

@@ -82,13 +82,16 @@
                                  success:^(HttpResponse *responseObject) {
                                      if([responseObject.result integerValue] == 1){
                                          NSArray *content = responseObject.content;
+
                                          for (NSDictionary *dic in content) {
-                                             [self.typeDic setValue:dic[@"name"] forKey:dic[@"code"]];
+                                             MachineSeriesModel *machineModel = [MachineSeriesModel modelWithDic:dic];
+                                             [self.typeDic setValue:machineModel forKey:dic[@"code"]];
                                          }
-                                         [self.tableView reloadData];
                                          AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
                                          appDelegate.typeDic = self.typeDic;
-                                         [self initTableHeaderAndFooter];
+                                         
+//                                         [self.tableView.mj_header beginRefreshing];
+                                         [self refresh];
                                      }
                                  }
                                  failure:nil];
@@ -108,8 +111,9 @@
 }
 
 -(void)initAll{
-    [self initMahineTypeModels];
+
     [self getTypeDic];
+    [self initMahineTypeModels];
 //
 //    _filterButton.list = @[@"空气波",@"电疗",@"光子",@"血瘘"];
     //pageControll
@@ -137,21 +141,9 @@
     
     [self.tableView addGestureRecognizer:tapGestureRecognizer];
     
-
-//    _typeDic = @{
-//                 @7681:@"空气波",
-//                 @57119:@"血瘘",
-//                 @56832:@"电疗",
-//                 @56833:@"电疗100",
-//                 @56834:@"电疗200",
-//                 @56836:@"电疗400",
-//                 @61200:@"光子C86",
-//                 @61201:@"光子C22",
-//                 @61202:@"光子C11",
-//
-//                 };
     
-    [self refresh];
+    [self initTableHeaderAndFooter];
+    [self getTypeDic];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
@@ -197,7 +189,7 @@
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
     
     self.tableView.mj_header = header;
-    [self.tableView.mj_header beginRefreshing];
+//    [self.tableView.mj_header beginRefreshing];
     //上拉加载
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
@@ -208,14 +200,43 @@
 
 -(void)refresh
 {
-    if ([self.searchBar.text length]>0) {
-        [self search:nil];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if(!appDelegate.typeDic){
+        NSMutableDictionary *typeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/AgesShop/MachineList"]
+                                      params:nil
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         if([responseObject.result integerValue] == 1){
+                                             NSArray *content = responseObject.content;
+                                             for (NSDictionary *dic in content) {
+                                                 MachineSeriesModel *machineModel = [MachineSeriesModel modelWithDic:dic];
+                                                 [typeDic setValue:machineModel forKey:dic[@"code"]];
+                                             }
+                                             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                                             appDelegate.typeDic = typeDic;
+                                             self.typeDic = typeDic;
+                                         }
+                                     }
+                                     failure:nil];
+                if ([self.searchBar.text length]>0) {
+                    [self search:nil];
+                }else{
+                    isFilteredList = NO;
+                    [self askForData:YES isFiltered:NO];
+                }
+                [self.searchBar resignFirstResponder];
+                [self hideKeyBoard];
     }else{
-        isFilteredList = NO;
-        [self askForData:YES isFiltered:NO];
+        if ([self.searchBar.text length]>0) {
+            [self search:nil];
+        }else{
+            isFilteredList = NO;
+            [self askForData:YES isFiltered:NO];
+        }
+        [self.searchBar resignFirstResponder];
+        [self hideKeyBoard];
     }
-    [self.searchBar resignFirstResponder];
-    [self hideKeyBoard];
 
 
 }
@@ -403,6 +424,13 @@
 
 
 #pragma mark - tableview dataSource
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 44;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return UITableViewAutomaticDimension;
+}
+
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -417,12 +445,18 @@
         cell = [[DeviceTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
+    
 //    if ([datas count]>0) {
 
         if (indexPath.row < [datas count]) {
             NSDictionary *dataDic = [datas objectAtIndex:indexPath.row];
             
-            cell.typeLabel.text = _typeDic[[dataDic objectForKey:@"machinetype"]];
+            cell.typeLabel.numberOfLines = 0;
+            cell.typeLabel.lineBreakMode = NSLineBreakByWordWrapping;
+            [cell.typeLabel sizeToFit];
+            MachineSeriesModel *machineSeries = _typeDic[[dataDic objectForKey:@"machinetype"]];;
+            cell.typeLabel.text = machineSeries.name;
+           
             
             cell.serialNumLabel.text = [dataDic objectForKey:@"serialnum"];
             
@@ -471,6 +505,11 @@
         
         NSMutableArray *deleteArray = [NSMutableArray array];
         
+        //header跟着tableview 左移
+        CGRect frame = self.tableView.tableHeaderView.frame;
+        frame.origin.x -= 36;
+        self.tableView.tableHeaderView.frame = frame;
+        
         for (NSIndexPath *indexPath in self.tableView.indexPathsForSelectedRows) {
             
             [deleteArray addObject:datas[indexPath.row]];
@@ -493,7 +532,6 @@
                                                          cell.selectionStyle = UITableViewCellSelectionStyleNone;
                                                      }
 
-                                                     
                                                  });
                                              }else{
                                                  NSString *error = responseObject.errorString;
@@ -504,6 +542,7 @@
                                              }
                                          }
                                          failure:nil];
+
         }
     
     }else{
@@ -512,6 +551,10 @@
         for (DeviceTableViewCell *cell in self.tableView.visibleCells) {
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
         }
+        //header跟着tableview右移
+        CGRect frame = self.tableView.tableHeaderView.frame;
+        frame.origin.x += 36;
+        self.tableView.tableHeaderView.frame = frame;
     }
     
     [self.tableView setEditing:!self.tableView.editing animated:NO];

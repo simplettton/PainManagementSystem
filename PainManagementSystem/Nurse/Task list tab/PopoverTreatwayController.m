@@ -45,9 +45,16 @@
     //获取数据源
     NSArray *dataArray = self.treatParamDic[@"paramlist"];
     datas = [dataArray mutableCopy];
+    NSMutableDictionary *noteDic = [[NSMutableDictionary alloc]initWithCapacity:20];
     
-    self.type = self.treatParamDic[@"machinetype"];
 
+    self.type = self.treatParamDic[@"machinetype"];
+    if ([self.type integerValue]!=0) {
+        [noteDic setObject:@"备注" forKey:@"showname"];
+        [noteDic setObject:self.treatParamDic[@"note"] forKey:@"value"];
+        [datas addObject:noteDic];
+    }
+    
     UIImageView *middleView = [self.topView viewWithTag:20000];
     
     UIImageView *leftView = [self.topView viewWithTag:10000];
@@ -188,8 +195,11 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [datas count];
 }
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 44;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return UITableViewAutomaticDimension;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -200,11 +210,17 @@
         cell = [[QuestionCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    
+    cell.selectionsLabel.numberOfLines = 0;
+    cell.selectionsLabel.lineBreakMode = NSLineBreakByWordWrapping;
     NSDictionary *dic = [datas objectAtIndex:indexPath.row];
     NSString *key = dic[@"showname"];
     cell.questionNameLabel.text = key;
-    cell.selectionsLabel.text = dic[@"value"];
+    if([dic[@"value"] isEqual:[NSNull null]]){
+        cell.selectionsLabel.text = @"无";
+    }else{
+        cell.selectionsLabel.text = dic[@"value"];
+    }
+
 
     return cell;
 

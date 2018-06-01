@@ -126,7 +126,7 @@ static const float ReaderViewLengthRatio = 0.72;
     labIntroudction.textAlignment = NSTextAlignmentCenter;
     labIntroudction.font = [UIFont boldSystemFontOfSize:13.0];
     labIntroudction.textColor = [UIColor whiteColor];
-    labIntroudction.text = @"将二维码/条形码置于框内, 即可自动扫描";
+    labIntroudction.text = @"将条形码置于框内, 即可自动扫描";
     [self addSubview:labIntroudction];
     
 

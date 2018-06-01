@@ -240,8 +240,15 @@
     //自动分行行数 每多加一行增加高度18
     NSInteger extralRowNum = 0;
     for (Question *question in quetionArray) {
+        if ([question.selectionString containsString:@"\n"]) {
+            NSString *subString = @"\n";
+            NSArray *array = [question.selectionString componentsSeparatedByString:subString];
+            NSInteger count= [array count] - 1;
+            extralRowNum += count;
+        }
         if ([question.selectionString length]>18) {
 
+            
             NSInteger extraRowNum = ([question.selectionString length] +18 -1)/18 - 1;
             extralRowNum += extraRowNum;
         }
@@ -406,6 +413,11 @@
 
             cell.questionNameLabel.text = param.name;
             cell.selectionsLabel.text = param.selectionString;
+//            if([param.name isEqualToString:@"备注"]){
+//                cell.selectionsLabel.textAlignment = NSTextAlignmentLeft;
+//            }else{
+//                cell.selectionsLabel.textAlignment = NSTextAlignmentRight;
+//            }
 
         }
         
@@ -415,7 +427,7 @@
             if (indexPath.row < [questionItem.questionArray count]) {
                 
                 Question *question = questionItem.questionArray[indexPath.row];
-                
+
                 cell.questionNameLabel.text = question.name;
                 
                 cell.selectionsLabel.text = question.selectionString;

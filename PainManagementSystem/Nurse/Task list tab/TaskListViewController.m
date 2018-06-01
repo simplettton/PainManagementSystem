@@ -86,7 +86,6 @@
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
     
-    
 }
 //双击tab更新列表
 -(void)reloadDataWithNotification:(NSNotification *)notification{
@@ -137,7 +136,7 @@
     [self.segmentedControl setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15.0f]}forState:UIControlStateNormal];
     
     [self.segmentedControl addTarget:self action:@selector(didClicksegmentedControlAction:) forControlEvents:UIControlEventValueChanged];
-    
+    [self initTableHeaderAndFooter];
     [self getTypeDic];
 
     self.pushOnce = 1;
@@ -157,7 +156,8 @@
                                          }
                                          AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
                                          appDelegate.typeDic = typeDic;
-                                         [self initTableHeaderAndFooter];
+                                         
+                                         [self.tableView.mj_header beginRefreshing];
                                      }
                                  }
                                  failure:nil];
@@ -204,8 +204,7 @@
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
     
     self.tableView.mj_header = header;
-    
-    [self.tableView.mj_header beginRefreshing];
+
     //上拉加载
     MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMore)];
     [footer setTitle:@"" forState:MJRefreshStateIdle];
@@ -216,7 +215,31 @@
 }
 
 -(void)refresh{
-    [self askForData:YES];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if(!appDelegate.typeDic){
+        NSMutableDictionary *typeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/AgesShop/MachineList"]
+                                      params:nil
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         if([responseObject.result integerValue] == 1){
+                                             NSArray *content = responseObject.content;
+                                             for (NSDictionary *dic in content) {
+                                                 MachineSeriesModel *machineModel = [MachineSeriesModel modelWithDic:dic];
+                                                 [typeDic setValue:machineModel forKey:dic[@"code"]];
+                                             }
+                                             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                                             appDelegate.typeDic = typeDic;
+                                             
+                                             [self askForData:YES];
+                                         }
+                                     }
+                                     failure:nil];
+    }else{
+        [self askForData:YES];
+        
+    }
+
 }
 
 -(void)loadMore{
@@ -449,11 +472,11 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     //设置label支持换行
-    cell.patientNameLabel.numberOfLines = 0;
-    cell.patientNameLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    
-    cell.medicalRecordNumLable.numberOfLines = 0;
-    cell.medicalRecordNumLable.lineBreakMode = NSLineBreakByWordWrapping;
+//    cell.patientNameLabel.numberOfLines = 0;
+//    cell.patientNameLabel.lineBreakMode = NSLineBreakByWordWrapping;
+//    
+//    cell.medicalRecordNumLable.numberOfLines = 0;
+//    cell.medicalRecordNumLable.lineBreakMode = NSLineBreakByWordWrapping;
     
     cell.finishTimeLabel.numberOfLines = 0;
     cell.finishTimeLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -719,33 +742,33 @@
     [self refresh];
     if ([datas count ]>0) {
         
-        
-        __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
-        //本地设备通知服务器绑定设备
-        if([task.machineType isEqualToString:@"血瘘"]){
-            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
-                                          params:@{
-                                                   @"serialnum":@"P06A17A00001",
-                                                   @"id":task.ID
-                                                   }
-                                        hasToken:YES
-                                         success:^(HttpResponse *responseObject) {
-                                             if([responseObject.result integerValue] == 1){
-                                                 NSLog(@"绑定成功");
-                                             }else{
-                                                 [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                                 NSLog(@"bind error :%@",responseObject.errorString);
+        if(self.selectedRow < [datas count]){
+            __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
+            //本地设备通知服务器绑定设备
+            if([task.machineType isEqualToString:@"血瘘"]){
+                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
+                                              params:@{
+                                                       @"serialnum":@"P06A17A00001",
+                                                       @"id":task.ID
+                                                       }
+                                            hasToken:YES
+                                             success:^(HttpResponse *responseObject) {
+                                                 if([responseObject.result integerValue] == 1){
+                                                     NSLog(@"绑定成功");
+                                                 }else{
+                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                                     NSLog(@"bind error :%@",responseObject.errorString);
+                                                 }
                                              }
-                                         }
-                                         failure:nil];
+                                             failure:nil];
+            }
+            
+            
+            [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
+                
+                [self focusMachineWithTask:task];
+            }];
         }
-        
-        
-        [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
-            
-            [self focusMachineWithTask:task];
-            
-        }];
     }
     
 }

@@ -75,13 +75,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
     [self connectMQTT];
     [self refresh];
-    if (self.tag == DeviceTypeOnline) {
-        if (datas != nil) {
-            for (MachineModel *machine in datas) {
-                [self subcribe:machine.cpuid];
-            }
-        }
-    }
     self.collectionView.mj_header.hidden = NO;
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didChangeDeviceSegmentBar:) name:@"ChangeDeviceSegmentBar" object:nil];
     
@@ -182,10 +175,10 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     [self.dropList reloadListData];
     
     //关注中设备添加 longpress 添加手势 可以取消设备
-    if (!self.isInAllTab) {
+//    if (!self.isInAllTab) {
         _longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(lonePressMoving:)];
         [self.collectionView addGestureRecognizer:_longPress];
-    }
+//    }
     
     //默认是治疗中的设备
     self.selectedTaskState = @3;
@@ -194,7 +187,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
     
 }
-
+#pragma mark - 长按手势取消关注和关注
 - (void)lonePressMoving:(UILongPressGestureRecognizer *)longPress
 {
     switch (_longPress.state) {
@@ -208,18 +201,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 
                 // 找到当前的cell
                 DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
-                // 定义cell的时候btn是隐藏的, 在这里设置为NO
-//                [cell.btnDelete setHidden:NO];
-                
                 cell.btnDelete.tag = selectIndexPath.item;
                 NSLog(@"selectIndexPath .item = %ld",(long)cell.btnDelete.tag);
 
-                
-                [self performSelector:@selector(unfollowDevice:) withObject:cell.btnDelete afterDelay:0.5];
-                //cell.layer添加抖动手势
-//                for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-//                    [self starShake:cell];
-//                }
+                if(_isInAllTab){
+                    [self performSelector:@selector(followDevice) withObject:nil afterDelay:0.5];
+                }else{
+                    [self performSelector:@selector(unfollowDevice:) withObject:cell.btnDelete afterDelay:0.5];
+                }
+
+
                 [self starShake:cell];
             }
             break;
@@ -237,6 +228,169 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             break;
     }
 }
+- (void)starShake:(DeviceCollectionViewCell*)cell{
+    
+    CAKeyframeAnimation * keyAnimaion = [CAKeyframeAnimation animation];
+    keyAnimaion.keyPath = @"transform.rotation";
+    keyAnimaion.values = @[@(-3 / 180.0 * M_PI),@(3 /180.0 * M_PI),@(-3/ 180.0 * M_PI)];//度数转弧度
+    keyAnimaion.removedOnCompletion = NO;
+    keyAnimaion.fillMode = kCAFillModeForwards;
+    keyAnimaion.duration = 0.3;
+    keyAnimaion.repeatCount = MAXFLOAT;
+    [cell.layer addAnimation:keyAnimaion forKey:@"cellShake"];
+}
+
+- (void)stopShake:(DeviceCollectionViewCell*)cell{
+    [cell.layer removeAnimationForKey:@"cellShake"];
+}
+
+-(void)followDevice{
+    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
+    // 找到当前的cell
+    for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+        [self stopShake:cell];
+    }
+    
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要关注设备吗？"
+                                                                   message:@"关注之后可以在关注设备中查看"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             [self.collectionView reloadData];
+                                                             
+                                                             for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                 [self stopShake:cell];
+                                                             }
+                                                         }];
+    UIAlertAction *focusAction = [UIAlertAction actionWithTitle:@"关注" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        if ([datas count]>0) {
+            MachineModel *machine = [datas objectAtIndex:selectIndexPath.row];
+            [self focusMachine:machine.serialNum];
+        }
+    }];
+    
+    [alert addAction:cancelAction];
+    [alert addAction:focusAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+//删除代码
+- (void)unfollowDevice:(UIButton *)btn{
+    //cell的隐藏删除设置
+    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
+    // 找到当前的cell
+    for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+        [self stopShake:cell];
+    }
+    
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要取消关注设备吗？"
+                                                                   message:@"取消关注操作将不可恢复。"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              [self.collectionView reloadData];
+                                                              
+                                                              for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                  [self stopShake:cell];
+                                                              }
+                                                          }];
+    
+    UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注" style:UIAlertActionStyleDestructive
+                                                              handler:^(UIAlertAction * action) {
+                                                                  //取出源item数据
+                                                                  
+                                                                  if ([datas count]>0) {
+                                                                      id objc = [datas objectAtIndex:selectIndexPath.row];
+                                                                      
+                                                                      //sendToserver
+                                                                      NSString *serialNum = [[NSString alloc]init];
+                                                                      if(self.tag == DeviceTypeOnline){
+                                                                          MachineModel *machine = (MachineModel *)objc;
+                                                                          serialNum = machine.serialNum;
+                                                                          [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Delete"]
+                                                                                                        params:@{@"serialnum":serialNum}
+                                                                                                      hasToken:YES
+                                                                                                       success:^(HttpResponse *responseObject) {
+                                                                                                           if([responseObject.result intValue] == 1){
+                                                                                                               [SVProgressHUD showErrorWithStatus:@"已取消关注"];
+                                                                                                               
+                                                                                                               
+                                                                                                               [datas removeObject:objc];
+                                                                                                               [self.collectionView reloadData];
+                                                                                                           }else{
+                                                                                                               [SVProgressHUD showErrorWithStatus:responseObject.errorString];                                NSLog(@"取消关注错误:%@",responseObject.errorString);
+                                                                                                           }
+                                                                                                           
+                                                                                                       }
+                                                                                                       failure:nil];
+                                                                          
+                                                                      }else{
+                                                                          LocalMachineModel *machine = (LocalMachineModel *)objc;
+                                                                          serialNum = machine.serialNum;
+                                                                          [self unfollowLocalDevice:machine];
+                                                                          
+                                                                      }
+                                                                      
+                                                                      for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                          [self stopShake:cell];
+                                                                      }
+                                                                  }
+                                                                  
+                                                              }];
+    
+    [alert addAction:defaultAction];
+    
+    [alert addAction:cancelFocusAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+    
+}
+
+-(void)unfollowLocalDevice:(LocalMachineModel *)machine{
+    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    //machine Array
+    NSArray *machineArray = [[NSArray alloc]init];
+    if ([fileManager fileExistsAtPath:documentPath]) {
+        
+        NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
+        NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
+        machineArray = [unArchiver decodeObjectForKey:@"machineArray"];
+        
+        NSMutableArray *array = [NSMutableArray arrayWithArray:machineArray];
+        
+        for (LocalMachineModel *savedMachine in array) {
+            if ([savedMachine.userMedicalNum isEqualToString:machine.userMedicalNum]) {
+                NSUInteger index = [array indexOfObject:savedMachine];
+                [array removeObjectAtIndex:index];
+                break;
+            }
+            
+        }
+        machineArray = [array copy];
+        //写入文件
+        NSMutableData *data = [[NSMutableData alloc] init] ;
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data] ;
+        [archiver encodeObject:machineArray forKey:@"machineArray"];
+        [archiver finishEncoding];
+        
+        BOOL success = [data writeToFile:documentPath atomically:YES];
+        if (!success)
+        {
+            [SVProgressHUD showErrorWithStatus:@"无法取消关注设备"];
+            
+        }else{
+            [SVProgressHUD showSuccessWithStatus:@"已取消关注"];
+            if(self.tag == DeviceTypeLocal){
+                [self refresh];
+            }
+        }
+        
+    }
+}
+
 //切换关注或者和全部
 -(void)didChangeDeviceSegmentBar:(NSNotification *)notification{
     NSString *selected = notification.object;
@@ -322,9 +476,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                          }
                                          if ([count intValue]>0) {
                                              [self getNetworkData:isRefresh withParam:params];
+
                                              [self hideNodataView];
                                          }else{
                                              [datas removeAllObjects];
+
                                              [self endRefresh];
                                              [self showNodataViewWithTitle:[NSString stringWithFormat:@"暂无%@",taskStateInfo[self.selectedTaskState]]];
                                          }
@@ -382,6 +538,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                      [datas addObject:machine];
                                                      //订阅治疗中设备和未开始设备 taskstate = 1 ,taskstate = 3
                                                      if ([self.selectedTaskState isEqual: @1] ||[self.selectedTaskState isEqual: @3]) {
+
                                                          [self subcribe:machine.cpuid];
                                                      }
                                                  }
@@ -477,6 +634,15 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     //订阅主题 controller即将出现的时候订阅
     [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:@"warning/#"];
     self.manager.subscriptions = [self.subscriptions copy];
+    
+    //若没有订阅设备则订阅设备
+    if (self.tag == DeviceTypeOnline) {
+        if (datas != nil) {
+            for (MachineModel *machine in datas) {
+                [self subcribe:machine.cpuid];
+            }
+        }
+    }
 
     [self.manager addObserver:self
                    forKeyPath:@"state"
@@ -491,7 +657,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 }
 -(void)subcribe:(NSString *)cpuid{
     NSString *newTopic = [NSString stringWithFormat:@"toapp/%@",cpuid];
-    if (![self.subscriptions.allKeys containsObject:newTopic]){
+    if (![self.manager.subscriptions.allKeys containsObject:newTopic]){
         [self.subscriptions setObject:[NSNumber numberWithInt:MQTTQosLevelExactlyOnce] forKey:newTopic];
         self.manager.subscriptions = [self.subscriptions copy];
     }
@@ -540,8 +706,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         }
     }else if ([topic hasPrefix:@"toapp"]){
         NSString *cpuid = [topic substringFromIndex:6];
-//        NSLog(@"=================================================");
-//        NSLog(@"to app :content = %@",content);
+        NSLog(@"=================================================");
+        NSLog(@"topic = %@\ncontent = %@",topic,content);
         
         //遍历去取出cell
         for (MachineModel *machine in datas) {
@@ -663,13 +829,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     NSInteger hour = [second intValue]/3600;
     NSInteger minute = [second integerValue]/60%60;
     
-    
+
     if (second != 0) {
-        minute = minute +1;
-        if (minute == 60) {
-            hour = hour +1;
-            minute = 0;
+        if (minute < 1) {
+            minute = 1;
         }
+//        minute = minute +1;
+//        if (minute == 60) {
+//            hour = hour +1;
+//            minute = 0;
+//        }
     }
     
     NSString *hourString = [NSString stringWithFormat:hour>9?@"%ld":@"0%ld",(long)hour];
@@ -836,7 +1005,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 case CellStyleOngoing_MachineStop:
                     break;
                 case CellStyleOngoing_MachineRunning:
-                    
                     break;
                     
                 default:
@@ -864,6 +1032,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                 @"unconnect":[NSNumber numberWithInteger:CellStyle_LocalUnconnect],
                 @"running":[NSNumber numberWithInteger:CellStyle_LocalRunning],
                 @"unrunning":[NSNumber numberWithInteger:CellStyle_LocalUnrunning],
+                @"pause":[NSNumber numberWithInteger:CellStyle_LocalPause]
             };
             
             NSNumber *stateNumber = [stateDic objectForKey:machine.state];
@@ -907,12 +1076,15 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     return YES;
 }
 
-////选中后回调
-//- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-//{
+//选中后回调
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
 //    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
-//
-//}
+    if (self.tag != DeviceTypeLocal) {
+        [self performSegueWithIdentifier:@"ShowAlertMessage" sender:nil];
+    }
+
+}
 //设置每个item的尺寸
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
     return CGSizeMake(220, 186);
@@ -938,140 +1110,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 }
 
 
-- (void)starShake:(DeviceCollectionViewCell*)cell{
-    
-    CAKeyframeAnimation * keyAnimaion = [CAKeyframeAnimation animation];
-    keyAnimaion.keyPath = @"transform.rotation";
-    keyAnimaion.values = @[@(-3 / 180.0 * M_PI),@(3 /180.0 * M_PI),@(-3/ 180.0 * M_PI)];//度数转弧度
-    keyAnimaion.removedOnCompletion = NO;
-    keyAnimaion.fillMode = kCAFillModeForwards;
-    keyAnimaion.duration = 0.3;
-    keyAnimaion.repeatCount = MAXFLOAT;
-    [cell.layer addAnimation:keyAnimaion forKey:@"cellShake"];
-}
-
-- (void)stopShake:(DeviceCollectionViewCell*)cell{
-    [cell.layer removeAnimationForKey:@"cellShake"];
-}
-
-//删除代码
-- (void)unfollowDevice:(UIButton *)btn{
-    //cell的隐藏删除设置
-    NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
-    // 找到当前的cell
-//    __block DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:selectIndexPath];
-    for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-        [self stopShake:cell];
-    }
-//    cell.btnDelete.hidden = NO;
-    
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要取消关注设备吗？"
-                                                                   message:@"取消关注操作将不可恢复。"
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              [self.collectionView reloadData];
-                                                              
-                                                              for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-                                                                  [self stopShake:cell];
-                                                              }
-                                                          }];
-    
-    UIAlertAction* cancelFocusAction = [UIAlertAction actionWithTitle:@"取消关注" style:UIAlertActionStyleDestructive
-                                                              handler:^(UIAlertAction * action) {
-                                                                  //取出源item数据
-                                                                  
-                                                                  if ([datas count]>0) {
-                                                                      id objc = [datas objectAtIndex:selectIndexPath.row];
-                                                                      
-                                                                      //sendToserver
-                                                                      NSString *serialNum = [[NSString alloc]init];
-                                                                      if(self.tag == DeviceTypeOnline){
-                                                                          MachineModel *machine = (MachineModel *)objc;
-                                                                          serialNum = machine.serialNum;
-                                                                          [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Delete"]
-                                                                                                        params:@{@"serialnum":serialNum}
-                                                                                                      hasToken:YES
-                                                                                                       success:^(HttpResponse *responseObject) {
-                                                                                                           if([responseObject.result intValue] == 1){
-                                                                                                               [SVProgressHUD showErrorWithStatus:@"已取消关注"];
-                                                                                                               
-                                                                                                               
-                                                                                                               [datas removeObject:objc];
-                                                                                                               [self.collectionView reloadData];
-                                                                                                           }else{
-                                                                                                               [SVProgressHUD showErrorWithStatus:responseObject.errorString];                                NSLog(@"取消关注错误:%@",responseObject.errorString);
-                                                                                                           }
-                                                                                                           
-                                                                                                       }
-                                                                                                       failure:nil];
-                                                                          
-                                                                      }else{
-                                                                          LocalMachineModel *machine = (LocalMachineModel *)objc;
-                                                                          serialNum = machine.serialNum;
-                                                                          [self unfollowLocalDevice:machine];
-                                                                          
-                                                                      }
-
-                                                                      for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-                                                                          [self stopShake:cell];
-                                                                      }
-                                                                  }
-
-                                                              }];
-    
-    [alert addAction:defaultAction];
-    
-    [alert addAction:cancelFocusAction];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-    
-    
-}
--(void)unfollowLocalDevice:(LocalMachineModel *)machine{
-        NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-    NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    //machine Array
-    NSArray *machineArray = [[NSArray alloc]init];
-    if ([fileManager fileExistsAtPath:documentPath]) {
-        
-        NSData * resultdata = [[NSData alloc] initWithContentsOfFile:documentPath];
-        NSKeyedUnarchiver *unArchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:resultdata];
-        machineArray = [unArchiver decodeObjectForKey:@"machineArray"];
-        
-        NSMutableArray *array = [NSMutableArray arrayWithArray:machineArray];
-        
-        for (LocalMachineModel *savedMachine in array) {
-            if ([savedMachine.userMedicalNum isEqualToString:machine.userMedicalNum]) {
-                NSUInteger index = [array indexOfObject:savedMachine];
-                [array removeObjectAtIndex:index];
-                break;
-            }
-            
-        }
-        machineArray = [array copy];
-        //写入文件
-        NSMutableData *data = [[NSMutableData alloc] init] ;
-        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data] ;
-        [archiver encodeObject:machineArray forKey:@"machineArray"];
-        [archiver finishEncoding];
-        
-        BOOL success = [data writeToFile:documentPath atomically:YES];
-        if (!success)
-        {
-            [SVProgressHUD showErrorWithStatus:@"无法取消关注设备"];
-
-        }else{
-            [SVProgressHUD showSuccessWithStatus:@"已取消关注"];
-            if(self.tag == DeviceTypeLocal){
-                [self refresh];
-            }
-        }
-
-    }
-}
 
 
 #pragma mark http control machine
@@ -1161,20 +1199,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                                 
                                                             }
                                                             else if (machine.serialNum) {
-                                                                [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
-                                                                                              params:@{@"serialnum":machine.serialNum}
-                                                                                            hasToken:YES
-                                                                                             success:^(HttpResponse *responseObject) {
-                                                                                                 if ([responseObject.result intValue]==1) {
-                                                                                                     NSLog(@"关注设备成功");
-                                                                                                     [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
-                                                                                                     [self refresh];
-                                                                                                 }else{
-                                                                                                     [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                                                                                 }
-                                                                                             }
-                                                                                             failure:nil];
-                                                                
+
+                                                                [self focusMachine:machine.serialNum];
                                                             }
                                                         }
 
@@ -1183,7 +1209,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                     }];
                                                 }
                                                 self.pushOnce = 0;
-
 
                                             }else{
                                                 [SVProgressHUD showErrorWithStatus:@"查找不到该病人的记录"];
@@ -1198,7 +1223,24 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     }else{
         [SVProgressHUD showErrorWithStatus:@"请输入病历号查找设备~"];
     }
-
+}
+-(void)focusMachine:(NSString *)serialNum{
+    
+    if (serialNum) {
+        [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Myfocus/Add"]
+                                      params:@{@"serialnum":serialNum}
+                                    hasToken:YES
+                                     success:^(HttpResponse *responseObject) {
+                                         if ([responseObject.result intValue]==1) {
+                                             NSLog(@"关注设备成功");
+                                             [SVProgressHUD showSuccessWithStatus:@"已关注设备"];
+                                             [self refresh];
+                                         }else{
+                                             [SVProgressHUD showErrorWithStatus:responseObject.errorString];
+                                         }
+                                     }
+                                     failure:nil];
+    }
 }
 
 #pragma mark - BLEFileManage
@@ -1497,7 +1539,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             
             NSDictionary *typeDic = @{@"1":@"unrunning",
                                       @"2":@"running",
-                                      @"3":@"unrunning"
+                                      @"3":@"pause"
                                       };
             LocalMachineModel *machine = [datas objectAtIndex:self.selectedDeviceIndex];
             [machine changeState:typeDic[stateKey]];

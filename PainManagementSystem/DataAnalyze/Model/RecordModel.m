@@ -120,6 +120,17 @@
                 Question *param = [Question questionWithDic:dic];
                 [params addObject:param];
             }
+            NSString *value;
+            if ([treatParamDic[@"note"] isEqual:[NSNull null]]) {
+                value = @"无";
+            }else if (![treatParamDic[@"note"]isEqualToString:@""]) {
+                value = treatParamDic[@"note"];
+            }else{
+                value = @"无";
+            }
+            Question *nodataDisplay = [Question questionWithDic:@{@"showname":@"备注",@"value":value}];
+            [params addObject:nodataDisplay];
+
         }
   
         self.treatParam = params;

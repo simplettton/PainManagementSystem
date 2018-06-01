@@ -91,14 +91,6 @@ typedef enum _CellStyle {
     return [[self alloc]initWithDic:dict];
 }
 -(void)changeState:(NSString *)machineState{
-//    NSDictionary *stateDic = @
-//    {
-//        @"connected":[NSNumber numberWithInteger:CellStyle_LocalConnect],
-//        @"unconnect":[NSNumber numberWithInteger:CellStyle_LocalUnconnect],
-//        @"running":[NSNumber numberWithInteger:CellStyle_LocalRunning],
-//        @"unrunning":[NSNumber numberWithInteger:CellStyle_LocalUnrunning],
-//    };
-//    NSNumber *stateNumber = [stateDic objectForKey:machineState];
     
     self.state = machineState;
 
