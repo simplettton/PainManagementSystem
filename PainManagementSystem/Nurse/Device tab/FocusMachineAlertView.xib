@@ -25,9 +25,9 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VVn-3E-5x7">
-                                    <rect key="frame" x="17" y="13" width="20" height="20"/>
+                                    <rect key="frame" x="17" y="13" width="25" height="25"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" image="close"/>
+                                    <state key="normal" image="error_black"/>
                                     <connections>
                                         <action selector="close:" destination="iN0-l3-epB" eventType="touchUpInside" id="MZC-eF-zDH"/>
                                     </connections>
@@ -176,6 +176,6 @@
         </view>
     </objects>
     <resources>
-        <image name="close" width="28" height="28"/>
+        <image name="error_black" width="30" height="30"/>
     </resources>
 </document>

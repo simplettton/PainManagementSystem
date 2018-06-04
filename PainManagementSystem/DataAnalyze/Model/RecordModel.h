@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PatientModel.h"
+#import "MachineSeriesModel.h"
 @class QuestionItem;
 @class Question;
 @interface RecordModel : NSObject
@@ -42,6 +43,8 @@
 @property (nonatomic,copy)NSString *physicalTreat;
 
 @property (nonatomic,copy)NSString *machineType;
+
+@property(nonatomic,strong) MachineSeriesModel *machine;
 
 @property (nonatomic,copy)NSString *vasBefore;
 

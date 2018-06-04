@@ -83,6 +83,9 @@
         return YES;
     }else if(textField == self.medicalRecordNumTextField){
 
+        if ([string isEqualToString:@""]) {
+            return YES;
+        }
         if (![self inputShouldLetterOrNumWithText:string]) {
             return NO;
         }
@@ -128,6 +131,8 @@
         self.scanButton.hidden = NO;
         //当前时间戳
         NSString *ts = [NSString stringWithFormat:@"%ld", time(NULL)];
+        
+        self.medicalRecordNumTextField.enabled = YES;
 
         self.treatDateLabel.text = [self stringFromTimeIntervalString:ts dateFormat:@"yyyy-MM-dd"];
 
@@ -160,15 +165,15 @@
     CGRect frame=  self.segmentedControll.frame;
     CGFloat fNewHeight = 35.0f;
     [self.segmentedControll setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, fNewHeight)];
-    
-    
+
     __weak typeof(self) weakSelf = self;
     [self.birthdayTF addTapAciton:^{
 
+//        NSString *minDateString = [self timeStampFromTimeString:@"1870-01-01 00:00:00" dataFormat:@"yyyy-MM-dd  HH:mm:ss"];
         [BRDatePickerView showDatePickerWithTitle:@"出生日期"
                                          dateType:UIDatePickerModeDate
                                   defaultSelValue:weakSelf.birthdayTF.text
-                                       minDateStr:nil
+                                       minDateStr:@"1870-01-01 00:00:00"
                                        maxDateStr:[NSDate currentDateString]
                                      isAutoSelect:NO
                                        themeColor:nil
@@ -179,6 +184,7 @@
                                             NSLog(@"------send to server ：生日时间戳：%@",timeStamp);
         } cancelBlock:^{
         }];
+        
 
     }];
     
@@ -352,9 +358,9 @@
 -(NSString *)timeStampFromTimeString:(NSString *)timeString dataFormat:(NSString *)dateFormat
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    formatter.timeZone = [NSTimeZone timeZoneWithName:@"shanghai"];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    formatter.timeZone = [NSTimeZone localTimeZone];
+//    [formatter setDateStyle:NSDateFormatterMediumStyle];
+//    [formatter setTimeStyle:NSDateFormatterShortStyle];
     [formatter setDateFormat:dateFormat];
     
     //日期转时间戳

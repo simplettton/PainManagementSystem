@@ -13,9 +13,9 @@
 #import "BEButton.h"
 #import "Pack.h"
 #import "AppDelegate.h"
-#define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
-#define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
-#define RX_CHARACTERISTIC_UUID @"8ac32d3f-5cb9-4d44-bec2-ee689169f626"
+//#define SERVICE_UUID           @"1b7e8251-2877-41c3-b46e-cf057c562023"
+//#define TX_CHARACTERISTIC_UUID @"5e9bf2a8-f93f-4481-a67e-3b2f4a07891a"
+//#define RX_CHARACTERISTIC_UUID @"8ac32d3f-5cb9-4d44-bec2-ee689169f626"
 @interface FocusMachineAlertView()
 @property (weak, nonatomic) IBOutlet UIView *backGroundView;
 @property (weak, nonatomic) IBOutlet UILabel *medicalNumLabel;
@@ -42,7 +42,6 @@
 -(void)awakeFromNib{
     [super awakeFromNib];
     self.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
-
 }
 
 +(void)alertControllerAboveIn:(UIViewController *)controller withDataModel:(MachineModel *)machine returnBlock:(returnBlock)returnEvent{
@@ -57,7 +56,7 @@
     if (machine) {
         [view configureUIWithDataModel:machine];
         view.dataModel = machine;
-        if ([machine.type isEqualToString:@"血瘘"]) {
+        if (machine.isLocal) {
             view.isLocalMachine = YES;
 
         }else{
@@ -110,9 +109,7 @@
             return;
         }
         self.BLEDeviceName = [[NSString alloc]init];
-        if ([self.dataModel.serialNum isEqualToString:@"P06A17A00001"]) {
-            self.BLEDeviceName = @"ALX420";
-        }
+        self.BLEDeviceName = _dataModel.machineInfo.broadcastName;
         baby.scanForPeripherals().begin();
     }
 
@@ -134,30 +131,7 @@
     //machine information
     self.machineTypeLabel.text = [NSString stringWithFormat:@"治疗设备：    %@", machine.type];
     self.machineNickLabel.text = [NSString stringWithFormat:@"设备昵称：    %@",machine.name];
-    
-    NSString *treatmentState = [NSString string];
-    switch ([machine.taskStateNumber intValue]) {
-        case 0:
-            treatmentState = @"处方尚未下发";
-            break;
-        case 1:
-            treatmentState = @"处方已下发，治疗尚未开始";
-            break;
-        case 3:
-            treatmentState = @"诊疗进行中";
-            break;
-        case 7:
-            treatmentState = @"治疗结束，尚未VAS评分";
-            break;
-        case 15:
-            treatmentState = @"疗程结束";
-            
-            break;
-        default:
-            treatmentState = @"未知";
-            break;
-    }
-    if ([machine.type isEqualToString:@"血瘘"]) {
+    if (machine.isLocal) {
         
         self.focusButton.enabled = ![self checkLocalMachineFocus:machine.taskId];
         
@@ -175,9 +149,9 @@
     }
     
 
-    self.findButton.hidden = ([treatmentState isEqualToString:@"处方尚未下发"]||[treatmentState isEqualToString:@"疗程结束"]);
+    self.findButton.hidden = ([machine.taskStateString isEqualToString:@"处方尚未下发"]||[machine.taskStateString isEqualToString:@"疗程结束"]);
 
-    self.taskStateLabel.text = [NSString stringWithFormat:@"治疗状态：    %@",treatmentState];
+    self.taskStateLabel.text = [NSString stringWithFormat:@"治疗状态：    %@",machine.taskStateString];
 
     if (machine.state) {
             self.machineStateLabel.text = [NSString stringWithFormat:@"设备状态：    %@",machine.state];
@@ -209,18 +183,18 @@
     
     //发现service的Characteristics
     [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        if ([service.UUID isEqual:[CBUUID UUIDWithString:SERVICE_UUID]]) {
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:weakSelf.dataModel.machineInfo.serviceUUID]]) {
             
             for (CBCharacteristic *characteristic in service.characteristics)
             {
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:RX_CHARACTERISTIC_UUID]])
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:weakSelf.dataModel.machineInfo.rxCharacteristicUUID]])
                 {
                     weakSelf.receiveCharacteristic = characteristic;
                     if (![characteristic isNotifying]) {
                         [weakSelf setNotify:characteristic];
                     }
                 }
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:TX_CHARACTERISTIC_UUID]])
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:weakSelf.dataModel.machineInfo.txCharacteristicUUID]])
                 {
                     weakSelf.sendCharacteristic = characteristic;
                     
@@ -240,7 +214,7 @@
         }
     }];
     [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
-        if (peripheralName.length > 0 && [peripheralName isEqualToString:@"ALX420"]) {
+        if (peripheralName.length > 0 && [peripheralName isEqualToString:self.dataModel.machineInfo.broadcastName]) {
             
             return YES;
             

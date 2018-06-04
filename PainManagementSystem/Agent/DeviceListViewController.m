@@ -114,8 +114,7 @@
 
     [self getTypeDic];
     [self initMahineTypeModels];
-//
-//    _filterButton.list = @[@"空气波",@"电疗",@"光子",@"血瘘"];
+
     //pageControll
     
     page = 0;
@@ -635,7 +634,6 @@
         datas = [[NSMutableArray alloc]initWithCapacity:20];
 
         NSMutableDictionary *paramDic = [[NSMutableDictionary alloc]initWithCapacity:20];
-        NSMutableDictionary *serialTypeDic = [[NSMutableDictionary alloc]initWithCapacity:20];
         for (MachineSeriesModel *model in typeItemModels) {
             if ([self.searchBar.text isEqualToString:model.name]) {
                 [paramDic setObject:model.code forKey:@"machinetype"];
@@ -645,44 +643,13 @@
                 return;
             }
         }
+        //搜索序列号或者名称
+        [paramDic setObject:self.searchBar.text forKey:@"key"];
         
+        filterparam = paramDic;
         
-//        if ([[_typeDic allValues]containsObject:self.searchBar.text]) {
-//            if ([self.searchBar.text isEqualToString: @"电疗"]) {
-//                [paramDic setObject:[NSNumber numberWithInt:56832] forKey:@"machinetype"];
-//
-//                filterparam = paramDic;
-//                [self askForData:YES isFiltered:YES];
-//            }
-//            else if([self.searchBar.text isEqualToString:@"空气波"]){
-//
-//                [paramDic setObject:[NSNumber numberWithInt:7681] forKey:@"machinetype"];
-//
-//                filterparam = paramDic;
-//                [self askForData:YES isFiltered:YES];
-//            }else if([self.searchBar.text isEqualToString:@"血瘘"]){
-//                [paramDic setObject:[NSNumber numberWithInt:57119] forKey:@"machinetype"];
-//
-//                filterparam = paramDic;
-//                [self askForData:YES isFiltered:YES];
-//            }else if([self.searchBar.text isEqualToString:@"光子"]){
-//                [paramDic setObject:[NSNumber numberWithInt:61184] forKey:@"machinetype"];
-//
-//                filterparam = paramDic;
-//                [self askForData:YES isFiltered:YES];
-//            }
+        [self askForData:YES isFiltered:YES];
 
-            
-//        }else{
-
-            //搜索序列号或者名称
-            [paramDic setObject:self.searchBar.text forKey:@"key"];
-            
-            filterparam = paramDic;
-            
-            [self askForData:YES isFiltered:YES];
-//
-//        }
     
     }else{
         //没有关键字显示全部

@@ -8,7 +8,7 @@
 
 #import "RecordModel.h"
 #import "AppDelegate.h"
-#import "MachineSeriesModel.h"
+
 
 @implementation RecordModel
 -(instancetype)initWithDic:(NSDictionary *)dic{
@@ -71,6 +71,7 @@
         NSDictionary *typeDic = appDelegate.typeDic;
         MachineSeriesModel *machineSeries = typeDic[type];
         self.machineType = machineSeries.name;
+        self.machine = machineSeries;
         
         switch ([type integerValue]) {
             case 56833:

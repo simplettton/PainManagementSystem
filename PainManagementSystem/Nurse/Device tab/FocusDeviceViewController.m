@@ -12,6 +12,7 @@
 #import <MQTTClient/MQTTSessionManager.h>
 #import <QuartzCore/QuartzCore.h>
 #import "AppDelegate.h"
+#import "MachineInfomationViewController.h"
 
 NSString *const HOST = @"192.168.2.127";
 NSString *const PORT = @"18826";
@@ -246,33 +247,53 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
 -(void)followDevice{
     NSIndexPath *selectIndexPath = [self.collectionView indexPathForItemAtPoint:[_longPress locationInView:self.collectionView]];
+     MachineModel *machine = [datas objectAtIndex:selectIndexPath.row];
     // 找到当前的cell
     for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
         [self stopShake:cell];
     }
-    
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要关注设备吗？"
-                                                                   message:@"关注之后可以在关注设备中查看"
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                             [self.collectionView reloadData];
-                                                             
-                                                             for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
-                                                                 [self stopShake:cell];
-                                                             }
-                                                         }];
-    UIAlertAction *focusAction = [UIAlertAction actionWithTitle:@"关注" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        if ([datas count]>0) {
-            MachineModel *machine = [datas objectAtIndex:selectIndexPath.row];
-            [self focusMachine:machine.serialNum];
-        }
-    }];
-    
-    [alert addAction:cancelAction];
-    [alert addAction:focusAction];
-    [self presentViewController:alert animated:YES completion:nil];
+    if(machine.isFocus){
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+                                                                       message:@"已关注该设备"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action) {
+                                                                 [self.collectionView reloadData];
+                                                                 
+                                                                 for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                     [self stopShake:cell];
+                                                                 }
+                                                             }];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }else{
+        
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"要关注设备吗？"
+                                                                       message:@"关注之后可以在关注设备中查看"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action) {
+                                                                 [self.collectionView reloadData];
+                                                                 
+                                                                 for (DeviceCollectionViewCell *cell in [self.collectionView visibleCells]) {
+                                                                     [self stopShake:cell];
+                                                                 }
+                                                             }];
+        UIAlertAction *focusAction = [UIAlertAction actionWithTitle:@"关注" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            if ([datas count]>0) {
+                MachineModel *machine = [datas objectAtIndex:selectIndexPath.row];
+                [self focusMachine:machine.serialNum];
+            }
+        }];
+        
+        [alert addAction:cancelAction];
+        [alert addAction:focusAction];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
+ 
 }
 //删除代码
 - (void)unfollowDevice:(UIButton *)btn{
@@ -981,19 +1002,17 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             cell.bedNumLabel.text = [NSString stringWithFormat:@"病床号: %@",machine.userBedNum];
   
 
-            if(![machine.type isEqualToString:@"血瘘"]){
-                //警告
-                if (machine.alertMessage) {
-                    [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
-                    
-                }else if (machine.leftTimeNumber) {
-                    //进行中才更新倒计时
-                    if (cell.style == CellStyleOngoing_MachineRunning) {
-                        [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
-                    }
-                }else{
-                    
+            //警告
+            if (machine.alertMessage) {
+                [cell configureWithStyle:CellStyle_MachineException message:machine.alertMessage];
+                
+            }else if (machine.leftTimeNumber) {
+                //进行中才更新倒计时
+                if (cell.style == CellStyleOngoing_MachineRunning) {
+                    [cell configureWithStyle:CellStyleOngoing_MachineRunning message:[self changeSecondToTimeString:machine.leftTimeNumber]];
                 }
+            }else{
+                
             }
 
             //按钮操作
@@ -1079,9 +1098,10 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 //选中后回调
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-//    DeviceCollectionViewCell *cell = (DeviceCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+
     if (self.tag != DeviceTypeLocal) {
-        [self performSegueWithIdentifier:@"ShowAlertMessage" sender:nil];
+        MachineModel *machine = [datas objectAtIndex:indexPath.row];
+        [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine];
     }
 
 }
@@ -1193,10 +1213,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
                                                         
                                                         if (![returnString isEqualToString:@"我按了取消按钮"]) {
                                                             //补关注设备
-                                                            if ([machine.type isEqualToString:@"血瘘"]) {
+                                                            if (machine.isLocal) {
                                                                 LocalMachineModel *machine = [LocalMachineModel modelWithDic:content[0]];
                                                                 [self saveLocalDevice:machine];
-                                                                
                                                             }
                                                             else if (machine.serialNum) {
 
@@ -1407,13 +1426,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     LocalMachineModel *machine = [datas objectAtIndex:interger];
 
-    NSString *serialNum = machine.serialNum;
-    
-    if ([serialNum isEqualToString:@"P06A17A00001"]) {
-        self.BLEDeviceName = @"ALX420";
-    }else{
-        self.BLEDeviceName = serialNum;
-    }
+    self.BLEDeviceName = machine.machineInfo.broadcastName;
     
     baby.scanForPeripherals().begin();
     
@@ -1454,24 +1467,23 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     
     //发现service的Characteristics
     [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        if ([service.UUID isEqual:[CBUUID UUIDWithString:SERVICE_UUID]]) {
+        LocalMachineModel *machine = [weakDatas objectAtIndex:weakSelf.selectedDeviceIndex];
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:machine.machineInfo.serviceUUID]]) {
             
             for (CBCharacteristic *characteristic in service.characteristics)
             {
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:RX_CHARACTERISTIC_UUID]])
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:machine.machineInfo.rxCharacteristicUUID]])
                 {
                     weakSelf.receiveCharacteristic = characteristic;
                     if (![characteristic isNotifying]) {
                         [weakSelf setNotify:characteristic];
                     }
                 }
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:TX_CHARACTERISTIC_UUID]])
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:machine.machineInfo.txCharacteristicUUID]])
                 {
                     weakSelf.sendCharacteristic = characteristic;
                     [weakSelf performSelector:@selector(sendMachineStateRequest) withObject:nil afterDelay:0.1];
-//                    [weakSelf sendMachineStateRequest];
-                    
-                    
+
                 }
                 
             }
@@ -1489,7 +1501,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     }];
     
     [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
-        if (peripheralName.length > 0 && [peripheralName isEqualToString:@"ALX420"]) {
+        LocalMachineModel *machine = [weakDatas objectAtIndex:weakSelf.selectedDeviceIndex];
+        if (peripheralName.length > 0 && [peripheralName isEqualToString:machine.machineInfo.broadcastName]) {
             
             return YES;
             
@@ -1626,6 +1639,9 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             MachineModel *machine = [datas objectAtIndex:indexPath.row];
             controller.medicalRecordNum = machine.userMedicalNum;
         }
+    }else if([segue.identifier isEqualToString:@"ShowAlertMessage"]){
+        MachineInfomationViewController *vc = (MachineInfomationViewController  *)segue.destinationViewController;
+        vc.machine = sender;
     }
 }
 #pragma mark === 永久闪烁的动画 ======

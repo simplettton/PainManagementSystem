@@ -192,6 +192,8 @@
     [datas removeAllObjects];
     [self.tableView reloadData];
     [self refresh];
+    [baby cancelScan];
+    [baby cancelAllPeripheralsConnection];
 
 }
 #pragma mark - refresh
@@ -355,12 +357,7 @@
                                                  
                                                  //处理中的任务 本地设备设置关注
                                                  if (self.segmentedControl.selectedSegmentIndex == 1) {
-                                                     if ([task.machineType isEqualToString:@"血瘘"]) {
-//                                                         if ([localMachineTaskIds containsObject:task.ID]) {
-//                                                             task.isFocus = true;
-//                                                         }else{
-//                                                             task.isFocus = false;
-//                                                         }
+                                                     if(task.machine.isLocal){
                                                          task.isFocus = [self checkLocalMachineFocus:task];
                                                      }
                                                  }
@@ -631,14 +628,12 @@
 - (void)scanAction:(id)sender {
     if ([datas count]>0) {
         TaskModel *task = [datas objectAtIndex:[sender tag]];
-        
-        if ([task.machineType isEqualToString:@"血瘘"]) {
-            
+        if (task.machine.isLocal) {
             //蓝牙的代理
             baby = [BabyBluetooth shareBabyBluetooth];
             [self babyDelegate];
             
-//            //判断蓝牙是否打开
+            //           //判断蓝牙是否打开
             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
             if (appDelegate.isBLEPoweredOff) {
                 [SVProgressHUD showErrorWithStatus:@"没有打开蓝牙无法下发处方,请在设置中打开"];
@@ -745,10 +740,10 @@
         if(self.selectedRow < [datas count]){
             __block TaskModel *task = [datas objectAtIndex:self.selectedRow];
             //本地设备通知服务器绑定设备
-            if([task.machineType isEqualToString:@"血瘘"]){
+            if (task.machine.isLocal) {
                 [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/BindingLocalDevice"]
                                               params:@{
-                                                       @"serialnum":@"P06A17A00001",
+                                                       @"serialnum":task.serialNum,
                                                        @"id":task.ID
                                                        }
                                             hasToken:YES
@@ -763,9 +758,7 @@
                                              failure:nil];
             }
             
-            
             [SendTreatmentSuccessView alertControllerAboveIn:self returnBlock:^{
-                
                 [self focusMachineWithTask:task];
             }];
         }
@@ -773,10 +766,10 @@
     
 }
 -(void)focusMachineWithTask:(TaskModel *)task{
-    if ([task.machineType isEqualToString:@"血瘘"]) {
-        if (!task.serialNum) {
-            task.serialNum = @"P06A17A00001";
-        }
+    if (task.machine.isLocal) {
+//        if (!task.serialNum) {
+////            task.serialNum = @"P06A17A00001";
+//        }
         NSString *medicalNum = task.medicalRecordNum;
         if (medicalNum) {
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
@@ -878,10 +871,10 @@
     
 }
 -(void)unfocusMachineWithTask:(TaskModel *)task{
-    if ([task.machineType isEqualToString:@"血瘘"]) {
-        if(!task.serialNum){
-            task.serialNum = @"P06A17A00001";
-        }
+    if (task.machine.isLocal) {
+//        if(!task.serialNum){
+//            task.serialNum = @"P06A17A00001";
+//        }
         NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
         NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
         NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -974,16 +967,11 @@
             NSLog(@"%@", [NSString stringWithFormat:@"medicalnum = %@",task.medicalRecordNum]);
             
             
-            if ([task.machineType isEqualToString:@"血瘘"]) {
-                
+            if (task.machine.isLocal) {
                 
                 [SVProgressHUD showWithStatus:@"处方下发中……"];
                 
-                if ([result isEqualToString:@"P06A17A00001"]) {
-                    self.BLEDeviceName = @"ALX420";
-                }else{
-                    self.BLEDeviceName = result;
-                }
+                self.BLEDeviceName = task.machine.broadcastName;
                 
                 NSArray *paramArray = task.treatParam[@"paramlist"];
                 
@@ -1005,6 +993,7 @@
                                                      
                                                      if ([enabled integerValue] ==1) {
                                                          //连接设备
+                                                         task.serialNum = result;
                                                          [self BLEConnectDevice];
                                                          [self startTimer];
                                                          
@@ -1037,8 +1026,6 @@
                                                      
                                                  }else{
                                                      [SVProgressHUD showErrorWithStatus:responseObject.errorString];
-                                                     //                                                 [self showFailView];
-                                                     
                                                  }
                                                  
                                              } failure:nil];
@@ -1067,7 +1054,6 @@
 -(void)BLEConnectDevice{
     
     if (self.BLEDeviceName) {
-        
 
         baby.scanForPeripherals().begin();
     }
@@ -1080,6 +1066,7 @@
     
     __weak typeof(self) weakSelf = self;
     __weak typeof(BabyBluetooth*) weakBaby = baby;
+    __weak typeof (NSMutableArray*)weakDatas = datas;
 
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
 
@@ -1094,18 +1081,20 @@
     
     //发现service的Characteristics
     [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        if ([service.UUID isEqual:[CBUUID UUIDWithString:SERVICE_UUID]]) {
+        TaskModel *task = [weakDatas objectAtIndex:weakSelf.selectedRow];
+        
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:task.machine.serviceUUID]]) {
             
             for (CBCharacteristic *characteristic in service.characteristics)
             {
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:RX_CHARACTERISTIC_UUID]])
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:task.machine.rxCharacteristicUUID]])
                 {
                     weakSelf.receiveCharacteristic = characteristic;
                     if (![characteristic isNotifying]) {
                         [weakSelf setNotify:characteristic];
                     }
                 }
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:TX_CHARACTERISTIC_UUID]])
+                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:task.machine.txCharacteristicUUID]])
                 {
                     weakSelf.sendCharacteristic = characteristic;
                     
@@ -1126,7 +1115,9 @@
         }
     }];
     [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
-        if (peripheralName.length > 0 && [peripheralName isEqualToString:@"ALX420"]) {
+        TaskModel *task = [weakDatas objectAtIndex:weakSelf.selectedRow];
+        
+        if (peripheralName.length > 0 && [peripheralName isEqualToString:task.machine.broadcastName]) {
             
             return YES;
             

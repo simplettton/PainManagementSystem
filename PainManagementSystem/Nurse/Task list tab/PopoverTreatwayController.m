@@ -46,13 +46,22 @@
     NSArray *dataArray = self.treatParamDic[@"paramlist"];
     datas = [dataArray mutableCopy];
     NSMutableDictionary *noteDic = [[NSMutableDictionary alloc]initWithCapacity:20];
-    
 
     self.type = self.treatParamDic[@"machinetype"];
+    
     if ([self.type integerValue]!=0) {
-        [noteDic setObject:@"备注" forKey:@"showname"];
-        [noteDic setObject:self.treatParamDic[@"note"] forKey:@"value"];
-        [datas addObject:noteDic];
+//        [noteDic setObject:@"备注" forKey:@"showname"];
+        
+        if (![self.treatParamDic[@"note"]isEqual:[NSNull null]]){
+            if(![self.treatParamDic[@"note"]isEqualToString:@""]){
+                if( ![self.treatParamDic[@"note"]isEqualToString:@"无"]) {
+                    //tableview footer增加noteview
+                    [self addNote:self.treatParamDic[@"note"]];
+//                    [noteDic setObject:self.treatParamDic[@"note"] forKey:@"value"];
+//                    [datas addObject:noteDic];
+                }
+            }
+        }
     }
     
     UIImageView *middleView = [self.topView viewWithTag:20000];
@@ -182,12 +191,31 @@
         [datas insertObject:modeDic atIndex:0];
     }
     
-    if (self.tableView.tableHeaderView.bounds.size.height + [datas count]*RowHeight + 30 >maxHeight) {
+    //popover显示高度调整
+    if (self.tableView.tableHeaderView.bounds.size.height + self.tableView.tableFooterView.bounds.size.height + [datas count]*RowHeight + 30 >maxHeight) {
         self.preferredContentSize = CGSizeMake(360, maxHeight);
     }else{
-        self.preferredContentSize = CGSizeMake(360, self.tableView.tableHeaderView.bounds.size.height + [datas count]*RowHeight + 30);
+        self.preferredContentSize = CGSizeMake(360, self.tableView.tableHeaderView.bounds.size.height + self.tableView.tableFooterView.bounds.size.height + [datas count]*RowHeight + 30);
     }
+}
+-(void)addNote:(NSString *)note{
+    NSString *showString = [NSString stringWithFormat:@"备注：%@",note];
+    NSRange noteRange = [showString rangeOfString:@"备注："];
     
+    //突出方案和备注关键字
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc]initWithString:showString];
+    [str addAttribute:NSForegroundColorAttributeName value:UIColorFromHex(0x5e97fe) range:noteRange];
+
+    UITextView *textView = [[UITextView alloc]initWithFrame:CGRectMake(10, 10, 300, 100)];
+    [self.tableView.tableFooterView addSubview:textView];
+    textView.attributedText = str;
+    textView.textAlignment = NSTextAlignmentLeft;
+    textView.font = [UIFont systemFontOfSize:16 weight:UIFontWeightLight];
+    [self refreshTextViewSize:textView];
+    
+    CGRect frame = self.tableView.tableFooterView.frame;
+    frame.size.height = textView.frame.size.height + textView.frame.origin.y;
+    self.tableView.tableFooterView.frame = frame;
 }
 
 #pragma mark - tableViewDelegate
@@ -220,8 +248,6 @@
     }else{
         cell.selectionsLabel.text = dic[@"value"];
     }
-
-
     return cell;
 
 }

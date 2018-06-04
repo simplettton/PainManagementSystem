@@ -7,12 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "MachineSeriesModel.h"
 @interface LocalMachineModel : NSObject<NSCoding>
 
 //taskId
 @property(nonatomic,copy)NSString *taskId;
 //设备基本信息
+@property(nonatomic,strong) MachineSeriesModel *machineInfo;
+
 @property(nonatomic,copy)NSString *name;
 
 @property(nonatomic,copy)NSString *cpuid;
@@ -33,6 +35,10 @@
 @property(nonatomic,copy)NSString *userBedNum;
 
 @property(nonatomic,copy)NSString *userMedicalNum;
+
+@property(nonatomic,copy)NSString *userAge;
+
+@property(nonatomic,copy)NSString *userContact;
 
 -(instancetype)initWithDic:(NSDictionary* )dict;
 

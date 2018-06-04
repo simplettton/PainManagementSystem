@@ -20,8 +20,7 @@ typedef enum _CellStyle {
     CellStyle_MachineOffline,
     
     CellStyleGrey_Unfinished,//通用
-    
-    
+
     CellStyle_LocalUnconnect,
     CellStyle_LocalConnect,
     CellStyle_LocalUnrunning,
@@ -40,23 +39,23 @@ typedef enum _CellStyle {
         self.cpuid = dict[@"cpuid"];
         NSNumber *typeNumber = dict[@"machinetype"];
 
+        //设备类型
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         NSDictionary *typeDic = appDelegate.typeDic;
+        MachineSeriesModel *machineSeries = typeDic[typeNumber];
+        self.machineInfo = machineSeries;
         
         if (typeDic[typeNumber]) {
-            MachineSeriesModel *machineSeries = typeDic[typeNumber];
+            
             self.type = machineSeries.name;
+
         }else{
             self.type = @"未知";
         }
-
+        
+        self.isLocal = machineSeries.isLocal;
         self.isFocus = ([dict[@"isfocus"]intValue] == 1)? YES:NO;
-        
-
-        
         self.stateNumber = dict[@"machinestate"];
-        
-        
         self.treatTimeNumber = dict[@"treattime"];
         self.treatTime = [NSString stringWithFormat:@"%@min",self.treatTimeNumber];
     
@@ -75,6 +74,29 @@ typedef enum _CellStyle {
         //配置显示cellstyle
 
         self.taskStateNumber = dict[@"taskstate"];
+        
+        switch ([self.taskStateNumber intValue]) {
+            case 0:
+                self.taskStateString = @"处方尚未下发";
+                break;
+            case 1:
+                self.taskStateString = @"处方已下发，治疗尚未开始";
+                break;
+            case 3:
+                self.taskStateString = @"诊疗进行中";
+                break;
+            case 7:
+                self.taskStateString = @"治疗结束，尚未VAS评分";
+                break;
+            case 15:
+                self.taskStateString = @"疗程结束";
+                
+                break;
+            default:
+                self.taskStateString = @"未知";
+                break;
+        }
+        
         switch ([self.taskStateNumber integerValue]) {
             case 1:
                 self.cellStyle = CellStyleNotStarted_MachineStop;
@@ -115,9 +137,12 @@ typedef enum _CellStyle {
         }else{
             self.userBedNum = dict[@"bednum"];
         }
+        self.userAge = dict[@"age"];
+        self.userContact = dict[@"contact"];
         self.userMedicalNum = dict[@"medicalrecordnum"];
         
         self.taskId = dict[@"id"];
+        
     }
     return self;
 }

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MachineSeriesModel.h"
 
 @interface TaskModel : NSObject
 
@@ -31,6 +32,8 @@
 @property(nonatomic,copy)NSArray *paramlist;
 
 @property(nonatomic,copy)NSString *machineType;
+
+@property(nonatomic,strong) MachineSeriesModel *machine;
 
 @property(nonatomic,copy)NSNumber *machineTypeNumber;
 

@@ -62,16 +62,17 @@ typedef enum _CellStyle {
         
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         NSDictionary *typeDic = appDelegate.typeDic;
+        MachineSeriesModel *machineSeries = typeDic[typeNumber];
+        self.machineInfo = machineSeries;
         
-//        NSDictionary *typeDic = @{
-//                                  @57119:@"血瘘",
-//                                  };
         if (typeDic[typeNumber]) {
-            MachineSeriesModel *machineSeries = typeDic[typeNumber];
+            
             self.type = machineSeries.name;
+            
         }else{
             self.type = @"未知";
         }
+        
         //绑定患者信息
         self.userName = dict[@"name"];
         if ([dict[@"bednum"]isEqual:[NSNull null]]) {
@@ -84,6 +85,10 @@ typedef enum _CellStyle {
         self.state = @"unconnect";
         
         self.taskId = dict[@"id"];
+        
+        self.userAge = dict[@"age"];
+        
+        self.userContact = dict[@"contact"];
     }
     return self;
 }

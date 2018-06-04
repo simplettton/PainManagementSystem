@@ -199,7 +199,7 @@
     __block NSString *idString = record.ID;
     __block NSNumber *isForceToStop;
     
-    if (self.isFocusToStop || [record.machineType isEqualToString:@"血瘘"]) {
+    if (self.isFocusToStop || record.machine.isLocal) {
         isForceToStop = @1;
     }else{
         isForceToStop = @0;
