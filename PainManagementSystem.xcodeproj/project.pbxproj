@@ -76,8 +76,11 @@
 		046E2E3C2062370800DEFD70 /* QRCodeTopRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */; };
 		046F072120B3EAC200F3B881 /* JLImageMagnification.m in Sources */ = {isa = PBXBuildFile; fileRef = 046F072020B3EAC200F3B881 /* JLImageMagnification.m */; };
 		046F072320B409C900F3B881 /* RecordDetailFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 046F072220B409C900F3B881 /* RecordDetailFooter.xib */; };
-		047A5E7120C4EBE800D1C377 /* AlertInfomationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047A5E7020C4EBE800D1C377 /* AlertInfomationView.xib */; };
-		047A5E7420C4EC0400D1C377 /* AlertInfomationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 047A5E7320C4EC0400D1C377 /* AlertInfomationView.m */; };
+		047147FD20C6427B003174CF /* AlertTimeLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 047147FB20C6427B003174CF /* AlertTimeLineCell.m */; };
+		047147FE20C6427B003174CF /* AlertTimeLineCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 047147FC20C6427B003174CF /* AlertTimeLineCell.xib */; };
+		0471480120C65D4F003174CF /* BETimeLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 0471480020C65D4F003174CF /* BETimeLine.m */; };
+		0471480420C664D8003174CF /* TimeLineModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0471480320C664D8003174CF /* TimeLineModel.m */; };
+		0471480820C67FBA003174CF /* DeviceDetailController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0471480720C67FBA003174CF /* DeviceDetailController.m */; };
 		047A5E7720C517A500D1C377 /* MachineInfomationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 047A5E7620C517A500D1C377 /* MachineInfomationViewController.m */; };
 		047AC09E20B66E0C004CDC26 /* MachineSeriesModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 047AC09D20B66E0C004CDC26 /* MachineSeriesModel.m */; };
 		047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047CA1E020639C0F00D6B1A4 /* wenshang.ttf */; };
@@ -251,9 +254,15 @@
 		046F071F20B3EAC200F3B881 /* JLImageMagnification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLImageMagnification.h; sourceTree = "<group>"; };
 		046F072020B3EAC200F3B881 /* JLImageMagnification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLImageMagnification.m; sourceTree = "<group>"; };
 		046F072220B409C900F3B881 /* RecordDetailFooter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecordDetailFooter.xib; sourceTree = "<group>"; };
-		047A5E7020C4EBE800D1C377 /* AlertInfomationView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlertInfomationView.xib; sourceTree = "<group>"; };
-		047A5E7220C4EC0400D1C377 /* AlertInfomationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertInfomationView.h; sourceTree = "<group>"; };
-		047A5E7320C4EC0400D1C377 /* AlertInfomationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertInfomationView.m; sourceTree = "<group>"; };
+		047147FA20C6427B003174CF /* AlertTimeLineCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertTimeLineCell.h; sourceTree = "<group>"; };
+		047147FB20C6427B003174CF /* AlertTimeLineCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertTimeLineCell.m; sourceTree = "<group>"; };
+		047147FC20C6427B003174CF /* AlertTimeLineCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlertTimeLineCell.xib; sourceTree = "<group>"; };
+		047147FF20C65D4F003174CF /* BETimeLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BETimeLine.h; sourceTree = "<group>"; };
+		0471480020C65D4F003174CF /* BETimeLine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BETimeLine.m; sourceTree = "<group>"; };
+		0471480220C664D8003174CF /* TimeLineModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeLineModel.h; sourceTree = "<group>"; };
+		0471480320C664D8003174CF /* TimeLineModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TimeLineModel.m; sourceTree = "<group>"; };
+		0471480620C67FBA003174CF /* DeviceDetailController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceDetailController.h; sourceTree = "<group>"; };
+		0471480720C67FBA003174CF /* DeviceDetailController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceDetailController.m; sourceTree = "<group>"; };
 		047A5E7520C517A500D1C377 /* MachineInfomationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachineInfomationViewController.h; sourceTree = "<group>"; };
 		047A5E7620C517A500D1C377 /* MachineInfomationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MachineInfomationViewController.m; sourceTree = "<group>"; };
 		047AC09C20B66E0C004CDC26 /* MachineSeriesModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachineSeriesModel.h; sourceTree = "<group>"; };
@@ -531,16 +540,16 @@
 				04484FD02064CDBF00467611 /* DeviceViewController.m */,
 				0462A40920746E74006DB5E0 /* FocusDeviceViewController.h */,
 				0462A40A20746E74006DB5E0 /* FocusDeviceViewController.m */,
+				0462A41120749ECA006DB5E0 /* DeviceCollectionViewCell.h */,
+				0462A41220749ECA006DB5E0 /* DeviceCollectionViewCell.m */,
 				040D19E62074D246001C51D9 /* FocusMachineAlertView.h */,
 				040D19E72074D246001C51D9 /* FocusMachineAlertView.m */,
 				040D19E92074D25C001C51D9 /* FocusMachineAlertView.xib */,
 				047A5E7520C517A500D1C377 /* MachineInfomationViewController.h */,
 				047A5E7620C517A500D1C377 /* MachineInfomationViewController.m */,
-				047A5E7220C4EC0400D1C377 /* AlertInfomationView.h */,
-				047A5E7320C4EC0400D1C377 /* AlertInfomationView.m */,
-				047A5E7020C4EBE800D1C377 /* AlertInfomationView.xib */,
-				0462A41120749ECA006DB5E0 /* DeviceCollectionViewCell.h */,
-				0462A41220749ECA006DB5E0 /* DeviceCollectionViewCell.m */,
+				0471480620C67FBA003174CF /* DeviceDetailController.h */,
+				0471480720C67FBA003174CF /* DeviceDetailController.m */,
+				0471480520C67415003174CF /* TimeLineView */,
 				045C01FB207B13EC00BB6A0A /* DeviceCollectionViewCell.xib */,
 				0462A40C207471DD006DB5E0 /* AllDeviceViewController.h */,
 				0462A40D207471DD006DB5E0 /* AllDeviceViewController.m */,
@@ -592,6 +601,8 @@
 				0465E38F206C7563009A2264 /* RecordModel.m */,
 				047AC09C20B66E0C004CDC26 /* MachineSeriesModel.h */,
 				047AC09D20B66E0C004CDC26 /* MachineSeriesModel.m */,
+				0471480220C664D8003174CF /* TimeLineModel.h */,
+				0471480320C664D8003174CF /* TimeLineModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -684,6 +695,18 @@
 				046E2E2C2062370800DEFD70 /* QRCodeTopRight@3x.png */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		0471480520C67415003174CF /* TimeLineView */ = {
+			isa = PBXGroup;
+			children = (
+				047147FA20C6427B003174CF /* AlertTimeLineCell.h */,
+				047147FB20C6427B003174CF /* AlertTimeLineCell.m */,
+				047147FC20C6427B003174CF /* AlertTimeLineCell.xib */,
+				047147FF20C65D4F003174CF /* BETimeLine.h */,
+				0471480020C65D4F003174CF /* BETimeLine.m */,
+			);
+			path = TimeLineView;
 			sourceTree = "<group>";
 		};
 		0481E8B12079EB380099B506 /* HHDropDownList */ = {
@@ -900,7 +923,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				047CA1E12063A24800D6B1A4 /* wenshang.ttf in Resources */,
-				047A5E7120C4EBE800D1C377 /* AlertInfomationView.xib in Resources */,
 				04ED0EC320528A1800638850 /* LaunchScreen.storyboard in Resources */,
 				041FDD5320722D2100BE6EC9 /* SendTreatmentFailView.xib in Resources */,
 				046E2E362062370800DEFD70 /* QRCodeBottomRight@3x.png in Resources */,
@@ -919,6 +941,7 @@
 				0419F4082073515900C83C2B /* Task.plist in Resources */,
 				046E2E342062370800DEFD70 /* QRCodeBottomLeft@3x.png in Resources */,
 				046E2E352062370800DEFD70 /* QRCodeBottomRight@2x.png in Resources */,
+				047147FE20C6427B003174CF /* AlertTimeLineCell.xib in Resources */,
 				047CA1E62063A88100D6B1A4 /* SetNetWorkView.xib in Resources */,
 				046E2E382062370800DEFD70 /* QRCodeLine@3x.png in Resources */,
 				040D19EA2074D25C001C51D9 /* FocusMachineAlertView.xib in Resources */,
@@ -1034,6 +1057,7 @@
 				04484FD12064CDBF00467611 /* DeviceViewController.m in Sources */,
 				0452786E20A1B0AB00CA605E /* TapBarController.m in Sources */,
 				045982B82080B68F00B51DB9 /* MachineModel.m in Sources */,
+				0471480120C65D4F003174CF /* BETimeLine.m in Sources */,
 				049C57872068C5E200180A8B /* AddPatientViewController.m in Sources */,
 				0459B01820BCFA26004DC863 /* UIViewController+BackButtonHandler.m in Sources */,
 				04271AF520AEA6740026C83A /* UIImage+Rotate.m in Sources */,
@@ -1042,8 +1066,10 @@
 				046C02102069E48100FDD974 /* BEButton.m in Sources */,
 				0462A40220746736006DB5E0 /* LLSegmentBarConfig.m in Sources */,
 				046E2E322062370800DEFD70 /* QRCodeReaderViewController.m in Sources */,
+				0471480820C67FBA003174CF /* DeviceDetailController.m in Sources */,
 				046E2E0F2061FB0E00DEFD70 /* AddDeviceCell.m in Sources */,
 				0481E8C82079EB480099B506 /* ListCell.m in Sources */,
+				047147FD20C6427B003174CF /* AlertTimeLineCell.m in Sources */,
 				046F072120B3EAC200F3B881 /* JLImageMagnification.m in Sources */,
 				04A2F90320B299090097066A /* CopyLabel.m in Sources */,
 				047CA1E42063A86300D6B1A4 /* SetNetWorkView.m in Sources */,
@@ -1052,6 +1078,7 @@
 				04661DEE2060999D002641D1 /* EditDeviceViewController.m in Sources */,
 				041B791D2068EDB2001D04C8 /* BETextField.m in Sources */,
 				045CB71B209448D30078A1A8 /* LocalMachineModel.m in Sources */,
+				0471480420C664D8003174CF /* TimeLineModel.m in Sources */,
 				04661DEA206091B6002641D1 /* DeviceTableViewCell.m in Sources */,
 				049C57832068C18B00180A8B /* PatientTableViewCell.m in Sources */,
 				0412081B2087341C00993A49 /* TaskModel.m in Sources */,
@@ -1065,7 +1092,6 @@
 				0411BC192071D235000FC687 /* TaskCell.m in Sources */,
 				0411BC1C2071FCAA000FC687 /* TaskListViewController.m in Sources */,
 				046C021D206A129400FDD974 /* VASMarkView.m in Sources */,
-				047A5E7420C4EC0400D1C377 /* AlertInfomationView.m in Sources */,
 				04A5530320737E4900822DB4 /* PopoverTreatwayController.m in Sources */,
 				0462A40F207471DD006DB5E0 /* AllDeviceViewController.m in Sources */,
 				04484FD52064CDF400467611 /* SettingViewController.m in Sources */,

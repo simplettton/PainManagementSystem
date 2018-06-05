@@ -9,5 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "MachineModel.h"
 @interface MachineInfomationViewController : UIViewController
+//在线设备传machine
 @property (nonatomic,strong)MachineModel *machine;
+//本地设备传medicalnum再请求设备和患者数据
+@property (nonatomic,strong)NSString *medicalNum;
 @end

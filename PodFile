@@ -10,6 +10,7 @@ target 'PainManagementSystem' do
 	pod 'MQTTClient'
 	pod 'Masonry'
 	pod 'SDWebImage'
+	pod 'SDAutoLayout'
 
 end
 #pods for app

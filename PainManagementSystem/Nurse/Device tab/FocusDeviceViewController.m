@@ -1100,8 +1100,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 {
 
     if (self.tag != DeviceTypeLocal) {
-        MachineModel *machine = [datas objectAtIndex:indexPath.row];
+        if ([datas count]>0) {
+            MachineModel *machine = [datas objectAtIndex:indexPath.row];
+            [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine];
+        }
+    }else{
+        if ([datas count]>0) {
+            LocalMachineModel *machine = [datas objectAtIndex:indexPath.row];
+//            [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine.userMedicalNum];
         [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine];
+        }
     }
 
 }
@@ -1641,7 +1649,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         }
     }else if([segue.identifier isEqualToString:@"ShowAlertMessage"]){
         MachineInfomationViewController *vc = (MachineInfomationViewController  *)segue.destinationViewController;
-        vc.machine = sender;
+        if (self.tag == DeviceTypeOnline) {
+            vc.machine = sender;
+        }else{
+            vc.medicalNum = sender;
+        }
+
     }
 }
 #pragma mark === 永久闪烁的动画 ======

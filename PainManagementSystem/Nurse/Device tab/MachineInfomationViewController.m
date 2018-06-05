@@ -7,7 +7,8 @@
 //
 
 #import "MachineInfomationViewController.h"
-
+#import "TimeLineModel.h"
+#import "BETimeLine.h"
 @interface MachineInfomationViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *medicalNumLabel;
 @property (weak, nonatomic) IBOutlet UILabel *patientNameLabel;
@@ -23,6 +24,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *leftTimeLabel;
 @property (weak, nonatomic) IBOutlet UIView *alertView;
+@property (weak, nonatomic) IBOutlet UIView *alertContentView;
+
+
+@property (strong,nonatomic)BETimeLine *timeLine;
 
 @end
 
@@ -31,11 +36,37 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    [self getAlertInfomation];
+    if (self.machine) {
+        [self getAlertInfomation];
+    }
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self configureUIWithDataModel:self.machine];
+    if (self.machine) {
+        [self configureUIWithDataModel:self.machine];
+    }else{
+        if (self.medicalNum) {
+            [self getInformFromNetworkWithMedicalNum:self.medicalNum];
+        }
+    }
+}
+-(void)getInformFromNetworkWithMedicalNum:(NSString *)medicalNum{
+    [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"] params:@{
+                                                                                                                          @"medicalrecordnum":medicalNum,
+                                                                                                                          @"needlocal":@1,
+                                                                                                                          @"taskstate":@135
+                                                                                                                          }
+                                hasToken:YES
+                                 success:^(HttpResponse *responseObject) {
+                                          if ([responseObject.result integerValue] == 1) {
+                                              NSArray *content = responseObject.content;
+                                              if (content) {
+                                                  MachineModel *machine = [MachineModel modelWithDic:content[0]];
+                                                  [self configureUIWithDataModel:machine];
+                                              }
+                                          }
+                                      }
+                                 failure:nil];
 }
 
 -(void)configureUIWithDataModel:(MachineModel *)machine{
@@ -56,11 +87,25 @@
     self.serialNumLabel.text = machine.serialNum;
     self.machineStateLabel.text = machine.state;
     self.timeLabel.text = machine.treatTime;
-    if (machine.isFocus) {
+    if (self.medicalNum) {
         self.isFocusLabel.text = @"已关注";
+        self.leftTimeLabel.text = @"----";
     }else{
-        self.isFocusLabel.text = @"未关注";
+        if (machine.isFocus) {
+            self.isFocusLabel.text = @"已关注";
+        }else{
+            self.isFocusLabel.text = @"未关注";
+        }
+        if (machine.leftTimeNumber) {
+            self.leftTimeLabel.text = [self changeSecondToTimeString:machine.leftTimeNumber];
+        }else{
+            self.leftTimeLabel.text = @"----";
+        }
     }
+}
+-(NSString *)changeSecondToTimeString:(NSNumber *)second{
+    NSString *min = [NSString stringWithFormat:@"%ldmin",[second integerValue]/60];
+    return min;
 }
 -(void)getAlertInfomation{
     datas = [[NSMutableArray alloc]initWithCapacity:20];
@@ -73,8 +118,22 @@
                                          if ([content count]>0) {
                                              self.alertView.hidden = NO;
                                              for (NSDictionary *dic in content) {
-                                                 [datas addObject:dic];
+                                                 TimeLineModel *model = [TimeLineModel modelWithDic:dic];
+                                                 BOOL containSameModel = NO;
+                                                 for (TimeLineModel *timeLineModel in datas) {
+                                                     if ([timeLineModel.timeStamp integerValue] == [model.timeStamp integerValue]) {
+                                                         containSameModel = YES;
+                                                         break;
+                                                     }
+                                                 }
+                                                 if (!containSameModel) {
+                                                     [datas addObject:model];
+                                                 }
                                              }
+                                             self.automaticallyAdjustsScrollViewInsets = YES;
+                                             self.timeLine = [[BETimeLine alloc]init];
+                                             [self.timeLine setSuperView:self.alertContentView DataArray:datas];
+
                                          }else{
                                              self.alertView.hidden = YES;
                                          }

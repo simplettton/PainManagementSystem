@@ -29,6 +29,10 @@
 //cell style
 @property(nonatomic,assign)UInt8 cellStyle;
 
+@property(nonatomic,copy)NSString *taskStateString;
+
+@property(nonatomic,copy)NSString *treatTime;
+
 //绑定患者信息
 @property(nonatomic,copy)NSString *userName;
 

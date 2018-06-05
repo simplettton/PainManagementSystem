@@ -767,9 +767,6 @@
 }
 -(void)focusMachineWithTask:(TaskModel *)task{
     if (task.machine.isLocal) {
-//        if (!task.serialNum) {
-////            task.serialNum = @"P06A17A00001";
-//        }
         NSString *medicalNum = task.medicalRecordNum;
         if (medicalNum) {
             [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]

@@ -168,18 +168,17 @@
 
     __weak typeof(self) weakSelf = self;
     [self.birthdayTF addTapAciton:^{
-
-//        NSString *minDateString = [self timeStampFromTimeString:@"1870-01-01 00:00:00" dataFormat:@"yyyy-MM-dd  HH:mm:ss"];
         [BRDatePickerView showDatePickerWithTitle:@"出生日期"
                                          dateType:UIDatePickerModeDate
                                   defaultSelValue:weakSelf.birthdayTF.text
-                                       minDateStr:@"1870-01-01 00:00:00"
+                                       minDateStr:@"1901-01-01 00:00:00"
                                        maxDateStr:[NSDate currentDateString]
                                      isAutoSelect:NO
                                        themeColor:nil
                                       resultBlock:^(NSString *selectValue) {
                                             weakSelf.birthdayTF.text = selectValue;
-                                            NSString *timeStamp = [self timeStampFromTimeString:selectValue dataFormat:@"yyyy-MM-dd"];
+                                          NSString *time = [selectValue stringByAppendingString:@" 00:00:00"];
+                                          NSString *timeStamp = [self timeStampFromTimeString:time dataFormat:@"yyyy-MM-dd HH:mm:ss"];
 
                                             NSLog(@"------send to server ：生日时间戳：%@",timeStamp);
         } cancelBlock:^{
@@ -358,9 +357,10 @@
 -(NSString *)timeStampFromTimeString:(NSString *)timeString dataFormat:(NSString *)dateFormat
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    formatter.timeZone = [NSTimeZone localTimeZone];
-//    [formatter setDateStyle:NSDateFormatterMediumStyle];
-//    [formatter setTimeStyle:NSDateFormatterShortStyle];
+//    formatter.timeZone = [NSTimeZone localTimeZone];
+    formatter.timeZone = [NSTimeZone timeZoneWithName:@"Asia/Beijing"];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
     [formatter setDateFormat:dateFormat];
     
     //日期转时间戳
@@ -368,8 +368,8 @@
     NSInteger timeSp = [[NSNumber numberWithDouble:[date timeIntervalSince1970]] integerValue];
     NSString* timeStamp = [NSString stringWithFormat:@"%ld",timeSp];
     return timeStamp;
-
 }
+
 //仅输入字母或数字 正则
 - (BOOL)inputShouldLetterOrNumWithText:(NSString *)inputString {
     if (inputString.length == 0) return NO;

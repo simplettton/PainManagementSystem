@@ -73,6 +73,8 @@ typedef enum _CellStyle {
             self.type = @"未知";
         }
         
+        self.treatTime = [NSString stringWithFormat:@"%@min",dict[@"treattime"]];
+        
         //绑定患者信息
         self.userName = dict[@"name"];
         if ([dict[@"bednum"]isEqual:[NSNull null]]) {
