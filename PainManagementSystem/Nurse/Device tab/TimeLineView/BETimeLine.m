@@ -27,7 +27,7 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
-    
+    self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
     [self addSubview:self.tableView];
     
  self.tableView.sd_layout.topEqualToView(self).leftEqualToView(self).bottomEqualToView(self).rightEqualToView(self);
@@ -47,13 +47,19 @@
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     AlertTimeLineCell *cell = [AlertTimeLineCell timeLineCell:tableView];
-    if (indexPath.row == 0) {
-        cell.lineView.sd_layout.topSpaceToView(cell.pointView, 0);
-    }else if(indexPath.row == [self.dataArray count] - 1){
-        cell.lineView.sd_layout.bottomSpaceToView(cell.pointView, 0);
+    if (self.dataArray.count == 1) {
+        cell.lineView.alpha = 0;
     }else{
-        cell.lineView.sd_layout.topSpaceToView(cell.contentView, 0);
+        cell.lineView.alpha = 1;
+        if (indexPath.row == 0) {
+            cell.lineView.sd_layout.topSpaceToView(cell.pointView, 0);
+        }else if(indexPath.row == [self.dataArray count] - 1){
+            cell.lineView.sd_layout.bottomSpaceToView(cell.pointView, 0);
+        }else{
+            cell.lineView.sd_layout.topSpaceToView(cell.contentView, 0);
+        }
     }
+
     cell.model = self.dataArray[indexPath.row];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;

@@ -15,10 +15,7 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     //设置按钮的边框
-//    [self.treatmentButton.layer setBorderWidth:0.5f];
-//    [self.treatmentButton.layer setBorderColor:UIColorFromHex(0xbbbbbb).CGColor];
     [self.treatmentButton setBackgroundColor:UIColorFromHex(0xf0f0f0)];
-//    [self.treatmentButton.layer setCornerRadius:5.0f];
     [self.treatmentButton.layer setMasksToBounds:YES];
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.treatmentButton.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(15, 15)];
@@ -52,13 +49,15 @@
     switch (style) {
         case CellStyle_UnDownLoad:
             [self.scanButton setImage:[UIImage imageNamed:@"scancode"] forState:UIControlStateNormal];
-            self.statusImage.image = [UIImage imageNamed:@""];
+//            self.statusImage.image = [UIImage imageNamed:@""];
+            self.statusImage.alpha = 0;
 
             break;
             
         case CellStyleGrey_DownLoadedUnRunning:
             [self.scanButton setImage:[UIImage imageNamed:@"scancode"] forState:UIControlStateNormal];
             self.statusImage.image = [UIImage imageNamed:@"notstarted"];
+            self.statusImage.alpha = 1;
 
             break;
         
@@ -67,12 +66,14 @@
             self.statusImage.animationImages = [self animationImages];
             self.statusImage.animationDuration = 1;
             [self.statusImage startAnimating];
+            self.statusImage.alpha = 1;
 
             break;
             
         case CellStyleBlue_DownLoadedFinishRunning:
             [self.scanButton setImage:[UIImage imageNamed:@"remark"] forState:UIControlStateNormal];
             self.statusImage.image = [UIImage imageNamed:@"finished"];
+            self.statusImage.alpha = 1;
 
             break;
         

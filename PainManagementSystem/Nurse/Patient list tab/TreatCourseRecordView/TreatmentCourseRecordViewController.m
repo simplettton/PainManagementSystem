@@ -14,6 +14,7 @@
 #import "NoDataPlaceHoler.h"
 #import "MJRefresh.h"
 #import "PatientListViewController.h"
+#import "UIViewController+BackButtonHandler.h"
 @interface TreatmentCourseRecordViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
@@ -39,8 +40,6 @@
 }
 
 -(void)initAll{
-    
-
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [[UIView alloc]init];
@@ -72,6 +71,31 @@
     self.pushOnce = 1;
     [self getStandardEvaluation];
 }
+-(BOOL)navigationShouldPopOnBackButton{
+    
+    if (self.navigationController ) {
+        UIViewController *controller = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
+        if ([controller isKindOfClass:[PatientListViewController class]]) {
+            
+            [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/Patient/ListByQuery"]
+                                          params:@{@"medicalrecordnum":self.patient.medicalRecordNum}
+                                        hasToken:YES
+                                         success:^(HttpResponse *responseObject) {
+                                                if ([responseObject.result intValue]==1) {
+                                                    NSDictionary *patientDic = [responseObject.content objectAtIndex:0];
+                                                    PatientListViewController *patientListController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
+                                                    patientListController.patient = [PatientModel modelWithDic:patientDic];
+                                                    [self.navigationController popToViewController:patientListController animated:YES];
+                                                }
+                                            } failure:nil];
+
+        }else{
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
+    
+    return NO;
+}
 #pragma mark - refresh
 -(void)initTableHeaderAndFooter{
     
@@ -81,7 +105,8 @@
     header.lastUpdatedTimeLabel.hidden = YES;
     header.stateLabel.hidden = YES;
     self.tableView.mj_header = header;
-    [self.tableView.mj_header beginRefreshing];
+//    [self.tableView.mj_header beginRefreshing];
+    [self refresh];
 }
 -(void)refresh{
     NSString *paramValue = self.medicalRecordNum != nil? self.medicalRecordNum : self.patient.medicalRecordNum;

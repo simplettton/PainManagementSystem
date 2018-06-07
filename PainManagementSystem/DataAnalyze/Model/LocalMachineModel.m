@@ -26,7 +26,7 @@ typedef enum _CellStyle {
     [aCoder encodeObject:self.userBedNum forKey:@"userBedNum"];
     [aCoder encodeObject:self.userName forKey:@"userName"];
     [aCoder encodeObject:self.userMedicalNum forKey:@"userMedicalNum"];
-    
+    [aCoder encodeObject:self.machineInfo forKey:@"machineInfo"];
     [aCoder encodeObject:self.state forKey:@"state"];
     [aCoder encodeInteger:self.cellStyle forKey:@"cellStyle"];
 }
@@ -41,7 +41,7 @@ typedef enum _CellStyle {
         self.userMedicalNum = [aDecoder decodeObjectForKey:@"userMedicalNum"];
         self.userName = [aDecoder decodeObjectForKey:@"userName"];
         self.userBedNum = [aDecoder decodeObjectForKey:@"userBedNum"];
-        
+        self.machineInfo = [aDecoder decodeObjectForKey:@"machineInfo"];
         self.state = [aDecoder decodeObjectForKey:@"state"];
         self.cellStyle = [aDecoder decodeIntegerForKey:@"cellStyle"];
     }

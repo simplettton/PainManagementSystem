@@ -113,9 +113,6 @@ typedef NS_ENUM(NSUInteger,typeTags)
 
 -(void)initAll{
     
-//    //默认选中电疗设备
-//    UIButton *btn = (UIButton *)[self.contentView viewWithTag:electrotherapyTag];
-//    [self changeDevice:btn];
     //非本地设备
     isLocalDeviceList = NO;
     

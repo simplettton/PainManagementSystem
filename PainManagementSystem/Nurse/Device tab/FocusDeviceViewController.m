@@ -31,7 +31,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 @property (weak, nonatomic) IBOutlet UIView *deviceBackgroundView;
 @property (weak, nonatomic) IBOutlet UIView *noDataView;
 
-
+//区分  治疗中设备 未开始设备 和治疗结束设备 按钮
+@property (weak, nonatomic) IBOutlet UIView *taskStateView;
 //下拉框
 @property (strong,nonatomic)HHDropDownList *dropList;
 @property (strong, nonatomic) NSArray *dropListArray;
@@ -167,13 +168,13 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     //默认是在线设备
     self.tag = DeviceTypeOnline;
     
-    //下拉框
-    [self.deviceBackgroundView addSubview:self.dropList];
-    
-    NSArray *array_1 = @[@"治疗中设备", @"未开始设备", @"治疗结束设备"];
-    self.dropListArray = array_1;
-    
-    [self.dropList reloadListData];
+//    //下拉框
+//    [self.deviceBackgroundView addSubview:self.dropList];
+//
+//    NSArray *array_1 = @[@"治疗中设备", @"未开始设备", @"治疗结束设备"];
+//    self.dropListArray = array_1;
+//
+//    [self.dropList reloadListData];
     
     //关注中设备添加 longpress 添加手势 可以取消设备
 //    if (!self.isInAllTab) {
@@ -425,12 +426,13 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     //下拉刷新
 //    self.collectionView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
     MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
-    [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
-    [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
     
+    header.lastUpdatedTimeLabel.hidden = YES;
+    header.stateLabel.hidden = YES;
     self.collectionView.mj_header = header;
-    [self.collectionView.mj_header beginRefreshing];
+//    [self.collectionView.mj_header beginRefreshing];
+    [self refresh];
     
     
     //上拉加载
@@ -855,11 +857,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         if (minute < 1) {
             minute = 1;
         }
-//        minute = minute +1;
-//        if (minute == 60) {
-//            hour = hour +1;
-//            minute = 0;
-//        }
     }
     
     NSString *hourString = [NSString stringWithFormat:hour>9?@"%ld":@"0%ld",(long)hour];
@@ -870,33 +867,37 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
 
 #pragma mark - HHDropDownList
--(HHDropDownList *)dropList{
-    if (!_dropList) {
-        //配置dropList
-        _dropList = [[HHDropDownList alloc]initWithFrame:CGRectMake(8, 14, List_Width, 35)];
-        
-        [_dropList setBackgroundColor:[UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0]];
-        [_dropList setHighlightColor:[UIColor colorWithRed:46/255.0 green:163/255.0 blue:230/255.0 alpha:0.5]];
-        [_dropList setDelegate:self];
-        [_dropList setDataSource:self];
-        
-        [_dropList setIsExclusive:YES];
-        [_dropList setHaveBorderLine:YES];
-    
-        
-    }
-    return _dropList;
-}
-- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
-    
-    return _dropListArray;
-}
-- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
-    NSDictionary *taskStateInfo = @{@"治疗中设备":@3,@"未开始设备":@1,@"治疗结束设备":@7};
-    self.selectedTaskState = taskStateInfo[itemName];
-    [self.collectionView.mj_header beginRefreshing];
+
+- (IBAction)changeTaskState:(id)sender {
     
 }
+//-(HHDropDownList *)dropList{
+//    if (!_dropList) {
+//        //配置dropList
+//        _dropList = [[HHDropDownList alloc]initWithFrame:CGRectMake(8, 14, List_Width, 35)];
+//
+//        [_dropList setBackgroundColor:[UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0]];
+//        [_dropList setHighlightColor:[UIColor colorWithRed:46/255.0 green:163/255.0 blue:230/255.0 alpha:0.5]];
+//        [_dropList setDelegate:self];
+//        [_dropList setDataSource:self];
+//
+//        [_dropList setIsExclusive:YES];
+//        [_dropList setHaveBorderLine:YES];
+//
+//
+//    }
+//    return _dropList;
+//}
+//- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
+//
+//    return _dropListArray;
+//}
+//- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
+//    NSDictionary *taskStateInfo = @{@"治疗中设备":@3,@"未开始设备":@1,@"治疗结束设备":@7};
+//    self.selectedTaskState = taskStateInfo[itemName];
+//    [self.collectionView.mj_header beginRefreshing];
+//
+//}
 
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
     
@@ -1108,7 +1109,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         if ([datas count]>0) {
             LocalMachineModel *machine = [datas objectAtIndex:indexPath.row];
 //            [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine.userMedicalNum];
-        [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine];
+        [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine.userMedicalNum];
         }
     }
 
@@ -1436,10 +1437,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
     self.BLEDeviceName = machine.machineInfo.broadcastName;
     
+    [self babyDelegate];
+    
     baby.scanForPeripherals().begin();
     
     //连接中状态指示
-//    _HUD = [MBProgressHUD showHUDAddedTo:deviceCell animated:YES];
     [self.collectionView reloadData];
     [SVProgressHUD showWithStatus:[NSString stringWithFormat:@"连接设备%@中...",machine.name]];
 
@@ -1509,8 +1511,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     }];
     
     [baby setFilterOnDiscoverPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
-        LocalMachineModel *machine = [weakDatas objectAtIndex:weakSelf.selectedDeviceIndex];
-        if (peripheralName.length > 0 && [peripheralName isEqualToString:machine.machineInfo.broadcastName]) {
+        if (peripheralName.length > 0 && [peripheralName isEqualToString:weakSelf.BLEDeviceName]) {
             
             return YES;
             
@@ -1565,7 +1566,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             LocalMachineModel *machine = [datas objectAtIndex:self.selectedDeviceIndex];
             [machine changeState:typeDic[stateKey]];
 
-            
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.collectionView reloadData];

@@ -9,6 +9,29 @@
 #import "MachineSeriesModel.h"
 #define MIN_BUTTONWIDTH 75
 @implementation MachineSeriesModel
+-(void)encodeWithCoder:(NSCoder *)aCoder{
+    [aCoder encodeObject:self.name forKey:@"name"];
+    [aCoder encodeObject:self.code forKey:@"code"];
+    [aCoder encodeBool:self.isLocal forKey:@"islocal"];
+    [aCoder encodeObject:self.serviceUUID forKey:@"serviceUUID"];
+    [aCoder encodeObject:self.txCharacteristicUUID forKey:@"txCharacteristicUUID"];
+    [aCoder encodeObject:self.rxCharacteristicUUID forKey:@"rxCharacteristicUUID"];
+    [aCoder encodeObject:self.broadcastName forKey:@"broadcastName"];
+    [aCoder encodeFloat:self.buttonWidth forKey:@"buttonWidth"];
+}
+-(instancetype)initWithCoder:(NSCoder *)aDecoder{
+    if (self = [super init]) {
+        self.name = [aDecoder decodeObjectForKey:@"name"];
+        self.code = [aDecoder decodeObjectForKey:@"code"];
+        self.isLocal = [aDecoder decodeBoolForKey:@"islocal"];
+        self.serviceUUID = [aDecoder decodeObjectForKey:@"serviceUUID"];
+        self.txCharacteristicUUID = [aDecoder decodeObjectForKey:@"txCharacteristicUUID"];
+        self.rxCharacteristicUUID = [aDecoder decodeObjectForKey:@"rxCharacteristicUUID"];
+        self.broadcastName = [aDecoder decodeObjectForKey:@"broadcastName"];
+        self.buttonWidth = [aDecoder decodeFloatForKey:@"buttonWidth"];
+    }
+    return self;
+}
 -(instancetype)initWithDic:(NSDictionary *)dic{
     if (self = [super init]) {
         self.name = dic[@"name"];

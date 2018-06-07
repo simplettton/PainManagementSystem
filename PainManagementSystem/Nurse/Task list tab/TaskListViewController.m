@@ -37,7 +37,7 @@
 
 #define ElectrothetapyColor 0x0dbaa5
 #define AirProColor 0xfd8574
-//#define AirProColor 0x9BADC3
+#define HiteColor 0x1f4ea5
 #define AladdinColor 0x5e97fe
 #define LightColor 0x57bd72
 
@@ -51,6 +51,7 @@
 @property (assign,nonatomic) NSInteger selectedRow;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UILabel *headerLastLabel;
+@property (weak, nonatomic) IBOutlet UIView *noDataView;
 
 //任务状态
 @property (nonatomic,assign)int taskTag;
@@ -65,8 +66,6 @@
 //防止push多个相同的
 @property (assign,nonatomic)BOOL pushOnce;
 @property(nonatomic,strong)NSTimer *timer;
-//没有记录view
-@property(nonatomic,strong)NoDataPlaceHoler *nodataView;
 
 @end
 
@@ -278,15 +277,18 @@
                                          {
                                              self.tableView.tableHeaderView.hidden = NO;
                                              [self getNetworkData:isRefresh];
-                                             [self hideNodataView];
+
+                                            self.noDataView.hidden = YES;
                                          }else{
                                              [datas removeAllObjects];
                                              [self endRefresh];
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  [self.tableView reloadData];
                                              });
-                                             [self showNodataViewWithTitle:[NSString stringWithFormat:@"暂无记录"]];
+
+                                             self.noDataView.hidden = NO;
                                              self.tableView.tableHeaderView.hidden = YES;
+
                                          }
                                          
                                      }else{
@@ -378,22 +380,6 @@
                                  } failure:nil];
 }
 #pragma mark - mark NoDataView
--(void)showNodataViewWithTitle:(NSString *)title{
-    if (self.nodataView == nil) {
-        self.nodataView = [[[NSBundle mainBundle]loadNibNamed:@"NoDataPlaceHolder" owner:self options:nil]lastObject];
-        self.nodataView.center = self.view.center;
-        [self.view addSubview:self.nodataView];
-    }
-    
-    self.nodataView.titleLabel.text = title;
-    
-}
--(void)hideNodataView{
-    if(self.nodataView){
-        [self.nodataView removeFromSuperview];
-        self.nodataView = nil;
-    }
-}
 -(BOOL)checkLocalMachineFocus:(TaskModel *)task{
     NSArray *localMachineTaskIds = [self returnLocalMachineTaskIdArray];
     if ([localMachineTaskIds containsObject:task.ID]) {
@@ -526,7 +512,10 @@
         case 61202:
             [cell setTypeLableColor:UIColorFromHex(LightColor)];
             break;
-            
+        case 4202:
+        case 4203:
+            [cell setTypeLableColor:UIColorFromHex(HiteColor)];
+            break;
         default:
             [cell setTypeLableColor:UIColorFromHex(0x212121)];
             break;
@@ -1157,7 +1146,11 @@
                     [self closeTimer];
                 }
             }else{
-                [self showFailView];
+                if (self.timer) {
+                    [self closeTimer];
+                }
+//                [self showFailView];
+                [SVProgressHUD showErrorWithStatus:@"设备正忙"];
             }
         }
     }

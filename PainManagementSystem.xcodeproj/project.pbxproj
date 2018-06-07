@@ -426,9 +426,9 @@
 				041A3E1D207C543100CC316A /* PrefixHeader.pch */,
 				0481E8D2207A04EB0099B506 /* Localizable.strings */,
 				047CA1E020639C0F00D6B1A4 /* wenshang.ttf */,
-				04271AF420AEA6730026C83A /* UIImage+Rotate.h */,
 				04271AF320AEA6730026C83A /* UIImage+Rotate.m */,
 				04A2F90120B299090097066A /* CopyLabel.h */,
+				04271AF420AEA6730026C83A /* UIImage+Rotate.h */,
 				04A2F90220B299090097066A /* CopyLabel.m */,
 			);
 			path = "Supporting Files";

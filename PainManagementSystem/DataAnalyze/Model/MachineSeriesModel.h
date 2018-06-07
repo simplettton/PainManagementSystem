@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MachineSeriesModel : NSObject
+@interface MachineSeriesModel : NSObject<NSCoding>
 
 @property (nonatomic,copy)NSString *name;
 

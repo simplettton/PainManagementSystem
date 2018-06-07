@@ -33,6 +33,7 @@
         NSDictionary *typeDic = appDelegate.typeDic;
         MachineSeriesModel *machineSeries = typeDic[treatParam[@"machinetype"]];
         self.machine = machineSeries;
+        
         self.machineType = machineSeries.name;
 
         self.treatTime = treatParam[@"time"];

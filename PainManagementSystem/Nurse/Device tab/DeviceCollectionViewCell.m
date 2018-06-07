@@ -114,7 +114,8 @@
             
             break;
             
-        //local machine        case CellStyle_LocalConnect:
+//        local machine
+        case CellStyle_LocalConnect:
             
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
@@ -166,7 +167,7 @@
     self.BLEPlayButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalRunning))?YES:NO;
     self.BLEPauseButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning)||(style == CellStyle_LocalPause))?YES:NO;
     self.BLEStopButton.hidden = ((style == CellStyle_LocalUnconnect)||(style == CellStyle_LocalUnrunning)||(style == CellStyle_LocalPause))?YES:NO;
-    self.BLERemarkButton.hidden = (style == CellStyle_LocalRunning);
+//    self.BLERemarkButton.hidden = (style == CellStyle_LocalRunning);
 }
 - (IBAction)controlButttons:(id)sender {
 }

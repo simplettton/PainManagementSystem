@@ -114,7 +114,7 @@
             [self refresh];
         }
     }else{
-        [self refresh];
+//        [self refresh];
     }
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadDataWithNotification:) name:@"ClickTabbarItem" object:nil];
 }

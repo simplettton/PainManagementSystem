@@ -27,6 +27,9 @@
 }
 - (void)awakeFromNib {
     [super awakeFromNib];
+    
+//    这里对titleLB的布局做高度自适应，及设置autoHeightRatio为0即可，然后我们直接在设置模型中调用 [self setupAutoHeightWithBottomView:self.titleLB bottomMargin:0]就自动完成了高度自适应，是不是很方便
+//    。
     self.titleLabel.sd_layout.autoHeightRatio(0);
     [self setRadius];
 }
@@ -41,7 +44,7 @@
     self.titleLabel.text = model.title;
     self.dateLabel.text = [self stringFromTimeIntervalString:model.timeStamp dateFormat:@"yyyy-MM-dd"];
     self.timeLabel.text = [self stringFromTimeIntervalString:model.timeStamp dateFormat:@"HH:mm"];
-    
+//    [self setupAutoHeightWithBottomView:self.titleLB bottomMargin:0];
 }
 -(void)setRadius{
     self.pointView.layer.cornerRadius = self.pointView.frame.size.width/2;

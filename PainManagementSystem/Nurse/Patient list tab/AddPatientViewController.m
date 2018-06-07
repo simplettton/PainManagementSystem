@@ -7,6 +7,7 @@
 //
 
 #import "AddPatientViewController.h"
+#import "UIViewController+BackButtonHandler.h"
 #import "PatientListViewController.h"
 #import "QRCodeReaderViewController.h"
 #import "NSDate+BRAdd.h"
@@ -32,7 +33,6 @@
 @property (weak, nonatomic) IBOutlet UIView *treatDayView;
 @property (weak, nonatomic) IBOutlet UIButton *scanButton;
 
-
 @property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *nameLabels;
 
 //条形码扫描
@@ -55,6 +55,7 @@
     [super viewWillDisappear:YES];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
 }
+
 -(void)textFieldDidChange{
     if (self.nameTextField.text.length > 20) {
         self.nameTextField.text = [self.nameTextField.text substringToIndex:20];
@@ -244,15 +245,10 @@
                                                                                   
                                                                                   PatientListViewController *patientListController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
                                                                                   
-                                                                                  patientListController.patient = nil;
-                                                                                  
                                                                                   patientListController.patient = [PatientModel modelWithDic:patientDic];
 
                                                                                   [self.navigationController popToViewController:patientListController animated:YES];
                                                                               }
-                                                                              
-                                                                              
-                                                                              
                                                                           }
                                                                           failure:nil];
                                              
