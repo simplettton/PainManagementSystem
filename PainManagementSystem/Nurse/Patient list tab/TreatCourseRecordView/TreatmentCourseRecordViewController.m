@@ -101,11 +101,11 @@
     
     //下拉刷新
     MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+    header.stateLabel.textColor =UIColorFromHex(0xdbdbdb);
     // 隐藏时间
     header.lastUpdatedTimeLabel.hidden = YES;
-    header.stateLabel.hidden = YES;
     self.tableView.mj_header = header;
-//    [self.tableView.mj_header beginRefreshing];
+
     [self refresh];
 }
 -(void)refresh{

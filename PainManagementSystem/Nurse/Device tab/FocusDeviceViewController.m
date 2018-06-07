@@ -13,7 +13,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import "AppDelegate.h"
 #import "MachineInfomationViewController.h"
-
+#define C_Button_Selected_Color 0x4F95D5
+#define C_Button_UnSelected_Color 0xf8f8f8
 NSString *const HOST = @"192.168.2.127";
 NSString *const PORT = @"18826";
 NSString *const MQTTUserName = @"admin";
@@ -33,9 +34,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
 //区分  治疗中设备 未开始设备 和治疗结束设备 按钮
 @property (weak, nonatomic) IBOutlet UIView *taskStateView;
-//下拉框
-@property (strong,nonatomic)HHDropDownList *dropList;
-@property (strong, nonatomic) NSArray *dropListArray;
+
 //区分 治疗中设备 未开始设备 和治疗结束设备
 @property (nonatomic,strong)NSNumber* selectedTaskState;
 //长按view抖动
@@ -94,7 +93,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 
     [baby cancelScan];
     [baby cancelAllPeripheralsConnection];
-    [self.dropList pullBack];
     [self.HUD hideAnimated:YES];
     if (self.manager) {
         [self.manager removeObserver:self forKeyPath:@"state" context:nil];
@@ -113,7 +111,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(void)hideKeyBoard{
     [self.view endEditing:YES];
     [self.collectionView endEditing:YES];
-    [self.dropList pullBack];
+
 
 }
 
@@ -127,7 +125,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         self.allTabButton.hidden = YES;
         self.segmentedControl.hidden = NO;
     }
-    
+    //设置任务状态切换按钮边框
+    for (UIView *view in self.taskStateView.subviews) {
+        if ([view isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)view;
+
+            [button.layer setBorderWidth:1.0f];
+            button.layer.borderColor = UIColorFromHex(C_Button_Selected_Color).CGColor;
+        }
+    }
+
     //配置searchbar样式
     self.searchBar.delegate = self;
     self.searchBar.backgroundImage = [[UIImage alloc]init];//去除边框线
@@ -136,9 +143,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     UITextField * searchField = [_searchBar valueForKey:@"_searchField"];
     
     [searchField setValue:[UIFont systemFontOfSize:15 weight:UIFontWeightLight] forKeyPath:@"_placeholderLabel.font"];
-    
-//    //设备外框边框设置
-//    [self setBorderWithView:self.deviceBackgroundView top:YES left:NO bottom:NO right:NO borderColor:UIColorFromHex(0xbbbbbb) borderWidth:0.5f];
+
     
     //UICollectionView 配置
     self.collectionView.dataSource = self;
@@ -168,19 +173,11 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     //默认是在线设备
     self.tag = DeviceTypeOnline;
     
-//    //下拉框
-//    [self.deviceBackgroundView addSubview:self.dropList];
-//
-//    NSArray *array_1 = @[@"治疗中设备", @"未开始设备", @"治疗结束设备"];
-//    self.dropListArray = array_1;
-//
-//    [self.dropList reloadListData];
     
-    //关注中设备添加 longpress 添加手势 可以取消设备
-//    if (!self.isInAllTab) {
-        _longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(lonePressMoving:)];
-        [self.collectionView addGestureRecognizer:_longPress];
-//    }
+    //设备添加 longpress 添加手势 可以取消关注/关注设备
+
+    _longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(lonePressMoving:)];
+    [self.collectionView addGestureRecognizer:_longPress];
     
     //默认是治疗中的设备
     self.selectedTaskState = @3;
@@ -424,10 +421,10 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 -(void)initTableHeaderAndFooter{
     
     //下拉刷新
-//    self.collectionView.mj_header = [MJChiBaoZiHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+
     MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
-    
+    header.stateLabel.textColor =UIColorFromHex(0xdbdbdb);
     header.lastUpdatedTimeLabel.hidden = YES;
     header.stateLabel.hidden = YES;
     self.collectionView.mj_header = header;
@@ -480,7 +477,7 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     [params setObject:self.selectedTaskState forKey:@"taskstate"];
     [params setObject:@0 forKey:@"needlocal"];
     
-    NSDictionary *taskStateInfo = @{@3:@"治疗中设备",@1:@"未开始设备",@7:@"治疗结束设备"};
+    NSDictionary *taskStateInfo = @{@3:@"治疗中设备",@1:@"未开始治疗设备",@7:@"治疗结束设备"};
     
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"]
                                   params:(NSDictionary *)params
@@ -849,56 +846,48 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 }
 
 -(NSString *)changeSecondToTimeString:(NSNumber *)second{
-    NSInteger hour = [second intValue]/3600;
-    NSInteger minute = [second integerValue]/60%60;
     
+    NSInteger minute = [second integerValue]/60;
+    
+//    NSInteger hour = [second intValue]/3600;
+//    NSInteger minute = [second integerValue]/60%60;
 
     if (second != 0) {
         if (minute < 1) {
             minute = 1;
         }
     }
-    
-    NSString *hourString = [NSString stringWithFormat:hour>9?@"%ld":@"0%ld",(long)hour];
-    NSString *minString = [NSString stringWithFormat:minute>9?@"%ld":@"0%ld",(long)minute];
-    NSString *timeString = [NSString stringWithFormat:@"  %@:%@",hourString,minString];
+//    NSString *hourString = [NSString stringWithFormat:hour>9?@"%ld":@"0%ld",(long)hour];
+//    NSString *minString = [NSString stringWithFormat:minute>9?@"%ld":@"0%ld",(long)minute];
+//    NSString *timeString = [NSString stringWithFormat:@"%@:%@",hourString,minString];
+    NSString *timeString = [NSString stringWithFormat:@"%ldmin",minute];
     return timeString;
 }
 
+#pragma mark - changeTaskState
 
-#pragma mark - HHDropDownList
+- (IBAction)changeTaskState:(UIButton *)sender {
+    self.selectedTaskState = [NSNumber numberWithInteger:[sender tag]];
+    
+    NSArray *taskStateButtonTagArray = [NSArray arrayWithObjects:@1,@3,@7, nil];
+    for (NSNumber *taskState in taskStateButtonTagArray) {
+        UIButton *btn = [self.taskStateView viewWithTag:[taskState integerValue]];
+        if ([btn tag] == [sender tag]) {
+            btn.backgroundColor = UIColorFromHex(C_Button_Selected_Color);
+            [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        }else{
+            btn.backgroundColor = UIColorFromHex(C_Button_UnSelected_Color);
+            [btn setTitleColor:UIColorFromHex(C_Button_Selected_Color) forState:UIControlStateNormal];
+        }
+    }
+    
 
-- (IBAction)changeTaskState:(id)sender {
+    [self refresh];
+    
+    
     
 }
-//-(HHDropDownList *)dropList{
-//    if (!_dropList) {
-//        //配置dropList
-//        _dropList = [[HHDropDownList alloc]initWithFrame:CGRectMake(8, 14, List_Width, 35)];
-//
-//        [_dropList setBackgroundColor:[UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0]];
-//        [_dropList setHighlightColor:[UIColor colorWithRed:46/255.0 green:163/255.0 blue:230/255.0 alpha:0.5]];
-//        [_dropList setDelegate:self];
-//        [_dropList setDataSource:self];
-//
-//        [_dropList setIsExclusive:YES];
-//        [_dropList setHaveBorderLine:YES];
-//
-//
-//    }
-//    return _dropList;
-//}
-//- (NSArray *)listDataForDropDownList:(HHDropDownList *)dropDownList {
-//
-//    return _dropListArray;
-//}
-//- (void)dropDownList:(HHDropDownList *)dropDownList didSelectItemName:(NSString *)itemName atIndex:(NSInteger)index {
-//    NSDictionary *taskStateInfo = @{@"治疗中设备":@3,@"未开始设备":@1,@"治疗结束设备":@7};
-//    self.selectedTaskState = taskStateInfo[itemName];
-//    [self.collectionView.mj_header beginRefreshing];
-//
-//}
-
+//在线或本地切换
 -(void)didClicksegmentedControlAction:(UISegmentedControl *)segmentedControl{
     
     NSInteger Index = segmentedControl.selectedSegmentIndex;
@@ -914,15 +903,16 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             [self.collectionView reloadData];
             self.tag = DeviceTypeOnline;
             
-            self.dropList.hidden = NO;
+            self.taskStateView.hidden = NO;
             
             [baby cancelScan];
             [baby cancelAllPeripheralsConnection];
             [self.HUD hideAnimated:YES];
             [self connectMQTT];
             
+            //uicollectionview下移
             UICollectionViewFlowLayout *collectionViewLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-            collectionViewLayout.headerReferenceSize = CGSizeMake(50, 50);
+            collectionViewLayout.headerReferenceSize = CGSizeMake(50, 60);
         
         }
             
@@ -935,13 +925,12 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             self.collectionView.mj_footer.hidden = YES;
             NSLog(@"切换本地设备");
             self.tag = DeviceTypeLocal;
-            [self.dropList pullBack];
-            self.dropList.hidden = YES;
+            self.taskStateView.hidden = YES;
 
             [self disconnectMQTT];
             baby = [BabyBluetooth shareBabyBluetooth];
             [self babyDelegate];
-            //位置布局
+            //位置布局  //uicollectionview上移
             UICollectionViewFlowLayout *collectionViewLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
             collectionViewLayout.headerReferenceSize = CGSizeMake(50, 20);
         }
@@ -967,13 +956,8 @@ NSString *const MQTTPassWord = @"lifotronic.com";
         MachineModel *machine = [datas objectAtIndex:indexPath.row];
         DeviceCollectionViewCell *currentCell = (DeviceCollectionViewCell *)cell;
         if (machine.alertMessage) {
-//
-//            [currentCell.middleImageView.layer removeAllAnimations];
-//            [currentCell.machineStateLabel.layer removeAllAnimations];
-            
-            [currentCell.middleImageView.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
-            [currentCell.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
-
+        [currentCell.middleImageView.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
+        [currentCell.machineStateLabel.layer addAnimation:[self opacityForever_Animation:0.25] forKey:nil];
         }
     }
 }
@@ -1119,12 +1103,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     return CGSizeMake(220, 186);
 }
 
-////设置每个item的UIEdgeInsets
-//- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
-//{
-//    return UIEdgeInsetsMake(10, 10, 10, 10);
-//}
-
 //设置每个item水平间距
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
@@ -1137,8 +1115,6 @@ NSString *const MQTTPassWord = @"lifotronic.com";
 {
     return 40;
 }
-
-
 
 
 #pragma mark http control machine

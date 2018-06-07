@@ -53,7 +53,7 @@
         //三种灰色未治疗结束的模板
         case CellStyleGrey_Unfinished:
             
-            self.topView.backgroundColor = UIColorFromHex(0xf0f0f4);
+            self.topView.backgroundColor = UIColorFromHex(0xf9f9f9);
             [self.machineStateLabel setTextColor:UIColorFromHex(kBlueColor)];
             [self.machineNameLabel setTextColor:UIColorFromHex(kBlueColor)];
             break;
@@ -95,10 +95,10 @@
 
             self.topView.backgroundColor = UIColorFromHex(kGreenColor);
             //601加上1分钟就是持续治疗
-            if ([message isEqualToString:@"  10:01"]) {
-                message = @"     持续治疗";
+            if ([message isEqualToString:@"601min"]) {
+                message = @"持续治疗";
             }
-            self.machineStateLabel.text = (message == nil)?@"  00:00":message;
+            self.machineStateLabel.text = (message == nil)?@"0min":message;
             [self.machineStateLabel setTextColor:UIColorFromHex(kGreenColor)];
             [self.machineNameLabel setTextColor:[UIColor whiteColor]];
             

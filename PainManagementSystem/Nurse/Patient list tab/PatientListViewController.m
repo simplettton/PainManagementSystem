@@ -140,10 +140,9 @@
     
     //下拉刷新
     MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
-    [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
-    [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
-    
+    header.stateLabel.textColor =UIColorFromHex(0xdbdbdb);
+    header.lastUpdatedTimeLabel.hidden = YES;
     self.tableView.mj_header = header;
     
     [self.tableView.mj_header beginRefreshing];

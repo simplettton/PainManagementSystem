@@ -172,8 +172,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
         for (int i = 0; i < [typeItemModels count]; i++){
             
             MachineSeriesModel *machineSerial = typeItemModels[i];
-            
-            
+
             BEButton *button = [[BEButton alloc]initWithFrame:CGRectMake(XPostion, buttonYPositon, machineSerial.buttonWidth, TYPE_ITEM_Height)];
             [button setTitle:machineSerial.name forState:UIControlStateNormal];
             button.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightLight];
@@ -207,6 +206,7 @@ typedef NS_ENUM(NSUInteger,typeTags)
     [header setTitle:@"下拉刷新" forState:MJRefreshStateIdle];
     [header setTitle:@"松开更新" forState:MJRefreshStatePulling];
     [header setTitle:@"加载中..." forState:MJRefreshStateRefreshing];
+    header.stateLabel.textColor =UIColorFromHex(0xdbdbdb);
     
     self.tableView.mj_header = header;
     [self refresh];
@@ -417,55 +417,10 @@ typedef NS_ENUM(NSUInteger,typeTags)
         [self.tableView reloadData];
     
 }
-- (IBAction)changeDevice:(UIButton *)sender {
-    
-    self.selectedDeviceTag = [sender tag];
-
-    for (int i = electrotherapyTag; i<electrotherapyTag +4; i++) {
-        UIButton *btn = (UIButton *)[self.contentView viewWithTag:i];
-        //配置选中按钮
-        if ([btn tag] == [(UIButton *)sender tag]) {
-            btn.backgroundColor = UIColorFromHex(0x37bd9c);
-            [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        }else{
-            btn.backgroundColor = [UIColor whiteColor];
-            [btn setTitleColor:UIColorFromHex(0x212121) forState:UIControlStateNormal];
-        }
-    }
-    
-    //选中蓝牙设备
-    if (self.selectedDeviceTag == aladdinTag) {
-        
-        isLocalDeviceList = YES;
-        
-        datas = [[NSMutableArray alloc]initWithCapacity:20];
-        
-        baby = [BabyBluetooth shareBabyBluetooth];
-        [self babyDelegate];
-        baby.scanForPeripherals().begin();
-        
-        self.tableView.mj_header = nil;
-        self.tableView.mj_footer = nil;
-
-    }else {
-
-        [baby cancelScan];
-        [baby cancelAllPeripheralsConnection];
-        
-        isLocalDeviceList = NO;
-        [self refresh];
-        
-    }
-    [self.tableView reloadData];
-}
-
-
-
 
 #pragma mark - BLE
 -(void)babyDelegate {
     __weak typeof(self) weakSelf = self;
-    __weak typeof(BabyBluetooth*) weakBaby = baby;
     
     [baby setBlockOnConnected:^(CBCentralManager *central, CBPeripheral *peripheral) {
         
