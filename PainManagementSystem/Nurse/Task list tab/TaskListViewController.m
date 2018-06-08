@@ -456,11 +456,7 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     //设置label支持换行
-//    cell.patientNameLabel.numberOfLines = 0;
-//    cell.patientNameLabel.lineBreakMode = NSLineBreakByWordWrapping;
-//    
-//    cell.medicalRecordNumLable.numberOfLines = 0;
-//    cell.medicalRecordNumLable.lineBreakMode = NSLineBreakByWordWrapping;
+
     
     cell.finishTimeLabel.numberOfLines = 0;
     cell.finishTimeLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -859,9 +855,7 @@
 }
 -(void)unfocusMachineWithTask:(TaskModel *)task{
     if (task.machine.isLocal) {
-//        if(!task.serialNum){
-//            task.serialNum = @"P06A17A00001";
-//        }
+
         NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
         NSString *documentPath = [documents stringByAppendingPathComponent:@"focusLocalMachine.plist"];
         NSFileManager *fileManager = [NSFileManager defaultManager];

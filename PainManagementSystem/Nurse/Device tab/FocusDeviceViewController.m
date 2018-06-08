@@ -13,6 +13,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "AppDelegate.h"
 #import "MachineInfomationViewController.h"
+#import "DeviceDetailController.h"
 #define C_Button_Selected_Color 0x4F95D5
 #define C_Button_UnSelected_Color 0xf8f8f8
 NSString *const HOST = @"192.168.2.127";
@@ -1087,13 +1088,14 @@ NSString *const MQTTPassWord = @"lifotronic.com";
     if (self.tag != DeviceTypeLocal) {
         if ([datas count]>0) {
             MachineModel *machine = [datas objectAtIndex:indexPath.row];
-            [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine];
+//            [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine];
+            [self performSegueWithIdentifier:@"ShowDeviceDetail" sender:machine];
         }
     }else{
         if ([datas count]>0) {
             LocalMachineModel *machine = [datas objectAtIndex:indexPath.row];
 //            [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine.userMedicalNum];
-        [self performSegueWithIdentifier:@"ShowAlertMessage" sender:machine.userMedicalNum];
+        [self performSegueWithIdentifier:@"ShowDeviceDetail" sender:machine.userMedicalNum];
         }
     }
 
@@ -1623,14 +1625,23 @@ NSString *const MQTTPassWord = @"lifotronic.com";
             MachineModel *machine = [datas objectAtIndex:indexPath.row];
             controller.medicalRecordNum = machine.userMedicalNum;
         }
-    }else if([segue.identifier isEqualToString:@"ShowAlertMessage"]){
-        MachineInfomationViewController *vc = (MachineInfomationViewController  *)segue.destinationViewController;
+    }
+//    else if([segue.identifier isEqualToString:@"ShowAlertMessage"]){
+//        MachineInfomationViewController *vc = (MachineInfomationViewController  *)segue.destinationViewController;
+//        if (self.tag == DeviceTypeOnline) {
+//            vc.machine = sender;
+//        }else{
+//            vc.medicalNum = sender;
+//        }
+//
+//    }
+    else if([segue.identifier isEqualToString:@"ShowDeviceDetail"]){
+        DeviceDetailController *vc = (DeviceDetailController *)segue.destinationViewController;
         if (self.tag == DeviceTypeOnline) {
             vc.machine = sender;
         }else{
             vc.medicalNum = sender;
         }
-
     }
 }
 #pragma mark === 永久闪烁的动画 ======

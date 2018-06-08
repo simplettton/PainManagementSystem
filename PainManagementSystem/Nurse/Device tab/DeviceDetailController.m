@@ -26,7 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *leftTimeLabel;
 @property (weak, nonatomic) IBOutlet UIView *alertView;
 @property (weak, nonatomic) IBOutlet UIView *alertContentView;
-
+@property (assign,nonatomic)BOOL hasAlertMessage;
 @property (strong,nonatomic)BETimeLine *timeLine;
 @end
 
@@ -40,7 +40,7 @@
     }
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad{
     [super viewDidLoad];
     if (self.machine) {
         [self configureUIWithDataModel:self.machine];
@@ -49,7 +49,6 @@
             [self getInformFromNetworkWithMedicalNum:self.medicalNum];
         }
     }
-
 }
 -(void)getInformFromNetworkWithMedicalNum:(NSString *)medicalNum{
     [[NetWorkTool sharedNetWorkTool]POST:[HTTPServerURLString stringByAppendingString:@"Api/TaskList/QueryTask"] params:@{
@@ -116,7 +115,9 @@
                                      if ([responseObject.result integerValue] == 1) {
                                          NSArray *content = responseObject.content;
                                          if ([content count]>0) {
+                                             self.hasAlertMessage = YES;
                                              self.alertView.hidden = NO;
+                                             
                                              for (NSDictionary *dic in content) {
                                                  TimeLineModel *model = [TimeLineModel modelWithDic:dic];
                                                  BOOL containSameModel = NO;
@@ -131,12 +132,21 @@
                                                  }
                                              }
                                              self.automaticallyAdjustsScrollViewInsets = YES;
+                                             CGRect frame = self.alertContentView.frame;
+                                             //每一个cell的高度固定为150
+                                             frame.size.height = 150 * [datas count];
+                                             self.alertContentView.frame = frame;
+                                             NSLog(@"alertContentView.frame = %f",self.alertContentView.frame.size.height);
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [self.tableView reloadData];
+                                             });
+                                             
                                              self.timeLine = [[BETimeLine alloc]init];
                                              [self.timeLine setSuperView:self.alertContentView DataArray:datas];
-                                             
 
-                                             
+
                                          }else{
+                                             self.hasAlertMessage = NO;
                                              self.alertView.hidden = YES;
                                          }
                                      }
@@ -151,6 +161,20 @@
 
 #pragma mark - Table view data source
 
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.row == 0) {
+        return 194;
+    }else if(indexPath.row == 1){
+        return 284;
+    }else{
+        if (self.hasAlertMessage) {
+            if (datas) {
+                return 50 + [datas count]*150;
+            }
+        }
+        return 0;
+    }
+}
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }

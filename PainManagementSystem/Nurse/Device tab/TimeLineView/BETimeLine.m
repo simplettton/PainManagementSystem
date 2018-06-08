@@ -28,6 +28,8 @@
     self.tableView.delegate = self;
     self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
     self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    self.tableView.showsVerticalScrollIndicator = NO;
+    
     [self addSubview:self.tableView];
     
  self.tableView.sd_layout.topEqualToView(self).leftEqualToView(self).bottomEqualToView(self).rightEqualToView(self);
@@ -64,19 +66,5 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
-//-(void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
-//        //end of loading
-////        dispatch_async(dispatch_get_main_queue(),^{
-////            //for example [activityIndicator stopAnimating];
-////        });
-//        [[NSNotificationCenter defaultCenter]postNotificationName:@"111" object:nil];
-//        CGRect frame = self.frame;
-//        frame.size.height = self.tableView.contentSize.height;
-//        NSLog(@"height = %f",self.tableView.contentSize.height);
-//        self.frame = frame;
-//    }
-//}
 
 @end
